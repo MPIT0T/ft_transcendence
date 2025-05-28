@@ -1,6 +1,4 @@
 include srcs/.env
-DOMAIN_NAME ?= localhost
-SECRETS_DIR = secrets
 
 all: up
 
