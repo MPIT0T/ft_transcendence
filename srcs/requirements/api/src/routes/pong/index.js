@@ -115,7 +115,7 @@ module.exports = async function (fastify, opts) {
   }
 
   fastify.get('/', async function (request, reply) {
-    return 'this is an ws'
+    return 'this is a websocket'
   })
 
   const stopPlayer = (e) => {

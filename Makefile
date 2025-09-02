@@ -3,6 +3,7 @@ include srcs/.env
 all: up
 
 up: secrets
+	@mkdir -p ~/data/frontend-dist
 	docker compose -f srcs/docker-compose.yml up --build --detach
 
 build:
@@ -30,6 +31,7 @@ clean:
 	docker compose -f srcs/docker-compose.yml down --volumes --rmi all
 
 fclean: clean
+	sudo rm -rf ~/data
 	rm -rf secrets/
 
 re: fclean up

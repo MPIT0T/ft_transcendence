@@ -1,0 +1,14 @@
+{
+    "name": "ping_pong",
+    "version": "0.001",
+    "type": "module",
+    "scripts": {
+        "watch": "tsc --watch",
+        "css": "",
+        "start": "http-server ./public -p 3006"
+    },
+
+    "devDependencies": {
+        "typescript": "^5.5.4"
+    }
+}
