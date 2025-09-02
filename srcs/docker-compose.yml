@@ -1,7 +1,7 @@
 services:
   api:
-    image: api
-    container_name: api
+    image: trans-api
+    container_name: trans-api
     build:
       context: requirements/api/
     networks:
@@ -11,8 +11,8 @@ services:
     restart: always
 
   nginx:
-    image: nginx
-    container_name: nginx
+    image: trans-nginx
+    container_name: trans-nginx
     build:
       context: requirements/nginx/
     networks:
