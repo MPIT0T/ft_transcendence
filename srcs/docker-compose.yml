@@ -1,0 +1,37 @@
+services:
+  api:
+    image: api
+    container_name: api
+    build:
+      context: requirements/api/
+    networks:
+      - transcendence
+    expose:
+      - "3000"
+    restart: always
+
+  nginx:
+    image: nginx
+    container_name: nginx
+    build:
+      context: requirements/nginx/
+    networks:
+      - transcendence
+    # depends_on:
+    #   - api
+    ports:
+      - "443:443"
+    secrets:
+      - ssl_crt
+      - ssl_key
+    restart: always
+
+networks:
+  transcendence:
+    name: transcendence
+
+secrets:
+  ssl_crt:
+    file: ../secrets/ssl_certificate
+  ssl_key:
+    file: ../secrets/ssl_certificate_key
