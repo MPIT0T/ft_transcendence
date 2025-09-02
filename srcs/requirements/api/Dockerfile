@@ -21,11 +21,12 @@ RUN node -v && npm -v
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY . .
 
+# Install dependencies
 RUN npm install
 
-COPY . .
+# Copy source code
 
 EXPOSE 3000
 
