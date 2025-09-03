@@ -33,14 +33,22 @@ services:
     container_name: trans-frontend
     build:
       context: requirements/frontend
+    develop:
+      watch:
+        - action: sync
+          path: requirements/frontend/src
+          target: /app/src
+        - action: sync
+          path: requirements/frontend/public
+          target: /app/dist
+        - action: rebuild
+          path: requirements/frontend/package.json
     networks:
       - transcendence
     volumes:
       - frontend-dist:/app/dist
     expose:
-      - "3006"
-    # restart: always
-    
+      - "3006"    
 
 networks:
   transcendence:
