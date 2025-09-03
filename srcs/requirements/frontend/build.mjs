@@ -1,14 +1,44 @@
 import esbuild from 'esbuild'
+import fs from 'fs'
+import path from 'path'
 
-esbuild.build({
-    entryPoints: ['src/main.ts'],   // entrypoint for the app
-    bundle: true,                   // bundle everything in one
-    outfile: 'dist/bundle.js',      // final file
-    minify: true,                   // minify the JS
-    sourcemap: false,               //
-    format: 'esm',                  // ES6 module
-    target: ['es2020'],             // modern browser compatibility
-}).catch(err => {
-    console.error(err);
-    process.exit(1)
-});
+const isDev = process.env.NODE_ENV === "dev"
+
+function copyPublic() {
+    const publicDir = "./public";
+    const distDir = "./dist";
+
+    fs.mkdirSync(distDir, {recursive: true});
+
+    fs.readdirSync(publicDir).forEach(file => {
+        fs.copyFileSync(
+            path.join(publicDir, file),
+            path.join(distDir, file)
+        )
+    });
+
+    console.log("Static assets copied successfuly");
+}
+
+copyPublic();
+
+if (isDev) {
+    const ctx = await esbuild.context({
+        entryPoints: ["src/main.ts"],
+        bundle: true,
+        outfile: "dist/bundle.js",
+        sourcemap: true,
+    });
+    await ctx.watch();
+    console.log("Watching for changes...");
+
+} else {
+    await esbuild.build({
+        entryPoints: ["src/main.ts"],
+        bundle: true,
+        outfile: "dist/bundle.js",
+        sourcemap: false,
+        minify: true,
+    });
+    console.log("Build complete.")
+};
