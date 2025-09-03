@@ -1,0 +1,63 @@
+services:
+  api:
+    image: trans-api
+    container_name: trans-api
+    build:
+      context: requirements/api/
+    networks:
+      - transcendence
+    expose:
+      - "3000"
+    restart: always
+
+  nginx:
+    image: trans-nginx
+    container_name: trans-nginx
+    build:
+      context: requirements/nginx/
+    networks:
+      - transcendence
+    volumes:
+      - frontend-dist:/var/www/html
+    ports:
+      - "443:443"
+    depends_on:
+      - frontend
+    secrets:
+      - ssl_crt
+      - ssl_key
+    restart: always
+
+  frontend:
+    image: trans-frontend
+    container_name: trans-frontend
+    build:
+      context: requirements/frontend
+    networks:
+      - transcendence
+    volumes:
+      - frontend-dist:/app/dist
+    expose:
+      - "3006"
+    # restart: always
+    
+
+networks:
+  transcendence:
+    name: transcendence
+
+volumes:
+  frontend-dist:
+    name: trans-frontend-dist
+    driver: local
+    driver_opts:
+      type: none
+      device: ${HOME}/data/frontend-dist
+      o: bind
+
+
+secrets:
+  ssl_crt:
+    file: ../secrets/ssl_certificate
+  ssl_key:
+    file: ../secrets/ssl_certificate_key
