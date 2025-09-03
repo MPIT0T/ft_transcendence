@@ -4,12 +4,7 @@ all: up
 
 up: secrets
 	@mkdir -p ~/data/frontend-dist
-<<<<<<< HEAD
-	docker compose -f srcs/docker-compose.yml up --build
-
-=======
 	docker compose -f srcs/compose.yml up --build
->>>>>>> main
 build:
 	docker compose -f srcs/compose.yml build --no-cache
 
