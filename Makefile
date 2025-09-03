@@ -4,7 +4,7 @@ all: up
 
 up: secrets
 	@mkdir -p ~/data/frontend-dist
-	docker compose -f srcs/docker-compose.yml up --build --detach
+	docker compose -f srcs/docker-compose.yml up --build
 
 build:
 	docker compose -f srcs/docker-compose.yml build --no-cache
@@ -28,7 +28,6 @@ clean:
 	docker compose -f srcs/docker-compose.yml down --volumes --rmi all
 
 fclean: clean
-	sudo rm -rf ~/data
 	rm -rf secrets/
 
 re: fclean up
