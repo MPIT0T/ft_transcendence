@@ -10,7 +10,7 @@ export const Home: Page = {
         </p>
         <a href="#/game" class="px-8 py-3 bg-indigo-600 text-white rounded-lg text-lg font-semibold hover:bg-indigo-700 transition-colors">
           Jouer
-        </a>
+        </a>  
       </div>
     `;
   },

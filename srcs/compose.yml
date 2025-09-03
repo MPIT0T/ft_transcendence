@@ -6,8 +6,11 @@ services:
       context: requirements/api/
     networks:
       - transcendence
+<<<<<<< HEAD:srcs/docker-compose.yml
     # expose:
     #   - "3000"
+=======
+>>>>>>> main:srcs/compose.yml
     restart: always
 
   nginx:
@@ -20,7 +23,11 @@ services:
     volumes:
       - frontend-dist:/var/www/html
     ports:
+<<<<<<< HEAD:srcs/docker-compose.yml
       - "8080:443"
+=======
+      - "4430:443"
+>>>>>>> main:srcs/compose.yml
     depends_on:
       - frontend
     secrets:
@@ -33,21 +40,34 @@ services:
     container_name: trans-frontend
     build:
       context: requirements/frontend
+    develop:
+      watch:
+        - action: sync
+          path: requirements/frontend/src
+          target: /app/src
+        - action: sync
+          path: requirements/frontend/public
+          target: /app/dist
+        - action: rebuild
+          path: requirements/frontend/package.json
     networks:
       - transcendence
     volumes:
       - frontend-dist:/app/dist
+<<<<<<< HEAD:srcs/docker-compose.yml
     # expose:
     #   - "3006"
     restart: always
+=======
+>>>>>>> main:srcs/compose.yml
     
-
 networks:
   transcendence:
     name: transcendence
 
 volumes:
   frontend-dist:
+<<<<<<< HEAD:srcs/docker-compose.yml
     # name: trans-frontend-dist
     # driver: local
     # driver_opts:
@@ -55,6 +75,9 @@ volumes:
     #   device: ${HOME}/data/frontend-dist
     #   o: bind
 
+=======
+    name: trans-frontend-dist
+>>>>>>> main:srcs/compose.yml
 
 secrets:
   ssl_crt:

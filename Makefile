@@ -4,28 +4,35 @@ all: up
 
 up: secrets
 	@mkdir -p ~/data/frontend-dist
+<<<<<<< HEAD
 	docker compose -f srcs/docker-compose.yml up --build
 
+=======
+	docker compose -f srcs/compose.yml up --build
+>>>>>>> main
 build:
-	docker compose -f srcs/docker-compose.yml build --no-cache
+	docker compose -f srcs/compose.yml build --no-cache
 
 down:
-	docker compose -f srcs/docker-compose.yml down
+	docker compose -f srcs/compose.yml down
 
 start:
-	docker compose -f srcs/docker-compose.yml start
+	docker compose -f srcs/compose.yml start
 
 stop:
-	docker compose -f srcs/docker-compose.yml stop
+	docker compose -f srcs/compose.yml stop
 
 logs:
-	docker compose -f srcs/docker-compose.yml logs --follow
+	docker compose -f srcs/compose.yml logs --follow
 
 prune:
 	docker system prune --all --volumes --force
 
+mysql:
+	docker compose -f srcs/compose.yml exec mariadb mysql
+
 clean:
-	docker compose -f srcs/docker-compose.yml down --volumes --rmi all
+	docker compose -f srcs/compose.yml down --volumes --rmi all
 
 fclean: clean
 	rm -rf secrets/
