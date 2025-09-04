@@ -3,6 +3,11 @@ services:
     container_name: trans-api
     build:
       context: requirements/api/
+    develop:
+      watch:
+        - action: sync+restart
+          path: requirements/api/src
+          target: app/src
     networks:
       - transcendence
     restart: always
