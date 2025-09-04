@@ -16,6 +16,11 @@ services:
     container_name: trans-nginx
     build:
       context: requirements/nginx/
+    develop:
+      watch:
+        - action: sync+restart
+          path: requirements/nginx/config/nginx.conf
+          target: etc/nginx/nginx.conf
     networks:
       - transcendence
     volumes:
