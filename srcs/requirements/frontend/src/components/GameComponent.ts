@@ -41,8 +41,8 @@ export class GameComponent {
   constructor(container: HTMLElement, initialCanStart: boolean = false) {
     this.container = container;
     this.canStart = initialCanStart;
-    this.render();           // Crée le HTML
-    this.setupCanvas();      // Configure le canvas
+    this.render();              // Crée le HTML
+    this.setupCanvas();         // Configure le canvas
     this.setupEventListeners(); // Ajoute les contrôles clavier
   }
 

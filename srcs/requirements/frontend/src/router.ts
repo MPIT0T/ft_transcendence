@@ -9,8 +9,10 @@ const routes: Record<string, Page> = {
 }
 
 const getPath = (): string => {
-  const hash = window.location.hash || "/";
-  const path = hash.replace(/^#/, "");
+  // const hash = window.location.hash || "/";
+  // const path = hash.replace(/^#/, "");
+  // return path;
+  const path = window.location.hash.slice(1) || "/";
   return path;
 }
 
