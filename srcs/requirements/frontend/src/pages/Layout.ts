@@ -7,6 +7,11 @@ export const Layout = {
           <div class="flex my-5 gap-3 mx-5">
             <button id="home-btn" class="flex items-center px-3 py-1 rounded hover:bg-gray-300 transition">
               <span class="text-2xl flex items-center justify-center w-8 h-8 p-0 m-0">🏠</span>
+              <span class="ml-2">Home</span>
+              <button id="stats-btn" class="flex items-center px-3 py-1 rounded hover:bg-gray-300 transition ml-2">
+                <span class="text-2xl flex items-center justify-center w-8 h-8 p-0 m-0">📊</span>
+                <span class="ml-2">Stats</span>
+              </button>
             </button>
           </div>
         </nav>
@@ -32,6 +37,12 @@ export const Layout = {
       homeBtn.addEventListener('click', () => {
         window.location.hash = '/';
       });
+    }
+    const statsBtn = root.querySelector('#stats-btn') as HTMLButtonElement;
+    if (statsBtn){
+      statsBtn.addEventListener('click', () =>{
+        window.location.hash = '/stats';
+      })
     }
   }
 };
