@@ -8,22 +8,21 @@ export const Layout = {
             <button id="home-btn" class="flex items-center px-3 py-1 rounded hover:bg-gray-300 transition">
               <span class="text-2xl flex items-center justify-center w-8 h-8 p-0 m-0">🏠</span>
               <span class="ml-2">Home</span>
-              <button id="stats-btn" class="flex items-center px-3 py-1 rounded hover:bg-gray-300 transition ml-2">
+              </button>
+              <button id="game-btn" class="flex items-center px-3 py-1 rounded hover:bg-gray-300 transition">
+                <span class="text-2xl flex items-center justify-center w-8 h-8 p-0 m-0">🎮</span>
+                <span class="ml-2">Game</span>
+              </button>
+              <button id="stats-btn" class="flex items-center px-3 py-1 rounded hover:bg-gray-300 transition">
                 <span class="text-2xl flex items-center justify-center w-8 h-8 p-0 m-0">📊</span>
                 <span class="ml-2">Stats</span>
               </button>
-            </button>
           </div>
         </nav>
         <div class="flex bg-[#e9ddcb] flex-1 p-3 gap-6">
           <div class="flex flex-1 items-center justify-center border-[6px] border-black rounded-xl max-h-[90vh] overflow-auto relative">
             <div id="page-content">
               ${content}
-            </div>
-          </div>
-          <div class="flex flex-col justify-between rounded-xl w-auto p-3 max-h-[90vh]">
-            <div id="chat-container">
-              <!-- Chat component will be mounted here -->
             </div>
           </div>
         </div>
@@ -42,6 +41,12 @@ export const Layout = {
     if (statsBtn){
       statsBtn.addEventListener('click', () =>{
         window.location.hash = '/stats';
+      })
+    }
+    const gameBtn = root.querySelector('#game-btn') as HTMLButtonElement;
+    if (gameBtn){
+      gameBtn.addEventListener('click', () =>{
+        window.location.hash = '/gameLoby';
       })
     }
   }
