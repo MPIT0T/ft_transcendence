@@ -3,8 +3,8 @@ export const Layout = {
      //font-custom ces ca le font que change le texte sur la ligne 6
     return `
       
-      <div class="flex flex-col w-window h-window font-custom">
-        <nav class="h-16 w-window bg-gray-400 flex items-center">
+      <div class="flex flex-col h-screen font-custom">
+        <nav class="h-16 bg-gray-400 flex items-center">
           <div class="flex my-5 gap-3 mx-5">
             <button id="home-btn" class="flex items-center px-3 py-1 rounded hover:bg-gray-300 transition">
               <span class="text-2xl flex items-center justify-center w-8 h-8 p-0 m-0">🏠</span>
