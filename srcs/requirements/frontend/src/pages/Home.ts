@@ -120,7 +120,7 @@ export const Home: Page = {
 			<div class="flex flex-col bg-gray-100">
 				<div class="flex lg:flex-row items-start justify-center p-2">
 					<!-- Header -->
-					<div class="text-center mb-5">
+					<div class="text-center mb-5 ">
 						<h1 class="text-6xl font-bold  bg-clip-text text-gray-700 mb-4">
 							ft_transcendence
 						</h1>
