@@ -3,7 +3,7 @@ import { Home } from      "./pages/Home.js";
 import { Game } from      "./pages/Game.js";
 import { Layout } from    "./pages/Layout.js";
 import { Stats } from     "./pages/Stats.js";
-import { GameLoby } from  "./pages/GameLoby.js";
+import { GameLoby } from  "./pages/GameLobby.js";
 
 const routes: Record<string, Page> = {
   "/": Home,
