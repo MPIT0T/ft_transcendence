@@ -4,11 +4,15 @@ import { Game } from      "./pages/Game.js";
 import { Layout } from    "./pages/Layout.js";
 import { Stats } from     "./pages/Stats.js";
 import { GameLoby } from  "./pages/GameLoby.js";
+import { GameOnline } from "./pages/GameOnline.js";
+import { GameRoom } from "./pages/GameRoom.js";
 
 const routes: Record<string, Page> = {
   "/": Home,
   "/stats": Stats,
   "/gameLoby": GameLoby,
+  "/gameOnline": GameOnline,
+  "/gameRoom": GameRoom,
   "/game": Game,
 }
 

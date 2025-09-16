@@ -149,8 +149,7 @@ export const GameLoby: Page = {
 		const onlineBtn = root.querySelector('#online-mode') as HTMLButtonElement;
 		if (onlineBtn) {
 			onlineBtn.addEventListener('click', () => {
-				// TODO: Implémenter la recherche d'adversaire
-				alert('🌐 Recherche d\'un adversaire en ligne...\n(Fonctionnalité à venir)');
+				window.location.hash = '/gameRoom';
 			});
 		}
 
