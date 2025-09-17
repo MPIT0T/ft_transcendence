@@ -10,7 +10,7 @@ export class GameComponentOnline {
   // Joueur 1 (gauche)
   private p1: Player = {
     x: 20,      // 20px du bord gauche
-    y: 200,     // Centre vertical
+    y: 260,     // Centre vertical
     width: 8,   // Raquette fine
     height: 80, // Assez haute
     vel_y: 0    // Immobile au départ
@@ -18,8 +18,8 @@ export class GameComponentOnline {
 
   // Joueur 2 (droite)  
   private p2: Player = {
-    x: 572,     // 572px = 600-20-8 (bord droit - marge - largeur)
-    y: 200,     // Centre vertical
+    x: 872,     // 572px = 900-20-8 (bord droit - marge - largeur)
+    y: 260,     // Centre vertical
     width: 8,
     height: 80,
     vel_y: 0
@@ -27,12 +27,12 @@ export class GameComponentOnline {
 
   // Balle
   private ball: Ball = {
-    x: 300,     // Centre horizontal
-    y: 200,     // Centre vertical
+    x: 450,     // Centre horizontal
+    y: 300,     // Centre vertical
     width: 8,   // Carrée
     height: 8,
-    vel_x: 3,   // Se déplace vers la droite
-    vel_y: 2    // Se déplace vers le bas
+    vel_x: 6,   //3 Se déplace vers la droite
+    vel_y: 4    //2 Se déplace vers le bas
   };
 
   private p1Score: number = 0;
@@ -61,8 +61,8 @@ export class GameComponentOnline {
         <canvas 
           id="game-canvas" 
           class="bg-black border-2 border-white"
-          width="600" 
-          height="400"
+          width="900" 
+          height="600"
           style="image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;">
         </canvas>
       </div>
@@ -91,14 +91,14 @@ export class GameComponentOnline {
     
     // Clear with black background
     this.context.fillStyle = "#000000";
-    this.context.fillRect(0, 0, 600, 400);
+    this.context.fillRect(0, 0, 900, 600);
     
     // Draw center line (dashed)
     this.context.fillStyle = "#FFFFFF";
     this.context.setLineDash([10, 10]);
     this.context.beginPath();
-    this.context.moveTo(300, 0);
-    this.context.lineTo(300, 400);
+    this.context.moveTo(450, 0);
+    this.context.lineTo(450, 600);
     this.context.strokeStyle = "#FFFFFF";
     this.context.lineWidth = 2;
     this.context.stroke();
@@ -151,7 +151,7 @@ export class GameComponentOnline {
     this.context.fillRect(this.ball.x, this.ball.y, this.ball.width, this.ball.height);
     
     // Ball collision with top/bottom walls
-    if (this.ball.y <= 0 || (this.ball.y + this.ball.height >= 400)) {
+    if (this.ball.y <= 0 || (this.ball.y + this.ball.height >= 600)) {
       this.ball.vel_y *= -1;
     }
     
@@ -176,7 +176,7 @@ export class GameComponentOnline {
     if (this.ball.x < 0) {
       this.p2Score++;
       this.resetGame(1);
-    } else if (this.ball.x + this.ball.width > 600) {
+    } else if (this.ball.x + this.ball.width > 900) {
       this.p1Score++;
       this.resetGame(-1);
     }
@@ -192,8 +192,8 @@ export class GameComponentOnline {
     this.context.textAlign = "center";
     
     // Draw scores in classic Pong style
-    this.context.fillText(this.p1Score.toString(), 150, 60);
-    this.context.fillText(this.p2Score.toString(), 450, 60);
+    this.context.fillText(this.p1Score.toString(), 300, 60);
+    this.context.fillText(this.p2Score.toString(), 600, 60);
   }
 
   private movePlayer = (e: KeyboardEvent) => {
@@ -229,21 +229,21 @@ export class GameComponentOnline {
   }
 
   private playerOutOfBound(ypos: number): boolean {
-    return ypos < 0 || ypos > (400 - 80); // 400 = canvas height, 80 = paddle height
+    return ypos < 0 || ypos > (600 - 80); // 600 = canvas height, 80 = paddle height
   }
 
   private resetGame(direction: number) {
     this.ball = {
-      x: 300,
+      x: 450,
       y: 200,
       width: 8,
       height: 8,
-      vel_x: direction * 3,
-      vel_y: (Math.random() - 0.5) * 4
+      vel_x: direction * 6,
+      vel_y: (Math.random() - 0.5) * 8
     };
     
-    this.p1.y = 160;
-    this.p2.y = 160;
+    this.p1.y = 260;
+    this.p2.y = 260;
     this.p1.vel_y = 0;
     this.p2.vel_y = 0;
   }
