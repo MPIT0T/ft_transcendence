@@ -5,31 +5,35 @@ let clientId: string | undefined;
 
 // Additional methods
 const reloadRooms = function (root: HTMLElement) {
-	console.log('🔄 Reloading rooms...');
 
-	// Simulate API call
-	setTimeout(() => {
-		const container = root.querySelector('#rooms-container') as HTMLDivElement;
-
-		// Add a new room for demo
-		const newRoom = document.createElement('button');
-		newRoom.className = 'room-btn px-6 py-3 border-2 border-black bg-white hover:bg-gray-100 transition-colors font-mono';
-		newRoom.dataset.room = 'newplayer';
-		newRoom.innerHTML = `
-				NewPlayer's room<br>
-				<span class="text-sm text-gray-600">0/2</span>
-			`;
-
-		newRoom.addEventListener('click', () => {
-			joinRoom('newplayer');
-		});
-
-		container.appendChild(newRoom);
-
-		console.log('✅ Rooms reloaded!');
-	}, 500);
+	const payLoad = {
+		"method": "rooms",
+		"clientId": clientId
+	}
+	ws.send(JSON.stringify(payLoad));
 }
 
+function displayRooms(root: HTMLElement, rooms: any[]) {
+    const container = root.querySelector('#rooms-container') as HTMLDivElement;
+    container.innerHTML = ''; // Vider le container
+    
+    rooms.forEach(room => {
+        const roomBtn = document.createElement('button');
+        roomBtn.className = 'room-btn px-6 py-3 border-2 border-black bg-white hover:bg-gray-100 transition-colors font-mono';
+        roomBtn.dataset.gameId = room.id;
+        roomBtn.innerHTML = `
+            ${room.roomName}<br>
+            <span class="text-sm text-gray-600">${room.players}</span>
+        `;
+        
+        roomBtn.addEventListener('click', () => {
+            joinRoom(room.id);
+        });
+        
+        container.appendChild(roomBtn);
+    });
+}
+	
 const createRoom = function (root: HTMLElement): void {
 	const roomName = (root.querySelector('#room-name') as HTMLInputElement).value;
 	const gamePoint = (root.querySelector('#game-point') as HTMLSelectElement).value;
@@ -54,14 +58,14 @@ const createRoom = function (root: HTMLElement): void {
 		(root.querySelector('#create-room-form') as HTMLFormElement).reset();
 }
 
-const 	joinRoom= function(roomName: string){
-		console.log(`🚪 Joining room: ${roomName}`);
+const 	joinRoom= function(gameId: string){
+		const payLoad = {
+			"method": "join",
+			"clientId": clientId,
+			"gameId": gameId
+		}
 
-		// Simulate joining room
-		setTimeout(() => {
-			alert(`🎮 Joining ${roomName}'s room...`);
-			window.location.hash = '/gameOnline';
-		}, 500);
+		ws.send(JSON.stringify(payLoad));
 	}
 
 
@@ -116,20 +120,8 @@ export const GameRoom: Page = {
 					🔄 Reload
 				</button>
 			</div>
-			
 			<div class="flex flex-wrap gap-4" id="rooms-container">
-				<button class="room-btn px-6 py-3 border-2 border-black bg-white hover:bg-gray-100 transition-colors font-mono" data-room="tjolivet">
-					Mathis's room<br>
-					<span class="text-sm text-gray-600">1/2</span>
-				</button>
-				<button class="room-btn px-6 py-3 border-2 border-black bg-white hover:bg-gray-100 transition-colors font-mono" data-room="abastos">
-					Max's room<br>
-					<span class="text-sm text-gray-600">1/2</span>
-				</button>
-				<button class="room-btn px-6 py-3 border-2 border-black bg-white hover:bg-gray-100 transition-colors font-mono" data-room="llethuil">
-					Bob's room<br>
-					<span class="text-sm text-gray-600">1/2</span>
-				</button>
+				
 			</div>
 		</div>
 	</div>
@@ -204,20 +196,21 @@ export const GameRoom: Page = {
                 gameId = response.game.id;
                 console.log("game successfully created with id " + response.game.id + " with " + response.game.balls + " balls")  
 				
-				const payLoad = {
-					"method": "join",
-					"clientId": clientId,
-					"gameId": gameId
-				}
-
-				ws.send(JSON.stringify(payLoad));
 			}
-
+			
 			if (response.method === "join"){
-                const game = response.game;
-				console.log(game);
-				window.location.hash = '/gameOnline';
+				if (response.status === "success") {
+					console.log(response.message);
+				} else {
+					alert("Failed to join the game room.");
+				}
 			}
+
+
+			if (response.method === "rooms"){
+				console.log("Rooms received:", response.rooms);
+				displayRooms(root, response.rooms);
+    		}
 
 		}
 
@@ -229,14 +222,7 @@ export const GameRoom: Page = {
 
 		if (vsBtn) {
 			vsBtn.addEventListener('click', () => {
-				// Direct 1v1 game
-				const payLoad = {
-					"method": "join",
-					"clientId": clientId,
-					"gameId": "rendom"
-				}
-
-				ws.send(JSON.stringify(payLoad));
+				joinRoom("ranked");
 			});
 		}
 
@@ -280,14 +266,5 @@ export const GameRoom: Page = {
 				createRoom(root);
 			});
 		}
-
-		// Room buttons
-		const roomBtns = root.querySelectorAll('.room-btn') as NodeListOf<HTMLButtonElement>;
-		roomBtns.forEach(btn => {
-			btn.addEventListener('click', () => {
-				const roomName = btn.dataset.room;
-				joinRoom(roomName || '');
-			});
-		});
 	},
 };

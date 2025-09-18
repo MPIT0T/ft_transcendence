@@ -39,6 +39,9 @@ module.exports = async function (fastify, opts) {
 				try {
 					const data = JSON.parse(message.toString());
 					switch (data.method) {
+						case 'rooms':
+							handleGetRooms(socket, data);
+							break;
 						case 'join':
 							handleJoinGame(socket, data);
 							break;
@@ -78,39 +81,71 @@ module.exports = async function (fastify, opts) {
 
 // Fonctions de gestion des messages WebSocket
 
-function handleJoinGame(socket, data) {
+function handleGetRooms(socket, data) {
 	const clientId = data.clientId;
-	const gameId = data.gameId;
-	const game = games[gameId];
 
-	if (game.clients.length >= 2) 
-		return;
-	
-	if (game.clients.length === 1){
-		const player = 1;
-	} else{
-		const player = 2;
-	}
-
-	game.clients.push({
-		"clientId": clientId,
-		"player": player
-	})
-
-	if (game.clients.length === 2) updateGameState();
-
-	const payLoad = {
-		"method": 'join',
-		"status": 'success',
-		"message": 'Successfully joined the game',
-		"game": game
-	}
-
-	game.clients.forEach(c => {
-		clients[c.clientId].socket.send(JSON.stringify(payLoad));
-	});
+	const availableRooms = Object.values(games).map(game => ({
+        id: game.id,
+        roomName: game.roomName || `Room ${game.id}`,
+        players: `${game.clients.length}/2`,
+        gameMode: game.gameMode || 'classic',
+        gamePoint: game.gamePoint || 3
+    }));
+    
+    socket.send(JSON.stringify({
+        method: 'rooms',
+        rooms: availableRooms,
+        timestamp: Date.now()
+    }));
 }
 
+function handleJoinGame(socket, data) {
+    const clientId = data.clientId;
+    const gameId = data.gameId;
+    
+    if (gameId === "ranked") {
+        // Logique pour matchmaking ranked
+        socket.send(JSON.stringify({
+            method: 'join',
+            status: 'success',
+            message: 'Searching for ranked match...',
+            gameType: 'ranked'
+        }));
+        return;
+    }
+    
+    if (!games[gameId]) {
+        socket.send(JSON.stringify({
+            method: 'join',
+            status: 'error',
+            message: 'Game not found'
+        }));
+        return;
+    }
+    
+    const game = games[gameId];
+    
+    if (game.clients.length >= 2) {
+        socket.send(JSON.stringify({
+            method: 'join',
+            status: 'error',
+            message: 'Game is full'
+        }));
+        return;
+    }
+    
+    game.clients.push({
+        clientId: clientId,
+        joinedAt: Date.now()
+    });
+    
+    socket.send(JSON.stringify({
+        method: 'join',
+        status: 'success',
+        message: 'Successfully joined the game',
+        game: game
+    }));
+}
 
 function handleCreateRoom(socket, data) {
 	const clientId = data.clientId;
@@ -126,11 +161,11 @@ function handleCreateRoom(socket, data) {
 	}
 
 	const player1 = {
-			x: 0,           // Position horizontale
+			x: 0,           // Position horisontale
 			y: 0,           // Position verticale
-			width: 10,      // Largeur de la raquette
-			height: 100,    // Hauteur de la raquette
-			vel_y: 0        // Vélocité verticale
+			width: 10,      // Largeur de la raquete
+			height: 100,    // Hauteur de la raquete
+			vel_y: 0        // Velocite verticale
 		};
 
 	const player2 = {
@@ -143,6 +178,9 @@ function handleCreateRoom(socket, data) {
 
 	games[gameId] = {
 		"id": gameId,
+		"roomName": data.roomName,
+		"gamePoint":data.gamePoint,
+		"gameMode": data.gameMode,
 		"ball": ball,
 		"player1":player1,
 		"player2":player2,
