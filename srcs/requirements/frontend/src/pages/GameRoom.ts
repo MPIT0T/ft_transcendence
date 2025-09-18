@@ -187,8 +187,9 @@ export const GameRoom: Page = {
 
 	mount(root: HTMLElement): void {
 		
-		let ws = new WebSocket("ws://localhost:4430/api/pong/ws")
+		let ws = new WebSocket("/api/pong/ws")
 		let clientId
+
 
 
 		ws.onmessage = message => {

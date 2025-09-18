@@ -1,7 +1,12 @@
 'use strict'
 
+
 module.exports = async function (fastify, opts) {
     // Route WebSocket pour le jeu Pong
+
+    await fastify.register(require('@fastify/websocket'));
+    
+    
     fastify.register(async function (fastify) {
         // Vérifier si fastify.authenticate existe avant de l'utiliser
         if (typeof fastify.authenticate === 'function') {
@@ -10,8 +15,8 @@ module.exports = async function (fastify, opts) {
             console.log('⚠️ Authentication middleware not available, continuing without auth');
         }
         
-        fastify.get('/ws', { websocket: true }, (connection, request) => {
-            console.log('🎮 New WebSocket connection for Pong');
+        fastify.get('/ws', { websocket: true }, (socket, request) => {
+            console.log('🎮 New WebSocket socket for Pong');
             
             // Log des informations de connexion
             console.log('Client IP:', request.ip);
@@ -21,14 +26,14 @@ module.exports = async function (fastify, opts) {
             const clientId = 'client_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
             
             // Envoyer l'ID au client
-            connection.socket.send(JSON.stringify({
+            socket.send(JSON.stringify({
                 method: 'connect',
                 clientId: clientId,
                 timestamp: new Date().toISOString()
             }));
             
             // Gérer les messages du client
-            connection.socket.on('message', (message) => {
+            socket.on('message', (message) => {
                 try {
                     const data = JSON.parse(message.toString());
                     console.log('📨 Received from client:', clientId, data);
@@ -36,27 +41,27 @@ module.exports = async function (fastify, opts) {
                     // Traiter les différents types de messages
                     switch (data.method) {
                         case 'ping':
-                            handlePing(connection, data);
+                            handlePing(socket, data);
                             break;
                         case 'join_game':
-                            handleJoinGame(connection, data);
+                            handleJoinGame(socket, data);
                             break;
                         case 'create_room':
-                            handleCreateRoom(connection, data);
+                            handleCreateRoom(socket, data);
                             break;
                         case 'game_move':
-                            handleGameMove(connection, data);
+                            handleGameMove(socket, data);
                             break;
                         default:
                             console.log('❓ Unknown message method:', data.method);
-                            connection.socket.send(JSON.stringify({
+                            socket.send(JSON.stringify({
                                 method: 'error',
                                 message: 'Unknown method: ' + data.method
                             }));
                     }
                 } catch (error) {
                     console.error('❌ Error parsing WebSocket message:', error);
-                    connection.socket.send(JSON.stringify({
+                    socket.send(JSON.stringify({
                         method: 'error',
                         message: 'Invalid JSON format'
                     }));
@@ -64,12 +69,12 @@ module.exports = async function (fastify, opts) {
             });
             
             // Gérer les erreurs de connexion
-            connection.socket.on('error', (error) => {
+            socket.on('error', (error) => {
                 console.error('❌ WebSocket error for client', clientId, error);
             });
             
             // Gérer la déconnexion
-            connection.socket.on('close', (code, reason) => {
+            socket.on('close', (code, reason) => {
                 console.log('👋 Client disconnected:', clientId, 'Code:', code, 'Reason:', reason?.toString());
             });
         });
@@ -95,18 +100,18 @@ module.exports = async function (fastify, opts) {
 }
 
 // Fonctions de gestion des messages WebSocket
-function handlePing(connection, data) {
+function handlePing(socket, data) {
     console.log('🏓 Ping received');
-    connection.socket.send(JSON.stringify({
+    socket.send(JSON.stringify({
         method: 'pong',
         timestamp: new Date().toISOString()
     }));
 }
 
-function handleJoinGame(connection, data) {
+function handleJoinGame(socket, data) {
     console.log('🎮 Player joining game:', data);
     
-    connection.socket.send(JSON.stringify({
+    socket.send(JSON.stringify({
         method: 'game_joined',
         status: 'success',
         message: 'Successfully joined the game',
@@ -115,12 +120,12 @@ function handleJoinGame(connection, data) {
     }));
 }
 
-function handleCreateRoom(connection, data) {
+function handleCreateRoom(socket, data) {
     console.log('🏠 Creating room:', data);
     
     const roomId = 'room_' + Date.now();
     
-    connection.socket.send(JSON.stringify({
+    socket.send(JSON.stringify({
         method: 'room_created',
         status: 'success',
         roomId: roomId,
@@ -131,11 +136,11 @@ function handleCreateRoom(connection, data) {
     }));
 }
 
-function handleGameMove(connection, data) {
+function handleGameMove(socket, data) {
     console.log('🎯 Game move:', data);
     
     // Ici vous ajouteriez la logique du jeu
-    connection.socket.send(JSON.stringify({
+    socket.send(JSON.stringify({
         method: 'game_update',
         gameState: {
             player1: { x: 10, y: 50, score: 0 },
