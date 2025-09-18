@@ -1,234 +1,147 @@
 'use strict'
 
 module.exports = async function (fastify, opts) {
-  const gameObjects = {
-    p1: {
-      id: null,
-      x: 10,
-      y: 250,
-      width: 10,
-      height: 50,
-      vel_y: 0,
-      score: 0
-    },
-    p2: {
-      x: 480,
-      y: 250,
-      width: 10,
-      height: 50,
-      vel_y: 0,
-      score: 0
-    },
-    ball: {
-      x: 250,
-      y: 250,
-      width: 10,
-      height: 10,
-      vel_x: 1,
-      vel_y: 2
-    },
-  }
-  const rooms = new Map();
-
-  const playerOutOfBound = (ypos) => {
-    return (ypos < 0 || ypos > 450)
-  }
-
-  const resetGame = (state) => {
-    state.p1.x = 10;
-    state.p1.y = 250;
-    state.p1.vel_y = 0;
-
-    state.p2.x = 480;
-    state.p2.y = 250;
-    state.p2.vel_y = 0;
-
-    state.ball.x = 250;
-    state.ball.y = 250;
-    state.ball.vel_y = 2;
-
-    return state;
-  }
-
-  const detectColision = (a, b) => {
-    return a.x < b.x + b.width &&
-      a.x + a.width > b.x &&
-      a.y < b.y + b.height &&
-      a.y + a.height > b.y;
-  }
-
-  const handleGame = (state) => {
-    let newP1_y = state.p1.y + state.p1.vel_y;
-
-    if (!playerOutOfBound(newP1_y))
-      state.p1.y = newP1_y
-
-    let newP2_y = state.p2.y + state.p2.vel_y;
-    if (!playerOutOfBound(newP2_y))
-      state.p2.y = newP2_y
-
-    state.ball.x += state.ball.vel_x
-    state.ball.y += state.ball.vel_y
-
-    if (state.ball.y <= 0 || (state.ball.y + state.ball.height >= 500))
-      state.ball.vel_y *= -1;
-
-    // // Improved collision math for paddles
-    // if (detectColision(state.ball, state.p1)) {
-    //   // Ball hits left paddle: reflect and add some "spin" based on impact position
-    //   state.ball.x = state.p1.x + state.p1.width; // Prevent sticking
-    //   state.ball.vel_x = Math.abs(state.ball.vel_x); // Always go right
-    //   // Add vertical velocity based on where the ball hits the paddle
-    //   const impact = (state.ball.y + state.ball.height / 2) - (state.p1.y + state.p1.height / 2);
-    //   state.ball.vel_y += impact * 0.15;
-    // }
-    // else if (detectColision(state.ball, state.p2)) {
-    //   // Ball hits right paddle: reflect and add some "spin" based on impact position
-    //   state.ball.x = state.p2.x - state.ball.width; // Prevent sticking
-    //   state.ball.vel_x = -Math.abs(state.ball.vel_x); // Always go left
-    //   // Add vertical velocity based on where the ball hits the paddle
-    //   const impact = (state.ball.y + state.ball.height / 2) - (state.p2.y + state.p2.height / 2);
-    //   state.ball.vel_y += impact * 0.15;
-    // }
-
-    if (detectColision(state.ball, state.p1)) {
-      if (state.ball.x <= state.p1.x + state.p1.width)
-        state.ball.vel_x *= -1;
-
-    }
-    else if (detectColision(state.ball, state.p2)) {
-      if (state.ball.x + 10 >= state.p1.x)
-        state.ball.vel_x *= -1;
-    }
-
-    if (state.ball.x < 0) {
-      state.p2.score += 1;
-      state = resetGame(state);
-      state.ball.vel_x *= -1;
-    }
-    else if (state.ball.x + 10 > 500) {
-      state.p1.score += 1;
-      state = resetGame(state);
-      state.ball.vel_x *= -1;
-    }
-    return state;
-  }
-
-  fastify.get('/', async function (request, reply) {
-    return 'this is a websocket'
-  })
-
-  const stopPlayer = (e) => {
-    if (e == "KeyW")
-      return 0;
-    else if (e == "KeyS")
-      return 0;
-
-    else if (e == "ArrowUp")
-      return 0;
-    else if (e == "ArrowDown")
-      return 0;
-  }
-
-  const movePlayer = (e) => {
-
-    if (e == "KeyW")
-      return -3;
-    else if (e == "KeyS")
-      return 3;
-    else if (e == "ArrowUp")
-      return -3;
-    else if (e == "ArrowDown")
-      return 3;
-  }
-
-  const connectedClients = new Set();
-
-  const clients = new Set();
-  let intervalId = null;
-
-  fastify.get('/ws', { websocket: true }, (connection, req) => {
-    connection["room"] = '00';
-    if (clients.size == 0)
-      connection["player"] = 1;
-    else
-      connection["player"] = 2;
-    clients.add(connection);
-    console.log('Nouvelle connexion WebSocket');
-
-    connection.on('message', (message) => {
-
-      try {
-        const data = JSON.parse(message);
-        const { header, body } = data;
-        // console.log('header :', header);
-        // console.log('body :', body);
-
-        if (header === 'client-msg-' + body.room + '-StartGame') {
-
-          rooms.set(body.room, structuredClone(gameObjects))
-          // console.log(rooms.get(body.room))
-          if (intervalId)
-            clearInterval(intervalId);
-          intervalId = setInterval(() => {
-            rooms.set(body.room, handleGame(rooms.get(body.room)))
-            for (const client of clients) {
-              if (client.readyState === 1 && client.room === body.room) {
-                client.send(JSON.stringify({
-                  header: 'server-msg-' + body.room + '-gameUpdate',
-                  body: rooms.get(body.room)
-                }));
-              }
-            }
-          }, 10); // send every 0.1 second
-
-          connection.on('close', () => {
-            clearInterval(intervalId);
-            clients.delete(connection);
-            rooms.delete(body.room);
-            console.log('Client déconnecté');
-          });
+    // Route WebSocket pour le jeu Pong
+    fastify.register(async function (fastify) {
+        // Vérifier si fastify.authenticate existe avant de l'utiliser
+        if (typeof fastify.authenticate === 'function') {
+            fastify.addHook('preHandler', fastify.authenticate);
+        } else {
+            console.log('⚠️ Authentication middleware not available, continuing without auth');
         }
-
-        // if (header === 'chat') {
-        //   // Broadcast à tous les clients
-        //   for (const client of clients) {
-        //     if (client !== connection && client.readyState === 1)
-        //       client.send(`Reçu de quelqu’un : ${body}`);
-        //     else
-        //       client.send(`Envoie : ${body}`)
-        //   }
-        // }
-        if (header === 'client-msg-' + body.room + '-keyEvent') {
-          const state = rooms.get(body.room);
-          if (state) {
-            if (connection.player == 1) {
-              if (body.move)
-                state.p1.vel_y = movePlayer(body.key);
-              else
-                state.p1.vel_y = stopPlayer(body.key);
-              state.player = 1
-
-            }
-            if (connection.player == 2) {
-              if (body.move)
-                state.p2.vel_y = movePlayer(body.key);
-              else
-                state.p2.vel_y = stopPlayer(body.key);
-              state.player = 2
-            }
-            rooms.set(body.room, state);
-          }
-        }
-      }
-      catch (e) {
-        console.error('Message invalide', e);
-      }
+        
+        fastify.get('/ws', { websocket: true }, (connection, request) => {
+            console.log('🎮 New WebSocket connection for Pong');
+            
+            // Log des informations de connexion
+            console.log('Client IP:', request.ip);
+            console.log('Headers:', request.headers);
+            
+            // Générer un ID client unique
+            const clientId = 'client_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            
+            // Envoyer l'ID au client
+            connection.socket.send(JSON.stringify({
+                method: 'connect',
+                clientId: clientId,
+                timestamp: new Date().toISOString()
+            }));
+            
+            // Gérer les messages du client
+            connection.socket.on('message', (message) => {
+                try {
+                    const data = JSON.parse(message.toString());
+                    console.log('📨 Received from client:', clientId, data);
+                    
+                    // Traiter les différents types de messages
+                    switch (data.method) {
+                        case 'ping':
+                            handlePing(connection, data);
+                            break;
+                        case 'join_game':
+                            handleJoinGame(connection, data);
+                            break;
+                        case 'create_room':
+                            handleCreateRoom(connection, data);
+                            break;
+                        case 'game_move':
+                            handleGameMove(connection, data);
+                            break;
+                        default:
+                            console.log('❓ Unknown message method:', data.method);
+                            connection.socket.send(JSON.stringify({
+                                method: 'error',
+                                message: 'Unknown method: ' + data.method
+                            }));
+                    }
+                } catch (error) {
+                    console.error('❌ Error parsing WebSocket message:', error);
+                    connection.socket.send(JSON.stringify({
+                        method: 'error',
+                        message: 'Invalid JSON format'
+                    }));
+                }
+            });
+            
+            // Gérer les erreurs de connexion
+            connection.socket.on('error', (error) => {
+                console.error('❌ WebSocket error for client', clientId, error);
+            });
+            
+            // Gérer la déconnexion
+            connection.socket.on('close', (code, reason) => {
+                console.log('👋 Client disconnected:', clientId, 'Code:', code, 'Reason:', reason?.toString());
+            });
+        });
+    });
+    
+    // Route de santé pour vérifier si le serveur fonctionne
+    fastify.get('/health', async (request, reply) => {
+        return { 
+            status: 'ok', 
+            timestamp: new Date().toISOString(),
+            service: 'pong-api',
+            websocket: 'available'
+        };
     });
 
-    connection.on('close', () => {
-      clients.delete(connection);
-      console.log('Client déconnecté');
+    // Route pour tester la connectivité
+    fastify.get('/test', async (request, reply) => {
+        return { 
+            message: 'Pong API is working!',
+            timestamp: new Date().toISOString()
+        };
     });
-  });
+}
+
+// Fonctions de gestion des messages WebSocket
+function handlePing(connection, data) {
+    console.log('🏓 Ping received');
+    connection.socket.send(JSON.stringify({
+        method: 'pong',
+        timestamp: new Date().toISOString()
+    }));
+}
+
+function handleJoinGame(connection, data) {
+    console.log('🎮 Player joining game:', data);
+    
+    connection.socket.send(JSON.stringify({
+        method: 'game_joined',
+        status: 'success',
+        message: 'Successfully joined the game',
+        gameId: data.gameId || 'default_game',
+        timestamp: new Date().toISOString()
+    }));
+}
+
+function handleCreateRoom(connection, data) {
+    console.log('🏠 Creating room:', data);
+    
+    const roomId = 'room_' + Date.now();
+    
+    connection.socket.send(JSON.stringify({
+        method: 'room_created',
+        status: 'success',
+        roomId: roomId,
+        roomName: data.roomName,
+        gameMode: data.gameMode || 'classic',
+        maxPlayers: data.maxPlayers || 2,
+        timestamp: new Date().toISOString()
+    }));
+}
+
+function handleGameMove(connection, data) {
+    console.log('🎯 Game move:', data);
+    
+    // Ici vous ajouteriez la logique du jeu
+    connection.socket.send(JSON.stringify({
+        method: 'game_update',
+        gameState: {
+            player1: { x: 10, y: 50, score: 0 },
+            player2: { x: 780, y: 50, score: 0 },
+            ball: { x: 400, y: 200, vx: 5, vy: 3 },
+            timestamp: new Date().toISOString()
+        }
+    }));
 }

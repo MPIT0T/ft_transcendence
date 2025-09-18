@@ -186,6 +186,22 @@ export const GameRoom: Page = {
 	},
 
 	mount(root: HTMLElement): void {
+		
+		let ws = new WebSocket("ws://localhost:4430/api/pong/ws")
+		let clientId
+
+
+		ws.onmessage = message => {
+            //message.data
+            const response = JSON.parse(message.data);
+            //connect
+            if (response.method === "connect"){
+                clientId = response.clientId;
+                console.log("Client id Set successfully " + clientId)
+            }
+		}
+
+
 		// Game buttons
 		const vsBtn = root.querySelector('#vs-btn') as HTMLButtonElement;
 		const createRoomBtn = root.querySelector('#create-room-btn') as HTMLButtonElement;
