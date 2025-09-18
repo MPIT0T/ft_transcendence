@@ -1,5 +1,8 @@
 import type { Page } from "../interface/gameInterface.js"
 
+let ws = new WebSocket("/api/pong/ws");
+let clientId: string | undefined;
+
 // Additional methods
 const reloadRooms = function (root: HTMLElement) {
 	console.log('🔄 Reloading rooms...');
@@ -32,11 +35,15 @@ const createRoom = function (root: HTMLElement): void {
 	const gamePoint = (root.querySelector('#game-point') as HTMLSelectElement).value;
 	const gameMode = (root.querySelector('#game-mode') as HTMLSelectElement).value;
 
-	console.log('🎮 Creating room:', { roomName, gamePoint, gameMode });
+		const payLoad = {
+			"method": "create",
+			"clientId": clientId,
+			"roomName": roomName,
+			"gamePoint": gamePoint,
+			"gameMode": gameMode
+		}
 
-	// Simulate room creation
-	setTimeout(() => {
-		alert(`🎉 Room "${roomName}" created successfully!\nMode: ${gameMode}\nGame Time: ${gamePoint}`);
+		ws.send(JSON.stringify(payLoad));
 
 		// Close modal
 		const modal = root.querySelector('#create-room-modal') as HTMLDivElement;
@@ -45,10 +52,6 @@ const createRoom = function (root: HTMLElement): void {
 
 		// Reset form
 		(root.querySelector('#create-room-form') as HTMLFormElement).reset();
-
-		// Redirect to game
-		window.location.hash = '/gameOnline';
-	}, 1000);
 }
 
 const 	joinRoom= function(roomName: string){
@@ -187,19 +190,35 @@ export const GameRoom: Page = {
 
 	mount(root: HTMLElement): void {
 		
-		let ws = new WebSocket("/api/pong/ws")
-		let clientId
-
-
+		let gameId;
 
 		ws.onmessage = message => {
-            //message.data
-            const response = JSON.parse(message.data);
-            //connect
-            if (response.method === "connect"){
-                clientId = response.clientId;
-                console.log("Client id Set successfully " + clientId)
-            }
+			//message.data
+			const response = JSON.parse(message.data);
+			//connect
+			if (response.method === "connect"){
+				clientId = response.clientId;
+				console.log("Client id Set successfully " + clientId)
+			}
+			if (response.method === "create"){
+                gameId = response.game.id;
+                console.log("game successfully created with id " + response.game.id + " with " + response.game.balls + " balls")  
+				
+				const payLoad = {
+					"method": "join",
+					"clientId": clientId,
+					"gameId": gameId
+				}
+
+				ws.send(JSON.stringify(payLoad));
+			}
+
+			if (response.method === "join"){
+                const game = response.game;
+				console.log(game);
+				window.location.hash = '/gameOnline';
+			}
+
 		}
 
 
@@ -211,7 +230,13 @@ export const GameRoom: Page = {
 		if (vsBtn) {
 			vsBtn.addEventListener('click', () => {
 				// Direct 1v1 game
-				window.location.hash = '/gameOnline';
+				const payLoad = {
+					"method": "join",
+					"clientId": clientId,
+					"gameId": "rendom"
+				}
+
+				ws.send(JSON.stringify(payLoad));
 			});
 		}
 
