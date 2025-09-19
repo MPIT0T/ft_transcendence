@@ -1,6 +1,6 @@
 import type { Page } from "../interface/gameInterface.js"
 
-let ws = new WebSocket("/api/pong/ws");
+let ws: WebSocket | undefined;
 let clientId: string | undefined;
 
 // Additional methods
@@ -10,7 +10,8 @@ const reloadRooms = function (root: HTMLElement) {
 		"method": "rooms",
 		"clientId": clientId
 	}
-	ws.send(JSON.stringify(payLoad));
+	if(ws)
+		ws.send(JSON.stringify(payLoad));
 }
 
 function displayRooms(root: HTMLElement, rooms: any[]) {
@@ -64,8 +65,8 @@ const 	joinRoom= function(gameId: string){
 			"clientId": clientId,
 			"gameId": gameId
 		}
-
-		ws.send(JSON.stringify(payLoad));
+		if(ws)
+			ws.send(JSON.stringify(payLoad));
 	}
 
 
@@ -183,6 +184,7 @@ export const GameRoom: Page = {
 	mount(root: HTMLElement): void {
 		
 		let gameId;
+		ws = new WebSocket("/api/pong/ws");
 
 		ws.onmessage = message => {
 			//message.data
@@ -205,7 +207,6 @@ export const GameRoom: Page = {
 					alert("Failed to join the game room.");
 				}
 			}
-
 
 			if (response.method === "rooms"){
 				console.log("Rooms received:", response.rooms);
