@@ -69,7 +69,6 @@ const 	joinRoom= function(gameId: string){
 			ws.send(JSON.stringify(payLoad));
 	}
 
-
 export const GameRoom: Page = {
 	render() {
 		return `
@@ -182,7 +181,6 @@ export const GameRoom: Page = {
 	},
 
 	mount(root: HTMLElement): void {
-		
 		let gameId;
 		ws = new WebSocket("/api/pong/ws");
 
@@ -192,17 +190,25 @@ export const GameRoom: Page = {
 			//connect
 			if (response.method === "connect"){
 				clientId = response.clientId;
+				if (clientId !== undefined) {
+					localStorage.setItem('clientId', clientId);
+				}
 				console.log("Client id Set successfully " + clientId)
 			}
 			if (response.method === "create"){
-                gameId = response.game.id;
-                console.log("game successfully created with id " + response.game.id + " with " + response.game.balls + " balls")  
-				
+				console.log("game successfully created with id " + response.game.id + " with " + response.game.balls + " balls");
+				gameId = response.game.id;
+				joinRoom(gameId)
 			}
 			
 			if (response.method === "join"){
 				if (response.status === "success") {
 					console.log(response.message);
+                	
+					gameId = response.game.id;
+					if (gameId !== undefined) {
+					localStorage.setItem('gameId', gameId);
+					}
 				} else {
 					alert("Failed to join the game room.");
 				}

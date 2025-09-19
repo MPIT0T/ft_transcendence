@@ -134,6 +134,7 @@ function handleJoinGame(socket, data) {
         return;
     }
     
+	// Add element to stack
     game.clients.push({
         clientId: clientId,
         joinedAt: Date.now()

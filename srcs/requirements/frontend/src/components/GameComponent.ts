@@ -31,7 +31,7 @@ export class GameComponent {
     y: 300,     // Centre vertical
     width: 8,   // Carrée
     height: 8,
-    vel_x: 6,   //3 Se déplace vers la droite
+    vel_x: 5,   //3 Se déplace vers la droite
     vel_y: 4    //2 Se déplace vers le bas
   };
 
@@ -146,6 +146,8 @@ export class GameComponent {
     this.context.fillRect(this.p2.x, this.p2.y, this.p2.width, this.p2.height);
     
     // Update ball
+    this.ball.vel_x = this.ball.vel_x*1.0001;
+    this.ball.vel_y = this.ball.vel_y*1.0001;
     this.ball.x += this.ball.vel_x;
     this.ball.y += this.ball.vel_y;
     this.context.fillRect(this.ball.x, this.ball.y, this.ball.width, this.ball.height);
@@ -197,7 +199,7 @@ export class GameComponent {
   }
 
   private movePlayer = (e: KeyboardEvent) => {
-    const speed = 4;
+    const speed = 8;
     
     if (e.code === "KeyW") {
       this.p1.vel_y = -speed;
@@ -238,8 +240,8 @@ export class GameComponent {
       y: 200,
       width: 8,
       height: 8,
-      vel_x: direction * 6,
-      vel_y: (Math.random() - 0.5) * 8
+      vel_x: direction * 5,
+      vel_y: (Math.random() - 0.5) * 6
     };
     
     this.p1.y = 260;
