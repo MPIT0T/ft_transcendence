@@ -47,8 +47,8 @@ const createRoom = function (root: HTMLElement): void {
 			"gamePoint": gamePoint,
 			"gameMode": gameMode
 		}
-
-		ws.send(JSON.stringify(payLoad));
+		if(ws)
+			ws.send(JSON.stringify(payLoad));
 
 		// Close modal
 		const modal = root.querySelector('#create-room-modal') as HTMLDivElement;
