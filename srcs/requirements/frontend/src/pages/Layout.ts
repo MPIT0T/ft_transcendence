@@ -62,12 +62,11 @@ export const Layout = {
   render(content: string): string {
     return `
       <div class="flex flex-col h-screen font-custom font-tiny5">
-        <nav class="h-16 bg-gray-400 flex items-center justify-between">
+        <nav class="fixed w-screen z-20 h-16 bg-gray-400 flex items-center justify-between">
           <!-- Navigation gauche -->
           <div class="flex my-5 gap-3 mx-5">
             <button id="home-btn" class="flex items-center px-3 py-1 rounded hover:bg-gray-300 transition">
-              <span class="text-2xl flex items-center justify-center w-8 h-8 p-0 m-0">🏠</span>
-              <span class="ml-2 font-custom">Home</span>
+              <img src="home.png" class="h-8 w-8"/>
             </button>
             <button id="game-btn" class="flex items-center px-3 py-1 rounded hover:bg-gray-300 transition">
               <span class="text-2xl flex items-center justify-center w-8 h-8 p-0 m-0">🎮</span>
