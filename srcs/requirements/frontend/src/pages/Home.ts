@@ -117,96 +117,63 @@ const initGamePreview = function () {
 export const Home: Page = {
 	render() {
 		return `
-			<div class="flex flex-col bg-gray-100">
+			<section class="h-screen flex flex-col items-center justify-center">
 				<div class="flex lg:flex-row items-start justify-center p-2">
-					<!-- Header -->
 					<div class="text-center mb-5 ">
-						<h1 class="text-6xl font-bold  bg-clip-text text-gray-700 mb-4">
-							ft_transcendence
-						</h1>
-						<p class="text-xl text-gray-600 mb-2">
-							🏓 Le jeu Pong légendaire revisité
-						</p>
-						<p class="text-lg text-gray-500 max-w-2xl mx-auto">
-							Affrontez vos amis dans des parties épiques de Pong, suivez vos statistiques et grimpez dans le classement !
-						</p>
+						<div class="relative inline-block">
+							<span class="absolute top-0 left-0 text-8xl font-bold text-white">
+								ft_transcendence
+							</span>
+
+							<span
+								class="relative z-10 text-8xl text-transparent bg-clip-text 
+									bg-gradient-to-r from-red-500 via-blue-500 to-green-500
+									bg-[length:400%_400%] animate-gradientShift">
+								ft_transcendence
+							</span>
+						</div>
 					</div>
 				</div>
 
-				
-				<!-- Features Grid -->
-				<div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto  mb-5">
-					<div class="bg-white rounded-xl p-6 text-center hover:shadow-lg transition-all duration-300 border">
-						<div class="text-4xl mb-4">⚡</div>
-						<h3 class="text-xl font-semibold mb-2 text-gray-700">Parties Rapides</h3>
-						<p class="text-gray-500 text-sm">Lancez une partie en quelques secondes</p>
-					</div>
-					
-					<div class="bg-white rounded-xl p-6 text-center hover:shadow-lg transition-all duration-300 border">
-						<div class="text-4xl mb-4">🏆</div>
-						<h3 class="text-xl font-semibold mb-2 text-gray-700">Classements</h3>
-						<p class="text-gray-500 text-sm">Suivez votre progression et votre rang</p>
-					</div>
-					
-					<div class="bg-white rounded-xl p-6 text-center hover:shadow-lg transition-all duration-300 border">
-						<div class="text-4xl mb-4">👥</div>
-						<h3 class="text-xl font-semibold mb-2 text-gray-700">Multijoueur</h3>
-						<p class="text-gray-500 text-sm">Défiez vos amis en temps réel</p>
-					</div>
-				</div>
-				
-				
-				<!-- Boutons d'action -->
 				<div class="flex justify-center gap-4 mb-8">
 					<button 
 						id="play-btn" 
-						class="px-8 py-4 bg-green-500 text-white rounded-xl text-lg font-semibold  transform hover:scale-105  duration-200 shadow-lg">
-						🎮 Jouer maintenant
+						class="px-8 py-4 bg-white text-black text-lg font-semibold  transform hover:bg-gray-300  duration-200 shadow-lg">
+						Jouer maintenant
 					</button>
 				</div>
-					<!-- Game Preview Réaliste -->
-					<div class="bg-white rounded-xl p-8 max-w-3xl mx-auto shadow-lg border">
+			</section>
+
+
+			<section class="py-20">
+				<div class="bg-white p-5 max-w-xl mx-auto shadow-lg border">
 					<h3 class="text-2xl font-bold text-center mb-6 text-gray-700">Aperçu du Jeu</h3>
 					
-					<!-- Canvas de prévisualisation -->
-					<div class="flex justify-center mb-6">
-					<canvas 
-						id="preview-canvas" 
-						width="500" 
-						height="300" 
-						class="bg-black border-2 border-gray-300 rounded"
-						style="image-rendering: pixelated;">
-					</canvas>
-					</div>
-						
-					<!-- Contrôles et informations -->
-					<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-						<div class="text-center">
-							<h4 class="text-lg font-semibold mb-2 text-gray-700">Joueur 1</h4>
-							<p class="text-gray-600">Contrôles : W ↑ / S ↓</p>
-						<div class="mt-2 text-sm text-gray-500">Raquette gauche</div>
-					</div>
-						
-					<div class="text-center">
-						<h4 class="text-lg font-semibold mb-2 text-gray-700">Joueur 2</h4>
-						<p class="text-gray-600">Contrôles : ↑ / ↓</p>
-						<div class="mt-2 text-sm text-gray-500">Raquette droite</div>
+					<div class="flex justify-center">
+						<canvas 
+							id="preview-canvas" 
+							width="500" 
+							height="300" 
+							class="bg-black border-2 border-gray-300 rounded"
+							style="image-rendering: pixelated;">
+						</canvas>
 					</div>
 				</div>
-							
-							<!-- Règles du jeu -->
-				<div class="mt-6 p-4 bg-gray-50 rounded-lg">
-					<h4 class="font-semibold mb-2 text-gray-700">Règles :</h4>
-					<ul class="text-sm text-gray-600 space-y-1">
+			</section>
+
+
+			<section class="">
+				<div class="mt-6 p-5 max-w-xl bg-gray-50 mx-auto">
+					<h4 class="font-semibold mb-2 w-full mx-auto text-gray-700">Règles :</h4>
+					<ul class="text-sm text-gray-600 space-y">
 						<li>• Utilisez votre raquette pour renvoyer la balle</li>
 						<li>• Marquez un point quand la balle dépasse la raquette adverse</li>
 						<li>• La balle rebondit sur les murs haut et bas</li>
 						<li>• Premier à 5 points gagne la partie</li>
 					</ul>
 				</div>
-			</div>
-		</div>
-	`;
+			</section>
+		`;
 	},
 
 	mount(root) {
