@@ -42,6 +42,9 @@ module.exports = async function (fastify, opts) {
 						case 'rooms':
 							handleGetRooms(socket, data);
 							break;
+						case 'ready':
+							handleReady(socket, data);
+							break;
 						case 'join':
 							handleJoinGame(socket, data);
 							break;
@@ -152,7 +155,7 @@ function handleJoinGame(socket, data) {
 					clients[client.clientId].connection.send(JSON.stringify({
 						method: 'join',
 						status: 'success',
-						message: 'Successfully joined the game, waiting for another player...',
+						message: 'Successfully joined the game, waiting for player to get READY...',
 						gameId: gameId,
 						url: roomUrl,
 						game: game,
@@ -212,6 +215,7 @@ function handleCreateRoom(socket, data) {
         player2: player2,
         clients: [],
         state: 'waiting',
+		playerR: 0,
         createdAt: Date.now()
     };
 
@@ -228,17 +232,36 @@ function handleGameMove(socket, data) {
 	const player = data.player;
 	const vel = data.vel;
 
-	let state = games[gameId].state;
-	if (!state)
-		state = {}
+	let game = games[gameId];
 	
 	if(player === 1)
-		state[player1].vel_y = vel;
+		game[player1].vel_y = vel;
 	if(player === 2)
-		state[player2].vel_y = vel;
-	
-	games[gameId].state = state;
+		game[player2].vel_y = vel;
 }
+
+function handleReady(socket, data) {
+	const gameId = data.gameId;
+	const state = data.state;
+
+	let game = games[gameId];
+	game.playerR += state;
+	console.log("State = "+ game.playerR);
+
+	if (state == 2)
+	{
+		const payLoad = {
+            "method": "Start",
+            "game": game
+        }
+
+        game.clients.forEach(c=> {
+            clients[c.clientId].connection.send(JSON.stringify(payLoad))
+        })
+		// updateGameState();
+	}
+}
+
 
 function updateGameState(){
 
