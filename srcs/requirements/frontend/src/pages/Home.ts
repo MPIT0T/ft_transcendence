@@ -117,7 +117,8 @@ const initGamePreview = function () {
 export const Home: Page = {
 	render() {
 		return `
-			<section class="h-screen flex flex-col items-center justify-center">
+		<!-- Home page -->
+			<section class="h-screen flex flex-col items-center justify-center relative">
 				<div class="flex lg:flex-row items-start justify-center p-2">
 					<div class="text-center mb-5 ">
 						<div class="relative inline-block">
@@ -142,10 +143,16 @@ export const Home: Page = {
 						Jouer maintenant
 					</button>
 				</div>
+
+				<div id="scroll-indicator" class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 transition-opacity duration-500 opacity-100">
+					<img src="arrow.png" alt="scroll down" class="w-10 animate-arrowHueBlink [animation-delay:0s]" />
+					<img src="arrow.png" alt="scroll down" class="w-10 animate-arrowHueBlink [animation-delay:0.1s]" />
+					<img src="arrow.png" alt="scroll down" class="w-10 animate-arrowHueBlink [animation-delay:0.2s]" />
+				</div>
 			</section>
 
-
-			<section class="py-20">
+		<!-- Game preview -->
+			<section class="py-20"> 
 				<div class="bg-white p-5 max-w-xl mx-auto shadow-lg border">
 					<h3 class="text-2xl font-bold text-center mb-6 text-gray-700">Aperçu du Jeu</h3>
 					
@@ -161,7 +168,7 @@ export const Home: Page = {
 				</div>
 			</section>
 
-
+		<!-- Game rules -->
 			<section class="">
 				<div class="mt-6 p-5 max-w-xl bg-gray-50 mx-auto">
 					<h4 class="font-semibold mb-2 w-full mx-auto text-gray-700">Règles :</h4>
@@ -192,6 +199,22 @@ export const Home: Page = {
 				window.history.pushState({}, "", '/stats');
 				window.dispatchEvent(new PopStateEvent('popstate'));
 			});
+		}
+
+		const scrollIndicator = root.querySelector('#scroll-indicator') as HTMLDivElement | null;
+		if (scrollIndicator) {
+		const handleScroll = () => {
+			if (window.scrollY > 300) {
+			scrollIndicator.classList.add('opacity-0');
+			} else {
+			scrollIndicator.classList.remove('opacity-0'); // fade back in
+			}
+		};
+
+		window.addEventListener('scroll', handleScroll);
+
+		const cleanup = () => window.removeEventListener('scroll', handleScroll);
+		(window as any).cleanupScrollIndicator = cleanup;
 		}
 
 		// Initialiser l'aperçu du jeu
