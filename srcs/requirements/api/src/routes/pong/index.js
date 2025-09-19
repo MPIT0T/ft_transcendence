@@ -133,19 +133,44 @@ function handleJoinGame(socket, data) {
         }));
         return;
     }
+
+	const playerNumber = game.clients.length + 1;
     
 	// Add element to stack
     game.clients.push({
         clientId: clientId,
-        joinedAt: Date.now()
+        joinedAt: Date.now(),
+		player: playerNumber
     });
+	const roomUrl = `/gameOnline?gameId=${gameId}`;
     
-    socket.send(JSON.stringify({
-        method: 'join',
-        status: 'success',
-        message: 'Successfully joined the game',
-        game: game
-    }));
+	if (game.clients.length === 2) {
+			game.state = 'playing';
+			
+			game.clients.forEach(client => {
+				if (clients[client.clientId] && clients[client.clientId].connection) {
+					clients[client.clientId].connection.send(JSON.stringify({
+						method: 'join',
+						status: 'success',
+						message: 'Successfully joined the game, waiting for another player...',
+						gameId: gameId,
+						url: roomUrl,
+						game: game,
+						yourPlayer: client.player
+					}));
+				}
+			});
+		} else {
+			socket.send(JSON.stringify({
+				method: 'join',
+				status: 'success',
+				message: 'Successfully joined the game, waiting for another player...',
+				gameId: gameId,
+				url: roomUrl,
+				game: game,
+				yourPlayer: playerNumber
+			}));
+		}
 }
 
 function handleCreateRoom(socket, data) {
@@ -178,15 +203,17 @@ function handleCreateRoom(socket, data) {
 		};
 
 	games[gameId] = {
-		"id": gameId,
-		"roomName": data.roomName,
-		"gamePoint":data.gamePoint,
-		"gameMode": data.gameMode,
-		"ball": ball,
-		"player1":player1,
-		"player2":player2,
-		"clients": []
-	}
+        id: gameId,
+        roomName: data.roomName || `${clientId}'s Room`,
+        gamePoint: data.gamePoint || 3,
+        gameMode: data.gameMode || 'classic',
+        ball: ball,
+        player1: player1,
+        player2: player2,
+        clients: [],
+        state: 'waiting',
+        createdAt: Date.now()
+    };
 
 	const payLoad = {
 		"method": "create",

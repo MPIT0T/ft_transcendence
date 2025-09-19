@@ -1,6 +1,6 @@
 import type { Page } from "../interface/gameInterface.js"
 
-let ws: WebSocket | undefined;
+export let ws: WebSocket | undefined;
 let clientId: string | undefined;
 
 // Additional methods
@@ -209,6 +209,7 @@ export const GameRoom: Page = {
 					if (gameId !== undefined) {
 					localStorage.setItem('gameId', gameId);
 					}
+					window.location.hash = response.url;
 				} else {
 					alert("Failed to join the game room.");
 				}

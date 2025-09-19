@@ -20,9 +20,15 @@ const getPath = (): string => {
   // const hash = window.location.hash || "/";
   // const path = hash.replace(/^#/, "");
   // return path;
-  const path = window.location.hash.slice(1) || "/";
+  let path = window.location.hash.slice(1) || "/";
+
+  if (path.includes('?')) {
+        path = path.split('?')[0];
+    }
   return path;
 }
+
+
 
 export function startRouter(){
   const root = document.getElementById("root")!;
