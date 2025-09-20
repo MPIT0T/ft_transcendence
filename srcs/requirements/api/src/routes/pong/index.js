@@ -248,7 +248,8 @@ function handleReady(socket, data) {
 	game.playerR += state;
 	console.log("State = "+ game.playerR);
 
-	if (state == 2)
+
+	if (game.playerR === 2)
 	{
 		const payLoad = {
             "method": "Start",
@@ -258,7 +259,7 @@ function handleReady(socket, data) {
         game.clients.forEach(c=> {
             clients[c.clientId].connection.send(JSON.stringify(payLoad))
         })
-		// updateGameState();
+		updateGameState();
 	}
 }
 
