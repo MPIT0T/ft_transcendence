@@ -209,6 +209,12 @@ export const GameRoom: Page = {
 					if (gameId !== undefined) {
 					localStorage.setItem('gameId', gameId);
 					}
+					
+					let playerNumber = response.player;
+					if (playerNumber !== undefined) {
+					localStorage.setItem('playerNumber', playerNumber);
+					}
+
 					window.location.hash = response.url;
 				} else {
 					alert("Failed to join the game room.");
