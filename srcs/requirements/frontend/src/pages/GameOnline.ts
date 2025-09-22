@@ -26,20 +26,25 @@ export const GameOnline: Page = {
             </div>
             </div>
             `;
-          },
-          
-    mount(root) {
+  },
+
+  mount(root) {
     let gameId = localStorage.getItem('gameId');
     let clientId = localStorage.getItem('clientId');
     let canStart = false;
+    let readyState = false;
     
+    const readyBtn = root.querySelector('#ready-btn') as HTMLButtonElement;
+    const gameContainer = root.querySelector('#game-container') as HTMLElement;
+
     if (ws) {
       ws.onmessage = message => {
 
         const response = JSON.parse(message.data);
         //connect
-        if (response.method === "update"){
+        if (response.method === "update") {
           canStart = true;
+          readyBtn.style.display = "none";
           const game = response.game;
           if (currentGame && game) {
             currentGame.updateGameState(game);
@@ -49,25 +54,18 @@ export const GameOnline: Page = {
       }
     }
 
+
     // Cleanup previous game if exists
     if (currentGame) {
       currentGame.destroy();
     }
-    
-    let readyState = false;
-    
-    const readyBtn = root.querySelector('#ready-btn') as HTMLButtonElement;
-    const gameContainer = root.querySelector('#game-container') as HTMLElement;
 
-
-    
     if (readyBtn && gameContainer) {
       // Initialize game component
       currentGame = new GameComponentOnline(gameContainer, canStart);
-      
+
       readyBtn.addEventListener('click', () => {
         readyState = !readyState;
-        
         // Update button appearance
         if (readyState) {
           readyBtn.className = "px-6 py-3 rounded-lg font-bold text-lg transition bg-red-600 text-white hover:bg-red-700";
@@ -78,7 +76,7 @@ export const GameOnline: Page = {
             "gameId": gameId,
             "state": 1
           }
-          if(ws)
+          if (ws)
             ws.send(JSON.stringify(payLoad));
 
         } else {
@@ -90,11 +88,11 @@ export const GameOnline: Page = {
             "gameId": gameId,
             "state": -1
           }
-          if(ws)
+          if (ws)
             ws.send(JSON.stringify(payLoad));
 
         }
-        
+
         // Update game state
         if (currentGame) {
           currentGame.setCanStart(canStart);

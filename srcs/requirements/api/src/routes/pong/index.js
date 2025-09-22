@@ -19,8 +19,6 @@ module.exports = async function (fastify, opts) {
 		
 		fastify.get('/ws', { websocket: true }, (socket, request) => {
 			
-			socket.on("open", () => console.log("opened!"))
-			
 			// Générer un ID client unique
 			const clientId = 'client_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 			
@@ -75,10 +73,36 @@ module.exports = async function (fastify, opts) {
 			});
 			
 			socket.on('close', (code, reason) => {
-				console.log('Client disconnected:', clientId, 'Code:', code, 'Reason:', reason?.toString());
+				remouveClient(clientId);
+				console.log('Client disconnected:', clientId);
 			});
 		});
 	});
+}
+
+function remouveClient(clientId){
+	if (clients[clientId]) {
+		// Remove client from all games
+		for (const gameId in games) {
+			const game = games[gameId];
+			game.clients = game.clients.filter(c => c.clientId !== clientId);
+			if (game.state == "playing-game"){
+				game.state = "finish"
+
+				const payLoad = {
+				"method": "finish",
+				"game": game
+				}
+				
+				game.clients.forEach(c=> {
+					clients[c.clientId].connection.send(JSON.stringify(payLoad))
+				})
+
+			}
+		}
+		// Remove client from clients list
+		delete clients[clientId];
+	}
 }
 
 
@@ -87,19 +111,22 @@ module.exports = async function (fastify, opts) {
 function handleGetRooms(socket, data) {
 	const clientId = data.clientId;
 
-	const availableRooms = Object.values(games).map(game => ({
-        id: game.id,
-        roomName: game.roomName || `Room ${game.id}`,
-        players: `${game.clients.length}/2`,
-        gameMode: game.gameMode || 'classic',
-        gamePoint: game.gamePoint || 3
-    }));
-    
-    socket.send(JSON.stringify({
-        method: 'rooms',
-        rooms: availableRooms,
-        timestamp: Date.now()
-    }));
+	const availableRooms = Object.values(games)
+		.filter(game => game.clients.length < 2)
+		.filter(game => game.state != "finish")
+		.map(game => ({
+			id: game.id,
+			roomName: game.roomName || `Room ${game.id}`,
+			players: `${game.clients.length}/2`,
+			gameMode: game.gameMode || 'classic',
+			gamePoint: game.gamePoint || 3
+		}));
+
+	socket.send(JSON.stringify({
+		method: 'rooms',
+		rooms: availableRooms,
+		timestamp: Date.now()
+	}));
 }
 
 function handleJoinGame(socket, data) {
@@ -190,8 +217,8 @@ function handleCreateRoom(socket, data) {
 	}
 
 	const player1 = {
-			x: 0,           // Position horisontale
-			y: 0,           // Position verticale
+			x: 20,           // Position horisontale
+			y: 260,           // Position verticale
 			width: 10,      // Largeur de la raquete
 			height: 100,    // Hauteur de la raquete
 			vel_y: 0        // Velocite verticale
@@ -251,6 +278,7 @@ function handleReady(socket, data) {
 
 	if (game.playerR === 2)
 	{
+		game.state = "playing-game";
 		const payLoad = {
             "method": "Start",
             "game": game
@@ -269,14 +297,17 @@ function updateGameState(){
     //{"gameid", fasdfsf}
     for (const g of Object.keys(games)) {
         const game = games[g]
-        const payLoad = {
-            "method": "update",
-            "game": game
-        }
-
-        game.clients.forEach(c=> {
-            clients[c.clientId].connection.send(JSON.stringify(payLoad))
-        })
+		if (game.state == "playing-game")
+		{
+			const payLoad = {
+				"method": "update",
+				"game": game
+			}
+			
+			game.clients.forEach(c=> {
+				clients[c.clientId].connection.send(JSON.stringify(payLoad))
+			})
+			}
     }
 
     setTimeout(updateGameState, 500);

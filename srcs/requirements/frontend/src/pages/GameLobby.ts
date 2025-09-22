@@ -133,8 +133,7 @@ export const GameLoby: Page = {
 		const tournamentBtn = root.querySelector('#tournament-mode') as HTMLButtonElement;
 		if (tournamentBtn) {
 			tournamentBtn.addEventListener('click', () => {
-				// TODO: Implémenter les tournois
-				alert('🏆 Système de tournoi en cours de développement...\n(Fonctionnalité à venir)');
+				window.location.hash = '/tournamentRoom';
 			});
 		}
 	}
