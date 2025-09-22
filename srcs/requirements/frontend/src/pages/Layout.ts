@@ -61,7 +61,7 @@ const initPastelBackground = () => {
 export const Layout = {
   render(content: string): string {
     return `
-      <div class="flex flex-col h-screen font-custom font-tiny5">
+      <div class="flex flex-col h-screen font-tiny5">
         <nav class="fixed w-screen z-20 h-16 bg-gray-400 flex items-center justify-between">
           <!-- Navigation gauche -->
           <div class="flex my-5 gap-3 mx-5">
