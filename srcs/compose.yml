@@ -53,6 +53,19 @@ services:
     volumes:
       - frontend-dist:/app/dist
     restart: always
+  
+  pong:
+    container_name: trans-pong
+    build:
+      context: requirements/pong/
+    develop:
+      watch:
+        - action: sync+restart
+          path: requirements/pong/src
+          target: app/src
+    networks:
+      - transcendence
+    restart: always
 
 networks:
   transcendence:

@@ -181,8 +181,7 @@ export const GameRoom: Page = {
 
 	mount(root: HTMLElement): void {
 		let gameId;
-		ws = new WebSocket("/api/pong/ws");
-
+		ws = new WebSocket("/pong/ws");
 		ws.onmessage = message => {
 			//message.data
 			const response = JSON.parse(message.data);
