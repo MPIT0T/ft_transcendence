@@ -139,7 +139,7 @@ export const Home: Page = {
 				<div class="flex justify-center gap-4 mb-8">
 					<button 
 						id="play-btn" 
-						class="px-8 py-4 bg-white text-black text-lg font-semibold  transform hover:bg-gray-300  duration-200 shadow-lg">
+						class="px-8 py-4 bg-gray-900 text-white border-2 border-white text-lg font-semibold transform hover:bg-gray-700 duration-200 shadow-lg">
 						Jouer maintenant
 					</button>
 				</div>
@@ -154,7 +154,7 @@ export const Home: Page = {
 		<!-- Game preview -->
 			<section class="py-20"> 
 				<div class="bg-white p-5 max-w-xl mx-auto shadow-lg border">
-					<h3 class="text-2xl font-bold text-center mb-6 text-gray-700">Aperçu du Jeu</h3>
+					<h3 id="preview-text" class="text-2xl font-bold text-center mb-6 text-gray-700">Aperçu du Jeu</h3>
 					
 					<div class="flex justify-center">
 						<canvas 
