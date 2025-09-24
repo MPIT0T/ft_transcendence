@@ -25,7 +25,7 @@ export const Home: Page = {
         <div class="bg-gray-700/25 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
         <form id="userForm" class="max-w-sm mx-auto">
           <div class="mb-5">
-            <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your username</label>
+            <label for="username" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your username</label>
             <input type="username" id="username" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="username" required />
           </div>
           <div class="mb-5">
@@ -61,6 +61,28 @@ export const Home: Page = {
     // Add any Home-specific event listeners here
     document.getElementById('userForm').addEventListener('submit', async function (e) {
       e.preventDefault();
-    });
+
+      const username = e.target.username.value;
+      const password = e.target.password.value;
+        try {
+          const res = await fetch('/api/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username, password })
+          });
+
+          if (res.ok) {
+            alert('Connexion réussie !');
+            modal.classList.add('hidden');
+          } else {
+            alert('Échec de la connexion');
+          }
+        } catch (err) {
+          console.error(err);
+          alert('Erreur lors de la requête');
+        }
+      });
   }
 }
