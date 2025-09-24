@@ -99,6 +99,11 @@ function remouveClient(clientId){
 				})
 
 			}
+			game.playerR -= 1;
+			if (game.clients.length == 0)
+			{
+				delete games[gameId];
+			}
 		}
 		// Remove client from clients list
 		delete clients[clientId];

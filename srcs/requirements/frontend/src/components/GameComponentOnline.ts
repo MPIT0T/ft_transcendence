@@ -57,12 +57,31 @@ export class GameComponentOnline {
 	}
 
 	updateGameState(game: any){
-		if (!game) return;
-		if (game.p1) Object.assign(this.p1, game.p1);
-		if (game.p2) Object.assign(this.p2, game.p2);
-		if (game.ball) Object.assign(this.ball, game.ball);
-		if (typeof game.p1Score === "number") this.p1Score = game.p1Score;
-		if (typeof game.p2Score === "number") this.p2Score = game.p2Score;
+		console.log("updateGameState called with:", game);
+		if (!game) {
+			console.log("No game state provided.");
+			return;
+		}
+		if (game.p1) {
+			console.log("Updating p1:", game.p1);
+			Object.assign(this.p1, game.p1);
+		}
+		if (game.p2) {
+			console.log("Updating p2:", game.p2);
+			Object.assign(this.p2, game.p2);
+		}
+		if (game.ball) {
+			console.log("Updating ball:", game.ball);
+			Object.assign(this.ball, game.ball);
+		}
+		if (typeof game.p1Score === "number") {
+			console.log("Updating p1Score:", game.p1Score);
+			this.p1Score = game.p1Score;
+		}
+		if (typeof game.p2Score === "number") {
+			console.log("Updating p2Score:", game.p2Score);
+			this.p2Score = game.p2Score;
+		}
 	}
 
 	private render() {
