@@ -10,13 +10,7 @@ module.exports = async function (fastify, opts) {
 	
 	
 	fastify.register(async function (fastify) {
-		// Vérifier si fastify.authenticate existe avant de l'utiliser
-		if (typeof fastify.authenticate === 'function') {
-			fastify.addHook('preHandler', fastify.authenticate);
-		} else {
-			console.log('Authentication middleware not available, continuing without auth');
-		}
-		
+
 		fastify.get('/ws', { websocket: true }, (socket, request) => {
 			
 			// Générer un ID client unique
