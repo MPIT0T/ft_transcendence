@@ -27,7 +27,7 @@ class Room {
 		const roomUrl = `/gameOnline?gameId=${this.roomId}`;
 		
 		console.log("wa 3")
-		socket.send(JSON.stringify({
+		socket.send(JSON.stringify({  ///ici le probleme
 			method: 'join',
 			status: 'success',
 			message: 'Successfully joined the game, waiting for another player...',
