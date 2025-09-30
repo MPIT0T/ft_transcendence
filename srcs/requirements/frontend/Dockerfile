@@ -1,29 +1,11 @@
-FROM debian:12
+FROM node:22.18.0-slim
 
-ENV DEBIAN_FRONTEND=noninteractive
-ENV NODE_VERSION=22.18.0
-ENV NODE_ENV="dev"
-
-RUN apt-get update && apt-get install -y \
-    curl \
-    xz-utils \
-    ca-certificates \
-    gnupg \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN curl -fsSL https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz \
-    -o /tmp/node.tar.xz \
-    && tar -xf /tmp/node.tar.xz -C /usr/local --strip-components=1 \
-    && rm /tmp/node.tar.xz
-
-RUN node -v && npm -v
+ENV NODE_ENV=dev
 
 WORKDIR /app
 
 COPY package.json ./
 RUN npm install
-
-RUN npm install --save-dev esbuild
 
 COPY tsconfig.json build.mjs ./
 COPY src ./src
