@@ -1,5 +1,5 @@
-const Clients = require('./clients.js');
-const Rooms = require('./rooms.js');
+import Clients from './clients.js';
+import Rooms from './rooms.js';
 
 class Games {
 	constructor() {
@@ -9,12 +9,13 @@ class Games {
 
 	createClient(socket){
 		const clientId = 'client_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-		_clients.createClient(clientId, socket);
+		this._clients.createClient(clientId, socket);
 		
 		socket.send(JSON.stringify({
 			method: 'connect',
 			clientId: clientId
 		}));
+
 		return clientId;
 	}
 
@@ -23,8 +24,7 @@ class Games {
 
 		this._rooms.createRoom(roomId, gameMode, gamePoint, roomName)
 
-		const room = this._rooms.find(roomId)
-
+		const room = this._rooms.findRoom(roomId);
 
 		socket.send(JSON.stringify({
 			"method": "create",
@@ -33,8 +33,14 @@ class Games {
 	}
 	
 	
-	findClient(id) {return this._clients.find(id);}
-	findRoom(id) {return this._rooms.find(id);}
+	findClient(id) {
+		const client = this._clients.findClient(id);
+		return client;
+	}
+	findRoom(id) {
+	const room = this._rooms.findRoom(id);
+		return room;
+	}
 
 
 	removeClient(id) {return this._clients.remove(id);}
@@ -48,4 +54,4 @@ class Games {
 
 }
 
-module.exports = Games;
+export default Games;

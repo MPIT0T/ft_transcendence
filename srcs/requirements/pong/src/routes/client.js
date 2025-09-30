@@ -1,21 +1,19 @@
 class Client {
-	constructor({id , socket} = {}) {
-		this._clientId = id;
+	constructor(clientId, socket) {
+		this._clientId = clientId;
 		this._dbId = null;
 		this._name = null;
-		this.player = null;
-		this.elo = 1000;
-		this.conection = socket;
+		this._player = null;
+		this._elo = 1000;
+		this._conection = socket;
 	}
 
-	toJSON() {
+	get JSON() {
 		return {
-			player:{
 				clientId: this._clientId,
 				name: this._name,
-				player: this.player,
-				elo: this.elo,
-			}
+				player: this._player,
+				elo: this._elo,
 		};
 	}
 

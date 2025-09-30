@@ -1,5 +1,5 @@
 class Player {
-    constructor({player} = {}) {
+    constructor(player) {
         if (player === 1) {
             this._x = 20;
             this._y = 260;

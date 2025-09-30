@@ -21,13 +21,13 @@ function displayRooms(root: HTMLElement, rooms: any[]) {
     rooms.forEach(room => {
         const roomBtn = document.createElement('button');
         roomBtn.className = 'room-btn px-6 py-3 border-2 border-black bg-white hover:bg-gray-100 transition-colors font-mono';
-        roomBtn.dataset.gameId = room.id;
+        roomBtn.dataset.roomId = room.roomId;
         roomBtn.innerHTML = `
             ${room.roomName}<br>
             <span class="text-sm text-gray-600">${room.players}</span>
         `;
         roomBtn.addEventListener('click', () => {
-            joinRoom(room.id);
+            joinRoom(room.roomId);
         });
         
         container.appendChild(roomBtn);
@@ -58,11 +58,11 @@ const createRoom = function (root: HTMLElement): void {
 		(root.querySelector('#create-room-form') as HTMLFormElement).reset();
 }
 
-const 	joinRoom= function(gameId: string){
+const 	joinRoom= function(roomId: string){
 		const payLoad = {
 			"method": "join",
 			"clientId": clientId,
-			"gameId": gameId
+			"roomId": roomId
 		}
 		if(ws)
 			ws.send(JSON.stringify(payLoad));
@@ -180,7 +180,7 @@ export const GameRoom: Page = {
 	},
 
 	mount(root: HTMLElement): void {
-		let gameId;
+		let roomId;
 		ws = new WebSocket("/pong/ws");
 		ws.onmessage = message => {
 			//message.data
@@ -194,18 +194,18 @@ export const GameRoom: Page = {
 				console.log("Client id Set successfully " + clientId)
 			}
 			if (response.method === "create"){
-				console.log("game successfully created with id " + response.game.id + " with " + response.game.balls + " balls");
-				gameId = response.game.id;
-				joinRoom(gameId)
+				console.log("game successfully created " + response.room.roomId);
+				roomId = response.room.roomId;
+				joinRoom(roomId)
 			}
 			
 			if (response.method === "join"){
 				if (response.status === "success") {
 					console.log(response.message);
                 	
-					gameId = response.game.id;
-					if (gameId !== undefined) {
-					localStorage.setItem('gameId', gameId);
+					roomId = response.room.roomId;
+					if (roomId !== undefined) {
+					localStorage.setItem('roomId', roomId);
 					}
 					
 					let playerNumber = response.player;

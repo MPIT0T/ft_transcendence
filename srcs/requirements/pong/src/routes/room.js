@@ -1,7 +1,8 @@
-const Player = require('./player.js');
+import Player from './player.js';
+import Ball from './ball.js';
 
 class Room {
-	constructor({ roomId, gameMode, gamePoint, roomName} = {}) {
+	constructor(roomId, gameMode, gamePoint, roomName) {
 		this.roomId = roomId;
 		this.ball = new Ball();
 		this.roomName = roomName;
@@ -14,8 +15,28 @@ class Room {
 		this.clients = [];
 	}
 
-	join(client) {
+	join(client, socket) {
+		
+		if (this.clients.length === 0)
+			client._player = 1;
+		else
+			client._player = 2;
+		
 		this.clients.push(client);
+		
+		const roomUrl = `/gameOnline?gameId=${this.roomId}`;
+		
+		console.log("wa 3")
+		socket.send(JSON.stringify({
+			method: 'join',
+			status: 'success',
+			message: 'Successfully joined the game, waiting for another player...',
+			roomId: this.roomId,
+			url: roomUrl,
+			game: this.toJSON()
+		}));
+		console.log("wa 4")
+		
 	}
 
 	remove(clientId) {
@@ -36,7 +57,7 @@ class Room {
 
 			const payLoad = {
 			"method": "Start",
-			"room": this.toJSON()
+			"room": this.JSON()
 			}
 			this.clients.forEach(c=> {
 				clients[c.clientId].connection.send(JSON.stringify(payLoad))
@@ -54,8 +75,6 @@ class Room {
 	// Sérialiser la room pour l'envoyer au front
 	toJSON() {
 		return {
-			room:{
-
 				roomId: this.roomId,
 				ball: this.ball?.toJSON ? this.ball.toJSON() : this.ball,
 				roomName: this.roomName,
@@ -66,9 +85,8 @@ class Room {
 				player1: this.player1?.toJSON ? this.player1.toJSON() : this.player1,
 				player2: this.player2?.toJSON ? this.player2.toJSON() : this.player2,
 				clients: this.clients.map(c => c?.toJSON ? c.toJSON() : c)
-			}
 		};
 	}
 }
 
-module.exports = Room;
+export default Room;

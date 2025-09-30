@@ -1,13 +1,13 @@
-const Room = require('./room.js');
+import Room from './room.js';
 
 class Rooms {
 	constructor() {
-		this._rooms = [];
+		this._rooms = {};
 	}
 
 	createRoom(roomId, gameMode, gamePoint, roomName) {
 		const room = new Room(roomId, gameMode, gamePoint, roomName);
-		this._rooms.push(room);
+		this._rooms[roomId] = room;
 	}
 
 	remove(roomId) {
@@ -19,8 +19,8 @@ class Rooms {
 		return false;
 	}
 
-	find(roomId) {
-		return this._room.find(c => c.roomId === roomId);
+	findRoom(roomId) {
+		return this._rooms[roomId];
 	}
 
 	getAllRooms() {return this._room;}
@@ -29,4 +29,4 @@ class Rooms {
 
 }
 
-module.exports = Rooms;
+export default Rooms;

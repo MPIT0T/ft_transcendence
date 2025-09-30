@@ -1,13 +1,14 @@
-const Client = require('./client.js');
+import Client from './client.js';
 
 class Clients {
 	constructor() {
-		this._clients = [];
+		this._clients = {};
 	}
 
-	createClient(clientId) {
-		const client = new Client(clientId);
-		this._clients.push(client);
+	createClient(clientId, socket) {
+
+		const client = new Client(clientId, socket);
+		this._clients[clientId]= client;
 		// return client;
 	}
 
@@ -20,8 +21,8 @@ class Clients {
 		return false;
 	}
 
-	find(clientId) {
-		return this._clients.find(c => c.clientId === clientId);
+	findClient(clientId) {
+		return this._clients[clientId];
 	}
 
 	getAllClients() {return this._clients;}
@@ -30,4 +31,4 @@ class Clients {
 
 }
 
-module.exports = Clients;
+export default Clients;
