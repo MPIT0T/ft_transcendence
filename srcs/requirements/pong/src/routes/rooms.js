@@ -5,8 +5,8 @@ class Rooms {
 		this._rooms = [];
 	}
 
-	createClient(roomId) {
-		const room = new Room(roomId);
+	createRoom(roomId, gameMode, gamePoint, roomName) {
+		const room = new Room(roomId, gameMode, gamePoint, roomName);
 		this._rooms.push(room);
 	}
 
