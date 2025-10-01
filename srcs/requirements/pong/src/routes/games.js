@@ -8,7 +8,7 @@ class Games {
 	}
 
 	createClient(socket){
-		const clientId = 'client_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+		const clientId = 'client_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
 		this._clients.createClient(clientId, socket);
 		
 		socket.send(JSON.stringify({
@@ -20,7 +20,7 @@ class Games {
 	}
 
 	createRoom(socket, gameMode, gamePoint, roomName){
-		const roomId = 'game_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+		const roomId = 'game_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
 
 		this._rooms.createRoom(roomId, gameMode, gamePoint, roomName)
 

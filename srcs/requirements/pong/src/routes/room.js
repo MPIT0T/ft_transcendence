@@ -32,7 +32,7 @@ class Room {
 			message: 'Successfully joined the game, waiting for another player...',
 			roomId: this.roomId,
 			url: roomUrl,
-			game: this.toJSON()
+			room: this.toJSON()
 		}));
 	}
 
@@ -46,21 +46,28 @@ class Room {
 	}
 
 	async updatePlayerR(int){
+		console.log("wa 6")
 		this.playerR += int;
 
 		console.log("playerR = "+ this.playerR);
+
+		console.log("wa 7")
+
 		if(this.playerR === 2){
 			this.state = "playing-game";
 
 			const payLoad = {
 			"method": "Start",
-			"room": this.JSON()
+			"room": this.toJSON()
 			}
-			this.clients.forEach(c=> {
-				clients[c.clientId].connection.send(JSON.stringify(payLoad))
-			})
+			this.clients.forEach(c => {
+				if (c.connection && c.connection.readyState === c.connection.OPEN) {
+					c.connection.send(JSON.stringify(payLoad));
+				}
+			});
 			await this.gameLoop();
 		}
+		console.log("wa 8")
 	}
 
 	find(clientId) {return this.clients.find(c => c.clientId === clientId);}

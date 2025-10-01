@@ -9,6 +9,8 @@ class Clients {
 
 		const client = new Client(clientId, socket);
 		this._clients[clientId]= client;
+
+		
 		// return client;
 	}
 

@@ -22,7 +22,7 @@ export const GameOnline: Page = {
 
 
   mount(root) {
-    let gameId = localStorage.getItem('gameId');
+    let roomId = localStorage.getItem('roomId');
     let clientId = localStorage.getItem('clientId');
     let canStart = false;
     
@@ -35,7 +35,7 @@ export const GameOnline: Page = {
     const payLoad = {
             "method": "ready",
             "clientId": clientId,
-            "gameId": gameId,
+            "roomId": roomId,
             "state": 1
           }
     if (ws)

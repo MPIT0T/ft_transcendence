@@ -8,7 +8,7 @@ class Client {
 		this._conection = socket;
 	}
 
-	get JSON() {
+	toJSON() {
 		return {
 				clientId: this._clientId,
 				name: this._name,

@@ -139,33 +139,13 @@ function handleGameMove(socket, data) {
 function handleReady(socket, data) {
     if (g_Games.findClient(data.clientId) === undefined)
         throw "Client id not good";
-    if (g_Games.findRoom(data.gameId) === undefined)
+    if (g_Games.findRoom(data.roomId) === undefined)
         throw "Room id not good";
+
 	const state = data.state;
     
-    const room = g_Games.findRoom(data.gameId);
+    const room = g_Games.findRoom(data.roomId);
 
     room.updatePlayerR(state);
 
-}
-
-function updateGameState(){
-
-    //{"gameid", fasdfsf}
-    for (const g of Object.keys(games)) {
-        const game = games[g]
-		if (game.state == "playing-game")
-		{
-			const payLoad = {
-				"method": "update",
-				"game": game
-			}
-			
-			game.clients.forEach(c=> {
-				clients[c.clientId].connection.send(JSON.stringify(payLoad))
-			})
-			}
-    }
-
-    setTimeout(updateGameState, 500);
 }
