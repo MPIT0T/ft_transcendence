@@ -26,8 +26,7 @@ class Room {
 		
 		const roomUrl = `/gameOnline?gameId=${this.roomId}`;
 		
-		console.log("wa 3")
-		socket.send(JSON.stringify({  ///ici le probleme
+		socket.send(JSON.stringify({
 			method: 'join',
 			status: 'success',
 			message: 'Successfully joined the game, waiting for another player...',
@@ -35,8 +34,6 @@ class Room {
 			url: roomUrl,
 			game: this.toJSON()
 		}));
-		console.log("wa 4")
-		
 	}
 
 	remove(clientId) {
@@ -84,7 +81,7 @@ class Room {
 				gamePoint: this.gamePoint,
 				player1: this.player1?.toJSON ? this.player1.toJSON() : this.player1,
 				player2: this.player2?.toJSON ? this.player2.toJSON() : this.player2,
-				clients: this.clients.map(c => c?.toJSON ? c.toJSON() : c)
+				clients: this.clients.map(c => c.JSON)
 		};
 	}
 }

@@ -63,6 +63,7 @@ module.exports = async function (fastify, opts) {
 }
 
 function remouveClient(clientId){
+	
 }
 
 
@@ -120,15 +121,12 @@ function handleJoinGame(socket, data) {
         return;
     }
 
-	room.join(g_Games.findClient(data.clientId));
-
+	room.join(g_Games.findClient(data.clientId), socket);
 }
 
 function handleCreateRoom(socket, data) {
     if (g_Games.findClient(data.clientId) === undefined)
         throw "Client id not good";
-	console.log("wawe");
-
 
 	g_Games.createRoom(socket, data.gameMode, data.gamePoint, data.roomName);
 
