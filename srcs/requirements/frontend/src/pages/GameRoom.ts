@@ -191,6 +191,7 @@ export const GameRoom: Page = {
 				if (clientId !== undefined) {
 					localStorage.setItem('clientId', clientId);
 				}
+				reloadRooms(root);
 				console.log("Client id Set successfully " + clientId)
 			}
 			if (response.method === "create"){

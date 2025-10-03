@@ -55,14 +55,14 @@ module.exports = async function (fastify, opts) {
 			});
 			
 			socket.on('close', (code, reason) => {
-				remouveClient(clientId);
+				removeClient(clientId);
 				console.log('Client disconnected:', clientId);
 			});
 		});
 	});
 }
 
-function remouveClient(clientId){
+function removeClient(clientId){
 	
 }
 
@@ -71,7 +71,7 @@ function remouveClient(clientId){
 
 function handleGetRooms(socket, data) {
 	if (g_Games.findClient(data.clientId) === undefined)
-        throw "Client id not good";
+		throw "Client id not good";
 
 	const availableRooms = Object.values(g_Games._rooms._rooms)
 		.filter(room => room.clients.length < 2)
@@ -92,20 +92,20 @@ function handleGetRooms(socket, data) {
 }
 
 function handleJoinGame(socket, data) {
-    if (g_Games.findClient(data.clientId) === undefined)
-        throw "Client id not good";
+	if (g_Games.findClient(data.clientId) === undefined)
+		throw "Client id not good";
 	const roomId = data.roomId;
 	
 	if (roomId === "ranked") {
 		// Logique pour matchmaking ranked
-        socket.send(JSON.stringify({
+		socket.send(JSON.stringify({
 			method: 'join',
-            status: 'success',
-            message: 'Searching for ranked match...',
-            gameType: 'ranked'
-        }));
-        return;
-    }
+			status: 'success',
+			message: 'Searching for ranked match...',
+			gameType: 'ranked'
+		}));
+		return;
+	}
 	
 	if (g_Games.findRoom(data.roomId) === undefined)
 		throw "Room id not good";
@@ -113,20 +113,20 @@ function handleJoinGame(socket, data) {
 	const room = g_Games.findRoom(data.roomId);
 
 	if (room.clients.length >= 2) {
-        socket.send(JSON.stringify({
-            method: 'join',
-            status: 'error',
-            message: 'Game is full'
-        }));
-        return;
-    }
+		socket.send(JSON.stringify({
+			method: 'join',
+			status: 'error',
+			message: 'Game is full'
+		}));
+		return;
+	}
 
 	room.join(g_Games.findClient(data.clientId), socket);
 }
 
 function handleCreateRoom(socket, data) {
-    if (g_Games.findClient(data.clientId) === undefined)
-        throw "Client id not good";
+	if (g_Games.findClient(data.clientId) === undefined)
+		throw "Client id not good";
 
 	g_Games.createRoom(socket, data.gameMode, data.gamePoint, data.roomName);
 
@@ -137,15 +137,15 @@ function handleGameMove(socket, data) {
 }
 
 function handleReady(socket, data) {
-    if (g_Games.findClient(data.clientId) === undefined)
-        throw "Client id not good";
-    if (g_Games.findRoom(data.roomId) === undefined)
-        throw "Room id not good";
+	if (g_Games.findClient(data.clientId) === undefined)
+		throw "Client id not good";
+	if (g_Games.findRoom(data.roomId) === undefined)
+		throw "Room id not good";
 
 	const state = data.state;
-    
-    const room = g_Games.findRoom(data.roomId);
+	
+	const room = g_Games.findRoom(data.roomId);
 
-    room.updatePlayerR(state);
+	room.updatePlayerR(state);
 
 }

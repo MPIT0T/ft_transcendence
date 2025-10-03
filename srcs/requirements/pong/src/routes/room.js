@@ -1,6 +1,10 @@
 import Player from './player.js';
 import Ball from './ball.js';
 
+function sleep(ms) {
+	return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 class Room {
 	constructor(roomId, gameMode, gamePoint, roomName) {
 		this.roomId = roomId;
@@ -46,12 +50,10 @@ class Room {
 	}
 
 	async updatePlayerR(int){
-		console.log("wa 6")
 		this.playerR += int;
 
 		console.log("playerR = "+ this.playerR);
 
-		console.log("wa 7")
 
 		if(this.playerR === 2){
 			this.state = "playing-game";
@@ -67,13 +69,17 @@ class Room {
 			});
 			await this.gameLoop();
 		}
-		console.log("wa 8")
 	}
 
 	find(clientId) {return this.clients.find(c => c.clientId === clientId);}
 
+	
+
 	async gameLoop(){
-		console.log("wawawawawww\n");
+		while(this.state === "playing-game"){
+			console.log("wawawawawww\n");
+			await sleep(500)
+		}
 	}
 
 	// Sérialiser la room pour l'envoyer au front
