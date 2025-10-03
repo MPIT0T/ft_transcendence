@@ -1,6 +1,5 @@
 import Player from './player.js';
 import Ball from './ball.js';
-import './gameMath.js';
 
 function sleep(ms) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
@@ -16,6 +15,8 @@ class Room {
 		this.gameMode = gameMode;
 		this.state = "waiting";
 		this.gamePoint = gamePoint;
+		this.p1Score = 0;
+		this.p2Score = 0;
 		this.player1 = new Player(1);
 		this.player2 = new Player(2);
 		this.clients = [];
@@ -128,10 +129,14 @@ class Room {
 		});
 	}
 
+	// mathLoop() {
+		
+	// }
+
 	async gameLoop() {
 		while (this.state === "playing-game") {
-			console.log("wawawawawww\n");
 
+			// mathLoop();
 
 			const payLoad = {
 				"method": "update",
@@ -158,6 +163,8 @@ class Room {
 			playerR: this.playerR,
 			gameMode: this.gameMode,
 			state: this.state,
+			p1Score: this.p1Score,
+			p2Score: this.p2Score,
 			gamePoint: this.gamePoint,
 			player1: this.player1?.toJSON ? this.player1.toJSON() : this.player1,
 			player2: this.player2?.toJSON ? this.player2.toJSON() : this.player2,

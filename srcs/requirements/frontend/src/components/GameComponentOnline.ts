@@ -57,29 +57,23 @@ export class GameComponentOnline {
 	}
 
 	updateGameState(game: any){
-		console.log("updateGameState called with:", game);
 		if (!game) {
 			console.log("No game state provided.");
 			return;
 		}
-		if (game.p1) {
-			console.log("Updating p1:", game.p1);
-			Object.assign(this.p1, game.p1);
+		if (game.player1) {
+			Object.assign(this.p1, game.player1);
 		}
-		if (game.p2) {
-			console.log("Updating p2:", game.p2);
-			Object.assign(this.p2, game.p2);
+		if (game.player2) {
+			Object.assign(this.p2, game.player2);
 		}
 		if (game.ball) {
-			console.log("Updating ball:", game.ball);
 			Object.assign(this.ball, game.ball);
 		}
 		if (typeof game.p1Score === "number") {
-			console.log("Updating p1Score:", game.p1Score);
 			this.p1Score = game.p1Score;
 		}
 		if (typeof game.p2Score === "number") {
-			console.log("Updating p2Score:", game.p2Score);
 			this.p2Score = game.p2Score;
 		}
 	}
@@ -160,6 +154,9 @@ export class GameComponentOnline {
 		this.drawBackground();
 		
 		this.drawScore();
+
+		this.context.fillRect(this.p1.x, this.p1.y, this.p1.width, this.p1.height);
+		this.context.fillRect(this.p2.x, this.p2.y, this.p2.width, this.p2.height);
 	};
 
 	private drawScore() {
