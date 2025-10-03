@@ -49,7 +49,7 @@ export const GameOnline: Page = {
         //connect
         if (response.method === "update") {
           canStart = true;
-          const game = response.game;
+          const game = response.room;
           if (currentGame && game) {
             currentGame.updateGameState(game);
             currentGame.setCanStart(canStart);

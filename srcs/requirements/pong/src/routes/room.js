@@ -1,9 +1,11 @@
 import Player from './player.js';
 import Ball from './ball.js';
+import './gameMath.js';
 
 function sleep(ms) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
 }
+
 
 class Room {
 	constructor(roomId, gameMode, gamePoint, roomName) {
@@ -20,16 +22,16 @@ class Room {
 	}
 
 	join(client, socket) {
-		
+
 		if (this.clients.length === 0)
 			client._player = 1;
 		else
 			client._player = 2;
-		
+
 		this.clients.push(client);
-		
+
 		const roomUrl = `/gameOnline?gameId=${this.roomId}`;
-		
+
 		socket.send(JSON.stringify({
 			method: 'join',
 			status: 'success',
@@ -49,35 +51,100 @@ class Room {
 		return false;
 	}
 
-	async updatePlayerR(int){
+	async updatePlayerR(int) {
 		this.playerR += int;
 
-		console.log("playerR = "+ this.playerR);
+		console.log("playerR = " + this.playerR);
 
 
-		if(this.playerR === 2){
+		if (this.playerR === 2) {
 			this.state = "playing-game";
 
 			const payLoad = {
-			"method": "Start",
-			"room": this.toJSON()
+				"method": "Start",
+				"room": this.toJSON()
 			}
+
 			this.clients.forEach(c => {
-				if (c.connection && c.connection.readyState === c.connection.OPEN) {
-					c.connection.send(JSON.stringify(payLoad));
+				if (c._conection && typeof c._conection.send === 'function') {
+					c._conection.send(JSON.stringify(payLoad));
+				} else {
+					console.error("Client socket non défini pour", c);
 				}
 			});
 			await this.gameLoop();
 		}
 	}
 
-	find(clientId) {return this.clients.find(c => c.clientId === clientId);}
+	find(clientId) { return this.clients.find(c => c.clientId === clientId); }
 
-	
+	updatePlayer(socket, data) {
 
-	async gameLoop(){
-		while(this.state === "playing-game"){
+		this.clients.forEach(c => {
+			if (c.connection && c.connection.readyState === c.connection.OPEN && c.connection === socket) {
+				const player = c._player
+				if (player === 1) {
+					if (data.type === "UP") {
+						if (e.code === "KeyW" || e.code === "ArrowUp") {
+							this.player1._vel_y = 4;
+						}
+
+						if (e.code === "ArrowDown" || e.code === "KeyS") {
+							this.player1._vel_y = -4;
+						}
+					} else if (data.type === "DOWN") {
+						if (e.code === "KeyW" || e.code === "KeyS") {
+							this.player1._vel_y = 0;
+
+						}
+						if (e.code === "ArrowUp" || e.code === "ArrowDown") {
+							this.player1._vel_y = 0;
+
+						}
+					}
+				} else if (player === 2) {
+					if (data.type === "UP") {
+						if (e.code === "KeyW" || e.code === "ArrowUp") {
+
+						}
+
+						if (e.code === "ArrowDown" || e.code === "KeyS") {
+
+						}
+					} else if (data.type === "DOWN") {
+						if (e.code === "KeyW" || e.code === "KeyS") {
+
+						}
+						if (e.code === "ArrowUp" || e.code === "ArrowDown") {
+
+						}
+					}
+				}
+
+
+
+			}
+
+		});
+	}
+
+	async gameLoop() {
+		while (this.state === "playing-game") {
 			console.log("wawawawawww\n");
+
+
+			const payLoad = {
+				"method": "update",
+				"room": this.toJSON()
+			}
+
+			this.clients.forEach(c => {
+				if (c._conection && typeof c._conection.send === 'function') {
+					c._conection.send(JSON.stringify(payLoad));
+				} else {
+					console.error("Client socket non défini pour", c);
+				}
+			});
 			await sleep(500)
 		}
 	}
@@ -85,16 +152,16 @@ class Room {
 	// Sérialiser la room pour l'envoyer au front
 	toJSON() {
 		return {
-				roomId: this.roomId,
-				ball: this.ball?.toJSON ? this.ball.toJSON() : this.ball,
-				roomName: this.roomName,
-				playerR: this.playerR,
-				gameMode: this.gameMode,
-				state: this.state,
-				gamePoint: this.gamePoint,
-				player1: this.player1?.toJSON ? this.player1.toJSON() : this.player1,
-				player2: this.player2?.toJSON ? this.player2.toJSON() : this.player2,
-				clients: this.clients.map(c => c.JSON)
+			roomId: this.roomId,
+			ball: this.ball?.toJSON ? this.ball.toJSON() : this.ball,
+			roomName: this.roomName,
+			playerR: this.playerR,
+			gameMode: this.gameMode,
+			state: this.state,
+			gamePoint: this.gamePoint,
+			player1: this.player1?.toJSON ? this.player1.toJSON() : this.player1,
+			player2: this.player2?.toJSON ? this.player2.toJSON() : this.player2,
+			clients: this.clients.map(c => c.toJSON())
 		};
 	}
 }
