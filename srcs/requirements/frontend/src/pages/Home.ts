@@ -117,20 +117,15 @@ const initGamePreview = function () {
 export const Home: Page = {
 	render() {
 		return `
-			<section class="h-screen flex flex-col items-center justify-center">
+		<!-- Home page -->
+			<section class="h-screen flex flex-col items-center justify-center relative">
 				<div class="flex lg:flex-row items-start justify-center p-2">
 					<div class="text-center mb-5 ">
-						<div class="relative inline-block">
-							<span class="absolute top-0 left-0 text-8xl font-bold text-white">
-								ft_transcendence
-							</span>
-
-							<span
-								class="relative z-10 text-8xl text-transparent bg-clip-text 
-									bg-gradient-to-r from-red-500 via-blue-500 to-green-500
-									bg-[length:400%_400%] animate-gradientShift">
-								ft_transcendence
-							</span>
+						<div class="relative inline-block
+								relative z-10 text-title text-transparent bg-clip-text 
+								bg-gradient-to-r from-red-500 via-blue-500 to-green-500
+								bg-[length:400%_400%] animate-gradientShift">
+							ft_transcendence
 						</div>
 					</div>
 				</div>
@@ -138,16 +133,22 @@ export const Home: Page = {
 				<div class="flex justify-center gap-4 mb-8">
 					<button 
 						id="play-btn" 
-						class="px-8 py-4 bg-white text-black text-lg font-semibold  transform hover:bg-gray-300  duration-200 shadow-lg">
+						class="px-12 py-8 bg-gray-900 text-white text-7xl font-semibold transform hover:bg-gray-700 duration-200 shadow-lg">
 						Jouer maintenant
 					</button>
 				</div>
+
+				<div id="scroll-indicator" class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 transition-opacity duration-500 opacity-100">
+					<img src="arrow.png" alt="scroll down" class="w-12 animate-arrowHueBlink [animation-delay:0s]" />
+					<img src="arrow.png" alt="scroll down" class="w-10 animate-arrowHueBlink [animation-delay:0.1s]" />
+					<img src="arrow.png" alt="scroll down" class="w-10 animate-arrowHueBlink [animation-delay:0.2s]" />
+				</div>
 			</section>
 
-
-			<section class="py-20">
+		<!-- Game preview -->
+			<section class="py-20"> 
 				<div class="bg-white p-5 max-w-xl mx-auto shadow-lg border">
-					<h3 class="text-2xl font-bold text-center mb-6 text-gray-700">Aperçu du Jeu</h3>
+					<h3 id="preview-text" class="text-2xl font-bold text-center mb-6 text-gray-700">Aperçu du Jeu</h3>
 					
 					<div class="flex justify-center">
 						<canvas 
@@ -161,7 +162,7 @@ export const Home: Page = {
 				</div>
 			</section>
 
-
+		<!-- Game rules -->
 			<section class="">
 				<div class="mt-6 p-5 max-w-xl bg-gray-50 mx-auto">
 					<h4 class="font-semibold mb-2 w-full mx-auto text-gray-700">Règles :</h4>
@@ -192,6 +193,22 @@ export const Home: Page = {
 				window.history.pushState({}, "", '/stats');
 				window.dispatchEvent(new PopStateEvent('popstate'));
 			});
+		}
+
+		const scrollIndicator = root.querySelector('#scroll-indicator') as HTMLDivElement | null;
+		if (scrollIndicator) {
+		const handleScroll = () => {
+			if (window.scrollY > 300) {
+			scrollIndicator.classList.add('opacity-0');
+			} else {
+			scrollIndicator.classList.remove('opacity-0'); // fade back in
+			}
+		};
+
+		window.addEventListener('scroll', handleScroll);
+
+		const cleanup = () => window.removeEventListener('scroll', handleScroll);
+		(window as any).cleanupScrollIndicator = cleanup;
 		}
 
 		// Initialiser l'aperçu du jeu

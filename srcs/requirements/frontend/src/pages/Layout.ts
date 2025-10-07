@@ -61,20 +61,33 @@ const initPastelBackground = () => {
 export const Layout = {
   render(content: string): string {
     return `
-      <div class="flex flex-col h-screen font-tiny5">
-        <nav class="fixed w-screen z-20 h-16 bg-gray-400 flex items-center justify-between">
+      <div class="flex flex-col h-screen font-custom font-tiny5">
+        <nav class="fixed w-screen z-20 h-16 flex items-center justify-between bg-gray-900">
           <!-- Navigation gauche -->
           <div class="flex my-5 gap-3 mx-5">
-            <button id="home-btn" class="flex items-center px-3 py-1 rounded hover:bg-gray-300 transition">
-              <img src="home.png" class="h-8 w-8"/>
+            <button id="home-btn" class="flex items-center px-3 py-1  hover:bg-gray-700 transition-all duration-300">
+              <div class="relative inline-block
+                  z-10 text-2xl text-transparent bg-clip-text
+                  bg-gradient-to-r from-red-500 via-blue-500 to-green-500
+                  bg-[length:300%_100%] bg-[position:0%_50%]">
+                ft_transcendence
+              </div>
             </button>
-            <button id="game-btn" class="flex items-center px-3 py-1 rounded hover:bg-gray-300 transition">
-              <span class="text-2xl flex items-center justify-center w-8 h-8 p-0 m-0">🎮</span>
-              <span class="ml-2">Game</span>
+            <button id="game-btn" class="flex items-center px-3 py-1  hover:bg-gray-700 transition-all duration-300">
+              <div class="relative inline-block
+                  z-10 text-2xl text-transparent bg-clip-text
+                  bg-gradient-to-r from-red-500 via-blue-500 to-green-500
+                  bg-[length:300%_100%] bg-[position:50%_50%]">
+                jouer
+              </div>
             </button>
-            <button id="stats-btn" class="flex items-center px-3 py-1 rounded hover:bg-gray-300 transition">
-              <span class="text-2xl flex items-center justify-center w-8 h-8 p-0 m-0">📊</span>
-              <span class="ml-2">Stats</span>
+            <button id="stats-btn" class="flex items-center px-3 py-1  hover:bg-gray-700 transition-all duration-300">
+              <div class="relative inline-block
+                  z-10 text-2xl text-transparent bg-clip-text
+                  bg-gradient-to-r from-red-500 via-blue-500 to-green-500
+                  bg-[length:300%_100%] bg-[position:100%_50%]">
+                stats
+              </div>
             </button>
           </div>
           
@@ -84,21 +97,21 @@ export const Layout = {
             <div class="flex items-center gap-2">
               <button 
                 id="lang-fr" 
-                class="w-8 h-6 rounded transition hover:scale-110 hover:shadow-md border-2 border-transparent" 
+                class="w-8 h-6 transition bg-transparent hover:bg-gray-300" 
                 data-lang="fr"
                 title="Français">
                 🇫🇷
               </button>
               <button 
                 id="lang-en" 
-                class="w-8 h-6 rounded transition hover:scale-110 hover:shadow-md border-2 border-transparent" 
+                class="w-8 h-6 transition hover:bg-gray-300 border-2" 
                 data-lang="en"
                 title="English">
                 🇺🇸
               </button>
               <button 
                 id="lang-es" 
-                class="w-8 h-6 rounded transition hover:scale-110 hover:shadow-md border-2 border-transparent" 
+                class="w-8 h-6 transition hover:bg-gray-300 border-2" 
                 data-lang="es"
                 title="Español">
                 🇪🇸
@@ -110,10 +123,10 @@ export const Layout = {
             
             <!-- Bouton Login -->
             <button 
-              id="login-btn" 
+              id="login-btn"
               class="flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-200 shadow-md hover:shadow-lg">
               <span class="text-lg mr-2">👤</span>
-              <span class="font-semibold">Login</span>
+              <span data-i18n="login-btn" class="font-semibold">Connexion</span>
             </button>
           </div>
         </nav>
@@ -478,34 +491,25 @@ export const Layout = {
     modal.classList.remove('flex');
   },
 
-  // Méthode pour changer la langue
-  changeLanguage(root: HTMLElement, lang: string): void {
-    localStorage.setItem('language', lang);
+  async changeLanguage(root: HTMLElement, lang: string): Promise<void> {
+    localStorage.setItem("language", lang);
     this.setActiveLanguage(root, lang);
-    
-    console.log(`🌍 Langue changée vers: ${lang}`);
-    
-    // Exemple de traduction simple
-    const translations = {
-      fr: { home: 'Accueil', game: 'Jeu', stats: 'Stats', login: 'Connexion' },
-      en: { home: 'Home', game: 'Game', stats: 'Stats', login: 'Login' },
-      es: { home: 'Inicio', game: 'Juego', stats: 'Stats', login: 'Iniciar' }
-    };
 
-    const t = translations[lang as keyof typeof translations];
-    if (t) {
-      const homeSpan = root.querySelector('#home-btn span:last-child');
-      const gameSpan = root.querySelector('#game-btn span:last-child');
-      const statsSpan = root.querySelector('#stats-btn span:last-child');
-      const loginSpan = root.querySelector('#login-btn span:last-child');
+    console.log(`Changed language to ${lang}`);
 
-      if (homeSpan) homeSpan.textContent = t.home;
-      if (gameSpan) gameSpan.textContent = t.game;
-      if (statsSpan) statsSpan.textContent = t.stats;
-      if (loginSpan && !localStorage.getItem('isLoggedIn')) loginSpan.textContent = t.login;
-    }
+    const res = await fetch("translations.json");
+    const translations = await res.json();
 
-    this.showNotification(`Langue changée vers ${this.getLanguageName(lang)}`);
+    const t = translations[lang];
+    if (!t) return ;
+
+    root.querySelectorAll<HTMLElement>("[data-i18n]").forEach(el => {
+      const key = el.dataset.i18n as keyof typeof t;
+
+      if (key === "login" && localStorage.getItem("isLoggedIn")) return;
+
+      if (t[key]) el.textContent = t[key];
+    });
   },
 
   setActiveLanguage(root: HTMLElement, lang: string): void {
@@ -513,9 +517,9 @@ export const Layout = {
     
     langButtons.forEach(btn => {
       if (btn.dataset.lang === lang) {
-        btn.className = 'w-8 h-6 rounded transition hover:scale-110 hover:shadow-md border-2 border-blue-500 shadow-lg transform scale-110';
+        btn.className = 'w-8 h-6 transition bg-gray-800 hover:bg-gray-800 transform ';
       } else {
-        btn.className = 'w-8 h-6 rounded transition hover:scale-110 hover:shadow-md border-2 border-transparent';
+        btn.className = 'w-8 h-6 transition hover:bg-gray-800 ';
       }
     });
   },
@@ -527,13 +531,13 @@ export const Layout = {
         const username = localStorage.getItem('username') || 'User';
         loginBtn.innerHTML = `
           <span class="text-lg mr-2">👋</span>
-          <span class="font-semibold">${username}</span>
+          <span data-i18n="login-btn" class="font-semibold">${username}</span>
         `;
         loginBtn.className = 'flex items-center px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all duration-200 shadow-md hover:shadow-lg';
       } else {
         loginBtn.innerHTML = `
           <span class="text-lg mr-2">👤</span>
-          <span class="font-semibold">Login</span>
+          <span data-i18n="login-btn" class="font-semibold">Connexion</span>
         `;
         loginBtn.className = 'flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-200 shadow-md hover:shadow-lg';
       }

@@ -23,8 +23,14 @@ interface GameState {
 }
 
 interface Page{
-  render():string;
-  mount(root:HTMLElement):void;
+  render(): string;
+  mount(root: HTMLElement): void;
 }
 
-export type { Player, Ball, GameState , Page};
+interface StatsPage extends Page {
+  renderProfile(): string;
+  renderHistory(): string;
+  mountProfileEvents(root: HTMLElement): void;
+}
+
+export type { Player, Ball, GameState , Page, StatsPage};
