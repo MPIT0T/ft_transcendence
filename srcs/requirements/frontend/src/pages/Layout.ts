@@ -57,36 +57,19 @@ const initPastelBackground = () => {
     loop();
 };
 
-
 export const Layout = {
   render(content: string): string {
     return `
       <div class="flex flex-col h-screen font-custom font-tiny5">
-        <nav class="fixed w-screen z-20 h-16 flex items-center justify-between bg-gray-900">
+        <nav class="fixed w-screen z-20 h-24 flex items-center justify-between bg-transparent">
           <!-- Navigation gauche -->
           <div class="flex my-5 gap-3 mx-5">
             <button id="home-btn" class="flex items-center px-3 py-1  hover:bg-gray-700 transition-all duration-300">
               <div class="relative inline-block
-                  z-10 text-2xl text-transparent bg-clip-text
+                  z-10 text-4xl text-transparent bg-clip-text
                   bg-gradient-to-r from-red-500 via-blue-500 to-green-500
-                  bg-[length:300%_100%] bg-[position:0%_50%]">
-                ft_transcendence
-              </div>
-            </button>
-            <button id="game-btn" class="flex items-center px-3 py-1  hover:bg-gray-700 transition-all duration-300">
-              <div class="relative inline-block
-                  z-10 text-2xl text-transparent bg-clip-text
-                  bg-gradient-to-r from-red-500 via-blue-500 to-green-500
-                  bg-[length:300%_100%] bg-[position:50%_50%]">
-                jouer
-              </div>
-            </button>
-            <button id="stats-btn" class="flex items-center px-3 py-1  hover:bg-gray-700 transition-all duration-300">
-              <div class="relative inline-block
-                  z-10 text-2xl text-transparent bg-clip-text
-                  bg-gradient-to-r from-red-500 via-blue-500 to-green-500
-                  bg-[length:300%_100%] bg-[position:100%_50%]">
-                stats
+                  bg-[length:400%_400%] animate-gradientShift">
+                ft_
               </div>
             </button>
           </div>
@@ -94,35 +77,35 @@ export const Layout = {
           <!-- Navigation droite -->
           <div class="flex items-center gap-4 mx-5">
             <!-- Sélecteur de langue -->
-            <div class="flex items-center gap-2">
-              <button 
-                id="lang-fr" 
-                class="w-8 h-6 transition bg-transparent hover:bg-gray-300" 
-                data-lang="fr"
-                title="Français">
-                🇫🇷
-              </button>
-              <button 
-                id="lang-en" 
-                class="w-8 h-6 transition hover:bg-gray-300 border-2" 
-                data-lang="en"
-                title="English">
-                🇺🇸
-              </button>
-              <button 
-                id="lang-es" 
-                class="w-8 h-6 transition hover:bg-gray-300 border-2" 
-                data-lang="es"
-                title="Español">
-                🇪🇸
-              </button>
-            </div>
+<!--            <div class="flex items-center gap-2">-->
+<!--              <button -->
+<!--                id="lang-fr" -->
+<!--                class="w-8 h-6 transition bg-transparent hover:bg-gray-300" -->
+<!--                data-lang="fr"-->
+<!--                title="Français">-->
+<!--                🇫🇷-->
+<!--              </button>-->
+<!--              <button -->
+<!--                id="lang-en"-->
+<!--                class="w-8 h-6 transition hover:bg-gray-300 border-2"-->
+<!--                data-lang="en"-->
+<!--                title="English">-->
+<!--                🇺🇸-->
+<!--              </button>-->
+<!--              <button-->
+<!--                id="lang-es"-->
+<!--                class="w-8 h-6 transition hover:bg-gray-300 border-2"-->
+<!--                data-lang="es"-->
+<!--                title="Español">-->
+<!--                🇪🇸-->
+<!--              </button>-->
+<!--            </div>-->
             
             <!-- Séparateur -->
-            <div class="w-px h-8 bg-gray-600"></div>
+<!--            <div class="w-px h-8 bg-gray-600"></div>-->
             
             <!-- Bouton Login -->
-            <button 
+            <button
               id="login-btn"
               class="flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-200 shadow-md hover:shadow-lg">
               <span class="text-lg mr-2">👤</span>
