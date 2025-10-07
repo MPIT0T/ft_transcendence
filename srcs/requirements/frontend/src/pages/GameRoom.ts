@@ -181,8 +181,10 @@ export const GameRoom: Page = {
 
 	mount(root: HTMLElement): void {
 		let roomId;
-		if (ws === undefined)
-			ws = new WebSocket("/pong/ws");
+		if (ws === undefined) {
+			const host = window.location.host;
+			ws = new WebSocket(`wss://${host}/pong/ws`);
+		}
 		ws.onmessage = message => {
 			//message.data
 			const response = JSON.parse(message.data);
