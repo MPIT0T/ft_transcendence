@@ -4,34 +4,34 @@ export let ws: WebSocket | undefined;
 let clientId: string | undefined;
 
 // Additional methods
-const reloadRooms = function (root: HTMLElement) {
+const reloadTournament = function (root: HTMLElement) {
 
 	const payLoad = {
-		"method": "rooms",
+		"method": "Tournament",
 		"clientId": clientId
 	}
-	if (ws)
+	if(ws)
 		ws.send(JSON.stringify(payLoad));
 }
 
-function displayRooms(root: HTMLElement, rooms: any[]) {
-	const container = root.querySelector('#rooms-container') as HTMLDivElement;
-	container.innerHTML = ''; // Vider le container
-
-	rooms.forEach(room => {
-		const roomBtn = document.createElement('button');
-		roomBtn.className = 'room-btn px-6 py-3 border-2 border-black bg-white hover:bg-gray-100 transition-colors font-mono';
-		roomBtn.dataset.roomId = room.roomId;
-		roomBtn.innerHTML = `
+function displayTournament(root: HTMLElement, Tournament: any[]) {
+    const container = root.querySelector('#Tournament-container') as HTMLDivElement;
+    container.innerHTML = ''; // Vider le container
+    
+    Tournament.forEach(room => {
+        const roomBtn = document.createElement('button');
+        roomBtn.className = 'room-btn px-6 py-3 border-2 border-black bg-white hover:bg-gray-100 transition-colors font-mono';
+        roomBtn.dataset.gameId = room.id;
+        roomBtn.innerHTML = `
             ${room.roomName}<br>
             <span class="text-sm text-gray-600">${room.players}</span>
         `;
-		roomBtn.addEventListener('click', () => {
-			joinRoom(room.roomId);
-		});
-
-		container.appendChild(roomBtn);
-	});
+        roomBtn.addEventListener('click', () => {
+            joinRoom(room.id);
+        });
+        
+        container.appendChild(roomBtn);
+    });
 }
 
 const createRoom = function (root: HTMLElement): void {
@@ -39,87 +39,68 @@ const createRoom = function (root: HTMLElement): void {
 	const gamePoint = (root.querySelector('#game-point') as HTMLSelectElement).value;
 	const gameMode = (root.querySelector('#game-mode') as HTMLSelectElement).value;
 
-	const payLoad = {
-		"method": "create",
-		"clientId": clientId,
-		"roomName": roomName,
-		"gamePoint": gamePoint,
-		"gameMode": gameMode
-	}
-	if (ws)
-		ws.send(JSON.stringify(payLoad));
+		const payLoad = {
+			"method": "create",
+			"clientId": clientId,
+			"roomName": roomName,
+			"gamePoint": gamePoint,
+			"gameMode": gameMode
+		}
+		if(ws)
+			ws.send(JSON.stringify(payLoad));
 
-	// Close modal
-	const modal = root.querySelector('#create-room-modal') as HTMLDivElement;
-	modal.classList.add('hidden');
-	modal.classList.remove('flex');
+		// Close modal
+		const modal = root.querySelector('#create-room-modal') as HTMLDivElement;
+		modal.classList.add('hidden');
+		modal.classList.remove('flex');
 
-	// Reset form
-	(root.querySelector('#create-room-form') as HTMLFormElement).reset();
+		// Reset form
+		(root.querySelector('#create-room-form') as HTMLFormElement).reset();
 }
 
-const joinRoom = function (roomId: string) {
-	const payLoad = {
-		"method": "join",
-		"clientId": clientId,
-		"roomId": roomId
+const 	joinRoom= function(gameId: string){
+		const payLoad = {
+			"method": "join",
+			"clientId": clientId,
+			"gameId": gameId
+		}
+		if(ws)
+			ws.send(JSON.stringify(payLoad));
 	}
-	if (ws)
-		ws.send(JSON.stringify(payLoad));
-}
 
-export const GameRoom: Page = {
+export const TournamentRoom: Page = {
 	render() {
 		return `
 	<div class="max-w-6xl mx-auto p-6 space-y-6">
 
 		<div class="bg-white border-2 border-black p-8">
 			<div class="flex justify-center">
-				<h1 class="text-2xl font-bold text-center">Ranked Game</h1>
-			</div>
-			<div class="text-center mb-8">
-				<div class="flex justify-center space-x-4">
-					
-					<button id="vs-btn" class="px-8 py-3 border-2 border-black bg-white hover:bg-gray-100 transition-colors font-mono">
-						👤 vs 👤
-					</button>
-					</div>
-				<p>
-					Le mode <span class="font-bold">Ranked</span> vous permet d'affronter un autre joueur dans une partie compétitive en 1 contre 1.<br>
-					Chaque victoire ou défaite affecte votre classement général.<br>
-					Relevez le défi pour grimper dans le classement et montrer vos compétences !
-				</p>
-			</div>
-		</div>
-
-		<div class="bg-white border-2 border-black p-8">
-			<div class="flex justify-center">
-				<h1 class="text-2xl font-bold text-center">Frendly Game</h1>
+				<h1 class="text-2xl font-bold text-center">Tournament</h1>
 			</div>
 			<div class="text-center mb-8">
 				<div class="flex justify-center space-x-4">
 					
 					<button id="create-room-btn" class="px-8 py-3 border-2 border-black bg-white hover:bg-gray-100 transition-colors font-mono">
-						+ Create a room
+						+ Create a Tournament
 					</button>
 				</div>
 				<p>
-					Le mode <span class="font-bold">Friendly</span> vous permet de jouer des parties amicales sans impact sur votre classement.<br>
-					Créez une salle ou rejoignez celle d'un ami pour vous entraîner, tester de nouvelles stratégies ou simplement vous amuser sans pression.<br>
-					C'est l'endroit idéal pour défier vos amis ou rencontrer de nouveaux joueurs dans une ambiance détendue !
+					Le mode <span class="font-bold">Tournament</span> vous permet de participer à des compétitions organisées entre plusieurs joueurs.<br>
+					Créez ou rejoignez un tournoi pour affronter d'autres participants dans une série de matchs à élimination ou en poule.<br>
+					C'est l'occasion idéale de tester vos compétences, de viser la victoire et de grimper dans le classement tout en profitant d'une ambiance compétitive et conviviale !
 				</p>
 			</div>
 		</div>
 
-		<!-- Available Rooms Section -->
+		<!-- Available Tournament Section -->
 		<div class="bg-white border-2 border-black p-6">
 			<div class="flex justify-between items-center mb-6">
-				<h2 class="text-2xl font-bold">Available rooms</h2>
+				<h2 class="text-2xl font-bold">Available Tournament</h2>
 				<button id="reload-btn" class="px-4 py-2 border-2 border-black bg-white hover:bg-gray-100 transition-colors font-mono">
 					🔄 Reload
 				</button>
 			</div>
-			<div class="flex flex-wrap gap-4" id="rooms-container">
+			<div class="flex flex-wrap gap-4" id="Tournament-container">
 				
 			</div>
 		</div>
@@ -128,18 +109,27 @@ export const GameRoom: Page = {
 	<!-- Modal Create Room -->
 	<div id="create-room-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
 		<div class="bg-white border-4 border-black p-8 max-w-md w-full mx-4">
-			<h3 class="text-2xl font-bold mb-6 text-center">Create a Room</h3>
+			<h3 class="text-2xl font-bold mb-6 text-center">Create a Tournament</h3>
 			
 			<form id="create-room-form" class="space-y-4">
 				<div>
-					<label class="block text-sm font-bold mb-2">Room Name:</label>
+					<label class="block text-sm font-bold mb-2">Tournament Name:</label>
 					<input 
 						type="text" 
-						id="room-name" 
+						id="Tournament-name" 
 						class="w-full px-3 py-2 border-2 border-black focus:outline-none focus:border-blue-500"
-						placeholder="Enter room name"
+						placeholder="Enter Tournament name"
 						required
 					>
+				</div>
+
+				<div>
+					<label class="block text-sm font-bold mb-2">Number of Players:</label>
+					<select id="player-count" class="w-full px-3 py-2 border-2 border-black focus:outline-none">
+						<option value="8">8</option>
+						<option value="6">6</option>
+						<option value="4">4</option>
+					</select>
 				</div>
 				
 				<div>
@@ -180,34 +170,38 @@ export const GameRoom: Page = {
 	},
 
 	mount(root: HTMLElement): void {
-		let roomId;
-		if (ws === undefined)
-			ws = new WebSocket("/pong/ws");
+		let gameId;
+		ws = new WebSocket("/api/pong/ws");
+
 		ws.onmessage = message => {
 			//message.data
 			const response = JSON.parse(message.data);
 			//connect
-			if (response.method === "connect") {
+			if (response.method === "connect"){
 				clientId = response.clientId;
 				if (clientId !== undefined) {
 					localStorage.setItem('clientId', clientId);
 				}
-				reloadRooms(root);
 				console.log("Client id Set successfully " + clientId)
 			}
-			if (response.method === "create") {
-				console.log("game successfully created " + response.room.roomId);
-				roomId = response.room.roomId;
-				joinRoom(roomId)
+			if (response.method === "create"){
+				console.log("game successfully created with id " + response.game.id + " with " + response.game.balls + " balls");
+				gameId = response.game.id;
+				joinRoom(gameId)
 			}
-
-			if (response.method === "join") {
+			
+			if (response.method === "join"){
 				if (response.status === "success") {
 					console.log(response.message);
-
-					roomId = response.room.roomId;
-					if (roomId !== undefined) {
-						localStorage.setItem('roomId', roomId);
+                	
+					gameId = response.game.id;
+					if (gameId !== undefined) {
+					localStorage.setItem('gameId', gameId);
+					}
+					
+					let playerNumber = response.player;
+					if (playerNumber !== undefined) {
+					localStorage.setItem('playerNumber', playerNumber);
 					}
 
 					window.location.hash = response.url;
@@ -216,10 +210,10 @@ export const GameRoom: Page = {
 				}
 			}
 
-			if (response.method === "rooms") {
-				console.log("Rooms received:", response.rooms);
-				displayRooms(root, response.rooms);
-			}
+			if (response.method === "Tournament"){
+				console.log("Tournament received:", response.Tournament);
+				displayTournament(root, response.Tournament);
+    		}
 
 		}
 
@@ -245,7 +239,7 @@ export const GameRoom: Page = {
 
 		if (reloadBtn) {
 			reloadBtn.addEventListener('click', () => {
-				reloadRooms(root);
+				reloadTournament(root);
 			});
 		}
 

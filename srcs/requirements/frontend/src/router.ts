@@ -6,6 +6,7 @@ import { Stats } from     "./pages/Stats.js";
 import { GameLoby } from  "./pages/GameLobby.js";
 import { GameOnline } from "./pages/GameOnline.js";
 import { GameRoom } from "./pages/GameRoom.js";
+import { TournamentRoom } from "./pages/TournamentRoom.js";
 
 const routes: Record<string, Page> = {
   "/": Home,
@@ -13,6 +14,7 @@ const routes: Record<string, Page> = {
   "/gameLoby": GameLoby,
   "/gameOnline": GameOnline,
   "/gameRoom": GameRoom,
+  "/tournamentRoom": TournamentRoom,
   "/game": Game,
 }
 
@@ -20,9 +22,15 @@ const getPath = (): string => {
   // const hash = window.location.hash || "/";
   // const path = hash.replace(/^#/, "");
   // return path;
-  const path = window.location.hash.slice(1) || "/";
+  let path = window.location.hash.slice(1) || "/";
+
+  if (path.includes('?')) {
+        path = path.split('?')[0];
+    }
   return path;
 }
+
+
 
 export function startRouter(){
   const root = document.getElementById("root")!;

@@ -131,8 +131,7 @@ export const GameLoby: Page = {
 		const onlineBtn = root.querySelector('#online-mode') as HTMLButtonElement;
 		if (onlineBtn) {
 			onlineBtn.addEventListener('click', () => {
-				// TODO: Implémenter la recherche d'adversaire
-				alert('🌐 Recherche d\'un adversaire en ligne...\n(Fonctionnalité à venir)');
+				window.location.hash = '/gameRoom';
 			});
 		}
 
@@ -141,8 +140,7 @@ export const GameLoby: Page = {
 		const tournamentBtn = root.querySelector('#tournament-mode') as HTMLButtonElement;
 		if (tournamentBtn) {
 			tournamentBtn.addEventListener('click', () => {
-				// TODO: Implémenter les tournois
-				alert('🏆 Système de tournoi en cours de développement...\n(Fonctionnalité à venir)');
+				window.location.hash = '/tournamentRoom';
 			});
 		}
 	}
