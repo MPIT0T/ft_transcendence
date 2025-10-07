@@ -1,18 +1,30 @@
 services:
   api:
-    image: trans-api
     container_name: trans-api
     build:
       context: requirements/api/
+    develop:
+      watch:
+        - action: sync+restart
+          path: requirements/api/src
+          target: app/src
+        - action: rebuild
+          path: requirements/api/Dockerfile
     networks:
       - transcendence
     restart: always
 
   nginx:
-    image: trans-nginx
     container_name: trans-nginx
     build:
       context: requirements/nginx/
+    develop:
+      watch:
+        - action: sync+restart
+          path: requirements/nginx/config/nginx.conf
+          target: etc/nginx/nginx.conf
+        - action: rebuild
+          path: requirements/nginx/Dockerfile
     networks:
       - transcendence
     volumes:
@@ -27,10 +39,10 @@ services:
     restart: always
 
   frontend:
-    image: trans-frontend
     container_name: trans-frontend
     build:
       context: requirements/frontend
+      target: ${TARGET}
     develop:
       watch:
         - action: sync
@@ -41,11 +53,13 @@ services:
           target: /app/dist
         - action: rebuild
           path: requirements/frontend/package.json
+        - action: rebuild
+          path: requirements/frontend/Dockerfile
     networks:
       - transcendence
     volumes:
       - frontend-dist:/app/dist
-    
+
 networks:
   transcendence:
     name: transcendence

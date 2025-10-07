@@ -1,6 +1,6 @@
 import { Player, Ball } from "../interface/gameInterface";
 
-export class GameComponent {
+export class GameComponentOnline {
   private container: HTMLElement;                    // Conteneur DOM
   private canStart: boolean = false;                 // État du jeu (pause/play)
   private canvas: HTMLCanvasElement | null = null;   // Élément canvas
@@ -123,6 +123,7 @@ export class GameComponent {
 
   private update = () => {
     if (!this.canStart || !this.context) return;
+
     
     this.animationId = requestAnimationFrame(this.update);
     

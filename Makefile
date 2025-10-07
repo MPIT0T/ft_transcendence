@@ -1,12 +1,18 @@
 include srcs/.env
 
-all: up
+all: dev
 
-up: secrets
-	@mkdir -p ~/data/frontend-dist
-	docker compose -f srcs/compose.yml up --build
-build:
-	docker compose -f srcs/compose.yml build --no-cache
+dev: build_dev
+	docker compose -f srcs/compose.yml up
+
+prod: build_prod
+	docker compose -f srcs/compose.yml up -d
+
+build_dev: secrets
+	TARGET=dev docker compose -f srcs/compose.yml build --no-cache
+
+build_prod: secrets
+	TARGET=prod docker compose -f srcs/compose.yml build --no-cache
 
 down:
 	docker compose -f srcs/compose.yml down
@@ -32,7 +38,7 @@ clean:
 fclean: clean
 	rm -rf secrets/
 
-re: fclean up
+re: fclean all
 
 secrets:
 	@mkdir -p $@
@@ -45,7 +51,8 @@ secrets:
 help:
 	@echo "Makefile for Docker Compose"
 	@echo "Available targets:"
-	@echo "  up      - Start services"
+	@echo "  prod    - Start services in production mode"
+	@echo "  dev     - Start services in development mode"
 	@echo "  build   - Build services"
 	@echo "  down    - Remove services"
 	@echo "  start   - Start services"
@@ -58,4 +65,4 @@ help:
 	@echo "  clean   - Remove volumes and stop services"
 	@echo "  help    - Show this help message"
 
-.PHONY: all up build down start stop logs prune mysql re fclean clean secrets
+.PHONY: all dev prod build_prod build_dev down start stop logs prune mysql re fclean clean secrets
