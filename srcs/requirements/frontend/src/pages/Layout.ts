@@ -1,6 +1,3 @@
-import translations from "../../public/translations.json";
-
-
 const initPastelBackground = () => {
     const canvas = document.getElementById('background-canvas') as HTMLCanvasElement;
     if (!canvas) return;
@@ -68,43 +65,28 @@ export const Layout = {
         <nav class="fixed w-screen z-20 h-16 flex items-center justify-between bg-gray-900">
           <!-- Navigation gauche -->
           <div class="flex my-5 gap-3 mx-5">
-            <button id="home-btn" class="flex items-center px-3 py-1  hover:bg-gray-800 transition-all duration-300">
-              <div class="relative inline-block">
-                <span class="absolute top-0 left-0 text-2xl font-bold text-black">
-                  ft_transcendence
-                </span>
-                <span
-                  class="relative z-10 text-2xl text-transparent bg-clip-text
-                    bg-gradient-to-r from-red-500 via-blue-500 to-green-500
-                    bg-[length:300%_100%] bg-[position:0%_50%]">
-                  ft_transcendence
-                </span>
+            <button id="home-btn" class="flex items-center px-3 py-1  hover:bg-gray-700 transition-all duration-300">
+              <div class="relative inline-block
+                  z-10 text-2xl text-transparent bg-clip-text
+                  bg-gradient-to-r from-red-500 via-blue-500 to-green-500
+                  bg-[length:300%_100%] bg-[position:0%_50%]">
+                ft_transcendence
               </div>
             </button>
-            <button id="game-btn" class="flex items-center px-3 py-1  hover:bg-gray-800 transition-all duration-300">
-              <div class="relative inline-block">
-                <span class="absolute top-0 left-0 text-2xl font-bold text-black">
-                  jouer
-                </span>
-                <span
-                  class="relative z-10 text-2xl text-transparent bg-clip-text
-                    bg-gradient-to-r from-red-500 via-blue-500 to-green-500
-                    bg-[length:300%_100%] bg-[position:50%_50%]">
-                  jouer
-                </span>
+            <button id="game-btn" class="flex items-center px-3 py-1  hover:bg-gray-700 transition-all duration-300">
+              <div class="relative inline-block
+                  z-10 text-2xl text-transparent bg-clip-text
+                  bg-gradient-to-r from-red-500 via-blue-500 to-green-500
+                  bg-[length:300%_100%] bg-[position:50%_50%]">
+                jouer
               </div>
             </button>
-            <button id="stats-btn" class="flex items-center px-3 py-1  hover:bg-gray-800 transition-all duration-300">
-              <div class="relative inline-block">
-                <span class="absolute top-0 left-0 text-2xl font-bold text-black">
-                  stats
-                </span>
-                <span
-                  class="relative z-10 text-2xl text-transparent bg-clip-text
-                    bg-gradient-to-r from-red-500 via-blue-500 to-green-500
-                    bg-[length:300%_100%] bg-[position:100%_50%]">
-                  stats
-                </span>
+            <button id="stats-btn" class="flex items-center px-3 py-1  hover:bg-gray-700 transition-all duration-300">
+              <div class="relative inline-block
+                  z-10 text-2xl text-transparent bg-clip-text
+                  bg-gradient-to-r from-red-500 via-blue-500 to-green-500
+                  bg-[length:300%_100%] bg-[position:100%_50%]">
+                stats
               </div>
             </button>
           </div>

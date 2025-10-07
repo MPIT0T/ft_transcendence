@@ -121,17 +121,11 @@ export const Home: Page = {
 			<section class="h-screen flex flex-col items-center justify-center relative">
 				<div class="flex lg:flex-row items-start justify-center p-2">
 					<div class="text-center mb-5 ">
-						<div class="relative inline-block">
-							<span class="absolute top-0 left-0 text-8xl font-bold text-white">
-								ft_transcendence
-							</span>
-
-							<span
-								class="relative z-10 text-8xl text-transparent bg-clip-text 
-									bg-gradient-to-r from-red-500 via-blue-500 to-green-500
-									bg-[length:400%_400%] animate-gradientShift">
-								ft_transcendence
-							</span>
+						<div class="relative inline-block
+								relative z-10 text-title text-transparent bg-clip-text 
+								bg-gradient-to-r from-red-500 via-blue-500 to-green-500
+								bg-[length:400%_400%] animate-gradientShift">
+							ft_transcendence
 						</div>
 					</div>
 				</div>
@@ -139,13 +133,13 @@ export const Home: Page = {
 				<div class="flex justify-center gap-4 mb-8">
 					<button 
 						id="play-btn" 
-						class="px-8 py-4 bg-gray-900 text-white border-2 border-white text-lg font-semibold transform hover:bg-gray-700 duration-200 shadow-lg">
+						class="px-12 py-8 bg-gray-900 text-white text-7xl font-semibold transform hover:bg-gray-700 duration-200 shadow-lg">
 						Jouer maintenant
 					</button>
 				</div>
 
 				<div id="scroll-indicator" class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 transition-opacity duration-500 opacity-100">
-					<img src="arrow.png" alt="scroll down" class="w-10 animate-arrowHueBlink [animation-delay:0s]" />
+					<img src="arrow.png" alt="scroll down" class="w-12 animate-arrowHueBlink [animation-delay:0s]" />
 					<img src="arrow.png" alt="scroll down" class="w-10 animate-arrowHueBlink [animation-delay:0.1s]" />
 					<img src="arrow.png" alt="scroll down" class="w-10 animate-arrowHueBlink [animation-delay:0.2s]" />
 				</div>

@@ -7,18 +7,13 @@ export const GameLoby: Page = {
 			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto flex-1">
 
 				<!-- Mode Local -->
-				<button id="local-mode" class="relative group w-full bg-gray-900 p-6 border-2 border-white transition-all duration-300 hover:bg-gray-300 text-left">
+				<button id="local-mode" class="relative group w-full bg-gray-900 p-6 transition-all duration-300 hover:bg-gray-700 text-left">
 					<div class="text-center mt-5">
-						<div class="relative inline-block">
-							<span class="absolute top-0 left-0 text-7xl font-bold text-black">
-								Local
-							</span>
-							<span
-								class="relative z-10 text-7xl text-transparent bg-clip-text
-									bg-gradient-to-r from-red-500 via-blue-500 to-green-500
-									bg-[length:300%_100%] bg-[position:0%_50%]">
-								Local
-							</span>
+						<div class="relative inline-block
+								relative z-10 text-7xl text-transparent bg-clip-text
+								bg-gradient-to-r from-red-500 via-blue-500 to-green-500
+								bg-[length:300%_100%] bg-[position:0%_50%]">
+							Local
 						</div>
 						<p class="text-gray-400 mb-6 text-xl">
 							Jouez à deux sur le même ordinateur. 
@@ -41,32 +36,27 @@ export const GameLoby: Page = {
 					</div>
 
 					<!-- Overlay text -->
-					<div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-white text-3xl font-bold ">
+					<div class="absolute inset-0 bg-gray-700 bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-white text-3xl font-bold ">
 						Click to Join!
 					</div>
 				</button>
 
 
 				<!-- Mode Online -->
-				<button id="online-mode" class="relative group w-full bg-gray-900 p-6 border-2 border-white transition-all duration-300 hover:bg-gray-700 text-left">
+				<button id="online-mode" class="relative group w-full bg-gray-900 p-6 transition-all duration-300 hover:bg-gray-700 text-left">
 					<div class="text-center mt-5">
-						<div id="mode-online-title" class="relative inline-block">
-							<span class="absolute top-0 left-0 text-7xl font-bold text-black">
-								En ligne
-							</span>
-							<span
-								class="relative z-10 text-7xl text-transparent bg-clip-text
-									bg-gradient-to-r from-red-500 via-blue-500 to-green-500
-									bg-[length:300%_100%] bg-[position:50%_50%]">
-								En ligne
-							</span>
+						<div id="mode-online-title" class="relative inline-block
+								relative z-10 text-7xl text-transparent bg-clip-text
+								bg-gradient-to-r from-red-500 via-blue-500 to-green-500
+								bg-[length:300%_100%] bg-[position:50%_50%]">
+							En ligne
 						</div>
-						<p class="text-gray-400 mb-6 text-xl">
+						<p class="text-gray-400 mb-6 text-xl z-10">
 							Affrontez des joueurs du monde entier en temps réel.
 							Système de matchmaking automatique !
 						</p>
 					</div>
-					<div class="space-y-2 mb-6">
+					<div class="space-y-2 mb-6 z-10">
 						<div class="flex justify-between text-xl">
 							<span class="text-gray-300">Joueurs :</span>
 							<span class="font-semibold text-white">2 en ligne</span>
@@ -82,24 +72,20 @@ export const GameLoby: Page = {
 					</div>
 
 					<!-- Overlay text -->
-					<div class="absolute inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-white text-3xl font-bold ">
-						Click to Join!
-					</div>
+					<div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+            <div class="absolute inset-0 bg-gray-700 bg-opacity-30"></div>
+            <span class="relative text-white text-3xl font-bold">Click to Join!</span>
+          </div>
 				</button>
 
 				<!-- Mode Tournoi -->
-				<button id="tournament-mode" class="relative group w-full bg-gray-900 p-6 border-2 border-white transition-all duration-300 hover:bg-gray-300 text-left">
+				<button id="tournament-mode" class="relative group w-full bg-gray-900 p-6 transition-all duration-300 hover:bg-gray-700 text-left">
 					<div class="text-center mt-6">
-						<div id="mode-tournament-title" class="relative inline-block">
-							<span class="absolute top-0 left-0 text-7xl font-bold text-black">
-								Tournoi
-							</span>
-							<span
-								class="relative z-10 text-7xl text-transparent bg-clip-text
-									bg-gradient-to-r from-red-500 via-blue-500 to-green-500
-									bg-[length:300%_100%] bg-[position:100%_50%]">
-								Tournoi
-							</span>
+						<div id="mode-tournament-title" class="relative inline-block
+								relative z-10 text-7xl text-transparent bg-clip-text
+								bg-gradient-to-r from-red-500 via-blue-500 to-green-500
+								bg-[length:300%_100%] bg-[position:100%_50%]">
+							Tournoi
 						</div>
 						<p class="text-gray-400 mb-6 text-xl">
 							Participez à des tournois avec élimination directe. Montez dans le classement mondial !
@@ -121,7 +107,7 @@ export const GameLoby: Page = {
 					</div>
 
 					<!-- Overlay text -->
-					<div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-white text-3xl font-bold ">
+					<div class="absolute inset-0 bg-gray-700 bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-white text-3xl font-bold ">
 						Click to Join!
 					</div>
 				</button>
