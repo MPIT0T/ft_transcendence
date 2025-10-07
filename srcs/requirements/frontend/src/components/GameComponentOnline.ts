@@ -61,20 +61,39 @@ export class GameComponentOnline {
 			console.log("No game state provided.");
 			return;
 		}
+		console.log(game);
 		if (game.player1) {
-			Object.assign(this.p1, game.player1);
+			this.p1.x = game.player1.x;
+			this.p1.y = game.player1.y;
+			this.p1.width = game.player1.width;
+			this.p1.height = game.player1.height;
+			this.p1.vel_y = game.player1.vel_y;
 		}
 		if (game.player2) {
-			Object.assign(this.p2, game.player2);
+			this.p2.x = game.player2.x;
+			this.p2.y = game.player2.y;
+			this.p2.width = game.player2.width;
+			this.p2.height = game.player2.height;
+			this.p2.vel_y = game.player2.vel_y;
 		}
 		if (game.ball) {
-			Object.assign(this.ball, game.ball);
+			this.ball.x = game.ball.x;
+			this.ball.y = game.ball.y;
+			this.ball.width = game.ball.width;
+			this.ball.height = game.ball.height;
+			this.ball.vel_x = game.ball.vel_x;
+			this.ball.vel_y = game.ball.vel_y;
 		}
 		if (typeof game.p1Score === "number") {
 			this.p1Score = game.p1Score;
 		}
 		if (typeof game.p2Score === "number") {
 			this.p2Score = game.p2Score;
+		}
+		
+		// Redessiner immédiatement si le jeu n'est pas encore démarré
+		if (!this.canStart) {
+			this.drawInitialState();
 		}
 	}
 
@@ -153,10 +172,15 @@ export class GameComponentOnline {
 		// Draw background
 		this.drawBackground();
 		
-		this.drawScore();
-
+		// Draw players and ball (white rectangles)
+		this.context.fillStyle = "#FFFFFF";
 		this.context.fillRect(this.p1.x, this.p1.y, this.p1.width, this.p1.height);
 		this.context.fillRect(this.p2.x, this.p2.y, this.p2.width, this.p2.height);
+		
+		// Draw ball
+		this.context.fillRect(this.ball.x, this.ball.y, this.ball.width, this.ball.height);
+		
+		this.drawScore();
 	};
 
 	private drawScore() {
@@ -174,13 +198,13 @@ export class GameComponentOnline {
 	private movePlayer = (e: KeyboardEvent) => {
 		// On ne prend que W, S, ArrowUp et ArrowDown
 		if (["KeyW", "KeyS", "ArrowUp", "ArrowDown"].includes(e.code)) {
-			ws?.send(JSON.stringify({ method: "move",type: "UP", key: e.code, roomId: localStorage.getItem('roomId'), clientId: localStorage.getItem('clientId'), player: localStorage.getItem('playerNumber')}));
+			ws?.send(JSON.stringify({ method: "move",type: "UP", key: e.code, roomId: localStorage.getItem('roomId'), clientId: localStorage.getItem('clientId')}));
 		}
 	};
 
 	private stopPlayer = (e: KeyboardEvent) => {
 		if (["KeyW", "KeyS", "ArrowUp", "ArrowDown"].includes(e.code)) {
-			ws?.send(JSON.stringify({ method: "move",type: "DOWN", key: e.code, roomId: localStorage.getItem('roomId'), clientId: localStorage.getItem('clientId'), player: localStorage.getItem('playerNumber')}));
+			ws?.send(JSON.stringify({ method: "move",type: "DOWN", key: e.code, roomId: localStorage.getItem('roomId'), clientId: localStorage.getItem('clientId')}));
 		}
 
 	};

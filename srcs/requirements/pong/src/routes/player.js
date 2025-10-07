@@ -1,31 +1,44 @@
 class Player {
-	constructor(player) {
-		if (player === 1) {
-			this._x = 20;
-			this._y = 260;
-			this._width = 8;
-			this._height = 80;
-			this._vel_y = 0;
-		} else if (player === 2) {
-			this._x = 872;
-			this._y = 260;
-			this._width = 8;
-			this._height = 80;
-			this._vel_y = 0;
-		}
+	constructor(playerNumber) {
+        this.playerNumber = playerNumber;
+        this.width = 8;
+        this.height = 80;
+        this.vel_y = 0;
+        
+        if (playerNumber === 1) {
+            this.x = 20;
+            this.y = 260;
+        } else {
+            this.x = 872;
+            this.y = 260;
+        }
 	}
 
+	updatePosition(canvasHeight = 600) {
+        const newY = this.y + this.vel_y;
+        
+        if (newY >= 0 && newY <= canvasHeight - this.height) {
+            this.y = newY;
+        }
+    }
 
-	// Convert to JSON
+	setVelocity(vel) {
+        this.vel_y = vel;
+    }
+
+    reset() {
+        this.y = 260;
+        this.vel_y = 0;
+    }
+
 	toJSON() {
 		return {
-		player: {
-			x: this._x,
-			y: this._y,
-			width: this._width,
-			height: this._height,
-			vel_y: this._vel_y
-		}
+			playerNumber: this.playerNumber,
+			x: this.x,
+			y: this.y,
+			width: this.width,
+			height: this.height,
+			vel_y: this.vel_y
 		};
 	}
 }
