@@ -3,7 +3,6 @@
   "version": "0.0.1",
   "description": "server pong",
   "main": "app.js",
-
   "keywords": [],
   "author": "mbrousse",
   "license": "ISC",

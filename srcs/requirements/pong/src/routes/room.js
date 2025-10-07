@@ -1,5 +1,5 @@
-import Player from './player.js';
-import Ball from './ball.js';
+const Player = require('./player.js');
+const Ball = require('./ball.js');
 
 function sleep(ms) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
@@ -176,4 +176,4 @@ class Room {
 	}
 }
 
-export default Room;
+module.exports = Room;

@@ -1,5 +1,5 @@
-import Clients from './clients.js';
-import Rooms from './rooms.js';
+const Clients = require('./clients.js');
+const Rooms = require('./rooms.js');
 
 class Games {
 	constructor() {
@@ -54,4 +54,4 @@ class Games {
 
 }
 
-export default Games;
+module.exports = Games;

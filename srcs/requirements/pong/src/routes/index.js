@@ -1,5 +1,5 @@
 'use strict'
-const Games = require('./games').default;
+const Games = require('./games');
 
 const g_Games = new Games();
 
@@ -138,7 +138,6 @@ function handleGameMove(socket, data) {
 	const room = g_Games.findRoom(data.roomId)
 	if (room === undefined)
 		throw "Room id not good";
-	console.log("wa");
 	room.updatePlayer(socket, data);
 }
 

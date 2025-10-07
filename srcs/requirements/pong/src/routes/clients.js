@@ -1,4 +1,4 @@
-import Client from './client.js';
+const Client = require('./client.js')
 
 class Clients {
 	constructor() {
@@ -31,4 +31,4 @@ class Clients {
 
 }
 
-export default Clients;
+module.exports = Clients;

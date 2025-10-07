@@ -1,4 +1,4 @@
-import Room from './room.js';
+const Room = require('./room.js');
 
 class Rooms {
 	constructor() {
@@ -29,4 +29,4 @@ class Rooms {
 
 }
 
-export default Rooms;
+module.exports = Rooms;
