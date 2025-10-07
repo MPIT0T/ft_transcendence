@@ -135,10 +135,11 @@ function handleCreateRoom(socket, data) {
 function handleGameMove(socket, data) {
 	if (g_Games.findClient(data.clientId) === undefined)
 		throw "Client id not good";
-	if (g_Games.findRoom(data.roomId) === undefined)
+	const room = g_Games.findRoom(data.roomId)
+	if (room === undefined)
 		throw "Room id not good";
-
-	updatePlayer(socket, data);
+	console.log("wa");
+	room.updatePlayer(socket, data);
 }
 
 function handleReady(socket, data) {

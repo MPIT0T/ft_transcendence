@@ -11,14 +11,13 @@ class Ball {
 	// Convert to JSON
 	toJSON() {
 		return {
-			ball: {
+			
 				x: this._x,
 				y: this._y,
 				width: this._width,
 				height: this._height,
 				vel_x: this._vel_x,
 				vel_y: this._vel_y
-			}
 		};
 		}
 }

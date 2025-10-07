@@ -106,17 +106,19 @@ class Room {
 				} else if (player === 2) {
 					if (data.type === "UP") {
 						if (e.code === "KeyW" || e.code === "ArrowUp") {
-
+							this.player2._vel_y = 4;
 						}
 
 						if (e.code === "ArrowDown" || e.code === "KeyS") {
-
+							this.player2._vel_y = -4;
 						}
 					} else if (data.type === "DOWN") {
 						if (e.code === "KeyW" || e.code === "KeyS") {
+							this.player2._vel_y = 0;
 
 						}
 						if (e.code === "ArrowUp" || e.code === "ArrowDown") {
+							this.player2._vel_y = 0;
 
 						}
 					}
@@ -127,6 +129,7 @@ class Room {
 			}
 
 		});
+		console.log()
 	}
 
 	// mathLoop() {
