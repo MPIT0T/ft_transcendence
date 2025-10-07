@@ -1,44 +1,54 @@
-import esbuild from 'esbuild'
-import fs from 'fs'
-import path from 'path'
+import esbuild from 'esbuild';
 
-const isDev = process.env.NODE_ENV === "dev"
+const isDev = process.env.BUILD_MODE === "dev";
 
-function copyPublic() {
-    const publicDir = "./public";
-    const distDir = "./dist";
+const rebuildLogger = {
+    name: 'rebuild-logger',
+    setup(build) {
+        build.onStart(() => {
+            console.log(`Rebuilding at ${new Date().toLocaleTimeString()}...`);
+        });
+        build.onEnd((result) => {
+            if (result.errors.length) {
+                console.error(`Build failed with ${result.errors.length} erros(s).`);
+            } else {
+                console.log(`Build succeeded with ${result.warnings.length} warning(s).`);
+            }
+        });
+    },
+};
 
-    fs.mkdirSync(distDir, {recursive: true});
-
-    fs.readdirSync(publicDir).forEach(file => {
-        fs.copyFileSync(
-            path.join(publicDir, file),
-            path.join(distDir, file)
-        )
-    });
-
-    console.log("Static assets copied successfuly");
+async function buildJS() {
+    if (isDev) {
+        const ctx = await esbuild.context({
+            entryPoints: ["src/main.ts"],
+            bundle: true,
+            outfile: "dist/bundle.js",
+            sourcemap: true,
+            loader: { '.ttf': 'file', },
+            plugins: [rebuildLogger],
+        });
+        await ctx.watch();
+        console.log("Watching for changes...");
+    }
+    else {
+        await esbuild.build({
+            entryPoints: ["src/main.ts"],
+            bundle: true,
+            outfile: "dist/bundle.js",
+            sourcemap: false,
+            minify: true,
+            loader: { '.ttf': 'file', },
+        });
+        console.log("Build complete.");
+    }
 }
 
-copyPublic();
+async function main() {
+    await buildJS();
+}
 
-if (isDev) {
-    const ctx = await esbuild.context({
-        entryPoints: ["src/main.ts"],
-        bundle: true,
-        outfile: "dist/bundle.js",
-        sourcemap: true,
-    });
-    await ctx.watch();
-    console.log("Watching for changes...");
-
-} else {
-    await esbuild.build({
-        entryPoints: ["src/main.ts"],
-        bundle: true,
-        outfile: "dist/bundle.js",
-        sourcemap: false,
-        minify: true,
-    });
-    console.log("Build complete.")
-};
+main().catch(err => {
+    console.error(err);
+    process.exit(1);
+});

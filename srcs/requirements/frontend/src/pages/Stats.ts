@@ -1,21 +1,41 @@
-import type { Page } from "../interface/gameInterface.js"
+import type { StatsPage } from "../interface/gameInterface.js"
 
-export const Stats: Page = {
+export const Stats: StatsPage = {
     render() {
         return `
-            <div class="min-h-screen bg-gray-100 p-6">
+            <div class="h-screen bg-transparent p-6 flex flex-col items-center justify-center">
                 <!-- Header avec onglets -->
                 <div class="max-w-6xl mx-auto mb-6">
-                    <div class="bg-white rounded-lg shadow-lg p-1 flex">
+                    <div class="bg-gray-900 shadow-lg p-1 flex">
                         <button 
-                            id="profile-tab" 
-                            class="flex-1 px-6 py-3 text-center font-semibold rounded-md transition-all duration-200 bg-blue-500 text-white">
-                            👤 Profile
+                            id="profile-tab"
+                            class="flex-1 px-6 py-3 text-center transition-all duration-200 bg-blue-500 text-white">
+                            <div class="relative inline-block">
+                                <span class="absolute top-0 left-0 text-7xl font-bold text-black">
+                                    Profil
+                                </span>
+                                <span
+                                    class="relative z-10 text-7xl text-transparent bg-clip-text
+                                        bg-gradient-to-r from-red-500 via-blue-500 to-green-500
+                                        bg-[length:200%_100%] bg-[position:0%_100%]">
+                                    Profil
+                                </span>
+                            </div>
                         </button>
                         <button 
-                            id="history-tab" 
-                            class="flex-1 px-6 py-3 text-center font-semibold rounded-md transition-all duration-200 text-gray-600 hover:bg-gray-100">
-                            📈 Match History
+                            id="history-tab"
+                            class="flex-1 px-6 py-3 text-center transition-all duration-200 text-white hover:bg-gray-700">
+                            <div class="relative inline-block">
+                                <span class="absolute top-0 left-0 text-7xl font-bold text-black">
+                                    Historique
+                                </span>
+                                <span
+                                    class="relative z-10 text-7xl text-transparent bg-clip-text
+                                        bg-gradient-to-r from-red-500 via-blue-500 to-green-500
+                                        bg-[length:200%_100%] bg-[position:100%_100%]">
+                                    Historique
+                                </span>
+                            </div>
                         </button>
                     </div>
                 </div>
@@ -32,7 +52,7 @@ export const Stats: Page = {
         return `
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- Profil Section -->
-                <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="bg-gray-900 p-6">
                     <!-- Avatar -->
                     <div class="text-center mb-6">
                         <div class="w-20 h-20 bg-gray-300 rounded-full mx-auto mb-3 flex items-center justify-center">
@@ -43,17 +63,17 @@ export const Stats: Page = {
                     
                     <!-- Username -->
                     <div class="text-center mb-6">
-                        <p class="text-sm text-gray-600 bg-gray-200 rounded font-semibold mb-1 p-2">LUCAS</p>
+                        <p class="text-sm text-gray-600 bg-gray-200 font-semibold mb-1 p-2">LUCAS</p>
                         <p class="text-xs text-blue-500 underline cursor-pointer" id="change-username">CHANGE USERNAME</p>
                     </div>
                     
                     <!-- Mail -->
                     <div class="text-center mb-6">
-                        <p class="text-sm text-gray-600 bg-gray-200 rounded font-semibold mb-1 p-2">LUCA@GMAIL.COM</p>
+                        <p class="text-sm text-gray-600 bg-gray-200 font-semibold mb-1 p-2">LUCA@GMAIL.COM</p>
                         <p class="text-xs text-blue-500 underline cursor-pointer" id="change-mail">CHANGE MAIL</p>
                     </div>
                     
-                    <!-- Statistiques principales -->
+                    <!-- Main stats -->
                     <div class="grid grid-cols-3 gap-4 text-center mt-8">
                         <div>
                             <div class="text-2xl font-bold text-gray-800" id="stats-rank">2</div>
@@ -70,28 +90,28 @@ export const Stats: Page = {
                     </div>
                 </div>
 
-                <!-- Statistiques détaillées -->
-                <div class="bg-white rounded-lg shadow-lg p-6">
-                    <h3 class="text-lg font-semibold mb-4 text-gray-800">📊 Statistiques</h3>
+                <!-- Detailed stats -->
+                <div class="bg-gray-900 shadow-lg p-6">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-100">Statistiques</h3>
                     <div class="space-y-4">
-                        <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                            <span class="text-sm font-medium text-gray-700">Parties jouées :</span>
-                            <span class="text-sm font-bold text-gray-900" id="stats-games-played">42</span>
+                        <div class="flex justify-between items-center py-2 border-b border-gray-700">
+                            <span class="text-sm font-medium text-gray-300">Parties jouées :</span>
+                            <span class="text-sm font-bold text-gray-400" id="stats-games-played">42</span>
                         </div>
-                        <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                            <span class="text-sm font-medium text-gray-700">Victoires :</span>
+                        <div class="flex justify-between items-center py-2 border-b border-gray-700">
+                            <span class="text-sm font-medium text-gray-300">Victoires :</span>
                             <span class="text-sm font-bold text-green-600" id="stats-wins">18</span>
                         </div>
-                        <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                            <span class="text-sm font-medium text-gray-700">Défaites :</span>
+                        <div class="flex justify-between items-center py-2 border-b border-gray-700">
+                            <span class="text-sm font-medium text-gray-300">Défaites :</span>
                             <span class="text-sm font-bold text-red-600" id="stats-losses">24</span>
                         </div>
-                        <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                            <span class="text-sm font-medium text-gray-700">Meilleur score :</span>
+                        <div class="flex justify-between items-center py-2 border-b border-gray-700">
+                            <span class="text-sm font-medium text-gray-300">Meilleur score :</span>
                             <span class="text-sm font-bold text-purple-600" id="stats-best-score">1200</span>
                         </div>
                         <div class="flex justify-between items-center py-2">
-                            <span class="text-sm font-medium text-gray-700">Temps de jeu :</span>
+                            <span class="text-sm font-medium text-gray-300">Temps de jeu :</span>
                             <span class="text-sm font-bold text-blue-600" id="stats-playtime">12h 34m</span>
                         </div>
                     </div>
@@ -100,33 +120,33 @@ export const Stats: Page = {
                 <!-- Friends Lists -->
                 <div class="space-y-6">
                     <!-- Online Friends -->
-                    <div class="bg-white rounded-lg shadow-lg p-6">
-                        <h3 class="text-lg font-semibold mb-4 text-gray-800">🟢 Online Friends</h3>
+                    <div class="bg-gray-900 shadow-lg p-6">
+                        <h3 class="text-lg font-semibold mb-4 text-gray-100">Online Friends</h3>
                         <ul class="space-y-3">
                             <li class="flex items-center justify-between">
                                 <span class="text-gray-700 flex items-center">
-                                    <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                                    <span class="w-2 h-2 bg-green-500 mr-2"></span>
                                     BOB
                                 </span>
-                                <button class="px-3 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+                                <button class="px-3 py-1 text-xs bg-blue-500 text-white hover:bg-blue-600 transition-colors">
                                     Invite
                                 </button>
                             </li>
                             <li class="flex items-center justify-between">
                                 <span class="text-gray-700 flex items-center">
-                                    <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                                    <span class="w-2 h-2 bg-green-500 mr-2"></span>
                                     Mike
                                 </span>
-                                <button class="px-3 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+                                <button class="px-3 py-1 text-xs bg-blue-500 text-white hover:bg-blue-600 transition-colors">
                                     Invite
                                 </button>
                             </li>
                             <li class="flex items-center justify-between">
                                 <span class="text-gray-700 flex items-center">
-                                    <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                                    <span class="w-2 h-2 bg-green-500 mr-2"></span>
                                     Mathis
                                 </span>
-                                <button class="px-3 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+                                <button class="px-3 py-1 text-xs bg-blue-500 text-white hover:bg-blue-600 transition-colors">
                                     Invite
                                 </button>
                             </li>
@@ -134,8 +154,8 @@ export const Stats: Page = {
                     </div>
 
                     <!-- Offline Friends -->
-                    <div class="bg-white rounded-lg shadow-lg p-6">
-                        <h3 class="text-lg font-semibold mb-4 text-gray-800">🔴 Offline Friends</h3>
+                    <div class="bg-gray-900 shadow-lg p-6">
+                        <h3 class="text-lg font-semibold mb-4 text-gray-100">Offline Friends</h3>
                         <ul class="space-y-3">
                             <li class="flex items-center">
                                 <span class="w-2 h-2 bg-gray-400 rounded-full mr-2"></span>
@@ -160,11 +180,11 @@ export const Stats: Page = {
         return `
             <div class="space-y-6">
                 <!-- Filtres -->
-                <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="bg-white shadow-lg p-6">
                     <div class="flex flex-wrap gap-4 items-center">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Période :</label>
-                            <select class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <select class="px-3 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 <option>Dernière semaine</option>
                                 <option>Dernier mois</option>
                                 <option>Tout</option>
@@ -172,20 +192,20 @@ export const Stats: Page = {
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Résultat :</label>
-                            <select class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <select class="px-3 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 <option>Tous</option>
                                 <option>Victoires</option>
                                 <option>Défaites</option>
                             </select>
                         </div>
-                        <button class="mt-6 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors">
+                        <button class="mt-6 px-4 py-2 bg-blue-500 text-white hover:bg-blue-600 transition-colors">
                             Filtrer
                         </button>
                     </div>
                 </div>
 
                 <!-- Historique des matches -->
-                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                <div class="bg-white shadow-lg overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-200">
                         <h3 class="text-lg font-semibold text-gray-800">📈 Historique des matches</h3>
                     </div>
@@ -281,19 +301,19 @@ export const Stats: Page = {
 
                 <!-- Statistiques de la période -->
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                    <div class="bg-white shadow-lg p-6 text-center">
                         <div class="text-3xl font-bold text-blue-600">4</div>
                         <div class="text-sm text-gray-600">Parties cette semaine</div>
                     </div>
-                    <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                    <div class="bg-white shadow-lg p-6 text-center">
                         <div class="text-3xl font-bold text-green-600">2</div>
                         <div class="text-sm text-gray-600">Victoires</div>
                     </div>
-                    <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                    <div class="bg-white shadow-lg p-6 text-center">
                         <div class="text-3xl font-bold text-red-600">2</div>
                         <div class="text-sm text-gray-600">Défaites</div>
                     </div>
-                    <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                    <div class="bg-white shadow-lg p-6 text-center">
                         <div class="text-3xl font-bold text-purple-600">50%</div>
                         <div class="text-sm text-gray-600">Winrate</div>
                     </div>
@@ -309,15 +329,15 @@ export const Stats: Page = {
         const contentContainer = root.querySelector('#content-container') as HTMLDivElement;
 
         const switchToProfile = () => {
-            profileTab.className = 'flex-1 px-6 py-3 text-center font-semibold rounded-md transition-all duration-200 bg-blue-500 text-white';
-            historyTab.className = 'flex-1 px-6 py-3 text-center font-semibold rounded-md transition-all duration-200 text-gray-600 hover:bg-gray-100';
+            profileTab.className = 'flex-1 px-6 py-3 text-center transition-all duration-200 bg-gray-800 text-white active:outline-none focus:outline-none focus:ring-0';
+            historyTab.className = 'flex-1 px-6 py-3 text-center transition-all duration-200 text-white hover:bg-gray-700';
             contentContainer.innerHTML = this.renderProfile();
             this.mountProfileEvents(root);
         };
 
         const switchToHistory = () => {
-            historyTab.className = 'flex-1 px-6 py-3 text-center font-semibold rounded-md transition-all duration-200 bg-blue-500 text-white';
-            profileTab.className = 'flex-1 px-6 py-3 text-center font-semibold rounded-md transition-all duration-200 text-gray-600 hover:bg-gray-100';
+            historyTab.className = 'flex-1 px-6 py-3 text-center transition-all duration-200 bg-gray-800 text-white active:outline-none focus:outline-none focus:ring-0';
+            profileTab.className = 'flex-1 px-6 py-3 text-center transition-all duration-200 text-white hover:bg-gray-700';
             contentContainer.innerHTML = this.renderHistory();
         };
 
