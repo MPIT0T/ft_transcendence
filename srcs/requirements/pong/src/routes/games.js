@@ -70,6 +70,11 @@ class Games {
 	removeClient(id) { return this._clients.remove(id); }
 	removeRoom(id) { return this._rooms.remove(id); }
 
+	isClientInMatchMaking(id){
+		return this._clientsList.some(c => c._client && c._client._clientId === id);
+	}
+
+	
 	removeClientsList(client) {
 		const index = this._clientsList.findIndex(c => c._client === client)
 		if (index !== -1) {

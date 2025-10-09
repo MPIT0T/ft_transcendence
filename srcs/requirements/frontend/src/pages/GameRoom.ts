@@ -214,9 +214,10 @@ export const GameRoom: Page = {
 
 					window.location.hash = response.url;
 				} else {
-					alert("Failed to join the game room.");
+					alert(response.message);
 				}
 			}
+			
 
 			if (response.method === "rooms") {
 				console.log("Rooms received:", response.rooms);

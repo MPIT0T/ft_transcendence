@@ -61,7 +61,6 @@ export class GameComponentOnline {
 			console.log("No game state provided.");
 			return;
 		}
-		console.log(game);
 		if (game.player1) {
 			this.p1.x = game.player1.x;
 			this.p1.y = game.player1.y;
