@@ -91,19 +91,18 @@ function handleGetRooms(socket, data) {
 		}));
 }
 
-function handleJoinGame(socket, data) {
+
+
+async function handleJoinGame(socket, data) {
 	if (g_Games.findClient(data.clientId) === undefined)
 		throw "Client id not good";
 	const roomId = data.roomId;
 	
 	if (roomId === "ranked") {
-		// Logique pour matchmaking ranked
-		socket.send(JSON.stringify({
-			method: 'join',
-			status: 'success',
-			message: 'Searching for ranked match...',
-			gameType: 'ranked'
-		}));
+		
+		g_Games.createWaitingP(g_Games.findClient(data.clientId));
+		await g_Games.matchMaquing();
+
 		return;
 	}
 	
@@ -141,7 +140,7 @@ function handleGameMove(socket, data) {
 	room.updatePlayer(socket, data);
 }
 
-function handleReady(socket, data) {
+async function handleReady(socket, data) {
 	if (g_Games.findClient(data.clientId) === undefined)
 		throw "Client id not good";
 	if (g_Games.findRoom(data.roomId) === undefined)
@@ -151,6 +150,6 @@ function handleReady(socket, data) {
 	
 	const room = g_Games.findRoom(data.roomId);
 
-	room.updatePlayerR(state);
+	await room.updatePlayerR(state);
 
 }

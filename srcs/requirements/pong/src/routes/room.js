@@ -92,54 +92,6 @@ class Room {
 		return this.clients.find(c => c.clientId === clientId);
 	}
 
-	// updatePlayer(socket, data) {
-
-	// 	this.clients.forEach(c => {
-	// 		if (c.connection && c.connection.readyState === c.connection.OPEN && c.connection === socket) {
-	// 			const player = c._player
-	// 			if (player === 1) {
-	// 				if (data.type === "UP") {
-	// 					if (data.key === "KeyW" || data.key === "ArrowUp") {
-	// 						this.player1.setVelocity(8);
-	// 					}
-
-	// 					if (data.key === "ArrowDown" || data.key === "KeyS") {
-	// 						this.player1.setVelocity(-8);
-	// 					}
-	// 				} else if (data.type === "DOWN") {
-	// 					if (data.key === "KeyW" || data.key === "KeyS") {
-	// 						this.player1.setVelocity(0);
-
-	// 					}
-	// 					if (data.key === "ArrowUp" || data.key === "ArrowDown") {
-	// 						this.player1.setVelocity(0);
-
-	// 					}
-	// 				}
-	// 			} else if (player === 2) {
-	// 				if (data.type === "UP") {
-	// 					if (data.key === "KeyW" || data.key === "ArrowUp") {
-	// 						this.player2.setVelocity(8);
-	// 					}
-
-	// 					if (data.key === "ArrowDown" || data.key === "KeyS") {
-	// 						this.player2.setVelocity(-8);
-	// 					}
-	// 				} else if (data.type === "DOWN") {
-	// 					if (data.key === "KeyW" || data.key === "KeyS") {
-	// 						this.player2.setVelocity(0);
-
-	// 					}
-	// 					if (data.key === "ArrowUp" || data.key === "ArrowDown") {
-	// 						this.player2.setVelocity(0);
-
-	// 					}
-	// 				}
-	// 			}
-	// 		}
-	// 	});
-	// }
-
 
 	updatePlayer(socket, data) {
         this.clients.forEach(c => {
