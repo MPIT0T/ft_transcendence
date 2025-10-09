@@ -61,7 +61,7 @@ export const Layout = {
   render(content: string): string {
     return `
       <div class="flex flex-col h-screen font-custom font-tiny5">
-        <nav class="fixed w-screen z-20 h-24 flex items-center justify-between bg-transparent">
+        <nav class="fixed w-screen z-20 h-24 flex items-center justify-between backdrop-blur-2xs border-b-1 border-gray-50">
           <!-- Navigation gauche -->
           <div class="flex my-5 gap-3 mx-5">
             <button id="home-btn" class="flex items-center px-3 py-1  hover:bg-gray-700 transition-all duration-300">
@@ -107,9 +107,14 @@ export const Layout = {
             <!-- Bouton Login -->
             <button
               id="login-btn"
-              class="flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-200 shadow-md hover:shadow-lg">
+              class="flex items-center px-3 py-2
+                  bg-gray-800 text-gray-50
+                  shadow-[3px_3px_0_#000]
+                  hover:bg-gray-700
+                  hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0_#000]
+                  transition-all duration-100">
               <span class="text-lg mr-2">👤</span>
-              <span data-i18n="login-btn" class="font-semibold">Connexion</span>
+              <span data-i18n="login-btn" class="text-xs text-gray-50">Connexion</span>
             </button>
           </div>
         </nav>
@@ -123,28 +128,28 @@ export const Layout = {
         </div>
 
         <!-- Modal Login -->
-        <div id="login-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-          <div class="bg-white border-4 border-black p-8 max-w-md w-full mx-4">
-            <h3 class="text-2xl font-bold mb-6 text-center">Login</h3>
+        <div id="login-modal" class="fixed inset-0 hidden items-center justify-center backdrop-blur-lg z-50">
+          <div class="border-1 border-gray-50 p-8 max-w-md w-full mx-4">
+            <h3 class="text-2xl font-bold mb-6 text-center text-gray-50">Login</h3>
             
             <form id="login-form" class="space-y-4">
               <div>
-                <label class="block text-sm font-bold mb-2">Username:</label>
+                <label class="block text-sm text-gray-50 font-bold mb-2">Username:</label>
                 <input 
                   type="text" 
                   id="username" 
-                  class="w-full px-3 py-2 border-2 border-black focus:outline-none focus:border-blue-500"
+                  class="w-full px-3 py-2 border-1 border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50"
                   placeholder="Enter your username"
                   required
                 >
               </div>
               
               <div>
-                <label class="block text-sm font-bold mb-2">Password:</label>
+                <label class="block text-sm text-gray-500 font-bold mb-2">Password:</label>
                 <input 
                   type="password" 
                   id="password" 
-                  class="w-full px-3 py-2 border-2 border-black focus:outline-none focus:border-blue-500"
+                  class="w-full px-3 py-2 border-1 border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50"
                   placeholder="Enter your password"
                   required
                 >
@@ -153,9 +158,9 @@ export const Layout = {
               <div class="flex items-center justify-between">
                 <label class="flex items-center">
                   <input type="checkbox" id="remember-me" class="mr-2">
-                  <span class="text-sm">Remember me</span>
+                  <span class="text-sm text-gray-50">Remember me</span>
                 </label>
-                <button type="button" class="text-sm text-blue-500 hover:underline">
+                <button type="button" class="text-sm text-gray-50 hover:underline">
                   Forgot password?
                 </button>
               </div>
@@ -163,20 +168,20 @@ export const Layout = {
               <div class="flex space-x-4 mt-6">
                 <button 
                   type="submit" 
-                  class="flex-1 bg-blue-500 text-white py-2 px-4 border-2 border-black hover:bg-blue-600 transition-colors font-bold">
+                  class="flex-1 text-white py-2 px-4 border-1 border-gray-50 hover:border-blue-500 hover:bg-gray-700 transition-all font-bold">
                   LOGIN
                 </button>
                 <button 
                   type="button" 
                   id="cancel-login" 
-                  class="flex-1 bg-red-500 text-white py-2 px-4 border-2 border-black hover:bg-red-600 transition-colors font-bold">
+                  class="flex-1 text-white py-2 px-4 border-1 border-gray-50 hover:border-red-500 hover:bg-gray-700 transition-all font-bold">
                   CANCEL
                 </button>
               </div>
               
               <div class="text-center mt-4 pt-4 border-t border-gray-300">
-                <p class="text-sm text-gray-600">Don't have an account?</p>
-                <button type="button" id="signup-btn" class="text-blue-500 hover:underline font-semibold">
+                <p class="text-sm text-gray-400">Don't have an account?</p>
+                <button type="button" id="signup-btn" class="text-gray-50 hover:underline font-semibold">
                   Sign up here
                 </button>
               </div>
@@ -185,50 +190,39 @@ export const Layout = {
         </div>
 
         <!-- Modal Register -->
-        <div id="register-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-          <div class="bg-white border-4 border-black p-8 max-w-md w-full mx-4">
-            <h3 class="text-2xl font-bold mb-6 text-center">Register</h3>
+        <div id="register-modal" class="fixed inset-0 hidden items-center justify-center z-50 backdrop-blur-lg">
+          <div class="border-1 border-white p-8 max-w-md w-full mx-4">
+            <h3 class="text-2xl text-gray-50 font-bold mb-6 text-center">Register</h3>
             
             <form id="register-form" class="space-y-4">
               <div>
-                <label class="block text-sm font-bold mb-2">Username:</label>
+                <label class="block text-sm text-gray-50 font-bold mb-2">Username:</label>
                 <input 
                   type="text" 
                   id="reg-username" 
-                  class="w-full px-3 py-2 border-2 border-black focus:outline-none focus:border-blue-500"
+                  class="w-full px-3 py-2 border-1 border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50"
                   placeholder="Choose a username"
                   required
                 >
               </div>
               
               <div>
-                <label class="block text-sm font-bold mb-2">Email:</label>
-                <input 
-                  type="email" 
-                  id="reg-email" 
-                  class="w-full px-3 py-2 border-2 border-black focus:outline-none focus:border-blue-500"
-                  placeholder="Enter your email"
-                  required
-                >
-              </div>
-              
-              <div>
-                <label class="block text-sm font-bold mb-2">Password:</label>
+                <label class="block text-sm text-gray-50 font-bold mb-2">Password:</label>
                 <input 
                   type="password" 
                   id="reg-password" 
-                  class="w-full px-3 py-2 border-2 border-black focus:outline-none focus:border-blue-500"
+                  class="w-full px-3 py-2 border-1 border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50"
                   placeholder="Create a password"
                   required
                 >
               </div>
               
               <div>
-                <label class="block text-sm font-bold mb-2">Confirm Password:</label>
+                <label class="block text-sm text-gray-50 font-bold mb-2">Confirm Password:</label>
                 <input 
                   type="password" 
                   id="reg-confirm-password" 
-                  class="w-full px-3 py-2 border-2 border-black focus:outline-none focus:border-blue-500"
+                  class="w-full px-3 py-2 border-1 border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50"
                   placeholder="Confirm your password"
                   required
                 >
@@ -237,20 +231,20 @@ export const Layout = {
               <div class="flex space-x-4 mt-6">
                 <button 
                   type="submit" 
-                  class="flex-1 bg-green-500 text-white py-2 px-4 border-2 border-black hover:bg-green-600 transition-colors font-bold">
+                  class="flex-1 text-white py-2 px-4 border-1 border-white hover:border-green-500 hover:bg-gray-700 transition-colors font-bold">
                   REGISTER
                 </button>
                 <button 
                   type="button" 
                   id="cancel-register" 
-                  class="flex-1 bg-red-500 text-white py-2 px-4 border-2 border-black hover:bg-red-600 transition-colors font-bold">
+                  class="flex-1 text-white py-2 px-4 border-1 border-white hover:border-red-500 hover:bg-gray-700 transition-colors font-bold">
                   CANCEL
                 </button>
               </div>
               
               <div class="text-center mt-4 pt-4 border-t border-gray-300">
-                <p class="text-sm text-gray-600">Already have an account?</p>
-                <button type="button" id="back-to-login" class="text-blue-500 hover:underline font-semibold">
+                <p class="text-sm text-gray-400">Already have an account?</p>
+                <button type="button" id="back-to-login" class="text-gray-50 hover:underline font-semibold">
                   Login here
                 </button>
               </div>
@@ -512,17 +506,30 @@ export const Layout = {
     if (loginBtn) {
       if (isLoggedIn) {
         const username = localStorage.getItem('username') || 'User';
+        const avatarSrc = 'arrow.png'; // API call to fetch image path
+
         loginBtn.innerHTML = `
-          <span class="text-lg mr-2">👋</span>
-          <span data-i18n="login-btn" class="font-semibold">${username}</span>
-        `;
-        loginBtn.className = 'flex items-center px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all duration-200 shadow-md hover:shadow-lg';
+        <img src="astronaut-removebg.png" alt="avatar" class="w-8 h-8 mr-2" />
+        <span class="text-3xl font-bold text-transparent bg-clip-text
+        bg-gradient-to-r from-red-500 via-blue-500 to-green-500
+        bg-[length:400%_400%] animate-gradientShift">${username}</span>
+      `;
+        loginBtn.className = `
+        flex items-center px-3 py-2
+        hover:bg-gray-700
+        transition-all duration-100
+      `;
       } else {
         loginBtn.innerHTML = `
-          <span class="text-lg mr-2">👤</span>
-          <span data-i18n="login-btn" class="font-semibold">Connexion</span>
-        `;
-        loginBtn.className = 'flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-200 shadow-md hover:shadow-lg';
+        <img src="anonymous-orange.png" alt="login" class="w-8 h-8 mr-2"/>
+        <span data-i18n="login-btn" class="text-2xl text-gray-50">Connexion</span>
+      `;
+        loginBtn.className = `
+        flex items-center px-3 py-2
+        text-gray-50
+        hover:bg-gray-700
+        transition-all duration-100
+      `;
       }
     }
   },
@@ -530,7 +537,7 @@ export const Layout = {
   showNotification(message: string, type: string = 'success'): void {
     const notification = document.createElement('div');
     const bgColor = type === 'error' ? 'bg-red-500' : 'bg-blue-500';
-    notification.className = `fixed top-4 right-4 ${bgColor} text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300 transform translate-x-full`;
+    notification.className = `fixed bottom-4 right-4 ${bgColor} text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300 transform translate-x-full`;
     notification.textContent = message;
     
     document.body.appendChild(notification);

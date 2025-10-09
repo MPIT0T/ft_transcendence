@@ -141,7 +141,7 @@ export const Home: Page = {
   <div class="flex justify-center gap-4 mb-8">
     <button 
       id="play-btn" 
-      class="px-12 py-8 backdrop-blur-2xs text-gray-50 text-7xl font-semibold transform hover:bg-gray-700 hover:bg-opacity-10 duration-200 shadow-lg">
+      class="px-12 py-8 backdrop-blur-2xs border-1 border-gray-50 text-gray-50 text-7xl font-semibold transform hover:bg-gray-700 hover:bg-opacity-10 duration-200 shadow-lg">
       Jouer maintenant
     </button>
   </div>
