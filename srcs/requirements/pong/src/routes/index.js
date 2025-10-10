@@ -72,6 +72,10 @@ module.exports = async function (fastify, opts) {
 				console.log('Client disconnected:', clientId);
 			});
 		});
+
+		fastify.get('/status', function handler(request, reply) {
+			reply.code(200).header('Content-Type', 'text/plain').send('OK');
+		});
 	});
 }
 
@@ -288,7 +292,7 @@ function handleCreateTournaments(socket, data) {
 			return;
 		}
 	}
-	
+
 	g_Games.createTournament(socket, data.gameMode, data.gamePoint, data.tournamentName);
 }
 

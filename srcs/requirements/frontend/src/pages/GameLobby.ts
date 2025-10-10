@@ -64,7 +64,7 @@ export const GameLoby: Page = {
 						</div>
 						<div class="flex justify-between text-3xl">
 							<span class="text-gray-300">Latence :</span>
-							<span class="font-semibold text-green-600">< 50ms</span>
+							<span id="ping" class="font-semibold text-green-600">< 50ms</span>
 						</div>
 						<div class="flex justify-between text-3xl">
 							<span class="text-gray-300">Classement :</span>
@@ -144,6 +144,23 @@ export const GameLoby: Page = {
 			tournamentBtn.addEventListener('click', () => {
 				window.location.hash = '/tournamentRoom';
 			});
+		}
+
+		const ping = root.querySelector('#ping') as HTMLButtonElement;
+		if(ping){
+			setInterval(async () => {
+				const start = Date.now();
+
+				try {
+					const response = await fetch("/pong/status");
+					// Optionally, you can use the response to display actual ping
+					const end = Date.now();
+					const latency = end - start;
+					ping.textContent = `< ${latency}ms`;
+				} catch (error) {
+					ping.textContent = `< error`;
+				}
+			}, 1000);
 		}
 	}
 };
