@@ -60,19 +60,19 @@ const Stats: StatsPage = {
       </div>
       <p class="text-xs text-blue-500 underline cursor-pointer" id="change-avatar">CHANGE AVATAR</p>
     </div>
-    
+
     <!-- Username -->
     <div class="text-center mb-6">
       <p class="text-sm text-gray-600 bg-gray-200 font-semibold mb-1 p-2">LUCAS</p>
       <p class="text-xs text-blue-500 underline cursor-pointer" id="change-username">CHANGE USERNAME</p>
     </div>
-    
+
     <!-- Mail -->
     <div class="text-center mb-6">
       <p class="text-sm text-gray-600 bg-gray-200 font-semibold mb-1 p-2">LUCA@GMAIL.COM</p>
       <p class="text-xs text-blue-500 underline cursor-pointer" id="change-mail">CHANGE MAIL</p>
     </div>
-    
+
     <!-- Main stats -->
     <div class="grid grid-cols-3 gap-4 text-center mt-8">
       <div>
@@ -89,7 +89,7 @@ const Stats: StatsPage = {
       </div>
     </div>
   </div>
-  
+
   <!-- Detailed stats -->
   <div class="backdrop-blur-2xs border-1 border-gray-50 p-6">
     <h3 class="text-lg font-semibold mb-4 text-gray-100">Statistiques</h3>
@@ -116,8 +116,8 @@ const Stats: StatsPage = {
       </div>
     </div>
   </div>
-  
-    <!-- Friends Lists -->
+
+  <!-- Friends Lists -->
   <div class="space-y-6">
     <!-- Online Friends -->
     <div class="backdrop-blur-2xs border-1 border-gray-50 p-6">
@@ -125,11 +125,11 @@ const Stats: StatsPage = {
       <ul class="space-y-3">
         <li class="flex items-center justify-between">
           <span class="text-gray-700 flex items-center">
-          <span class="w-2 h-2 bg-green-500 mr-2"></span>
-            BOB
+            <span class="w-2 h-2 bg-green-500 mr-2"></span>
+              BOB
           </span>
           <button class="px-3 py-1 text-xs bg-blue-500 text-white hover:bg-blue-600 transition-colors">
-              Invite
+            Invite
           </button>
         </li>
         <li class="flex items-center justify-between">
@@ -147,7 +147,7 @@ const Stats: StatsPage = {
             Mathis
           </span>
           <button class="px-3 py-1 text-xs bg-blue-500 text-white hover:bg-blue-600 transition-colors">
-              Invite
+            Invite
           </button>
         </li>
       </ul>
@@ -173,8 +173,8 @@ const Stats: StatsPage = {
     </div>
   </div>
 </div>
-          `;
-      },
+  `;
+  },
 
   renderHistory() {
           return `
@@ -323,7 +323,7 @@ const Stats: StatsPage = {
       },
 
   mount(root) {
-          // Gestion des onglets
+    // Gestion des onglets
     const profileTab = root.querySelector('#profile-tab') as HTMLButtonElement;
     const historyTab = root.querySelector('#history-tab') as HTMLButtonElement;
     const contentContainer = root.querySelector('#content-container') as HTMLDivElement;
