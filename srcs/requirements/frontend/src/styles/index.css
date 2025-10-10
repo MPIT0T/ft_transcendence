@@ -2,42 +2,90 @@
 @source "../../public/**/*.html" "../**/*.{ts,tsx,js,jsx}";
 
 @theme {
-  --font-tiny5: "Tiny5", sans-serif;
+    --font-tiny5: "Tiny5", sans-serif;
 
-  --color-gray-50: oklch(98.5% 0 0);
-  --color-gray-100: oklch(97% 0 0);
-  --color-gray-200: oklch(92.2% 0 0);
-  --color-gray-300: oklch(87% 0 0);
-  --color-gray-400: oklch(70.8% 0 0);
-  --color-gray-500: oklch(55.6% 0 0);
-  --color-gray-600: oklch(43.9% 0 0);
-  --color-gray-700: oklch(37.1% 0 0);
-  --color-gray-800: oklch(26.9% 0 0);
-  --color-gray-900: oklch(20.5% 0 0);
-  --color-gray-950: oklch(14.5% 0 0);
+    --color-gray-50: oklch(98.5% 0 0);
+    --color-gray-100: oklch(97% 0 0);
+    --color-gray-200: oklch(92.2% 0 0);
+    --color-gray-300: oklch(87% 0 0);
+    --color-gray-400: oklch(70.8% 0 0);
+    --color-gray-500: oklch(55.6% 0 0);
+    --color-gray-600: oklch(43.9% 0 0);
+    --color-gray-700: oklch(37.1% 0 0);
+    --color-gray-800: oklch(26.9% 0 0);
+    --color-gray-900: oklch(20.5% 0 0);
+    --color-gray-950: oklch(14.5% 0 0);
 
-  --text-title: 13rem;
-  --text-title--line-height: 1;
+    --color-red-50: oklch(97.1% 0.013 17.38);
+    --color-red-100: oklch(93.6% 0.032 17.717);
+    --color-red-200: oklch(88.5% 0.062 18.334);
+    --color-red-300: oklch(80.8% 0.114 19.571);
+    --color-red-400: oklch(70.4% 0.191 22.216);
+    --color-red-500: oklch(63.7% 0.237 25.331);
+    --color-red-600: oklch(57.7% 0.245 27.325);
+    --color-red-700: oklch(50.5% 0.213 27.518);
+    --color-red-800: oklch(44.4% 0.177 26.899);
+    --color-red-900: oklch(39.6% 0.141 25.723);
+    --color-red-950: oklch(25.8% 0.092 26.042);
 
-  @keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
-  @keyframes arrowBlink {
-    0% { opacity: 1; }
-    25% { opacity: 0.4; }
-    50% { opacity: 1; }
-  }
-  @keyframes arrowHue {
-    0% { filter: hue-rotate(0deg); }
-    100% { filter: hue-rotate(359deg); }
-  }
+    --color-teal-50: oklch(0.984 0.014 180.72);
+    --color-teal-100: oklch(0.953 0.051 180.801);
+    --color-teal-200: oklch(0.91 0.096 180.426);
+    --color-teal-300: oklch(0.855 0.138 181.071);
+    --color-teal-400: oklch(0.777 0.152 181.912);
+    --color-teal-500: oklch(0.704 0.14 182.503);
+    --color-teal-600: oklch(0.6 0.118 184.704);
+    --color-teal-700: oklch(0.511 0.096 186.391);
+    --color-teal-800: oklch(0.437 0.078 188.216);
+    --color-teal-900: oklch(0.386 0.063 188.416);
+    --color-teal-950: oklch(0.277 0.046 192.524);
 
-  --animate-gradientShift: gradientShift 4s ease infinite;
-  --animate-arrowBlink: arrowBlink 1s infinite;
-  --animate-arrowHue: arrowHue 6s linear infinite;
-  --animate-arrowHueBlink: arrowHue 6s ease infinite, arrowBlink 1s infinite;
+    --color-green-50: oklch(0.982 0.018 155.826);
+    --color-green-100: oklch(0.962 0.044 156.743);
+    --color-green-200: oklch(0.925 0.084 155.995);
+    --color-green-300: oklch(0.871 0.15 154.449);
+    --color-green-400: oklch(0.792 0.209 151.711);
+    --color-green-500: oklch(0.723 0.219 149.579);
+    --color-green-600: oklch(0.627 0.194 149.214);
+    --color-green-700: oklch(0.527 0.154 150.069);
+    --color-green-800: oklch(0.448 0.119 151.328);
+    --color-green-900: oklch(0.393 0.095 152.535);
+    --color-green-950: oklch(0.266 0.065 152.934);
+
+    --text-title: 13rem;
+    --text-title--line-height: 1;
+
+    --blur-4xs: 1px;
+    --blur-3xs: 2px;
+    --blur-2xs: 3px;
+    --blur-xs: 4px;
+    --blur-sm: 8px;
+    --blur-md: 12px;
+    --blur-lg: 16px;
+    --blur-xl: 24px;
+    --blur-2xl: 40px;
+    --blur-3xl: 64px;
+
+
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    @keyframes arrowBlink {
+        0% { opacity: 1; }
+        25% { opacity: 0.4; }
+        50% { opacity: 1; }
+    }
+    @keyframes arrowHue {
+        0% { filter: hue-rotate(0deg); }
+        100% { filter: hue-rotate(359deg); }
+    }
+
+    --animate-gradientShift: gradientShift 4s ease infinite;
+    --animate-arrowBlink: arrowBlink 1s infinite;
+    --animate-arrowHue: arrowHue 6s linear infinite;
+    --animate-arrowHueBlink: arrowHue 6s ease infinite, arrowBlink 1s infinite;
 }
 
 button,
