@@ -120,7 +120,7 @@ export const Layout = {
         </nav>
         <canvas id="background-canvas" class="fixed top-0 left-0 w-full h-full -z-10"></canvas>
         <div class="flex flex-1 p-3 gap-6">
-          <div class="flex flex-1 items-center justify-center rounded-xl relative">
+          <div class="flex flex-1 items-center justify-center relative">
             <div id="page-content">
               ${content}
             </div>
@@ -389,13 +389,7 @@ export const Layout = {
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     
     if (isLoggedIn) {
-      // If already logged in, show logout confirmation
-      if (confirm('Voulez-vous vous déconnecter ?')) {
-        localStorage.removeItem('isLoggedIn');
-        localStorage.removeItem('username');
-        this.showNotification('Déconnexion réussie');
-        this.updateLoginButton(root, false);
-      }
+      window.location.hash = '/stats'
     } else {
       // Open login modal
       const loginModal = root.querySelector('#login-modal') as HTMLDivElement;
