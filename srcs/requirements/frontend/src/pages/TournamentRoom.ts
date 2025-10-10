@@ -126,7 +126,6 @@ export const TournamentRoom: Page = {
 					<label class="block text-sm font-bold mb-2">Number of Players:</label>
 					<select id="player-count" class="w-full px-3 py-2 border-2 border-black focus:outline-none">
 						<option value="8">8</option>
-						<option value="6">6</option>
 						<option value="4">4</option>
 					</select>
 				</div>
