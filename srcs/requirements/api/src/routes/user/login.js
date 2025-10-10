@@ -1,5 +1,6 @@
 'use strict'
 const db = require('./db');
+const bcrypt = require('bcrypt');
 
 async function loginRoute(fastify, options) {
     fastify.post('/login', async (request, reply) => {
@@ -18,11 +19,16 @@ async function loginRoute(fastify, options) {
             if (!user) {
                 return reply.status(401).send({ error: 'Invalid username or password' });
             }
-            if (password !== user.password) {
+            bcrypt.compare(user.password, password, function(err, res) {
+            if (err){
+                return reply.status(500).send({ error: 'Database error' });
+            }
+            if (res) {
+                return reply.send({ success: true, message: token });
+            } else {
                 return reply.status(401).send({ error: 'Invalid username or password' });
             }
-
-            return reply.send({ success: true, message: 'Login successful' });
+            });
         });
     });
 }
