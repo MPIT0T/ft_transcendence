@@ -25,19 +25,17 @@ export const GameOnline: Page = {
     let roomId = localStorage.getItem('roomId');
     let clientId = localStorage.getItem('clientId');
     let canStart = false;
-    
+
     const gameContainer = root.querySelector('#game-container') as HTMLElement;
     currentGame = new GameComponentOnline(gameContainer, canStart);
     currentGame.setCanStart(canStart);
 
-    
-
     const payLoad = {
-            "method": "ready",
-            "clientId": clientId,
-            "roomId": roomId,
-            "state": 1
-          }
+      "method": "ready",
+      "clientId": clientId,
+      "roomId": roomId,
+      "state": 1
+    }
     if (ws)
       ws.send(JSON.stringify(payLoad));
 
@@ -47,13 +45,24 @@ export const GameOnline: Page = {
 
         const response = JSON.parse(message.data);
         //connect
-        if (response.method === "update") {
+        if (response.method === "Start") {
           canStart = true;
+          if (currentGame)
+            currentGame.setCanStart(canStart);
+
+        }
+
+        if (response.method === "update") {
+
           const game = response.room;
           if (currentGame && game) {
             currentGame.updateGameState(game);
-            currentGame.setCanStart(canStart);
           }
+        }
+
+        if (response.method === "gameEnd") {
+          if (currentGame)
+            currentGame.destroy();
         }
       }
     }
@@ -64,5 +73,17 @@ export const GameOnline: Page = {
       currentGame.destroy();
     }
 
+    const hashChangeHandler = (event: HashChangeEvent) => {
+      console.log('Hash changed');
+      const payLoad = {
+        "method": "leave",
+        "clientId": clientId
+      }
+      if (ws)
+        ws.send(JSON.stringify(payLoad));
+
+      window.removeEventListener('hashchange', hashChangeHandler);
+    };
+    window.addEventListener('hashchange', hashChangeHandler);
   }
 }

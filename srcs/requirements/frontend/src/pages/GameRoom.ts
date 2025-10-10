@@ -40,7 +40,7 @@ const createRoom = function (root: HTMLElement): void {
 	const gameMode = (root.querySelector('#game-mode') as HTMLSelectElement).value;
 
 	const payLoad = {
-		"method": "create",
+		"method": "createR",
 		"clientId": clientId,
 		"roomName": roomName,
 		"gamePoint": gamePoint,
@@ -181,29 +181,27 @@ export const GameRoom: Page = {
 
 	mount(root: HTMLElement): void {
 		let roomId;
-		if (ws === undefined)
-			ws = new WebSocket("/pong/ws");
+		if (ws === undefined) {
+			const host = window.location.host;
+			ws = new WebSocket(`wss://${host}/pong/ws`);
+		}
 		ws.onmessage = message => {
-			//message.data
 			const response = JSON.parse(message.data);
-			//connect
+
 			if (response.method === "connect") {
 				clientId = response.clientId;
 				if (clientId !== undefined) {
 					localStorage.setItem('clientId', clientId);
 				}
 				reloadRooms(root);
-				console.log("Client id Set successfully " + clientId)
 			}
 			if (response.method === "create") {
-				console.log("game successfully created " + response.room.roomId);
 				roomId = response.room.roomId;
 				joinRoom(roomId)
 			}
 
 			if (response.method === "join") {
 				if (response.status === "success") {
-					console.log(response.message);
 
 					roomId = response.room.roomId;
 					if (roomId !== undefined) {
@@ -212,19 +210,16 @@ export const GameRoom: Page = {
 
 					window.location.hash = response.url;
 				} else {
-					alert("Failed to join the game room.");
+					alert(response.message);
 				}
 			}
 
 			if (response.method === "rooms") {
-				console.log("Rooms received:", response.rooms);
 				displayRooms(root, response.rooms);
 			}
-
 		}
 
-
-		// Game buttons
+		// page buttons
 		const vsBtn = root.querySelector('#vs-btn') as HTMLButtonElement;
 		const createRoomBtn = root.querySelector('#create-room-btn') as HTMLButtonElement;
 		const reloadBtn = root.querySelector('#reload-btn') as HTMLButtonElement;

@@ -20,6 +20,12 @@ class Room {
 		this.player1 = new Player(1);
 		this.player2 = new Player(2);
 		this.clients = [];
+
+		// Constantes du jeu
+		this.CANVAS_WIDTH = 900;
+		this.CANVAS_HEIGHT = 600;
+		this.TICK_RATE = 60; // 60 FPS
+		this.TICK_INTERVAL = 1000 / this.TICK_RATE;
 	}
 
 	join(client, socket) {
@@ -47,24 +53,28 @@ class Room {
 		const idx = this.clients.findIndex(c => c.clientId === clientId);
 		if (idx !== -1) {
 			this.clients.splice(idx, 1);
+
+			// Arrêter le jeu si un joueur part
+			if (this.state === "playing-game") {
+				this.state = "ended";
+			}
+
 			return true;
 		}
 		return false;
 	}
 
+
 	async updatePlayerR(int) {
+		
 		this.playerR += int;
-
-		console.log("playerR = " + this.playerR);
-
-
 		if (this.playerR === 2) {
 			this.state = "playing-game";
 
 			const payLoad = {
 				"method": "Start",
 				"room": this.toJSON()
-			}
+			};
 
 			this.clients.forEach(c => {
 				if (c._conection && typeof c._conection.send === 'function') {
@@ -73,78 +83,48 @@ class Room {
 					console.error("Client socket non défini pour", c);
 				}
 			});
+
+			await sleep(3000); // Délai de 3 secondes avant de commencer
 			await this.gameLoop();
 		}
 	}
 
-	find(clientId) { return this.clients.find(c => c.clientId === clientId); }
-
-	updatePlayer(socket, data) {
-
-		this.clients.forEach(c => {
-			if (c.connection && c.connection.readyState === c.connection.OPEN && c.connection === socket) {
-				const player = c._player
-				if (player === 1) {
-					if (data.type === "UP") {
-						if (e.code === "KeyW" || e.code === "ArrowUp") {
-							this.player1._vel_y = 4;
-						}
-
-						if (e.code === "ArrowDown" || e.code === "KeyS") {
-							this.player1._vel_y = -4;
-						}
-					} else if (data.type === "DOWN") {
-						if (e.code === "KeyW" || e.code === "KeyS") {
-							this.player1._vel_y = 0;
-
-						}
-						if (e.code === "ArrowUp" || e.code === "ArrowDown") {
-							this.player1._vel_y = 0;
-
-						}
-					}
-				} else if (player === 2) {
-					if (data.type === "UP") {
-						if (e.code === "KeyW" || e.code === "ArrowUp") {
-							this.player2._vel_y = 4;
-						}
-
-						if (e.code === "ArrowDown" || e.code === "KeyS") {
-							this.player2._vel_y = -4;
-						}
-					} else if (data.type === "DOWN") {
-						if (e.code === "KeyW" || e.code === "KeyS") {
-							this.player2._vel_y = 0;
-
-						}
-						if (e.code === "ArrowUp" || e.code === "ArrowDown") {
-							this.player2._vel_y = 0;
-
-						}
-					}
-				}
-
-
-
-			}
-
-		});
-		console.log()
+	find(clientId) {
+		return this.clients.find(c => c.clientId === clientId);
 	}
 
-	// mathLoop() {
-		
-	// }
+
+	updatePlayer(socket, data) {
+        this.clients.forEach(c => {
+			if (c._conection && c._conection === socket) {
+                const player = c._player === 1 ? this.player1 : this.player2;
+                
+                if (data.type === "UP") {
+                    if (data.key === "KeyW" || data.key === "ArrowUp") {
+                        player.setVelocity(-8); // Monter
+                    } else if (data.key === "KeyS" || data.key === "ArrowDown") {
+                        player.setVelocity(8); // Descendre
+                    }
+                } else if (data.type === "DOWN") {
+                    player.setVelocity(0);
+                }
+            }
+        });
+    }
 
 	async gameLoop() {
-		while (this.state === "playing-game") {
+		let lastTime = Date.now();
 
-			// mathLoop();
+		while (this.state === "playing-game") {
+			const currentTime = Date.now();
+			const deltaTime = currentTime - lastTime;
+
+			this.updateGamePhysics();
 
 			const payLoad = {
 				"method": "update",
 				"room": this.toJSON()
-			}
+			};
 
 			this.clients.forEach(c => {
 				if (c._conection && typeof c._conection.send === 'function') {
@@ -153,11 +133,81 @@ class Room {
 					console.error("Client socket non défini pour", c);
 				}
 			});
-			await sleep(500)
+
+			lastTime = currentTime;
+
+			//(16.67ms pour 60 FPS)
+			await sleep(this.TICK_INTERVAL);
+		}
+
+		this.sendGameEnd();
+	}
+
+	updateGamePhysics() {
+		this.player1.updatePosition(this.CANVAS_HEIGHT);
+		this.player2.updatePosition(this.CANVAS_HEIGHT);
+
+		this.ball.updatePosition();
+
+		this.ball.checkWallCollision(this.CANVAS_HEIGHT);
+
+		this.ball.checkPaddleCollision(this.player1);
+		this.ball.checkPaddleCollision(this.player2);
+
+		const scorer = this.ball.checkScoring(this.CANVAS_WIDTH);
+		if (scorer === 1) {
+			this.p1Score++;
+			this.ball.reset(1);
+			this.player1.reset();
+			this.player2.reset();
+		} else if (scorer === 2) {
+			this.p2Score++;
+			this.ball.reset(-1);
+			this.player1.reset();
+			this.player2.reset();
+		}
+
+		// 6. Vérifier la condition de victoire
+		if (this.p1Score >= this.gamePoint || this.p2Score >= this.gamePoint) {
+			
+			const payLoad = {
+				"method": "update",
+				"room": this.toJSON()
+			};
+
+			this.clients.forEach(c => {
+				if (c._conection && typeof c._conection.send === 'function') {
+					c._conection.send(JSON.stringify(payLoad));
+				} else {
+					console.error("Client socket non défini pour", c);
+				}
+			});
+
+			
+			this.state = "ended";
 		}
 	}
 
-	// Sérialiser la room pour l'envoyer au front
+	sendGameEnd() {
+		const winner = this.p1Score >= this.gamePoint ? 1 : 2;
+
+		const payLoad = {
+			"method": "gameEnd",
+			"winner": winner,
+			"finalScore": {
+				"player1": this.p1Score,
+				"player2": this.p2Score
+			},
+			"room": this.toJSON()
+		};
+
+		this.clients.forEach(c => {
+			if (c._conection && typeof c._conection.send === 'function') {
+				c._conection.send(JSON.stringify(payLoad));
+			}
+		});
+	}
+
 	toJSON() {
 		return {
 			roomId: this.roomId,

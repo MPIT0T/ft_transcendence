@@ -11,9 +11,13 @@ class Rooms {
 	}
 
 	remove(roomId) {
-		const index = this._room.findIndex(c => c.roomId === roomId);
-		if (index !== -1) {
-			this._room.splice(index, 1);
+		if (this._rooms[roomId]) {
+			// Arrêter le jeu si en cours
+			const room = this._rooms[roomId];
+			if (room.state === "playing-game") {
+				room.state = "ended";
+			}
+			delete this._rooms[roomId];
 			return true;
 		}
 		return false;
@@ -21,6 +25,16 @@ class Rooms {
 
 	findRoom(roomId) {
 		return this._rooms[roomId];
+	}
+
+	findClient(clientId) {
+		for (const roomId in this._rooms) {
+			const room = this._rooms[roomId];
+			if (room.find(clientId)) {
+				return room;
+			}
+		}
+		return null;
 	}
 
 	getAllRooms() {return this._room;}

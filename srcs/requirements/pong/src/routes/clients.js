@@ -13,9 +13,8 @@ class Clients {
 	}
 
 	remove(clientId) {
-		const index = this._clients.findIndex(c => c.clientId === clientId);
-		if (index !== -1) {
-			this._clients.splice(index, 1);
+		if (this._clients[clientId]) {
+			delete this._clients[clientId];
 			return true;
 		}
 		return false;
