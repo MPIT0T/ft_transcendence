@@ -2,11 +2,12 @@ import type { Page } from "./interface/gameInterface.js";
 import { Home } from      "./pages/Home.js";
 import { Game } from      "./pages/Game.js";
 import { Layout } from    "./pages/Layout.js";
-import { Stats } from     "./pages/Stats.js";
+import Stats from     "./pages/Stats.js";
 import { GameLoby } from  "./pages/GameLobby.js";
 import { GameOnline } from "./pages/GameOnline.js";
 import { GameRoom } from "./pages/GameRoom.js";
 import { TournamentRoom } from "./pages/TournamentRoom.js";
+import { TournamentOnline } from "./pages/TournamentOnline.js";
 
 const routes: Record<string, Page> = {
   "/": Home,
@@ -15,6 +16,7 @@ const routes: Record<string, Page> = {
   "/gameOnline": GameOnline,
   "/gameRoom": GameRoom,
   "/tournamentRoom": TournamentRoom,
+  "/tournamentOnline": TournamentOnline,
   "/game": Game,
 }
 

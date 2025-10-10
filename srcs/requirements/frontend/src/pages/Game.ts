@@ -37,21 +37,21 @@ export const Game: Page = {
     if (currentGame) {
       currentGame.destroy();
     }
-    
+
     let canStart = false;
-    
+
     const startBtn = root.querySelector('#start-btn') as HTMLButtonElement;
     const restartBtn = root.querySelector('#restart-btn') as HTMLButtonElement;
     const gameContainer = root.querySelector('#game-container') as HTMLElement;
-    
+
     if (startBtn && restartBtn && gameContainer) {
       // Initialize game component
       currentGame = new GameComponent(gameContainer, canStart);
-      
+
       // Start/Pause button
       startBtn.addEventListener('click', () => {
         canStart = !canStart;
-        
+
         // Update button appearance
         if (canStart) {
           startBtn.className = "px-6 py-3 rounded-lg font-bold text-lg transition bg-red-600 text-white hover:bg-red-700";
@@ -60,7 +60,7 @@ export const Game: Page = {
           startBtn.className = "px-6 py-3 rounded-lg font-bold text-lg transition bg-white text-black hover:bg-gray-200";
           startBtn.textContent = "START";
         }
-        
+
         // Update game state
         if (currentGame) {
           currentGame.setCanStart(canStart);
@@ -73,11 +73,11 @@ export const Game: Page = {
           // Pause the game first
           canStart = false;
           currentGame.setCanStart(false);
-          
+
           // Reset button to START state
           startBtn.className = "px-6 py-3 rounded-lg font-bold text-lg transition bg-white text-black hover:bg-gray-200";
           startBtn.textContent = "START";
-          
+
           // Restart the game
           currentGame.restart();
         }

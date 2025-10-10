@@ -12,14 +12,6 @@ export const GameOnline: Page = {
           <!-- Game component will be mounted here -->
         </div>
         <div class="flex flex-col gap-4 items-center">
-          <div class="items-center">
-            <button
-            id="ready-btn"
-            class="px-6 py-3 rounded-lg font-bold text-lg transition bg-blue-600 text-white hover:bg-blue-700"
-            >
-            READY
-            </button>
-            <div>
             <div class="text-white text-2xl">
             <p>Player : { W / S } keys & { ↑ / ↓ } keys</p>
             </div>
@@ -28,28 +20,49 @@ export const GameOnline: Page = {
             `;
   },
 
+
   mount(root) {
-    let gameId = localStorage.getItem('gameId');
+    let roomId = localStorage.getItem('roomId');
     let clientId = localStorage.getItem('clientId');
     let canStart = false;
-    let readyState = false;
-    
-    const readyBtn = root.querySelector('#ready-btn') as HTMLButtonElement;
+
     const gameContainer = root.querySelector('#game-container') as HTMLElement;
+    currentGame = new GameComponentOnline(gameContainer, canStart);
+    currentGame.setCanStart(canStart);
+
+    const payLoad = {
+      "method": "ready",
+      "clientId": clientId,
+      "roomId": roomId,
+      "state": 1
+    }
+    if (ws)
+      ws.send(JSON.stringify(payLoad));
+
 
     if (ws) {
       ws.onmessage = message => {
 
         const response = JSON.parse(message.data);
         //connect
-        if (response.method === "update") {
+        if (response.method === "Start") {
           canStart = true;
-          readyBtn.style.display = "none";
-          const game = response.game;
+          if (currentGame)
+            currentGame.setCanStart(canStart);
+
+        }
+
+        if (response.method === "update") {
+
+          const game = response.room;
           if (currentGame && game) {
             currentGame.updateGameState(game);
-            currentGame.setCanStart(canStart);
           }
+        }
+
+        if (response.method === "gameEnd") {
+          if (currentGame)
+            currentGame.destroy();
         }
       }
     }
@@ -60,44 +73,17 @@ export const GameOnline: Page = {
       currentGame.destroy();
     }
 
-    if (readyBtn && gameContainer) {
-      // Initialize game component
-      currentGame = new GameComponentOnline(gameContainer, canStart);
+    const hashChangeHandler = (event: HashChangeEvent) => {
+      console.log('Hash changed');
+      const payLoad = {
+        "method": "leave",
+        "clientId": clientId
+      }
+      if (ws)
+        ws.send(JSON.stringify(payLoad));
 
-      readyBtn.addEventListener('click', () => {
-        readyState = !readyState;
-        // Update button appearance
-        if (readyState) {
-          readyBtn.className = "px-6 py-3 rounded-lg font-bold text-lg transition bg-red-600 text-white hover:bg-red-700";
-          readyBtn.textContent = "NOT READY";
-          const payLoad = {
-            "method": "ready",
-            "clientId": clientId,
-            "gameId": gameId,
-            "state": 1
-          }
-          if (ws)
-            ws.send(JSON.stringify(payLoad));
-
-        } else {
-          readyBtn.className = "px-6 py-3 rounded-lg font-bold text-lg transition bg-white text-black hover:bg-gray-200";
-          readyBtn.textContent = "READY";
-          const payLoad = {
-            "method": "ready",
-            "clientId": clientId,
-            "gameId": gameId,
-            "state": -1
-          }
-          if (ws)
-            ws.send(JSON.stringify(payLoad));
-
-        }
-
-        // Update game state
-        if (currentGame) {
-          currentGame.setCanStart(canStart);
-        }
-      });
-    }
+      window.removeEventListener('hashchange', hashChangeHandler);
+    };
+    window.addEventListener('hashchange', hashChangeHandler);
   }
 }

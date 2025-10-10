@@ -1,14 +1,15 @@
-FROM node:22.18.0-slim
-
-ENV NODE_ENV=dev
+FROM node:22.18.0-slim AS base
 
 WORKDIR /app
 
-COPY package.json ./
-RUN npm install
-
-COPY tsconfig.json build.mjs ./
+COPY package.json tsconfig.json postcss.config.js build.mjs ./
 COPY src ./src
 COPY public ./public
 
-CMD ["node", "build.mjs"]
+RUN npm install
+
+FROM base AS prod
+CMD ["npm", "run", "build"]
+
+FROM base AS dev
+CMD ["npm", "run", "dev"]

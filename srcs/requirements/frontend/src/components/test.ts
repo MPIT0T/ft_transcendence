@@ -8,36 +8,63 @@ export class GameComponentOnline {
 	private context: CanvasRenderingContext2D | null = null; // Context 2D
 	private animationId: number | null = null;         // ID de l'animation
 
-	// Joueur 1 (gauche)
-	private p1: Player = {
-		x: 20,      // 20px du bord gauche
-		y: 260,     // Centre vertical
-		width: 8,   // Raquette fine
-		height: 80, // Assez haute
-		vel_y: 0    // Immobile au départ
-	};
-
-	// Joueur 2 (droite)  
-	private p2: Player = {
-		x: 872,     // 572px = 900-20-8 (bord droit - marge - largeur)
-		y: 260,     // Centre vertical
+	// Position actuelle rendue (ce qu'on voit à l'écran)
+	private p1Rendered: Player = {
+		x: 20,
+		y: 260,
 		width: 8,
 		height: 80,
 		vel_y: 0
 	};
 
-	// Balle
-	private ball: Ball = {
-		x: 450,     // Centre horizontal
-		y: 300,     // Centre vertical
-		width: 8,   // Carrée
+	private p2Rendered: Player = {
+		x: 872,
+		y: 260,
+		width: 8,
+		height: 80,
+		vel_y: 0
+	};
+
+	private ballRendered: Ball = {
+		x: 450,
+		y: 300,
+		width: 8,
 		height: 8,
-		vel_x: 6,   //3 Se déplace vers la droite
-		vel_y: 4    //2 Se déplace vers le bas
+		vel_x: 6,
+		vel_y: 4
+	};
+
+	// Position cible (reçue du serveur)
+	private p1: Player = {
+		x: 20,
+		y: 260,
+		width: 8,
+		height: 80,
+		vel_y: 0
+	};
+
+	private p2: Player = {
+		x: 872,
+		y: 260,
+		width: 8,
+		height: 80,
+		vel_y: 0
+	};
+
+	private ball: Ball = {
+		x: 450,
+		y: 300,
+		width: 8,
+		height: 8,
+		vel_x: 6,
+		vel_y: 4
 	};
 
 	private p1Score: number = 0;
 	private p2Score: number = 0;
+
+	// Facteur d'interpolation (0.2 = 20% vers la cible à chaque frame)
+	private lerpFactor: number = 0.8;
 
 	constructor(container: HTMLElement, initialCanStart: boolean = false) {
 		this.container = container;
@@ -61,6 +88,7 @@ export class GameComponentOnline {
 			console.log("No game state provided.");
 			return;
 		}
+		console.log(game);
 		if (game.player1) {
 			this.p1.x = game.player1.x;
 			this.p1.y = game.player1.y;
@@ -146,6 +174,11 @@ export class GameComponentOnline {
 		this.context.setLineDash([]);
 	}
 
+	// Fonction d'interpolation linéaire
+	private lerp(start: number, end: number, factor: number): number {
+		return start + (end - start) * factor;
+	}
+
 	private drawInitialState() {
 		this.drawBackground();
 		
@@ -153,11 +186,11 @@ export class GameComponentOnline {
 		
 		// Draw paddles (white rectangles)
 		this.context.fillStyle = "#FFFFFF";
-		this.context.fillRect(this.p1.x, this.p1.y, this.p1.width, this.p1.height);
-		this.context.fillRect(this.p2.x, this.p2.y, this.p2.width, this.p2.height);
+		this.context.fillRect(this.p1Rendered.x, this.p1Rendered.y, this.p1Rendered.width, this.p1Rendered.height);
+		this.context.fillRect(this.p2Rendered.x, this.p2Rendered.y, this.p2Rendered.width, this.p2Rendered.height);
 		
 		// Draw ball (white square)
-		this.context.fillRect(this.ball.x, this.ball.y, this.ball.width, this.ball.height);
+		this.context.fillRect(this.ballRendered.x, this.ballRendered.y, this.ballRendered.width, this.ballRendered.height);
 		
 		this.drawScore();
 	}
@@ -165,19 +198,28 @@ export class GameComponentOnline {
 	private update = () => {
 		if (!this.canStart || !this.context) return;
 
-		
 		this.animationId = requestAnimationFrame(this.update);
 		
+		// Interpoler vers les positions cibles (smooth movement)
+		this.p1Rendered.y = this.lerp(this.p1Rendered.y, this.p1.y, this.lerpFactor);
+		this.p2Rendered.y = this.lerp(this.p2Rendered.y, this.p2.y, this.lerpFactor);
+		
+		// Interpoler la balle
+		this.ballRendered.x = this.lerp(this.ballRendered.x, this.ball.x, this.lerpFactor);
+		this.ballRendered.y = this.lerp(this.ballRendered.y, this.ball.y, this.lerpFactor);
+		
+		console.log("p1Rendered:", this.p1Rendered, "p2Rendered:", this.p2Rendered, "ballRendered:", this.ballRendered);
+		console.log("p1 target:", this.p1, "p2 target:", this.p2, "ball target:", this.ball);
 		// Draw background
 		this.drawBackground();
 		
-		// Draw players and ball (white rectangles)
+		// Draw players and ball (white rectangles) avec les positions interpolées
 		this.context.fillStyle = "#FFFFFF";
-		this.context.fillRect(this.p1.x, this.p1.y, this.p1.width, this.p1.height);
-		this.context.fillRect(this.p2.x, this.p2.y, this.p2.width, this.p2.height);
+		this.context.fillRect(this.p1Rendered.x, this.p1Rendered.y, this.p1Rendered.width, this.p1Rendered.height);
+		this.context.fillRect(this.p2Rendered.x, this.p2Rendered.y, this.p2Rendered.width, this.p2Rendered.height);
 		
 		// Draw ball
-		this.context.fillRect(this.ball.x, this.ball.y, this.ball.width, this.ball.height);
+		this.context.fillRect(this.ballRendered.x, this.ballRendered.y, this.ballRendered.width, this.ballRendered.height);
 		
 		this.drawScore();
 	};

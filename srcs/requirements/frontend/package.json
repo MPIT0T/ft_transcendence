@@ -1,15 +1,35 @@
 {
-    "name": "ping_pong",
+    "name": "ft_transcendence",
     "version": "0.001",
     "type": "module",
     "scripts": {
-        "watch": "tsc --watch",
-        "css": "",
-        "start": "http-server ./public -p 3006"
+        "copy:public": "mkdir -p dist && cp -r public/* dist/ 2>/dev/null || true",
+        "typecheck": "tsc --noEmit",
+        "typecheck:watch": "tsc --noEmit --watch --preserveWatchOutput",
+        "dev:css": "npx @tailwindcss/cli -i src/styles/index.css -o ./dist/output.css --watch",
+        "dev:js": "BUILD_MODE=dev node build.mjs",
+        "dev": "npm run copy:public && concurrently --names 'esbuild,tailwind,typescript' 'npm run dev:js' 'npm run dev:css' 'npm run typecheck:watch'",
+        "build:css": "npx @tailwindcss/cli -i src/styles/index.css -o ./dist/output.css",
+        "build:js": "BUILD_MODE=prod node build.mjs",
+        "build": "npm run copy:public && npm run build:css && npm run build:js"
     },
-
+    "dependencies": {
+        "@tailwindcss/cli": "^4.1.14",
+        "autoprefixer": "^10.4.20",
+        "esbuild": "^0.25.10",
+        "postcss": "^8.5.1",
+        "tailwindcss": "^4.1.14",
+        "typescript": "^5.7.2",
+        "@tailwindcss/postcss": "^4.1.14"
+    },
     "devDependencies": {
-        "typescript": "^5.5.4",
-        "esbuild": "0.25.9"
+        "@tailwindcss/cli": "^4.1.14",
+        "autoprefixer": "^10.4.20",
+        "esbuild": "^0.25.10",
+        "postcss": "^8.5.1",
+        "tailwindcss": "^4.1.14",
+        "typescript": "^5.7.2",
+        "concurrently": "^9.2.1",
+        "@tailwindcss/postcss": "^4.1.14"
     }
 }

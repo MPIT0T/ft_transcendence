@@ -146,8 +146,8 @@ export class GameComponent {
     this.context.fillRect(this.p2.x, this.p2.y, this.p2.width, this.p2.height);
     
     // Update ball
-    this.ball.vel_x = this.ball.vel_x*1.0001;
-    this.ball.vel_y = this.ball.vel_y*1.0001;
+    this.ball.vel_x = this.ball.vel_x*1.004;
+    this.ball.vel_y = this.ball.vel_y*1.004;
     this.ball.x += this.ball.vel_x;
     this.ball.y += this.ball.vel_y;
     this.context.fillRect(this.ball.x, this.ball.y, this.ball.width, this.ball.height);
@@ -237,7 +237,7 @@ export class GameComponent {
   private resetGame(direction: number) {
     this.ball = {
       x: 450,
-      y: 200,
+      y: 300,
       width: 8,
       height: 8,
       vel_x: direction * 5,
