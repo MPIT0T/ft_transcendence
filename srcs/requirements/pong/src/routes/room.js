@@ -66,6 +66,7 @@ class Room {
 
 
 	async updatePlayerR(int) {
+		
 		this.playerR += int;
 		if (this.playerR === 2) {
 			this.state = "playing-game";

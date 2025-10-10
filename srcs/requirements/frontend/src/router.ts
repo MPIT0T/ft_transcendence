@@ -7,7 +7,7 @@ import { GameLoby } from  "./pages/GameLobby.js";
 import { GameOnline } from "./pages/GameOnline.js";
 import { GameRoom } from "./pages/GameRoom.js";
 import { TournamentRoom } from "./pages/TournamentRoom.js";
-import { Tournament } from "./pages/Tournament.js";
+import { TournamentOnline } from "./pages/TournamentOnline.js";
 
 const routes: Record<string, Page> = {
   "/": Home,
@@ -16,7 +16,7 @@ const routes: Record<string, Page> = {
   "/gameOnline": GameOnline,
   "/gameRoom": GameRoom,
   "/tournamentRoom": TournamentRoom,
-  "/tournament": Tournament,
+  "/tournamentOnline": TournamentOnline,
   "/game": Game,
 }
 

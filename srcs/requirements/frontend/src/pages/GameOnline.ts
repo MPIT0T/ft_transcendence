@@ -30,8 +30,6 @@ export const GameOnline: Page = {
     currentGame = new GameComponentOnline(gameContainer, canStart);
     currentGame.setCanStart(canStart);
 
-
-
     const payLoad = {
       "method": "ready",
       "clientId": clientId,
@@ -75,5 +73,17 @@ export const GameOnline: Page = {
       currentGame.destroy();
     }
 
+    const hashChangeHandler = (event: HashChangeEvent) => {
+      console.log('Hash changed');
+      const payLoad = {
+        "method": "leave",
+        "clientId": clientId
+      }
+      if (ws)
+        ws.send(JSON.stringify(payLoad));
+
+      window.removeEventListener('hashchange', hashChangeHandler);
+    };
+    window.addEventListener('hashchange', hashChangeHandler);
   }
 }
