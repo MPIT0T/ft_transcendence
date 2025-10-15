@@ -153,7 +153,6 @@ export const GameLoby: Page = {
 
 				try {
 					const response = await fetch("/pong/status");
-					// Optionally, you can use the response to display actual ping
 					const end = Date.now();
 					const latency = end - start;
 					ping.textContent = `< ${latency}ms`;
