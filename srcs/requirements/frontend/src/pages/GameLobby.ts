@@ -60,7 +60,7 @@ export const GameLoby: Page = {
 					<div class="space-y-2 mb-12 z-10">
 						<div class="flex justify-between text-3xl">
 							<span class="text-gray-300">Joueurs :</span>
-							<span class="font-semibold text-white">2 en ligne</span>
+							<span id="player" class="font-semibold text-white">2 en ligne</span>
 						</div>
 						<div class="flex justify-between text-3xl">
 							<span class="text-gray-300">Latence :</span>
@@ -161,5 +161,28 @@ export const GameLoby: Page = {
 				}
 			}, 1000);
 		}
+
+		const player = root.querySelector('#player') as HTMLButtonElement;
+		if (player) {
+			setInterval(async () => {
+				try {
+					const response = await fetch("/pong/statusPlayer");
+					const count = await response.text();
+					player.textContent = `${count} en ligne`;
+				} catch (error) {
+					player.textContent = `erreur`;
+				}
+			}, 1000);
+		}
+
+		// Hash change handler to clear intervals
+		const hashChangeHandler = (event: HashChangeEvent) => {
+			const highestId = window.setInterval(() => {}, 0);
+			for (let i = 1; i <= highestId; i++) {
+				window.clearInterval(i);
+			}
+			window.removeEventListener('hashchange', hashChangeHandler);
+		};
+		window.addEventListener('hashchange', hashChangeHandler);
 	}
 };

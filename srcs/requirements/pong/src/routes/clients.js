@@ -9,6 +9,7 @@ class Clients {
 
 		const client = new Client(clientId, socket);
 		this._clients[clientId]= client;
+		
 
 	}
 
@@ -25,6 +26,8 @@ class Clients {
 	}
 
 	getAllClients() {return this._clients;}
+
+	
 
 	count() {return this._clients.length;}
 

@@ -76,6 +76,9 @@ module.exports = async function (fastify, opts) {
 		fastify.get('/status', function handler(request, reply) {
 			reply.code(200).header('Content-Type', 'text/plain').send('OK');
 		});
+		fastify.get('/statusPlayer', function handler(request, reply) {
+			reply.code(200).header('Content-Type', 'text/plain').send(getPlayer());
+		});
 	});
 }
 
@@ -104,6 +107,10 @@ function removeClient(clientId) {
 	}
 
 	g_Games.removeClient(clientId);
+}
+
+function getPlayer() {
+	return Object.keys(g_Games._clients._clients).length.toString();
 }
 
 function leave(clientId) {

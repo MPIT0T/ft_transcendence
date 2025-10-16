@@ -62,18 +62,10 @@ export class GameComponentOnline {
 			return;
 		}
 		if (game.player1) {
-			this.p1.x = game.player1.x;
 			this.p1.y = game.player1.y;
-			this.p1.width = game.player1.width;
-			this.p1.height = game.player1.height;
-			this.p1.vel_y = game.player1.vel_y;
 		}
 		if (game.player2) {
-			this.p2.x = game.player2.x;
 			this.p2.y = game.player2.y;
-			this.p2.width = game.player2.width;
-			this.p2.height = game.player2.height;
-			this.p2.vel_y = game.player2.vel_y;
 		}
 		if (game.ball) {
 			this.ball.x = game.ball.x;

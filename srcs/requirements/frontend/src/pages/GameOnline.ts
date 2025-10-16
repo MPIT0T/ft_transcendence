@@ -25,6 +25,7 @@ export const GameOnline: Page = {
     let roomId = localStorage.getItem('roomId');
     let clientId = localStorage.getItem('clientId');
     let canStart = false;
+    let waiting = true;
 
     const gameContainer = root.querySelector('#game-container') as HTMLElement;
     currentGame = new GameComponentOnline(gameContainer, canStart);
@@ -46,6 +47,7 @@ export const GameOnline: Page = {
         const response = JSON.parse(message.data);
         //connect
         if (response.method === "Start") {
+          waiting = false;
           canStart = true;
           if (currentGame)
             currentGame.setCanStart(canStart);
