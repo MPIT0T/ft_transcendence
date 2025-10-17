@@ -12,15 +12,13 @@ export const Game: Page = {
         </div>
         <div class="flex gap-4 items-center">
           <button
-            id="start-btn"
-            class="px-6 py-3 rounded-lg font-bold text-lg transition bg-white text-black hover:bg-gray-200"
-          >
+              id="start-btn"
+              class="px-6 py-3 rounded-lg font-bold text-lg transition bg-white text-black hover:bg-gray-200">
             START
           </button>
           <button
-            id="restart-btn"
-            class="px-6 py-3 rounded-lg font-bold text-lg transition bg-blue-600 text-white hover:bg-blue-700"
-          >
+              id="restart-btn"
+              class="px-6 py-3 rounded-lg font-bold text-lg transition bg-blue-600 text-white hover:bg-blue-700">
             RESTART
           </button>
           <div class="text-white text-sm">

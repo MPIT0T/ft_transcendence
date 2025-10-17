@@ -7,7 +7,7 @@ let currentGame: GameComponentOnline | null = null;
 export const GameOnline: Page = {
   render() {
     return `
-      <div class="flex-1 p-5 flex flex-col items-center justify-center bg-gray-900">
+      <div class="flex-1 p-5 flex flex-col items-center justify-center backdrop-blur-2xs border-1 border-gray-50">
         <div id="game-container" class="mb-8">
           <!-- Game component will be mounted here -->
         </div>

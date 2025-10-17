@@ -20,11 +20,11 @@ function displayRooms(root: HTMLElement, rooms: any[]) {
 
 	rooms.forEach(room => {
 		const roomBtn = document.createElement('button');
-		roomBtn.className = 'room-btn px-6 py-3 border-2 border-black bg-white hover:bg-gray-100 transition-colors font-mono';
+		roomBtn.className = 'room-btn text-gray-50 px-6 py-3 border-1 backdrop-blur-2xs border-gray-50 hover:bg-gray-700 transition-colors';
 		roomBtn.dataset.roomId = room.roomId;
 		roomBtn.innerHTML = `
             ${room.roomName}<br>
-            <span class="text-sm text-gray-600">${room.players}</span>
+            <span class="text-sm text-gray-400">${room.players}</span>
         `;
 		roomBtn.addEventListener('click', () => {
 			joinRoom(room.roomId);
@@ -73,18 +73,18 @@ export const GameRoom: Page = {
 		return `
 	<div class="max-w-6xl mx-auto p-6 space-y-6">
 
-		<div class="bg-white border-2 border-black p-8">
+		<div class="backdrop-blur-2xs border-1 border-gray-50 p-8">
 			<div class="flex justify-center">
-				<h1 class="text-2xl font-bold text-center">Ranked Game</h1>
+				<h1 class="text-4xl z-10 text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-blue-500 to-green-500 bg-[length:400%_400%] animate-gradientShift font-bold text-center mb-5">Ranked Game</h1>
 			</div>
 			<div class="text-center mb-8">
 				<div class="flex justify-center space-x-4">
 					
-					<button id="vs-btn" class="px-8 py-3 border-2 border-black bg-white hover:bg-gray-100 transition-colors font-mono">
-						👤 vs 👤
+					<button id="vs-btn" class="px-10 py-3 font-bold text-2xl border-1 border-gray-50 text-gray-50 hover:bg-gray-700 transition-colors mb-5">
+						Jouer
 					</button>
 					</div>
-				<p>
+				<p class="text-gray-200 text-lg">
 					Le mode <span class="font-bold">Ranked</span> vous permet d'affronter un autre joueur dans une partie compétitive en 1 contre 1.<br>
 					Chaque victoire ou défaite affecte votre classement général.<br>
 					Relevez le défi pour grimper dans le classement et montrer vos compétences !
@@ -92,18 +92,18 @@ export const GameRoom: Page = {
 			</div>
 		</div>
 
-		<div class="bg-white border-2 border-black p-8">
+		<div class="backdrop-blur-2xs border-1 border-gray-50 p-8">
 			<div class="flex justify-center">
-				<h1 class="text-2xl font-bold text-center">Frendly Game</h1>
+				<h1 class="text-4xl z-10 text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-blue-500 to-green-500 bg-[length:400%_400%] animate-gradientShift font-bold text-center mb-5">Friendly Game</h1>
 			</div>
 			<div class="text-center mb-8">
 				<div class="flex justify-center space-x-4">
 					
-					<button id="create-room-btn" class="px-8 py-3 border-2 border-black bg-white hover:bg-gray-100 transition-colors font-mono">
-						+ Create a room
+					<button id="create-room-btn" class="px-10 py-3 text-2xl text-gray-50 border-1 border-gray-50 hover:bg-gray-700 transition-colors mb-5">
+						Créer une partie
 					</button>
 				</div>
-				<p>
+				<p class="text-lg text-gray-200">
 					Le mode <span class="font-bold">Friendly</span> vous permet de jouer des parties amicales sans impact sur votre classement.<br>
 					Créez une salle ou rejoignez celle d'un ami pour vous entraîner, tester de nouvelles stratégies ou simplement vous amuser sans pression.<br>
 					C'est l'endroit idéal pour défier vos amis ou rencontrer de nouveaux joueurs dans une ambiance détendue !
@@ -112,11 +112,11 @@ export const GameRoom: Page = {
 		</div>
 
 		<!-- Available Rooms Section -->
-		<div class="bg-white border-2 border-black p-6">
+		<div class="backdrop-blur-2xs border-1 border-gray-50 p-6">
 			<div class="flex justify-between items-center mb-6">
-				<h2 class="text-2xl font-bold">Available rooms</h2>
-				<button id="reload-btn" class="px-4 py-2 border-2 border-black bg-white hover:bg-gray-100 transition-colors font-mono">
-					🔄 Reload
+				<h2 class="text-2xl text-gray-50 font-bold">Available rooms</h2>
+				<button id="reload-btn" class="px-4 py-2 font-bold text-gray-50 border-1 border-gray-50 hover:bg-gray-700 transition-colors">
+					Rafraichir
 				</button>
 			</div>
 			<div class="flex flex-wrap gap-4" id="rooms-container">
@@ -126,25 +126,25 @@ export const GameRoom: Page = {
 	</div>
 
 	<!-- Modal Create Room -->
-	<div id="create-room-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-		<div class="bg-white border-4 border-black p-8 max-w-md w-full mx-4">
-			<h3 class="text-2xl font-bold mb-6 text-center">Create a Room</h3>
+	<div id="create-room-modal" class="fixed inset-0 backdrop-blur-lg hidden items-center justify-center z-50">
+		<div class="border-1 border-gray-50 p-8 max-w-md w-full mx-4">
+			<h3 class="text-2xl text-gray-50 font-bold mb-6 text-center">Créer une partie</h3>
 			
 			<form id="create-room-form" class="space-y-4">
 				<div>
-					<label class="block text-sm font-bold mb-2">Room Name:</label>
+					<label class="block text-sm font-bold mb-2 text-gray-200">Nom :</label>
 					<input 
 						type="text" 
 						id="room-name" 
-						class="w-full px-3 py-2 border-2 border-black focus:outline-none focus:border-blue-500"
+						class="w-full px-3 py-2 border-1 border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50"
 						placeholder="Enter room name"
 						required
 					>
 				</div>
 				
 				<div>
-					<label class="block text-sm font-bold mb-2">Party Point (s):</label>
-					<select id="game-point" class="w-full px-3 py-2 border-2 border-black focus:outline-none">
+					<label class="block text-sm font-bold mb-2 text-gray-200">Points maximum :</label>
+					<select id="game-point" class="w-full px-3 py-2 border-1 border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50">
 						<option value="3">3</option>
 						<option value="5">5</option>
 						<option value="10">10</option>
@@ -153,24 +153,24 @@ export const GameRoom: Page = {
 				</div>
 				
 				<div>
-					<label class="block text-sm font-bold mb-2">Game Mode:</label>
-					<select id="game-mode" class="w-full px-3 py-2 border-2 border-black focus:outline-none">
-						<option value="classic">Classic Pong</option>
-						<option value="power-up">Power-up Mode</option>
+					<label class="block text-sm font-bold mb-2">Mode de Jeu :</label>
+					<select id="game-mode" class="w-full px-3 py-2 border-1 border-gray-400 focus:outline-none focus:border-gray-50">
+						<option value="classic">Pong Classique</option>
+						<option value="power-up">Mode Power-Ups</option>
 					</select>
 				</div>
 				
 				<div class="flex space-x-4 mt-6">
 					<button 
 						type="submit" 
-						class="flex-1 bg-green-500 text-white py-2 px-4 border-2 border-black hover:bg-green-600 transition-colors font-bold">
-						CREATE
+						class="flex-1 text-white py-2 px-4 border-1 border-gray-50 hover:bg-gray-700 hover:border-green-500 transition-colors font-bold">
+						CRÉER
 					</button>
 					<button 
 						type="button" 
 						id="cancel-create" 
-						class="flex-1 bg-red-500 text-white py-2 px-4 border-2 border-black hover:bg-red-600 transition-colors font-bold">
-						CANCEL
+						class="flex-1 text-white py-2 px-4 border-1 border-gray-50 hover:bg-gray-700 hover:border-red-500 transition-colors font-bold">
+						ANNULER
 					</button>
 				</div>
 			</form>

@@ -16,7 +16,7 @@ const routes: Record<string, Page> = {
   "/gameOnline": GameOnline,
   "/gameRoom": GameRoom,
   "/tournamentRoom": TournamentRoom,
-  "/tournamentOnline": TournamentOnline,
+  // "/tournamentOnline": TournamentOnline,
   "/game": Game,
 }
 

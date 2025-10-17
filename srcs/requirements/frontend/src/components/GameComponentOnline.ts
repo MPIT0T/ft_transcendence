@@ -130,9 +130,8 @@ export class GameComponentOnline {
 	private drawBackground() {
 		if (!this.context) return;
 
-		// Clear with black background
-		this.context.fillStyle = "#000000";
-		this.context.fillRect(0, 0, 900, 600);
+		// Clear background
+		this.context.clearRect(0, 0, 900, 600);
 
 		// Draw center line (dashed)
 		this.context.fillStyle = "#FFFFFF";

@@ -1,4 +1,4 @@
-import type { Page } from "../interface/gameInterface";
+import type { TournamentPage } from "../interface/gameInterface";
 
 interface Player {
 	id: string;
@@ -14,118 +14,28 @@ interface Match {
 	position: number;
 }
 
-export const TournamentOnline: Page = {
+export const TournamentOnline: TournamentPage = {
 	render() {
 		return `
-			<div class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white p-8">
-				<!-- Header -->
-				<div class="max-w-7xl mx-auto mb-8">
-					<div class="flex items-center justify-center mb-8">
-						<div class="w-32 h-1 bg-gradient-to-r from-transparent to-yellow-500"></div>
-						<h1 class="text-5xl font-bold mx-4 text-yellow-400 tracking-wider">⚔ TOURNAMENT ⚔</h1>
-						<div class="w-32 h-1 bg-gradient-to-l from-transparent to-yellow-500"></div>
-					</div>
-				</div>
-
-				<!-- Tournament Setup (visible initially) -->
-				<div id="tournament-setup" class="max-w-2xl mx-auto bg-slate-800/80 backdrop-blur-sm rounded-lg p-8 shadow-2xl border-2 border-blue-500">
-					<h2 class="text-3xl font-bold mb-6 text-center text-blue-300">Setup Tournament</h2>
-					
-					<!-- Player Input -->
-					<div class="space-y-4 mb-6">
-						<div class="flex gap-2">
-							<input 
-								type="text" 
-								id="player-name-input" 
-								placeholder="Enter player name"
-								class="flex-1 px-4 py-3 bg-slate-700 border-2 border-slate-600 rounded-lg focus:border-blue-500 focus:outline-none text-white placeholder-slate-400"
-							/>
-							<button 
-								id="add-player-btn"
-								class="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold transition-all transform hover:scale-105 active:scale-95"
-							>
-								Add Player
-							</button>
-						</div>
-						
-						<!-- Player List -->
-						<div id="player-list" class="space-y-2 max-h-64 overflow-y-auto">
-							<!-- Players will be added here -->
-						</div>
-					</div>
-
-					<!-- Start Button -->
-					<button 
-						id="start-tournament-btn"
-						class="w-full py-4 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 rounded-lg font-bold text-xl transition-all transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-						disabled
-					>
-						Start Tournament (Need at least 4 players)
-					</button>
-				</div>
-
-				<!-- Tournament Bracket (hidden initially) -->
-				<div id="tournament-bracket" class="hidden">
-					<div class="max-w-7xl mx-auto">
-						<!-- Bracket Container -->
-						<div class="flex justify-center items-start gap-8 overflow-x-auto pb-8">
-							<!-- Round 1: Quarter Finals -->
-							<div class="flex flex-col gap-8">
-								<div class="text-center mb-4">
-									<h3 class="text-2xl font-bold text-yellow-400">Quarter Finals</h3>
-								</div>
-								<div id="round-1" class="flex flex-col gap-16">
-									<!-- Matches will be generated here -->
-								</div>
-							</div>
-
-							<!-- Round 2: Semi Finals -->
-							<div class="flex flex-col gap-8">
-								<div class="text-center mb-4">
-									<h3 class="text-2xl font-bold text-yellow-400">Semi Finals</h3>
-								</div>
-								<div id="round-2" class="flex flex-col gap-32">
-									<!-- Matches will be generated here -->
-								</div>
-							</div>
-
-							<!-- Round 3: Final -->
-							<div class="flex flex-col gap-8">
-								<div class="text-center mb-4">
-									<h3 class="text-2xl font-bold text-yellow-400">Final</h3>
-								</div>
-								<div id="round-3" class="flex flex-col justify-center min-h-[400px]">
-									<!-- Final match will be generated here -->
-								</div>
-							</div>
-
-							<!-- Winner -->
-							<div class="flex flex-col gap-8">
-								<div class="text-center mb-4">
-									<h3 class="text-2xl font-bold text-yellow-400">🏆 Winner 🏆</h3>
-								</div>
-								<div id="winner-container" class="flex flex-col justify-center min-h-[400px]">
-									<!-- Winner will be displayed here -->
-								</div>
-							</div>
-						</div>
-
-						<!-- Reset Button -->
-						<div class="text-center mt-8">
-							<button 
-								id="reset-tournament-btn"
-								class="px-8 py-3 bg-red-600 hover:bg-red-700 rounded-lg font-semibold transition-all transform hover:scale-105 active:scale-95"
-							>
-								Reset Tournament
-							</button>
-						</div>
-					</div>
-				</div>
-			</div>
+<div class="text-white text-center">
+Hello World
+</div>
 		`;
 	},
 
-	mount(root: HTMLElement): void {
+  render4players(): string {
+    return `
+<div class="border-1 border-gray-50">
+
+</div>
+    `;
+  },
+
+  render8players(): string {
+    return ``;
+  },
+
+  mount(root: HTMLElement): void {
 		const players: Player[] = [];
 		const matches: Match[] = [];
 		let currentRound = 1;
@@ -409,3 +319,4 @@ export const TournamentOnline: Page = {
 		});
 	}
 };
+export default TournamentPage;

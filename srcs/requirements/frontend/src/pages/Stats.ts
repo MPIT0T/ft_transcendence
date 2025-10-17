@@ -43,6 +43,11 @@ const Stats: StatsPage = {
   <div id="content-container" class="w-[1200px] h-[700px]">
     ${activeTab === 'profile' ? this.renderProfile() : this.renderHistory()}
   </div>
+  <div class="w-[1200px] flex items-center justify-center p-6 gap-6">
+    <button class="text-blue-500 border-1 border-gray-50 px-6 py-2 text-2xl font-bold backdrop-blur-2xs hover:bg-gray-700 hover:bg-opacity-50">fr</button>
+    <button class="text-red-500 border-1 border-gray-50 px-6 py-2 text-2xl font-bold backdrop-blur-2xs hover:bg-gray-700 hover:bg-opacity-50">en</button>
+    <button class="text-yellow-400 border-1 border-gray-50 px-6 py-2 text-2xl font-bold backdrop-blur-2xs hover:bg-gray-700 hover:bg-opacity-50">es</button>
+  </div>
 </div>
   `;
 },
