@@ -41,6 +41,12 @@ class Player {
 			vel_y: this.vel_y
 		};
 	}
+
+    toJsonMove() {
+		return {
+			y: this.y,
+		};
+	}
 }
 
 module.exports = Player;

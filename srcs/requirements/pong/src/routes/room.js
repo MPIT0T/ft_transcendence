@@ -47,6 +47,22 @@ class Room {
 			url: roomUrl,
 			room: this.toJsonJoin()
 		}));
+
+		const notifyPayload = {
+			method: 'playerJoined',
+			status: 'success',
+			message: 'Un joueur a rejoint la salle.',
+			room: this.toJsonJoin(),
+			player: client._name
+		};
+
+		this.clients.forEach(c => {
+			if (c._clientId !== client._clientId && c._conection && typeof c._conection.send === 'function') {
+				c._conection.send(JSON.stringify(notifyPayload));
+			}
+		});
+
+
 	}
 
 	remove(clientId) {
@@ -119,11 +135,11 @@ class Room {
 			const currentTime = Date.now();
 			const deltaTime = currentTime - lastTime;
 
-			this.updateGamePhysics();
+			await this.updateGamePhysics();
 
 			const payLoad = {
 				"method": "update",
-				"room": this.toJSON()
+				"room": this.toJsonUpdate()
 			};
 
 			this.clients.forEach(c => {
@@ -143,7 +159,7 @@ class Room {
 		this.sendGameEnd();
 	}
 
-	updateGamePhysics() {
+	async updateGamePhysics() {
 		this.player1.updatePosition(this.CANVAS_HEIGHT);
 		this.player2.updatePosition(this.CANVAS_HEIGHT);
 
@@ -166,13 +182,31 @@ class Room {
 			this.player1.reset();
 			this.player2.reset();
 		}
+		
+		if (scorer === 1 || scorer === 2) {
+			const payLoad = {
+				"method": "update",
+				"room": this.toJsonGoal(),
+			};
+
+			this.clients.forEach(c => {
+				if (c._conection && typeof c._conection.send === 'function') {
+					c._conection.send(JSON.stringify(payLoad));
+				} else {
+					console.error("Client socket non défini pour", c);
+				}
+			});
+
+
+			await sleep(3000);
+		}
 
 		// 6. Vérifier la condition de victoire
 		if (this.p1Score >= this.gamePoint || this.p2Score >= this.gamePoint) {
 			
 			const payLoad = {
 				"method": "update",
-				"room": this.toJSON()
+				"room": this.toJsonUpdate(),
 			};
 
 			this.clients.forEach(c => {
@@ -223,15 +257,25 @@ class Room {
 			player2: this.player2?.toJSON ? this.player2.toJSON() : this.player2,
 		};
 	}
+	
 	toJsonUpdate() {
+		return {
+			ball: this.ball?.toJSON ? this.ball.toJSON() : this.ball,
+			player1: this.player1?.toJsonMove ? this.player1.toJsonMove() : this.player1,
+			player2: this.player2?.toJsonMove ? this.player2.toJsonMove() : this.player2,
+		};
+	}
+
+	toJsonGoal() {
 		return {
 			ball: this.ball?.toJSON ? this.ball.toJSON() : this.ball,
 			p1Score: this.p1Score,
 			p2Score: this.p2Score,
-			player1: this.player1?.toJSON ? this.player1.toJSON() : this.player1,
-			player2: this.player2?.toJSON ? this.player2.toJSON() : this.player2,
+			player1: this.player1?.toJsonMove ? this.player1.toJsonMove() : this.player1,
+			player2: this.player2?.toJsonMove ? this.player2.toJsonMove() : this.player2,
 		};
 	}
+	
 	toJsonJoin() {
 		return {
 			roomId: this.roomId,
