@@ -70,7 +70,6 @@ class Room {
 		if (idx !== -1) {
 			this.clients.splice(idx, 1);
 
-			// Arrêter le jeu si un joueur part
 			if (this.state === "playing-game") {
 				this.state = "ended";
 			}
@@ -134,6 +133,11 @@ class Room {
 		while (this.state === "playing-game") {
 			const currentTime = Date.now();
 			const deltaTime = currentTime - lastTime;
+
+			// Vérifier qu'il y a toujours 2 clients connectés
+			if (this.clients.length !== 2) {
+				this.state = "gameEnd";
+			}
 
 			await this.updateGamePhysics();
 
@@ -223,7 +227,8 @@ class Room {
 	}
 
 	sendGameEnd() {
-		const winner = this.p1Score >= this.gamePoint ? 1 : 2;
+		const winner = this.p1Score > this.p2Score ? 1 : 2;
+		// const winner = this.p1Score >= this.gamePoint ? 1 : 2;
 
 		const payLoad = {
 			"method": "gameEnd",
