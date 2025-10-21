@@ -258,6 +258,7 @@ class Room {
 			p1Score: this.p1Score,
 			p2Score: this.p2Score,
 			gamePoint: this.gamePoint,
+			clients: this.clients.map(client => client.id || client),
 			player1: this.player1?.toJSON ? this.player1.toJSON() : this.player1,
 			player2: this.player2?.toJSON ? this.player2.toJSON() : this.player2,
 		};

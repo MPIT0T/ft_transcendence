@@ -190,7 +190,7 @@ export const TournamentRoom: Page = {
 				joinTournament(tournamentId);
 			}
 
-			if (response.method === "join") {
+			if (response.method === "joinT") {
 				if (response.status === "success") {
 					console.log(response.message);
 

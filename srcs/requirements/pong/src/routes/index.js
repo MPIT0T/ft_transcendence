@@ -28,6 +28,9 @@ module.exports = async function (fastify, opts) {
 						case 'ready':
 							handleReady(socket, data);
 							break;
+						case 'readyT':
+							handleReadyTournament(socket, data);
+							break;
 						case 'join':
 							handleJoinGame(socket, data);
 							break;
@@ -86,7 +89,6 @@ function removeClient(clientId) {
 
 	const client = g_Games.findClient(clientId);
 	if (!client) {
-		console.log('Client not found:', clientId);
 		return;
 	}
 
@@ -117,7 +119,6 @@ function leave(clientId) {
 
 	const client = g_Games.findClient(clientId);
 	if (!client) {
-		console.log('Client not found:', clientId);
 		return;
 	}
 
@@ -200,7 +201,7 @@ function handleJoinTournament(socket, data) {
 		const clientIndex = t.clients.findIndex(c => c._clientId === data.clientId);
 		if (clientIndex !== -1) {
 			socket.send(JSON.stringify({
-				method: 'join',
+				method: 'joinT',
 				status: 'error',
 				message: 'Client already in a tournament'
 			}));
@@ -323,5 +324,19 @@ async function handleReady(socket, data) {
 	const room = g_Games.findRoom(data.roomId);
 
 	await room.updatePlayerR(state);
+
+}
+
+async function handleReadyTournament(socket, data) {
+	if (g_Games.findClient(data.clientId) === undefined)
+		throw "Client id not good";
+	if (g_Games.findTournament(data.tournamentId) === undefined)
+		throw "Tournament id not good";
+
+	const state = data.state;
+
+	const tournament = g_Games.findTournament(data.tournamentId);
+
+	await tournament.updatePlayerR(state);
 
 }
