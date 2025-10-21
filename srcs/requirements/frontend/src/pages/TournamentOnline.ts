@@ -363,10 +363,15 @@ export const TournamentOnline: Page = {
 
 				// Résultats de match avec scores
 				if (response.method === "matchResult") {
+					console.log('=== matchResult received ===');
+					console.log('Full response:', JSON.stringify(response));
+					console.log('Round:', response.round);
+					console.log('Player1:', response.player1, 'Score1:', response.score1);
+					console.log('Player2:', response.player2, 'Score2:', response.score2);
+					console.log('Winner:', response.winner);
+					
 					addServerMessage(`✅ ${response.match} result: ${response.player1} ${response.score1} - ${response.score2} ${response.player2}`);
 					addServerMessage(`Winner: ${response.winner}!`);
-					
-					console.log('matchResult received:', response);
 					
 					// Trouver le match correspondant et afficher le score
 					let matchBox = null;
@@ -411,11 +416,12 @@ export const TournamentOnline: Page = {
 					
 					// Mettre à jour les scores et highlight winner
 					if (matchBox) {
-						console.log('Updating match box with scores');
+						console.log('✓ Match box found!', matchBox);
 						const score1El = matchBox.querySelector('.score-1');
 						const score2El = matchBox.querySelector('.score-2');
 						
-						console.log('Score elements found:', score1El, score2El);
+						console.log('Score1 element:', score1El);
+						console.log('Score2 element:', score2El);
 						
 						// Trouver les slots de joueurs
 						let player1Slot, player2Slot;
@@ -423,27 +429,42 @@ export const TournamentOnline: Page = {
 							const slots = matchBox.querySelectorAll('[data-slot]');
 							player1Slot = slots[0];
 							player2Slot = slots[1];
+							console.log('Quarter Finals slots found:', slots.length);
 						} else {
 							player1Slot = matchBox.querySelector('[data-player="1"]');
 							player2Slot = matchBox.querySelector('[data-player="2"]');
+							console.log('Semi/Final slots found:', player1Slot, player2Slot);
 						}
 						
 						// Afficher les scores à côté de VS
-						if (score1El) score1El.textContent = response.score1;
-						if (score2El) score2El.textContent = response.score2;
+						if (score1El) {
+							score1El.textContent = response.score1;
+							console.log('✓ Score1 set to:', response.score1);
+						} else {
+							console.log('✗ Score1 element not found!');
+						}
+						
+						if (score2El) {
+							score2El.textContent = response.score2;
+							console.log('✓ Score2 set to:', response.score2);
+						} else {
+							console.log('✗ Score2 element not found!');
+						}
 						
 						// Highlight winner
 						if (response.winner === response.player1) {
 							player1Slot?.classList.add('bg-green-900', 'border-green-400');
 							player1Slot?.classList.remove('bg-black/50');
+							console.log('✓ Player1 highlighted as winner');
 						} else {
 							player2Slot?.classList.add('bg-green-900', 'border-green-400');
 							player2Slot?.classList.remove('bg-black/50');
+							console.log('✓ Player2 highlighted as winner');
 						}
 						
-						console.log('Match box updated successfully');
+						console.log('=== Match box updated successfully ===');
 					} else {
-						console.log('ERROR: Match box not found!');
+						console.log('✗✗✗ ERROR: Match box not found! ✗✗✗');
 					}
 				}
 

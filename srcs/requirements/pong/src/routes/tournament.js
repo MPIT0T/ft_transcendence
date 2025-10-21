@@ -128,19 +128,19 @@ class Tournament {
 			await room.gameLoop();
 			
 			// Determine winner (player with highest score)
-			const winner = room.player1.score > room.player2.score ? match.player1 : match.player2;
-			const loser = room.player1.score > room.player2.score ? match.player2 : match.player1;
+			const winner = room.p1Score > room.p2Score ? match.player1 : match.player2;
+			const loser = room.p1Score > room.p2Score ? match.player2 : match.player1;
 			semiFinalPlayers.push(winner);
 			
 			quarterResults.push({
 				player1: match.player1._name,
 				player2: match.player2._name,
-				score1: room.player1.score,
-				score2: room.player2.score,
+				score1: room.p1Score,
+				score2: room.p2Score,
 				winner: winner._name
 			});
 			
-			console.log(`${match.roomName} winner: ${winner._name} (${room.player1.score}-${room.player2.score})`);
+			console.log(`${match.roomName} winner: ${winner._name} (${room.p1Score}-${room.p2Score})`);
 			
 			// Notify match result
 			this.clients.forEach(c => {
@@ -151,8 +151,8 @@ class Tournament {
 						match: match.roomName,
 						player1: match.player1._name,
 						player2: match.player2._name,
-						score1: room.player1.score,
-						score2: room.player2.score,
+						score1: room.p1Score,
+						score2: room.p2Score,
 						winner: winner._name
 					}));
 				}
@@ -199,18 +199,18 @@ class Tournament {
 			
 			await room.gameLoop();
 			
-			const winner = room.player1.score > room.player2.score ? match.player1 : match.player2;
+			const winner = room.p1Score > room.p2Score ? match.player1 : match.player2;
 			finalPlayers.push(winner);
 			
 			semiResults.push({
 				player1: match.player1._name,
 				player2: match.player2._name,
-				score1: room.player1.score,
-				score2: room.player2.score,
+				score1: room.p1Score,
+				score2: room.p2Score,
 				winner: winner._name
 			});
 			
-			console.log(`${match.roomName} winner: ${winner._name} (${room.player1.score}-${room.player2.score})`);
+			console.log(`${match.roomName} winner: ${winner._name} (${room.p1Score}-${room.p2Score})`);
 			
 			// Notify match result
 			this.clients.forEach(c => {
@@ -221,8 +221,8 @@ class Tournament {
 						match: match.roomName,
 						player1: match.player1._name,
 						player2: match.player2._name,
-						score1: room.player1.score,
-						score2: room.player2.score,
+						score1: room.p1Score,
+						score2: room.p2Score,
 						winner: winner._name
 					}));
 				}
@@ -261,9 +261,9 @@ class Tournament {
 			
 			await room.gameLoop();
 			
-			const champion = room.player1.score > room.player2.score ? finalMatch.player1 : finalMatch.player2;
+			const champion = room.p1Score > room.p2Score ? finalMatch.player1 : finalMatch.player2;
 			
-			console.log(`Tournament Champion: ${champion._name} (${room.player1.score}-${room.player2.score})`);
+			console.log(`Tournament Champion: ${champion._name} (${room.p1Score}-${room.p2Score})`);
 
 			// Notify match result
 			this.clients.forEach(c => {
@@ -274,8 +274,8 @@ class Tournament {
 						match: 'Final',
 						player1: finalMatch.player1._name,
 						player2: finalMatch.player2._name,
-						score1: room.player1.score,
-						score2: room.player2.score,
+						score1: room.p1Score,
+						score2: room.p2Score,
 						winner: champion._name
 					}));
 				}
@@ -290,8 +290,8 @@ class Tournament {
 						method: 'tournamentWinner',
 						winner: champion._name,
 						championId: champion._clientId,
-						finalScore1: room.player1.score,
-						finalScore2: room.player2.score
+						finalScore1: room.p1Score,
+						finalScore2: room.p2Score
 					}));
 				}
 			});
