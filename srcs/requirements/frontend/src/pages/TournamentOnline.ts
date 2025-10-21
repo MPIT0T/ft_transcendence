@@ -16,10 +16,10 @@ export const TournamentOnline: Page = {
 			</div>
 
 			<!-- Contenu principal (center) -->
-			<div class="flex-1 backdrop-blur-xs text-white max-w-5xl">
+			<div class="flex-1  text-white max-w-5xl">
 				<!-- Header avec style arcade -->
 				<div class="mx-auto mb-8">
-					<div class="flex items-center justify-center mb-4 border-4 border-white p-4 bg-black">
+					<div class="flex items-center justify-center mb-4 border-4 border-white p-4 backdrop-blur-xs">
 						<h1 class="text-5xl font-bold text-white tracking-wider" style="font-family: 'Courier New', monospace; text-shadow: 0 0 10px #fff, 0 0 20px #fff;">
 							◈ TOURNAMENT ◈
 						</h1>
@@ -32,13 +32,13 @@ export const TournamentOnline: Page = {
 					<div class="flex justify-center items-start gap-8">
 						<!-- Round 1: Quarter Finals -->
 						<div class="flex flex-col gap-8">
-							<div class="text-center mb-4 border-2 border-white p-2 bg-black/70 backdrop-blur-xs">
+							<div class="text-center mb-4 border-2 border-white p-2 backdrop-blur-xs">
 								<h3 class="text-2xl font-bold text-white" style="font-family: 'Courier New', monospace;">ROUND 1</h3>
 							</div>
 							<div class="flex flex-col gap-6">
 								<!-- Match 1 -->
-								<div class="border-4 border-white p-3 w-64 bg-black/70 backdrop-blur-xs" data-match="quarter-1">
-									<div class="player-slot p-2 mb-1 border-2 border-white bg-black/50" data-slot="0">
+								<div class="border-4 border-white p-3 w-64 backdrop-blur-xs" data-match="quarter-1">
+									<div class="player-slot p-2 mb-1 border-2 border-white backdrop-blur-xs" data-slot="0">
 										<span class="player-name text-gray-400" style="font-family: 'Courier New', monospace;">█ WAITING...</span>
 									</div>
 									<div class="text-center text-white text-lg my-1 flex items-center justify-center gap-3" style="font-family: 'Courier New', monospace;">
@@ -46,14 +46,14 @@ export const TournamentOnline: Page = {
 										<span>- VS -</span>
 										<span class="score-2 text-yellow-400 font-bold"></span>
 									</div>
-									<div class="player-slot p-2 border-2 border-white bg-black/50" data-slot="1">
+									<div class="player-slot p-2 border-2 border-white backdrop-blur-xs" data-slot="1">
 										<span class="player-name text-gray-400" style="font-family: 'Courier New', monospace;">█ WAITING...</span>
 									</div>
 								</div>
 
 								<!-- Match 2 -->
-								<div class="border-4 border-white p-3 w-64 bg-black/70 backdrop-blur-xs" data-match="quarter-2">
-									<div class="player-slot p-2 mb-1 border-2 border-white bg-black/50" data-slot="2">
+								<div class="border-4 border-white p-3 w-64 backdrop-blur-xs" data-match="quarter-2">
+									<div class="player-slot p-2 mb-1 border-2 border-white backdrop-blur-xs" data-slot="2">
 										<span class="player-name text-gray-400" style="font-family: 'Courier New', monospace;">█ WAITING...</span>
 									</div>
 									<div class="text-center text-white text-lg my-1 flex items-center justify-center gap-3" style="font-family: 'Courier New', monospace;">
@@ -61,14 +61,14 @@ export const TournamentOnline: Page = {
 										<span>- VS -</span>
 										<span class="score-2 text-yellow-400 font-bold"></span>
 									</div>
-									<div class="player-slot p-2 border-2 border-white bg-black/50" data-slot="3">
+									<div class="player-slot p-2 border-2 border-white backdrop-blur-xs" data-slot="3">
 										<span class="player-name text-gray-400" style="font-family: 'Courier New', monospace;">█ WAITING...</span>
 									</div>
 								</div>
 
 								<!-- Match 3 -->
-								<div class="border-4 border-white p-3 w-64 bg-black/70 backdrop-blur-xs" data-match="quarter-3">
-									<div class="player-slot p-2 mb-1 border-2 border-white bg-black/50" data-slot="4">
+								<div class="border-4 border-white p-3 w-64 backdrop-blur-xs" data-match="quarter-3">
+									<div class="player-slot p-2 mb-1 border-2 border-white backdrop-blur-xs" data-slot="4">
 										<span class="player-name text-gray-400" style="font-family: 'Courier New', monospace;">█ WAITING...</span>
 									</div>
 									<div class="text-center text-white text-lg my-1 flex items-center justify-center gap-3" style="font-family: 'Courier New', monospace;">
@@ -76,14 +76,14 @@ export const TournamentOnline: Page = {
 										<span>- VS -</span>
 										<span class="score-2 text-yellow-400 font-bold"></span>
 									</div>
-									<div class="player-slot p-2 border-2 border-white bg-black/50" data-slot="5">
+									<div class="player-slot p-2 border-2 border-white backdrop-blur-xs" data-slot="5">
 										<span class="player-name text-gray-400" style="font-family: 'Courier New', monospace;">█ WAITING...</span>
 									</div>
 								</div>
 
 								<!-- Match 4 -->
-								<div class="border-4 border-white p-3 w-64 bg-black/70 backdrop-blur-xs" data-match="quarter-4">
-									<div class="player-slot p-2 mb-1 border-2 border-white bg-black/50" data-slot="6">
+								<div class="border-4 border-white p-3 w-64 backdrop-blur-xs" data-match="quarter-4">
+									<div class="player-slot p-2 mb-1 border-2 border-white backdrop-blur-xs" data-slot="6">
 										<span class="player-name text-gray-400" style="font-family: 'Courier New', monospace;">█ WAITING...</span>
 									</div>
 									<div class="text-center text-white text-lg my-1 flex items-center justify-center gap-3" style="font-family: 'Courier New', monospace;">
@@ -91,7 +91,7 @@ export const TournamentOnline: Page = {
 										<span>- VS -</span>
 										<span class="score-2 text-yellow-400 font-bold"></span>
 									</div>
-									<div class="player-slot p-2 border-2 border-white bg-black/50" data-slot="7">
+									<div class="player-slot p-2 border-2 border-white backdrop-blur-xs" data-slot="7">
 										<span class="player-name text-gray-400" style="font-family: 'Courier New', monospace;">█ WAITING...</span>
 									</div>
 								</div>
@@ -100,13 +100,13 @@ export const TournamentOnline: Page = {
 
 						<!-- Round 2: Semi Finals -->
 						<div class="flex flex-col gap-8">
-							<div class="text-center mb-4 border-2 border-white p-2 bg-black/70 backdrop-blur-xs">
+							<div class="text-center mb-4 border-2 border-white p-2 backdrop-blur-xs">
 								<h3 class="text-2xl font-bold text-white" style="font-family: 'Courier New', monospace;">ROUND 2</h3>
 							</div>
 							<div class="flex flex-col gap-32 mt-24">
 								<!-- Semi 1 -->
-								<div class="border-4 border-white p-3 w-64 bg-black/70 backdrop-blur-xs" data-match="semi-1">
-									<div class="p-2 mb-1 border-2 border-white bg-black/50" data-player="1">
+								<div class="border-4 border-white p-3 w-64 backdrop-blur-xs" data-match="semi-1">
+									<div class="p-2 mb-1 border-2 border-white backdrop-blur-xs" data-player="1">
 										<span class="player-name text-gray-400" style="font-family: 'Courier New', monospace;">TBD</span>
 									</div>
 									<div class="text-center text-white text-lg my-1 flex items-center justify-center gap-3" style="font-family: 'Courier New', monospace;">
@@ -114,14 +114,14 @@ export const TournamentOnline: Page = {
 										<span>- VS -</span>
 										<span class="score-2 text-yellow-400 font-bold"></span>
 									</div>
-									<div class="p-2 border-2 border-white bg-black/50" data-player="2">
+									<div class="p-2 border-2 border-white backdrop-blur-xs" data-player="2">
 										<span class="player-name text-gray-400" style="font-family: 'Courier New', monospace;">TBD</span>
 									</div>
 								</div>
 
 								<!-- Semi 2 -->
-								<div class="border-4 border-white p-3 w-64 bg-black/70 backdrop-blur-xs" data-match="semi-2">
-									<div class="p-2 mb-1 border-2 border-white bg-black/50" data-player="1">
+								<div class="border-4 border-white p-3 w-64 backdrop-blur-xs" data-match="semi-2">
+									<div class="p-2 mb-1 border-2 border-white backdrop-blur-xs" data-player="1">
 										<span class="player-name text-gray-400" style="font-family: 'Courier New', monospace;">TBD</span>
 									</div>
 									<div class="text-center text-white text-lg my-1 flex items-center justify-center gap-3" style="font-family: 'Courier New', monospace;">
@@ -129,7 +129,7 @@ export const TournamentOnline: Page = {
 										<span>- VS -</span>
 										<span class="score-2 text-yellow-400 font-bold"></span>
 									</div>
-									<div class="p-2 border-2 border-white bg-black/50" data-player="2">
+									<div class="p-2 border-2 border-white backdrop-blur-xs" data-player="2">
 										<span class="player-name text-gray-400" style="font-family: 'Courier New', monospace;">TBD</span>
 									</div>
 								</div>
@@ -138,12 +138,12 @@ export const TournamentOnline: Page = {
 
 						<!-- Round 3: Final -->
 						<div class="flex flex-col gap-8">
-							<div class="text-center mb-4 border-2 border-white p-2 bg-black/70 backdrop-blur-xs">
+							<div class="text-center mb-4 border-2 border-white p-2 backdrop-blur-xs">
 								<h3 class="text-2xl font-bold text-white" style="font-family: 'Courier New', monospace;">FINAL</h3>
 							</div>
 							<div class="flex flex-col justify-center min-h-[600px]">
-								<div class="border-4 border-white p-3 w-64 bg-black/70 backdrop-blur-xs" data-match="final">
-									<div class="p-2 mb-1 border-2 border-white bg-black/50" data-player="1">
+								<div class="border-4 border-white p-3 w-64 backdrop-blur-xs" data-match="final">
+									<div class="p-2 mb-1 border-2 border-white backdrop-blur-xs" data-player="1">
 										<span class="player-name text-gray-400" style="font-family: 'Courier New', monospace;">TBD</span>
 									</div>
 									<div class="text-center text-white text-lg my-1 flex items-center justify-center gap-3" style="font-family: 'Courier New', monospace;">
@@ -151,7 +151,7 @@ export const TournamentOnline: Page = {
 										<span>- VS -</span>
 										<span class="score-2 text-yellow-400 font-bold"></span>
 									</div>
-									<div class="p-2 border-2 border-white bg-black/50" data-player="2">
+									<div class="p-2 border-2 border-white backdrop-blur-xs" data-player="2">
 										<span class="player-name text-gray-400" style="font-family: 'Courier New', monospace;">TBD</span>
 									</div>
 								</div>
@@ -160,11 +160,11 @@ export const TournamentOnline: Page = {
 
 						<!-- Winner -->
 						<div class="flex flex-col gap-8" style="min-width: 200px; max-width: 250px;">
-							<div class="text-center mb-4 border-2 border-white p-2 bg-black/70 backdrop-blur-xs">
+							<div class="text-center mb-4 border-2 border-white p-2 backdrop-blur-xs">
 								<h3 class="text-2xl font-bold text-white" style="font-family: 'Courier New', monospace;">★ WINNER ★</h3>
 							</div>
 							<div class="flex flex-col justify-center min-h-[600px]">
-								<div class="border-4 border-white p-4 text-center bg-black/70 backdrop-blur-xs w-full">
+								<div class="border-4 border-white p-4 text-center backdrop-blur-xs w-full">
 									<div class="text-5xl mb-3 text-white">🏆</div>
 									<div class="text-gray-400 text-sm break-words overflow-hidden" style="font-family: 'Courier New', monospace; max-height: 80px;">TBD</div>
 								</div>
@@ -363,12 +363,6 @@ export const TournamentOnline: Page = {
 
 				// Résultats de match avec scores
 				if (response.method === "matchResult") {
-					console.log('=== matchResult received ===');
-					console.log('Full response:', JSON.stringify(response));
-					console.log('Round:', response.round);
-					console.log('Player1:', response.player1, 'Score1:', response.score1);
-					console.log('Player2:', response.player2, 'Score2:', response.score2);
-					console.log('Winner:', response.winner);
 					
 					addServerMessage(`✅ ${response.match} result: ${response.player1} ${response.score1} - ${response.score2} ${response.player2}`);
 					addServerMessage(`Winner: ${response.winner}!`);
@@ -379,49 +373,39 @@ export const TournamentOnline: Page = {
 					if (response.round === "Quarter Finals") {
 						// Chercher dans tous les Quarter Finals
 						const allQuarters = root.querySelectorAll('[data-match^="quarter-"]');
-						console.log('Found quarter boxes:', allQuarters.length);
 						
 						allQuarters.forEach((box) => {
 							const slots = box.querySelectorAll('[data-slot]');
 							const name1 = slots[0]?.querySelector('.player-name')?.textContent?.trim();
 							const name2 = slots[1]?.querySelector('.player-name')?.textContent?.trim();
 							
-							console.log(`Checking match: ${name1} vs ${name2} against ${response.player1} vs ${response.player2}`);
 							
 							if (name1 === response.player1 && name2 === response.player2) {
 								matchBox = box;
-								console.log('Found matching quarter box!');
 							}
 						});
 					} else if (response.round === "Semi Finals") {
 						// Chercher dans les Semi Finals
 						const allSemis = root.querySelectorAll('[data-match^="semi-"]');
-						console.log('Found semi boxes:', allSemis.length);
 						
 						allSemis.forEach((box) => {
 							const name1 = box.querySelector('[data-player="1"] .player-name')?.textContent?.trim();
 							const name2 = box.querySelector('[data-player="2"] .player-name')?.textContent?.trim();
 							
-							console.log(`Checking match: ${name1} vs ${name2} against ${response.player1} vs ${response.player2}`);
 							
 							if (name1 === response.player1 && name2 === response.player2) {
 								matchBox = box;
-								console.log('Found matching semi box!');
 							}
 						});
 					} else if (response.round === "Final") {
 						matchBox = root.querySelector('[data-match="final"]');
-						console.log('Found final box:', matchBox);
 					}
 					
 					// Mettre à jour les scores et highlight winner
 					if (matchBox) {
-						console.log('✓ Match box found!', matchBox);
 						const score1El = matchBox.querySelector('.score-1');
 						const score2El = matchBox.querySelector('.score-2');
 						
-						console.log('Score1 element:', score1El);
-						console.log('Score2 element:', score2El);
 						
 						// Trouver les slots de joueurs
 						let player1Slot, player2Slot;
@@ -429,42 +413,26 @@ export const TournamentOnline: Page = {
 							const slots = matchBox.querySelectorAll('[data-slot]');
 							player1Slot = slots[0];
 							player2Slot = slots[1];
-							console.log('Quarter Finals slots found:', slots.length);
 						} else {
 							player1Slot = matchBox.querySelector('[data-player="1"]');
 							player2Slot = matchBox.querySelector('[data-player="2"]');
-							console.log('Semi/Final slots found:', player1Slot, player2Slot);
 						}
 						
 						// Afficher les scores à côté de VS
 						if (score1El) {
 							score1El.textContent = response.score1;
-							console.log('✓ Score1 set to:', response.score1);
-						} else {
-							console.log('✗ Score1 element not found!');
-						}
-						
+						} 
 						if (score2El) {
 							score2El.textContent = response.score2;
-							console.log('✓ Score2 set to:', response.score2);
-						} else {
-							console.log('✗ Score2 element not found!');
 						}
 						
 						// Highlight winner
 						if (response.winner === response.player1) {
 							player1Slot?.classList.add('bg-green-900', 'border-green-400');
-							player1Slot?.classList.remove('bg-black/50');
-							console.log('✓ Player1 highlighted as winner');
 						} else {
 							player2Slot?.classList.add('bg-green-900', 'border-green-400');
-							player2Slot?.classList.remove('bg-black/50');
-							console.log('✓ Player2 highlighted as winner');
 						}
 						
-						console.log('=== Match box updated successfully ===');
-					} else {
-						console.log('✗✗✗ ERROR: Match box not found! ✗✗✗');
 					}
 				}
 
@@ -473,7 +441,6 @@ export const TournamentOnline: Page = {
 					addServerMessage(`🏆 CHAMPION: ${response.winner}!`);
 					addServerMessage(`Congratulations to the winner!`);
 					
-					console.log('Tournament winner:', response.winner);
 					
 					if (tournamentNameEl) {
 						tournamentNameEl.textContent = '🏆 TOURNAMENT FINISHED 🏆';
@@ -482,22 +449,15 @@ export const TournamentOnline: Page = {
 					// Afficher le gagnant dans la zone Winner
 					// Chercher le div avec le trophée (maintenant text-5xl au lieu de text-6xl)
 					const trophyDiv = root.querySelector('.text-5xl.mb-3.text-white');
-					console.log('Trophy div found:', trophyDiv);
 					
 					if (trophyDiv && trophyDiv.parentElement) {
 						const winnerNameDiv = trophyDiv.nextElementSibling;
-						console.log('Winner name div found:', winnerNameDiv);
 						
 						if (winnerNameDiv) {
 							winnerNameDiv.textContent = response.winner;
 							winnerNameDiv.classList.remove('text-gray-400', 'text-sm');
 							winnerNameDiv.classList.add('text-white', 'text-lg', 'font-bold', 'break-words');
-							console.log('Winner name updated to:', response.winner);
-						} else {
-							console.log('ERROR: Winner name div not found');
 						}
-					} else {
-						console.log('ERROR: Trophy div not found');
 					}
 				}
 

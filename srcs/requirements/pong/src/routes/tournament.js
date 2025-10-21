@@ -86,7 +86,6 @@ class Tournament {
 	}
 
 	async tournamentLoop() {
-		console.log('Starting tournament with', this.clients.length, 'players');
 
 		// Round 1: Quarter Finals (8 players -> 4 winners)
 		const quarterFinals = [];
@@ -119,7 +118,6 @@ class Tournament {
 		const semiFinalPlayers = [];
 		const quarterResults = [];
 		for (const match of quarterFinals) {
-			console.log(`Starting ${match.roomName}: ${match.player1._name} vs ${match.player2._name}`);
 			
 			const roomId = this.createRoom(match.roomName, match.player1, match.player2);
 			const room = this.rooms.findRoom(roomId);
@@ -140,7 +138,6 @@ class Tournament {
 				winner: winner._name
 			});
 			
-			console.log(`${match.roomName} winner: ${winner._name} (${room.p1Score}-${room.p2Score})`);
 			
 			// Notify match result
 			this.clients.forEach(c => {
@@ -192,7 +189,6 @@ class Tournament {
 		const finalPlayers = [];
 		const semiResults = [];
 		for (const match of semiFinals) {
-			console.log(`Starting ${match.roomName}: ${match.player1._name} vs ${match.player2._name}`);
 			
 			const roomId = this.createRoom(match.roomName, match.player1, match.player2);
 			const room = this.rooms.findRoom(roomId);
@@ -210,7 +206,6 @@ class Tournament {
 				winner: winner._name
 			});
 			
-			console.log(`${match.roomName} winner: ${winner._name} (${room.p1Score}-${room.p2Score})`);
 			
 			// Notify match result
 			this.clients.forEach(c => {
@@ -254,7 +249,6 @@ class Tournament {
 				}
 			});
 
-			console.log(`Starting Final: ${finalMatch.player1._name} vs ${finalMatch.player2._name}`);
 			
 			const roomId = this.createRoom(finalMatch.roomName, finalMatch.player1, finalMatch.player2);
 			const room = this.rooms.findRoom(roomId);
@@ -263,7 +257,6 @@ class Tournament {
 			
 			const champion = room.p1Score > room.p2Score ? finalMatch.player1 : finalMatch.player2;
 			
-			console.log(`Tournament Champion: ${champion._name} (${room.p1Score}-${room.p2Score})`);
 
 			// Notify match result
 			this.clients.forEach(c => {
@@ -299,7 +292,6 @@ class Tournament {
 			this.state = "finished";
 		}
 
-		console.log('Tournament finished');
 	}
 
 	findRoom(roomId) {
