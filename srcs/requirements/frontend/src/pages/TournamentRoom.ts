@@ -75,7 +75,7 @@ export const TournamentRoom: Page = {
 
 		<div class="bg-white border-2 border-black p-8">
 			<div class="flex justify-center">
-				<h1 class="text-2xl font-bold text-center">Tournament</h1>
+				<h1 class="text-2xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-blue-500 to-green-500 bg-[length:400%_400%] animate-gradientShift">Tournament</h1>
 			</div>
 			<div class="text-center mb-8">
 				<div class="flex justify-center space-x-4">
