@@ -33,9 +33,4 @@ interface StatsPage extends Page {
   mountProfileEvents(root: HTMLElement): void;
 }
 
-export interface TournamentPage extends Page {
-  render8players(): string;
-  render4players(): string;
-}
-
 export type { Player, Ball, GameState , Page, StatsPage};

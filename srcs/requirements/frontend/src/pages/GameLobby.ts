@@ -1,6 +1,6 @@
 import type { Page } from "../interface/gameInterface.js"
 
-export const GameLoby: Page = {
+export const GameLobby: Page = {
 	render() {
 		return `
 			<!-- Modes de jeu -->
