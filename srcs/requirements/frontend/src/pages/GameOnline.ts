@@ -28,7 +28,7 @@ export const GameOnline: Page = {
     let waiting = true;
 
     const gameContainer = root.querySelector('#game-container') as HTMLElement;
-    currentGame = new GameComponentOnline(gameContainer, canStart);
+    currentGame = new GameComponentOnline(gameContainer, canStart, ws);
     currentGame.setCanStart(canStart);
 
     const payLoad = {

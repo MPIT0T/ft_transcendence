@@ -5,6 +5,7 @@ import { Layout } from    "./pages/Layout.js";
 import Stats from     "./pages/Stats.js";
 import { GameLoby } from  "./pages/GameLobby.js";
 import { GameOnline } from "./pages/GameOnline.js";
+import { GameOnlineTournament } from "./pages/GameOnlineTournament.js";
 import { GameRoom } from "./pages/GameRoom.js";
 import { TournamentRoom } from "./pages/TournamentRoom.js";
 import { TournamentOnline } from "./pages/TournamentOnline.js";
@@ -14,6 +15,7 @@ const routes: Record<string, Page> = {
   "/stats": Stats,
   "/gameLoby": GameLoby,
   "/gameOnline": GameOnline,
+  "/gameOnlineTournament": GameOnlineTournament,
   "/gameRoom": GameRoom,
   "/tournamentRoom": TournamentRoom,
   "/tournamentOnline": TournamentOnline,

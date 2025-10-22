@@ -280,27 +280,37 @@ export const TournamentOnline: Page = {
 					if (tournamentNameEl) tournamentNameEl.textContent = 'QUARTER FINALS';
 				}
 
-				// Mise à jour des rounds (Quarter Finals, Semi Finals, Final)
-				if (response.method === "tournamentRound") {
-					addServerMessage(`⚔️ ${response.round} starting!`);
+				// 📊 Recevoir l'état complet du tournoi (tous les matchs)
+				if (response.method === "tournamentState") {
+					addServerMessage(`📊 Updating tournament state...`);
 					
-					response.matches.forEach((match: any, index: number) => {
-						addServerMessage(`Match ${index + 1}: ${match.player1} vs ${match.player2}`);
-					});
-
-					// Mettre à jour l'en-tête avec le round actuel
-					if (tournamentNameEl) {
-						tournamentNameEl.textContent = response.round.toUpperCase();
+					const allMatches = response.allMatches;
+					
+					// Déterminer le round actuel basé sur les matchs en cours
+					let currentRound = 'QUARTER FINALS';
+					const hasCompletedQuarters = allMatches.filter((m: any) => m.round === 'Quarter Finals' && m.status === 'completed').length;
+					const hasCompletedSemis = allMatches.filter((m: any) => m.round === 'Semi Finals' && m.status === 'completed').length;
+					
+					if (hasCompletedSemis === 2) {
+						currentRound = 'FINAL';
+					} else if (hasCompletedQuarters === 4) {
+						currentRound = 'SEMI FINALS';
 					}
-
-					// Mettre à jour les cases du bracket selon le round
-					if (response.round === "Quarter Finals") {
-						// Les noms devraient déjà être là depuis playerJoinTournament
-						// Mais on peut les vérifier/mettre à jour
-						response.matches.forEach((match: any, index: number) => {
-							const matchId = `quarter-${index + 1}`;
-							const matchBox = root.querySelector(`[data-match="${matchId}"]`);
-							if (matchBox) {
+					
+					if (tournamentNameEl) {
+						tournamentNameEl.textContent = currentRound;
+					}
+					
+					// Mettre à jour tous les matchs
+					allMatches.forEach((match: any) => {
+						let matchBox = null;
+						
+						// Trouver la box correspondante
+						if (match.round === 'Quarter Finals') {
+							const matchId = `quarter-${match.matchNumber}`;
+							matchBox = root.querySelector(`[data-match="${matchId}"]`);
+							
+							if (matchBox && match.player1 && match.player2) {
 								const slots = matchBox.querySelectorAll('[data-slot]');
 								const name1 = slots[0]?.querySelector('.player-name');
 								const name2 = slots[1]?.querySelector('.player-name');
@@ -315,125 +325,131 @@ export const TournamentOnline: Page = {
 									name2.classList.remove('text-gray-400');
 									name2.classList.add('text-white');
 								}
-							}
-						});
-					} else if (response.round === "Semi Finals") {
-						// Mettre à jour les 2 matchs de semi-finales
-						response.matches.forEach((match: any, index: number) => {
-							const matchId = `semi-${index + 1}`;
-							const matchBox = root.querySelector(`[data-match="${matchId}"]`);
-							if (matchBox) {
-								const player1Name = matchBox.querySelector('[data-player="1"] .player-name');
-								const player2Name = matchBox.querySelector('[data-player="2"] .player-name');
 								
-								if (player1Name) {
-									player1Name.textContent = match.player1;
-									player1Name.classList.remove('text-gray-400');
-									player1Name.classList.add('text-white');
-								}
-								if (player2Name) {
-									player2Name.textContent = match.player2;
-									player2Name.classList.remove('text-gray-400');
-									player2Name.classList.add('text-white');
+								// Si le match est terminé, afficher les scores
+								if (match.status === 'completed') {
+									const score1El = matchBox.querySelector('.score-1');
+									const score2El = matchBox.querySelector('.score-2');
+									
+									if (score1El) score1El.textContent = match.score1;
+									if (score2El) score2El.textContent = match.score2;
+									
+									// Highlight winner
+									if (match.winner === match.player1) {
+										slots[0]?.classList.add('bg-green-900', 'border-green-400');
+									} else {
+										slots[1]?.classList.add('bg-green-900', 'border-green-400');
+									}
 								}
 							}
-						});
-					} else if (response.round === "Final") {
-						// Mettre à jour le match final
-						if (response.matches[0]) {
-							const finalBox = root.querySelector('[data-match="final"]');
-							if (finalBox) {
-								const player1Name = finalBox.querySelector('[data-player="1"] .player-name');
-								const player2Name = finalBox.querySelector('[data-player="2"] .player-name');
+						} else if (match.round === 'Semi Finals') {
+							const matchId = `semi-${match.matchNumber}`;
+							matchBox = root.querySelector(`[data-match="${matchId}"]`);
+							
+							if (matchBox && match.player1 && match.player2) {
+								const player1Slot = matchBox.querySelector('[data-player="1"]');
+								const player2Slot = matchBox.querySelector('[data-player="2"]');
+								const name1 = player1Slot?.querySelector('.player-name');
+								const name2 = player2Slot?.querySelector('.player-name');
 								
-								if (player1Name) {
-									player1Name.textContent = response.matches[0].player1;
-									player1Name.classList.remove('text-gray-400');
-									player1Name.classList.add('text-white');
+								if (name1) {
+									name1.textContent = match.player1;
+									name1.classList.remove('text-gray-400');
+									name1.classList.add('text-white');
 								}
-								if (player2Name) {
-									player2Name.textContent = response.matches[0].player2;
-									player2Name.classList.remove('text-gray-400');
-									player2Name.classList.add('text-white');
+								if (name2) {
+									name2.textContent = match.player2;
+									name2.classList.remove('text-gray-400');
+									name2.classList.add('text-white');
+								}
+								
+								// Si le match est terminé, afficher les scores
+								if (match.status === 'completed') {
+									const score1El = matchBox.querySelector('.score-1');
+									const score2El = matchBox.querySelector('.score-2');
+									
+									if (score1El) score1El.textContent = match.score1;
+									if (score2El) score2El.textContent = match.score2;
+									
+									// Highlight winner
+									if (match.winner === match.player1) {
+										player1Slot?.classList.add('bg-green-900', 'border-green-400');
+									} else {
+										player2Slot?.classList.add('bg-green-900', 'border-green-400');
+									}
+								}
+							}
+						} else if (match.round === 'Final') {
+							matchBox = root.querySelector('[data-match="final"]');
+							
+							if (matchBox && match.player1 && match.player2) {
+								const player1Slot = matchBox.querySelector('[data-player="1"]');
+								const player2Slot = matchBox.querySelector('[data-player="2"]');
+								const name1 = player1Slot?.querySelector('.player-name');
+								const name2 = player2Slot?.querySelector('.player-name');
+								
+								if (name1) {
+									name1.textContent = match.player1;
+									name1.classList.remove('text-gray-400');
+									name1.classList.add('text-white');
+								}
+								if (name2) {
+									name2.textContent = match.player2;
+									name2.classList.remove('text-gray-400');
+									name2.classList.add('text-white');
+								}
+								
+								// Si le match est terminé, afficher les scores
+								if (match.status === 'completed') {
+									const score1El = matchBox.querySelector('.score-1');
+									const score2El = matchBox.querySelector('.score-2');
+									
+									if (score1El) score1El.textContent = match.score1;
+									if (score2El) score2El.textContent = match.score2;
+									
+									// Highlight winner et afficher dans la winner box
+									if (match.winner === match.player1) {
+										player1Slot?.classList.add('bg-green-900', 'border-green-400');
+									} else {
+										player2Slot?.classList.add('bg-green-900', 'border-green-400');
+									}
+									
+									// Afficher le champion
+									const winnerBox = root.querySelector('.winner-box');
+									if (winnerBox) {
+										const winnerName = winnerBox.querySelector('.text-5xl.mb-3.text-white');
+										if (winnerName) {
+											winnerName.textContent = match.winner;
+										}
+									}
 								}
 							}
 						}
-					}
+					});
 				}
 
-				// Résultats de match avec scores
-				if (response.method === "matchResult") {
+			// 🎮 Redirection vers un match
+			if (response.method === "startMatch") {
+				addServerMessage(`🎮 Your match is starting!`);
+				addServerMessage(`Opponent: ${response.opponent}`);
+				addServerMessage(`Redirecting to game...`);
+				
+				// Sauvegarder les infos du match dans localStorage
+				localStorage.setItem('matchRound', response.matchRound);
+				localStorage.setItem('matchOpponent', response.opponent);
+				
+				// Rediriger vers la page de jeu après 1 seconde
+				setTimeout(() => {
+					window.location.hash = response.roomUrl;
+				}, 1000);
+			}				// 🔙 Retour au bracket après un match
+				if (response.method === "returnToBracket") {
+					addServerMessage(`Match finished! Returning to bracket...`);
 					
-					addServerMessage(`✅ ${response.match} result: ${response.player1} ${response.score1} - ${response.score2} ${response.player2}`);
-					addServerMessage(`Winner: ${response.winner}!`);
-					
-					// Trouver le match correspondant et afficher le score
-					let matchBox = null;
-					
-					if (response.round === "Quarter Finals") {
-						// Chercher dans tous les Quarter Finals
-						const allQuarters = root.querySelectorAll('[data-match^="quarter-"]');
-						
-						allQuarters.forEach((box) => {
-							const slots = box.querySelectorAll('[data-slot]');
-							const name1 = slots[0]?.querySelector('.player-name')?.textContent?.trim();
-							const name2 = slots[1]?.querySelector('.player-name')?.textContent?.trim();
-							
-							
-							if (name1 === response.player1 && name2 === response.player2) {
-								matchBox = box;
-							}
-						});
-					} else if (response.round === "Semi Finals") {
-						// Chercher dans les Semi Finals
-						const allSemis = root.querySelectorAll('[data-match^="semi-"]');
-						
-						allSemis.forEach((box) => {
-							const name1 = box.querySelector('[data-player="1"] .player-name')?.textContent?.trim();
-							const name2 = box.querySelector('[data-player="2"] .player-name')?.textContent?.trim();
-							
-							
-							if (name1 === response.player1 && name2 === response.player2) {
-								matchBox = box;
-							}
-						});
-					} else if (response.round === "Final") {
-						matchBox = root.querySelector('[data-match="final"]');
-					}
-					
-					// Mettre à jour les scores et highlight winner
-					if (matchBox) {
-						const score1El = matchBox.querySelector('.score-1');
-						const score2El = matchBox.querySelector('.score-2');
-						
-						
-						// Trouver les slots de joueurs
-						let player1Slot, player2Slot;
-						if (response.round === "Quarter Finals") {
-							const slots = matchBox.querySelectorAll('[data-slot]');
-							player1Slot = slots[0];
-							player2Slot = slots[1];
-						} else {
-							player1Slot = matchBox.querySelector('[data-player="1"]');
-							player2Slot = matchBox.querySelector('[data-player="2"]');
-						}
-						
-						// Afficher les scores à côté de VS
-						if (score1El) {
-							score1El.textContent = response.score1;
-						} 
-						if (score2El) {
-							score2El.textContent = response.score2;
-						}
-						
-						// Highlight winner
-						if (response.winner === response.player1) {
-							player1Slot?.classList.add('bg-green-900', 'border-green-400');
-						} else {
-							player2Slot?.classList.add('bg-green-900', 'border-green-400');
-						}
-						
-					}
+					// Rediriger vers le bracket après 2 secondes
+					setTimeout(() => {
+						window.location.hash = `/tournamentOnline`;
+					}, 2000);
 				}
 
 				// Annonce du gagnant du tournoi

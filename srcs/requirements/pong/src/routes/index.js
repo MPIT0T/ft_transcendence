@@ -37,22 +37,25 @@ module.exports = async function (fastify, opts) {
 						case 'joinT':
 							handleJoinTournament(socket, data);
 							break;
-						case 'createR':
-							handleCreateRoom(socket, data);
-							break;
-						case 'createT':
-							handleCreateTournaments(socket, data);
-							break;
-						case 'move':
-							handleGameMove(socket, data);
-							break;
-						case 'leave':
-							leave(clientId);
-							break;
-						default:
-							socket.send(JSON.stringify({
-								method: 'error',
-								message: 'Unknown method: ' + data.method
+					case 'createR':
+						handleCreateRoom(socket, data);
+						break;
+					case 'createT':
+						handleCreateTournaments(socket, data);
+						break;
+					case 'move':
+						handleGameMove(socket, data);
+						break;
+					case 'moveT':
+						handleTournamentMove(socket, data);
+						break;
+					case 'leave':
+						leave(clientId);
+						break;
+					default:
+						socket.send(JSON.stringify({
+							method: 'error',
+							message: 'Unknown method: ' + data.method
 							}));
 					}
 				} catch (error) {
@@ -325,6 +328,29 @@ async function handleReady(socket, data) {
 
 	await room.updatePlayerR(state);
 
+}
+
+function handleTournamentMove(socket, data) {
+	// Trouver le tournoi qui contient cette room
+	// g_Games._tournaments est l'objet Tournaments, qui contient _tournaments (les tournois)
+	const tournamentsObj = g_Games._tournaments._tournaments || {};
+	let tournament = null;
+	
+	// Parcourir tous les tournois pour trouver celui qui contient cette room
+	for (const tournamentId in tournamentsObj) {
+		const t = tournamentsObj[tournamentId];
+		if (t.rooms && t.rooms.findRoom(data.roomId)) {
+			tournament = t;
+			break;
+		}
+	}
+	
+	if (!tournament) {
+		console.error('Tournament not found for room:', data.roomId);
+		return;
+	}
+	
+	tournament.handleMove(socket, data);
 }
 
 async function handleReadyTournament(socket, data) {

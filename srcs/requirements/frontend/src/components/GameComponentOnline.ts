@@ -1,5 +1,4 @@
 import { Player, Ball } from "../interface/gameInterface";
-import { ws } from "../pages/GameRoom";
 
 export class GameComponentOnline {
 	private container: HTMLElement;                    // Conteneur DOM
@@ -7,6 +6,8 @@ export class GameComponentOnline {
 	private canvas: HTMLCanvasElement | null = null;   // Élément canvas
 	private context: CanvasRenderingContext2D | null = null; // Context 2D
 	private animationId: number | null = null;         // ID de l'animation
+	private ws: WebSocket | undefined;                 // WebSocket pour ce jeu
+	private moveMethod: string = 'move';               // Méthode de mouvement ('move' ou 'moveT')
 
 	// Joueur 1 (gauche)
 	private p1: Player = {
@@ -39,9 +40,11 @@ export class GameComponentOnline {
 	private p1Score: number = 0;
 	private p2Score: number = 0;
 
-	constructor(container: HTMLElement, initialCanStart: boolean = false) {
+	constructor(container: HTMLElement, initialCanStart: boolean = false, websocket?: WebSocket, moveMethod: string = 'move') {
 		this.container = container;
 		this.canStart = initialCanStart;
+		this.ws = websocket;  // Utiliser la WebSocket passée en paramètre
+		this.moveMethod = moveMethod;  // 'move' pour jeu normal, 'moveT' pour tournoi
 		this.render();              // Crée le HTML
 		this.setupCanvas();         // Configure le canvas
 		this.setupEventListeners(); // Ajoute les contrôles clavier
@@ -189,16 +192,21 @@ export class GameComponentOnline {
 	private movePlayer = (e: KeyboardEvent) => {
 		// On ne prend que W, S, ArrowUp et ArrowDown
 		if (["KeyW", "KeyS", "ArrowUp", "ArrowDown"].includes(e.code)) {
-			ws?.send(JSON.stringify({ method: "move",type: "UP", key: e.code, roomId: localStorage.getItem('roomId'), clientId: localStorage.getItem('clientId')}));
+			const roomId = localStorage.getItem('roomId');
+			const clientId = localStorage.getItem('clientId');
+			this.ws?.send(JSON.stringify({ method: this.moveMethod, type: "UP", key: e.code, roomId: roomId, clientId: clientId}));
 		}
 	};
 
 	private stopPlayer = (e: KeyboardEvent) => {
 		if (["KeyW", "KeyS", "ArrowUp", "ArrowDown"].includes(e.code)) {
-			ws?.send(JSON.stringify({ method: "move",type: "DOWN", key: e.code, roomId: localStorage.getItem('roomId'), clientId: localStorage.getItem('clientId')}));
+			const roomId = localStorage.getItem('roomId');
+			const clientId = localStorage.getItem('clientId');
+			this.ws?.send(JSON.stringify({ method: this.moveMethod, type: "DOWN", key: e.code, roomId: roomId, clientId: clientId}));
 		}
 
 	};
+
 
 	private startGame() {
 		if (!this.animationId) {
