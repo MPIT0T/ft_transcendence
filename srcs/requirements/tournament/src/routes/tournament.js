@@ -1,4 +1,3 @@
-const Clients = require('./clients.js');
 const Rooms = require('./rooms.js');
 
 /**
@@ -41,9 +40,9 @@ function sleep(ms) {
 }
 
 class Tournament {
-	constructor(tournamentId, gameMode, gamePoint, Name) {
+	constructor(tournamentId, gameMode, gamePoint, tournamentName) {
 		this.tournamentId = tournamentId;
-		this.gameMode = gatournamentmeMode;
+		this.gameMode = gameMode;
 		this.gamePoint = gamePoint;
 		this.tournamentName = tournamentName;
 		this.rooms = new Rooms();
@@ -111,14 +110,12 @@ class Tournament {
 		return this.allTournamentRooms;
 	}
 
-	// Récupère une room par son round et son numéro de match
 	getTournamentRoom(round, matchNumber) {
 		return this.allTournamentRooms.find(
 			r => r.round === round && r.matchNumber === matchNumber
 		);
 	}
 
-	// Assigne des joueurs à une room spécifique
 	assignPlayersToRoom(round, matchNumber, player1, player2) {
 		const roomData = this.getTournamentRoom(round, matchNumber);
 		if (!roomData) {
@@ -248,17 +245,14 @@ class Tournament {
 			}
 		}
 
-		// Récupérer les rooms des Quarter Finals
 		const quarterFinalRooms = this.allTournamentRooms.filter(r => r.round === 'Quarter Finals');
 
 		this.broadcastTournamentState();
 
-		// 🎮 Lancer tous les matchs des Quarter Finals EN PARALLÈLE
 		const semiFinalPlayers = [];
 		const quarterPromises = quarterFinalRooms.map(async (roomData) => {
 			const room = this.rooms.findRoom(roomData.roomId);
 
-			// 🎮 Rediriger les joueurs vers le match
 			if (roomData.player1 && roomData.player1._conection) {
 				const roomUrl = `/gameOnlineTournament?gameId=${roomData.roomId}`;
 				roomData.player1._conection.send(JSON.stringify({
@@ -280,20 +274,16 @@ class Tournament {
 				}));
 			} await sleep(1000);
 
-			// Start the game
 			room.state = "playing-game";
 			await room.gameLoop();
 
-			// Determine winner (player with highest score)
 			const winner = room.p1Score > room.p2Score ? roomData.player1 : roomData.player2;
 
-			// Update room data
 			roomData.score1 = room.p1Score;
 			roomData.score2 = room.p2Score;
 			roomData.winner = winner;
 			roomData.status = 'completed';
 
-			// 🔙 Rediriger les joueurs vers le bracket
 			if (roomData.player1 && roomData.player1._conection) {
 				roomData.player1._conection.send(JSON.stringify({
 					method: "returnToBracket",
@@ -309,20 +299,17 @@ class Tournament {
 
 			await sleep(2000);
 
-			// 📊 Envoyer l'état complet après chaque match terminé
 			this.broadcastTournamentState();
 
 			return winner;
 		});
 
-		// Attendre que TOUS les matchs des Quarter Finals soient terminés
 		const quarterWinners = await Promise.all(quarterPromises);
 		semiFinalPlayers.push(...quarterWinners);
 
 		await sleep(2000);
 
 		// Round 2: Semi Finals (4 players -> 2 winners)
-		// Assigner les gagnants des Quarter Finals aux Semi Finals
 		for (let i = 0; i < semiFinalPlayers.length; i += 2) {
 			if (i + 1 < semiFinalPlayers.length) {
 				const matchNumber = (i / 2) + 1;
@@ -330,17 +317,13 @@ class Tournament {
 			}
 		}
 
-		// Récupérer les rooms des Semi Finals
 		const semiFinalRooms = this.allTournamentRooms.filter(r => r.round === 'Semi Finals');
 
-		// 📊 Envoyer l'état complet du tournoi
 		this.broadcastTournamentState();
 
-		// 🎮 Lancer tous les matchs des Semi Finals EN PARALLÈLE
 		const semiPromises = semiFinalRooms.map(async (roomData) => {
 			const room = this.rooms.findRoom(roomData.roomId);
 
-			// 🎮 Rediriger les joueurs vers le match
 			if (roomData.player1 && roomData.player1._conection) {
 				const roomUrl = `/gameOnlineTournament?gameId=${roomData.roomId}`;
 				roomData.player1._conection.send(JSON.stringify({
@@ -364,19 +347,16 @@ class Tournament {
 
 			await sleep(1000);
 
-			// Start the game
 			room.state = "playing-game";
 			await room.gameLoop();
 
 			const winner = room.p1Score > room.p2Score ? roomData.player1 : roomData.player2;
 
-			// Update room data
 			roomData.score1 = room.p1Score;
 			roomData.score2 = room.p2Score;
 			roomData.winner = winner;
 			roomData.status = 'completed';
 
-			// 🔙 Rediriger les joueurs vers le bracket
 			if (roomData.player1 && roomData.player1._conection) {
 				roomData.player1._conection.send(JSON.stringify({
 					method: "returnToBracket",
@@ -392,31 +372,25 @@ class Tournament {
 
 			await sleep(2000);
 
-			// 📊 Envoyer l'état complet après chaque match terminé
 			this.broadcastTournamentState();
 
 			return winner;
 		});
 
-		// Attendre que TOUS les matchs des Semi Finals soient terminés
 		const finalPlayers = await Promise.all(semiPromises);
 
 		await sleep(2000);
 
 		// Round 3: Final (2 players -> 1 winner)
 		if (finalPlayers.length === 2) {
-			// Assigner les gagnants des Semi Finals à la Final
 			this.assignPlayersToRoom('Final', 1, finalPlayers[0], finalPlayers[1]);
 
-			// Récupérer la room de la Final
 			const finalRoomData = this.getTournamentRoom('Final', 1);
 
-			// 📊 Envoyer l'état complet du tournoi
 			this.broadcastTournamentState();
 
 			const room = this.rooms.findRoom(finalRoomData.roomId);
 
-			// 🎮 Rediriger les joueurs vers le match final
 			if (finalRoomData.player1 && finalRoomData.player1._conection) {
 				const roomUrl = `/gameOnlineTournament?gameId=${finalRoomData.roomId}`;
 				finalRoomData.player1._conection.send(JSON.stringify({
@@ -438,19 +412,16 @@ class Tournament {
 				}));
 			} await sleep(1000);
 
-			// Start the final game
 			room.state = "playing-game";
 			await room.gameLoop();
 
 			const champion = room.p1Score > room.p2Score ? finalRoomData.player1 : finalRoomData.player2;
 
-			// Update room data
 			finalRoomData.score1 = room.p1Score;
 			finalRoomData.score2 = room.p2Score;
 			finalRoomData.winner = champion;
 			finalRoomData.status = 'completed';
 
-			// 🔙 Rediriger les joueurs vers le bracket
 			if (finalRoomData.player1 && finalRoomData.player1._conection) {
 				finalRoomData.player1._conection.send(JSON.stringify({
 					method: "returnToBracket",
@@ -466,12 +437,10 @@ class Tournament {
 
 			await sleep(2000);
 
-			// 📊 Envoyer l'état complet final avec le champion
 			this.broadcastTournamentState();
 
 			await sleep(2000);
 
-			// Notify all clients about the champion
 			this.clients.forEach(c => {
 				if (c._conection && typeof c._conection.send === 'function') {
 					c._conection.send(JSON.stringify({
@@ -489,12 +458,41 @@ class Tournament {
 
 	}
 
+	remove(clientId) {
+		const idx = this.clients.findIndex(c => c._clientId === clientId);
+		if (idx !== -1) {
+			this.clients.splice(idx, 1);
+			
+
+			// Notifier les autres clients de la room
+			const payLoad = {
+				method: 'playerJoinTournament',
+				status: 'success',
+				message: 'Un joueur a quitté le tournoi.',
+				playerCount: this.clients.length,
+				clients: this.clients.map(c => ({
+					id: c.id || c._clientId,
+					name: c._name || 'Unknown',
+					elo: c.elo || 1000
+				})),
+			};
+
+			this.clients.forEach(c => {
+				if (c._conection && typeof c._conection.send === 'function') {
+					c._conection.send(JSON.stringify(payLoad));
+				}
+			});
+			
+			return true;
+		}
+		return false;
+	}
+
 	findRoom(roomId) {
 		return this.rooms.findRoom(roomId);
 	}
 
 	handleMove(socket, data) {
-		// Gérer les mouvements des joueurs dans les rooms de tournoi
 		const room = this.rooms.findRoom(data.roomId);
 		if (!room) {
 			console.error('Room not found in tournament:', data.roomId);

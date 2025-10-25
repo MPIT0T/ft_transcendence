@@ -171,7 +171,7 @@ export const TournamentRoom: Page = {
 		let tournamentId;
 		if (ws === undefined) {
 			const host = window.location.host;
-			ws = new WebSocket(`wss://${host}/pong/ws`);
+			ws = new WebSocket(`wss://${host}/tournament/ws`);
 		}
 
 		ws.onmessage = message => {
