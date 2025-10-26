@@ -1,42 +1,27 @@
-import { Player, Ball } from "../interface/gameInterface";
+import { Player } from './Player';
+import { Ball } from './Ball';
 
 export class GameComponent {
-  private container: HTMLElement;                    // Conteneur DOM
-  private canStart: boolean = false;                 // État du jeu (pause/play)
-  private canvas: HTMLCanvasElement | null = null;   // Élément canvas
-  private context: CanvasRenderingContext2D | null = null; // Context 2D
-  private animationId: number | null = null;         // ID de l'animation
+  private container: HTMLElement;
+  private canStart: boolean = false;
+  private canvas: HTMLCanvasElement | null = null;
+  private context: CanvasRenderingContext2D | null = null;
+  private animationId: number | null = null;
 
-  // Joueur 1 (gauche)
-  private p1: Player = {
-    x: 20,      // 20px du bord gauche
-    y: 260,     // Centre vertical
-    width: 8,   // Raquette fine
-    height: 80, // Assez haute
-    vel_y: 0    // Immobile au départ
-  };
+  // Constantes du jeu (identiques au serveur)
+  private readonly CANVAS_WIDTH = 900;
+  private readonly CANVAS_HEIGHT = 600;
+  private readonly TICK_RATE = 60;
+  private readonly TICK_INTERVAL = 1000 / this.TICK_RATE;
 
-  // Joueur 2 (droite)  
-  private p2: Player = {
-    x: 872,     // 572px = 900-20-8 (bord droit - marge - largeur)
-    y: 260,     // Centre vertical
-    width: 8,
-    height: 80,
-    vel_y: 0
-  };
-
-  // Balle
-  private ball: Ball = {
-    x: 450,     // Centre horizontal
-    y: 300,     // Centre vertical
-    width: 8,   // Carrée
-    height: 8,
-    vel_x: 5,   //3 Se déplace vers la droite
-    vel_y: 4    //2 Se déplace vers le bas
-  };
+  // Utilisation des classes Player et Ball
+  private p1: Player = new Player(1);
+  private p2: Player = new Player(2);
+  private ball: Ball = new Ball();
 
   private p1Score: number = 0;
   private p2Score: number = 0;
+  private lastTime: number = 0;
 
   constructor(container: HTMLElement, initialCanStart: boolean = false) {
     this.container = container;
@@ -124,67 +109,68 @@ export class GameComponent {
   private update = () => {
     if (!this.canStart || !this.context) return;
 
-    
     this.animationId = requestAnimationFrame(this.update);
     
-    // Draw background
+    // Calculer le delta time (comme le serveur)
+    const currentTime = Date.now();
+    const deltaTime = currentTime - this.lastTime;
+    
+    // Mettre à jour la physique du jeu
+    this.updateGamePhysics();
+    
+    // Dessiner l'état actuel
+    this.drawGame();
+    
+    this.lastTime = currentTime;
+  };
+
+  private updateGamePhysics(): void {
+    // 1. Mettre à jour les positions des joueurs
+    this.p1.updatePosition(this.CANVAS_HEIGHT);
+    this.p2.updatePosition(this.CANVAS_HEIGHT);
+
+    // 2. Mettre à jour la position de la balle
+    this.ball.updatePosition();
+
+    // 3. Vérifier les collisions avec les murs
+    this.ball.checkWallCollision(this.CANVAS_HEIGHT);
+
+    // 4. Vérifier les collisions avec les raquettes
+    this.ball.checkPaddleCollision(this.p1);
+    this.ball.checkPaddleCollision(this.p2);
+
+    // 5. Vérifier les points marqués
+    const scorer = this.ball.checkScoring(this.CANVAS_WIDTH);
+    if (scorer === 1) {
+      this.p1Score++;
+      this.ball.reset(1);
+      this.p1.reset();
+      this.p2.reset();
+    } else if (scorer === 2) {
+      this.p2Score++;
+      this.ball.reset(-1);
+      this.p1.reset();
+      this.p2.reset();
+    }
+  }
+
+  private drawGame(): void {
+    if (!this.context) return;
+    
+    // Dessiner le fond
     this.drawBackground();
     
-    // Update player 1
+    // Dessiner les joueurs
     this.context.fillStyle = "#FFFFFF";
-    let newP1_y = this.p1.y + this.p1.vel_y;
-    if (!this.playerOutOfBound(newP1_y)) {
-      this.p1.y = newP1_y;
-    }
     this.context.fillRect(this.p1.x, this.p1.y, this.p1.width, this.p1.height);
-    
-    // Update player 2
-    let newP2_y = this.p2.y + this.p2.vel_y;
-    if (!this.playerOutOfBound(newP2_y)) {
-      this.p2.y = newP2_y;
-    }
     this.context.fillRect(this.p2.x, this.p2.y, this.p2.width, this.p2.height);
     
-    // Update ball
-    this.ball.vel_x = this.ball.vel_x*1.004;
-    this.ball.vel_y = this.ball.vel_y*1.004;
-    this.ball.x += this.ball.vel_x;
-    this.ball.y += this.ball.vel_y;
+    // Dessiner la balle
     this.context.fillRect(this.ball.x, this.ball.y, this.ball.width, this.ball.height);
     
-    // Ball collision with top/bottom walls
-    if (this.ball.y <= 0 || (this.ball.y + this.ball.height >= 600)) {
-      this.ball.vel_y *= -1;
-    }
-    
-    // Ball collision with paddles
-    if (this.detectCollision(this.ball, this.p1)) {
-      if (this.ball.vel_x < 0) { // Only bounce if moving towards paddle
-        this.ball.vel_x *= -1;
-        // Add some spin based on where it hits the paddle
-        const hitPos = (this.ball.y - this.p1.y) / this.p1.height;
-        this.ball.vel_y = (hitPos - 0.5) * 4;
-      }
-    } else if (this.detectCollision(this.ball, this.p2)) {
-      if (this.ball.vel_x > 0) { // Only bounce if moving towards paddle
-        this.ball.vel_x *= -1;
-        // Add some spin based on where it hits the paddle
-        const hitPos = (this.ball.y - this.p2.y) / this.p2.height;
-        this.ball.vel_y = (hitPos - 0.5) * 4;
-      }
-    }
-    
-    // Score detection
-    if (this.ball.x < 0) {
-      this.p2Score++;
-      this.resetGame(1);
-    } else if (this.ball.x + this.ball.width > 900) {
-      this.p1Score++;
-      this.resetGame(-1);
-    }
-    
+    // Dessiner le score
     this.drawScore();
-  };
+  }
 
   private drawScore() {
     if (!this.context) return;
@@ -202,56 +188,30 @@ export class GameComponent {
     const speed = 8;
     
     if (e.code === "KeyW") {
-      this.p1.vel_y = -speed;
+      this.p1.setVelocity(-speed);
     } else if (e.code === "KeyS") {
-      this.p1.vel_y = speed;
+      this.p1.setVelocity(speed);
     }
     
     if (e.code === "ArrowUp") {
-      this.p2.vel_y = -speed;
+      this.p2.setVelocity(-speed);
     } else if (e.code === "ArrowDown") {
-      this.p2.vel_y = speed;
+      this.p2.setVelocity(speed);
     }
   };
 
   private stopPlayer = (e: KeyboardEvent) => {
     if (e.code === "KeyW" || e.code === "KeyS") {
-      this.p1.vel_y = 0;
+      this.p1.setVelocity(0);
     }
     if (e.code === "ArrowUp" || e.code === "ArrowDown") {
-      this.p2.vel_y = 0;
+      this.p2.setVelocity(0);
     }
   };
 
-  private detectCollision(ball: Ball, player: Player): boolean {
-    return ball.x < player.x + player.width &&
-           ball.x + ball.width > player.x &&
-           ball.y < player.y + player.height &&
-           ball.y + ball.height > player.y;
-  }
-
-  private playerOutOfBound(ypos: number): boolean {
-    return ypos < 0 || ypos > (600 - 80); // 600 = canvas height, 80 = paddle height
-  }
-
-  private resetGame(direction: number) {
-    this.ball = {
-      x: 450,
-      y: 300,
-      width: 8,
-      height: 8,
-      vel_x: direction * 5,
-      vel_y: (Math.random() - 0.5) * 6
-    };
-    
-    this.p1.y = 260;
-    this.p2.y = 260;
-    this.p1.vel_y = 0;
-    this.p2.vel_y = 0;
-  }
-
   private startGame() {
     if (!this.animationId) {
+      this.lastTime = Date.now();
       this.update();
     }
   }
@@ -271,8 +231,10 @@ export class GameComponent {
     this.p1Score = 0;
     this.p2Score = 0;
     
-    // Reset game state
-    this.resetGame(1);
+    // Reset players and ball
+    this.p1.reset();
+    this.p2.reset();
+    this.ball.reset(1);
     
     // Redraw initial state
     this.drawInitialState();

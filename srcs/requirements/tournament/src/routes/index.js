@@ -73,7 +73,7 @@ function removeClient(clientId) {
 		return;
 	}
 
-	//adde remouve tournament
+	g_Games._tournaments.removeClientsTournament(clientId);
 	g_Games.removeClient(clientId);
 	
 }

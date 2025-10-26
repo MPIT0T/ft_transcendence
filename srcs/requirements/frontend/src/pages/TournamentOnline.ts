@@ -241,6 +241,48 @@ export const TournamentOnline: Page = {
 			  ws.onmessage = message => {
 		
 				const response = JSON.parse(message.data);
+
+				if (response.method === "playerLeaveTournament") {
+					// Mettre à jour le compteur et le sidebar
+					if (playerCountEl) playerCountEl.textContent = `${response.playerCount}/8 PLAYERS`;
+					if (playerInfoEl) playerInfoEl.textContent = `${response.playerCount}/8`;
+					
+					addServerMessage(`${response.playerName} left. (${response.playerCount}/8)`);
+
+					// Mettre à jour les slots du bracket (quarter-finals)
+					const slots = root.querySelectorAll('[data-slot]');
+					slots.forEach((slot, index) => {
+						const nameEl = slot.querySelector('.player-name');
+						if (!nameEl) return;
+
+						const client = response.clients && Array.isArray(response.clients) ? response.clients[index] : null;
+						if (client) {
+							nameEl.textContent = client.name || `Player ${index + 1}`;
+							nameEl.classList.remove('text-gray-400');
+							nameEl.classList.add('text-white');
+						} else {
+							nameEl.textContent = '█ WAITING...';
+							nameEl.classList.remove('text-white');
+							nameEl.classList.add('text-gray-400');
+							// retirer les éventuels styles de gagnant
+							slot.classList.remove('bg-green-900', 'border-green-400');
+						}
+					});
+
+					// Mettre à jour la liste des joueurs (sidebar droite)
+					if (playersListEl) {
+						if (response.clients && Array.isArray(response.clients) && response.clients.length > 0) {
+							playersListEl.innerHTML = response.clients.map((client: { name: string, elo: number }) => `
+								<div class="backdrop-blur-xs border border-gray-400 p-3 text-center shadow">
+									<p class="text-sm font-semibold text-gray-50">${client.name}</p>
+									<p class="text-xs text-gray-400 mt-1">ELO: ${client.elo}</p>
+								</div>
+							`).join('');
+						} else {
+							playersListEl.innerHTML = `<div class="text-center text-gray-400">No players</div>`;
+						}
+					}
+				}
 		
 				if (response.method === "playerJoinTournament") {
 					if (playerCountEl) playerCountEl.textContent = `${response.playerCount}/8 PLAYERS`;

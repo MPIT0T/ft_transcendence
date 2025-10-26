@@ -461,14 +461,15 @@ class Tournament {
 	remove(clientId) {
 		const idx = this.clients.findIndex(c => c._clientId === clientId);
 		if (idx !== -1) {
-			this.clients.splice(idx, 1);
+			const removed = this.clients.splice(idx, 1)[0];
+			const playerName = removed ? (removed._name || 'Unknown') : 'Unknown';
 			
-
 			// Notifier les autres clients de la room
 			const payLoad = {
-				method: 'playerJoinTournament',
+				method: 'playerLeaveTournament',
 				status: 'success',
-				message: 'Un joueur a quitté le tournoi.',
+				message: `${playerName} a quitté le tournoi.`,
+				playerName: playerName,
 				playerCount: this.clients.length,
 				clients: this.clients.map(c => ({
 					id: c.id || c._clientId,
@@ -476,7 +477,7 @@ class Tournament {
 					elo: c.elo || 1000
 				})),
 			};
-
+			
 			this.clients.forEach(c => {
 				if (c._conection && typeof c._conection.send === 'function') {
 					c._conection.send(JSON.stringify(payLoad));
