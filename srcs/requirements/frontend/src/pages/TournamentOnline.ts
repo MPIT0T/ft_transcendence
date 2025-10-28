@@ -5,16 +5,6 @@ export const TournamentOnline: Page = {
 	render() {
 		return `
 		<div class="flex gap-16 p-6 pt-24 items-start justify-center">
-			<!-- Boîte Message Server à gauche -->
-			<div class="shrink-0 mt-8" style="width: 400px;">
-				<div class="backdrop-blur-2xs border-2 border-gray-300 shadow-xl p-6 h-[750px] flex flex-col">
-					<h3 class="text-2xl font-semibold text-center mb-4 text-gray-50 drop-shadow-[0_0_6px_rgba(255,255,255,0.25)]">Server Log</h3>
-					<div id="server-messages" class="space-y-2 overflow-y-auto flex-1">
-						<div class="text-lg text-gray-400">Waiting for updates...</div>
-					</div>
-				</div>
-			</div>
-
 			<!-- Contenu principal (center) -->
 			<div class="flex-1  text-white max-w-5xl">
 				<!-- Header avec style arcade -->
@@ -183,18 +173,6 @@ export const TournamentOnline: Page = {
 					</button>
 				</div>
 			</div>
-
-			<!-- Boîte Player à droite -->
-			<div class="shrink-0 mt-8" style="width: 400px;">
-				<div class="backdrop-blur-2xs border-2 border-gray-300 shadow-xl p-6 h-[750px] flex flex-col">
-					<h3 class="text-2xl font-semibold text-center mb-4 text-gray-50 drop-shadow-[0_0_6px_rgba(255,255,255,0.25)]">Players</h3>
-					<p class="text-xl text-gray-400 text-center mb-4" id="player-info">0/8</p>
-					<div id="players-list" class="space-y-2 overflow-y-auto flex-1">
-						<div class="bg-pink-200 rounded-2xl p-3 border-2 border-red-300 text-center">
-						</div>
-					</div>
-				</div>
-			</div>
 		</div>
 		`;
 	},
@@ -205,28 +183,8 @@ export const TournamentOnline: Page = {
 
 		const tournamentNameEl = root.querySelector('#tournament-name') as HTMLElement;
 		const playerCountEl = root.querySelector('#player-count') as HTMLElement;
-		const playersListEl = root.querySelector('#players-list') as HTMLElement;
-		const serverMessagesEl = root.querySelector('#server-messages') as HTMLElement;
-		const playerInfoEl = root.querySelector('#player-info') as HTMLElement;
 		const currentPlayerNameEl = root.querySelector('#current-player-name') as HTMLElement;
 		const leaveTournamentBtn = root.querySelector('#leave-tournament-btn') as HTMLButtonElement;
-
-		// Fonction pour ajouter un message du serveur
-		const addServerMessage = (message: string) => {
-			if (!serverMessagesEl) return;
-			
-			const timestamp = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-			const messageEl = document.createElement('div');
-			messageEl.className = 'text-lg text-gray-300 mb-2 leading-relaxed';
-			messageEl.innerHTML = `<span class="text-gray-200">[${timestamp}]</span> ${message}`;
-			
-			serverMessagesEl.appendChild(messageEl);
-			serverMessagesEl.scrollTop = serverMessagesEl.scrollHeight;
-			
-			while (serverMessagesEl.children.length > 30) {
-				serverMessagesEl.removeChild(serverMessagesEl.firstChild as Node);
-			}
-		};
 
 		const payLoad = {
 			  "method": "readyT",
@@ -242,14 +200,11 @@ export const TournamentOnline: Page = {
 		
 				const response = JSON.parse(message.data);
 
-				if (response.method === "playerLeaveTournament") {
-					// Mettre à jour le compteur et le sidebar
-					if (playerCountEl) playerCountEl.textContent = `${response.playerCount}/8 PLAYERS`;
-					if (playerInfoEl) playerInfoEl.textContent = `${response.playerCount}/8`;
-					
-					addServerMessage(`${response.playerName} left. (${response.playerCount}/8)`);
+			if (response.method === "playerLeaveTournament") {
+				// Mettre à jour le compteur et le sidebar
+				if (playerCountEl) playerCountEl.textContent = `${response.playerCount}/8 PLAYERS`;
 
-					// Mettre à jour les slots du bracket (quarter-finals)
+				// Mettre à jour les slots du bracket (quarter-finals)
 					const slots = root.querySelectorAll('[data-slot]');
 					slots.forEach((slot, index) => {
 						const nameEl = slot.querySelector('.player-name');
@@ -268,29 +223,12 @@ export const TournamentOnline: Page = {
 							slot.classList.remove('bg-green-900', 'border-green-400');
 						}
 					});
-
-					// Mettre à jour la liste des joueurs (sidebar droite)
-					if (playersListEl) {
-						if (response.clients && Array.isArray(response.clients) && response.clients.length > 0) {
-							playersListEl.innerHTML = response.clients.map((client: { name: string, elo: number }) => `
-								<div class="backdrop-blur-xs border border-gray-400 p-3 text-center shadow">
-									<p class="text-sm font-semibold text-gray-50">${client.name}</p>
-									<p class="text-xs text-gray-400 mt-1">ELO: ${client.elo}</p>
-								</div>
-							`).join('');
-						} else {
-							playersListEl.innerHTML = `<div class="text-center text-gray-400">No players</div>`;
-						}
-					}
 				}
 		
-				if (response.method === "playerJoinTournament") {
-					if (playerCountEl) playerCountEl.textContent = `${response.playerCount}/8 PLAYERS`;
-					if (playerInfoEl) playerInfoEl.textContent = `${response.playerCount}/8`;
-					
-					addServerMessage(`${response.playerName} joined! (${response.playerCount}/8)`);
-					
-					if (response.clients && Array.isArray(response.clients)) {
+			if (response.method === "playerJoinTournament") {
+				if (playerCountEl) playerCountEl.textContent = `${response.playerCount}/8 PLAYERS`;
+				
+				if (response.clients && Array.isArray(response.clients)) {
 						response.clients.forEach((client: any, index: number) => {
 							const slot = root.querySelector(`[data-slot="${index}"]`);
 							if (slot) {
@@ -303,29 +241,15 @@ export const TournamentOnline: Page = {
 							}
 						});
 					}
-
-					// Mettre à jour la liste des joueurs (sidebar droite)
-					if (playersListEl && response.clients) {
-						playersListEl.innerHTML = response.clients.map((client: { name: string, elo: number }, index: number) => `
-							<div class="backdrop-blur-xs border border-gray-400 p-3 text-center shadow">
-								<p class="text-sm font-semibold text-gray-50">${client.name}</p>
-								<p class="text-xs text-gray-400 mt-1">ELO: ${client.elo}</p>
-							</div>
-						`).join('');
-					}
 				}
 
 				// Quand le tournoi commence
 				if (response.method === "Start") {
-					addServerMessage(`🎮 Tournament is starting!`);
-					addServerMessage(`All players are ready. Good luck!`);
 					if (tournamentNameEl) tournamentNameEl.textContent = 'QUARTER FINALS';
 				}
 
 				// 📊 Recevoir l'état complet du tournoi (tous les matchs)
 				if (response.method === "tournamentState") {
-					addServerMessage(`📊 Updating tournament state...`);
-					
 					const allMatches = response.allMatches;
 					
 					// Déterminer le round actuel basé sur les matchs en cours
@@ -472,10 +396,6 @@ export const TournamentOnline: Page = {
 
 			// 🎮 Redirection vers un match
 			if (response.method === "startMatch") {
-				addServerMessage(`🎮 Your match is starting!`);
-				addServerMessage(`Opponent: ${response.opponent}`);
-				addServerMessage(`Redirecting to game...`);
-				
 				// Sauvegarder les infos du match dans localStorage
 				localStorage.setItem('matchRound', response.matchRound);
 				localStorage.setItem('matchOpponent', response.opponent);
@@ -486,8 +406,6 @@ export const TournamentOnline: Page = {
 				}, 1000);
 			}				// 🔙 Retour au bracket après un match
 				if (response.method === "returnToBracket") {
-					addServerMessage(`Match finished! Returning to bracket...`);
-					
 					// Rediriger vers le bracket après 2 secondes
 					setTimeout(() => {
 						window.location.hash = `/tournamentOnline`;
@@ -496,10 +414,6 @@ export const TournamentOnline: Page = {
 
 				// Annonce du gagnant du tournoi
 				if (response.method === "tournamentWinner") {
-					addServerMessage(`🏆 CHAMPION: ${response.winner}!`);
-					addServerMessage(`Congratulations to the winner!`);
-					
-					
 					if (tournamentNameEl) {
 						tournamentNameEl.textContent = '🏆 TOURNAMENT FINISHED 🏆';
 					}
