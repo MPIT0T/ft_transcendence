@@ -192,7 +192,6 @@ export const TournamentRoom: Page = {
 
 			if (response.method === "joinT") {
 				if (response.status === "success") {
-					console.log(response.message);
 
 					tournamentId = response.tournamentId;
 					if (tournamentId !== undefined) {

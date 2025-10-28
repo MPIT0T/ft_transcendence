@@ -105,13 +105,11 @@ export const GameOnlineTournament: Page = {
           // Attendre un peu avant de rediriger vers le bracket
           setTimeout(() => {
             // Le backend enverra returnToBracket qui gérera la redirection
-            console.log('Waiting for returnToBracket signal...');
           }, 2000);
         }
 
         // Retour au bracket (envoyé par le backend après le match)
         if (response.method === "returnToBracket") {
-          console.log('Returning to tournament bracket...');
           
           // Nettoyer les infos du match
           localStorage.removeItem('matchRound');
@@ -137,7 +135,6 @@ export const GameOnlineTournament: Page = {
 
     // Handler pour le changement de hash (si le joueur quitte manuellement)
     const hashChangeHandler = (event: HashChangeEvent) => {
-      console.log('Hash changed - leaving tournament match');
       
       const payLoad = {
         "method": "leave",

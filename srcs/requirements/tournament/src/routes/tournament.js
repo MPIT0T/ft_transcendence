@@ -198,7 +198,6 @@ class Tournament {
 	async updatePlayerR(int) {
 
 		this.playerR = this.getPlayerR();
-		console.log(`[Tournament] playerR: ${this.playerR}, clients.length: ${this.clients.length}`);
 
 		if (this.state === "playing-tournament" && this.allTournamentRooms.length > 0) {
 			this.broadcastTournamentState();
@@ -207,7 +206,6 @@ class Tournament {
 
 		// Vérifier qu'il y a exactement 8 joueurs connectés avant de lancer
 		if (this.playerR === 8 && this.clients.length === 8) {
-			console.log('[Tournament] Starting tournament with 8 players!');
 			this.state = "playing-tournament";
 
 			this.generateAllTournamentRooms();
@@ -283,7 +281,6 @@ class Tournament {
 				roomData.score2 = 0;
 				roomData.winner = winner;
 				roomData.status = 'completed';
-				console.log(`[Tournament] Both players disconnected in ${roomData.roomName}, random winner: ${winner._name}`);
 				this.broadcastTournamentState();
 				return winner;
 			}
@@ -295,7 +292,6 @@ class Tournament {
 				roomData.score2 = 3;
 				roomData.winner = winner;
 				roomData.status = 'completed';
-				console.log(`[Tournament] Player1 disconnected in ${roomData.roomName}, ${winner._name} wins by forfeit`);
 				if (p2Connected) {
 					roomData.player2._conection.send(JSON.stringify({
 						method: "returnToBracket",
@@ -313,7 +309,6 @@ class Tournament {
 				roomData.score2 = 0;
 				roomData.winner = winner;
 				roomData.status = 'completed';
-				console.log(`[Tournament] Player2 disconnected in ${roomData.roomName}, ${winner._name} wins by forfeit`);
 				if (p1Connected) {
 					roomData.player1._conection.send(JSON.stringify({
 						method: "returnToBracket",
@@ -411,7 +406,6 @@ class Tournament {
 				roomData.score2 = 0;
 				roomData.winner = winner;
 				roomData.status = 'completed';
-				console.log(`[Tournament] Both players disconnected in ${roomData.roomName}, random winner: ${winner._name}`);
 				this.broadcastTournamentState();
 				return winner;
 			}
@@ -423,7 +417,6 @@ class Tournament {
 				roomData.score2 = 3;
 				roomData.winner = winner;
 				roomData.status = 'completed';
-				console.log(`[Tournament] Player1 disconnected in ${roomData.roomName}, ${winner._name} wins by forfeit`);
 				if (p2Connected) {
 					roomData.player2._conection.send(JSON.stringify({
 						method: "returnToBracket",
@@ -441,7 +434,6 @@ class Tournament {
 				roomData.score2 = 0;
 				roomData.winner = winner;
 				roomData.status = 'completed';
-				console.log(`[Tournament] Player2 disconnected in ${roomData.roomName}, ${winner._name} wins by forfeit`);
 				if (p1Connected) {
 					roomData.player1._conection.send(JSON.stringify({
 						method: "returnToBracket",
@@ -533,7 +525,6 @@ class Tournament {
 				finalRoomData.score2 = 0;
 				finalRoomData.winner = champion;
 				finalRoomData.status = 'completed';
-				console.log(`[Tournament] Both players disconnected in Final, random winner: ${champion._name}`);
 			}
 			// Si seul player1 est déconnecté, player2 gagne
 			else if (!p1Connected && p2Connected) {
@@ -542,7 +533,6 @@ class Tournament {
 				finalRoomData.score2 = 3;
 				finalRoomData.winner = champion;
 				finalRoomData.status = 'completed';
-				console.log(`[Tournament] Player1 disconnected in Final, ${champion._name} wins by forfeit`);
 				if (p2Connected) {
 					finalRoomData.player2._conection.send(JSON.stringify({
 						method: "returnToBracket",
@@ -557,7 +547,6 @@ class Tournament {
 				finalRoomData.score2 = 0;
 				finalRoomData.winner = champion;
 				finalRoomData.status = 'completed';
-				console.log(`[Tournament] Player2 disconnected in Final, ${champion._name} wins by forfeit`);
 				if (p1Connected) {
 					finalRoomData.player1._conection.send(JSON.stringify({
 						method: "returnToBracket",

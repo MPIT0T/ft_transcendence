@@ -61,7 +61,6 @@ export class GameComponentOnline {
 
 	updateGameState(game: any){
 		if (!game) {
-			console.log("No game state provided.");
 			return;
 		}
 		if (game.player1) {

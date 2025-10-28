@@ -76,7 +76,6 @@ export const GameOnline: Page = {
     }
 
     const hashChangeHandler = (event: HashChangeEvent) => {
-      console.log('Hash changed');
       const payLoad = {
         "method": "leave",
         "clientId": clientId

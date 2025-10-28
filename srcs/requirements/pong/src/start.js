@@ -13,9 +13,6 @@ const { spawn } = require('child_process');
 const serverAddr = process.env.SERVER_ADDR || '0.0.0.0';
 const port = process.env.SERVER_PORT || '3001';
 
-// console.log(`🚀 Starting server on ${serverAddr}:${port}`);
-// console.log(`📁 Using .env file: ${envPath}`);
-
 // Start the fastify server with the specified address
 const args = ['start', '-l', 'info', '-a', serverAddr, '-p', port, 'app.js'];
 
