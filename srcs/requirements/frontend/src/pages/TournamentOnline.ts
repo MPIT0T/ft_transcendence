@@ -6,7 +6,7 @@ export const TournamentOnline: Page = {
 		return `
 		<div class="flex gap-16 p-6 pt-24 items-start justify-center">
 			<!-- Boîte Message Server à gauche -->
-			<div class="flex-shrink-0 mt-8" style="width: 400px;">
+			<div class="shrink-0 mt-8" style="width: 400px;">
 				<div class="backdrop-blur-2xs border-2 border-gray-300 shadow-xl p-6 h-[750px] flex flex-col">
 					<h3 class="text-2xl font-semibold text-center mb-4 text-gray-50 drop-shadow-[0_0_6px_rgba(255,255,255,0.25)]">Server Log</h3>
 					<div id="server-messages" class="space-y-2 overflow-y-auto flex-1">
@@ -166,7 +166,7 @@ export const TournamentOnline: Page = {
 							<div class="flex flex-col justify-center min-h-[600px]">
 								<div class="border-4 border-white p-4 text-center backdrop-blur-xs w-full">
 									<div class="text-5xl mb-3 text-white">🏆</div>
-									<div class="text-gray-400 text-sm break-words overflow-hidden" style="font-family: 'Courier New', monospace; max-height: 80px;">TBD</div>
+									<div class="text-gray-400 text-sm wrap-break-word overflow-hidden" style="font-family: 'Courier New', monospace; max-height: 80px;">TBD</div>
 								</div>
 							</div>
 						</div>
@@ -185,7 +185,7 @@ export const TournamentOnline: Page = {
 			</div>
 
 			<!-- Boîte Player à droite -->
-			<div class="flex-shrink-0 mt-8" style="width: 400px;">
+			<div class="shrink-0 mt-8" style="width: 400px;">
 				<div class="backdrop-blur-2xs border-2 border-gray-300 shadow-xl p-6 h-[750px] flex flex-col">
 					<h3 class="text-2xl font-semibold text-center mb-4 text-gray-50 drop-shadow-[0_0_6px_rgba(255,255,255,0.25)]">Players</h3>
 					<p class="text-xl text-gray-400 text-center mb-4" id="player-info">0/8</p>
