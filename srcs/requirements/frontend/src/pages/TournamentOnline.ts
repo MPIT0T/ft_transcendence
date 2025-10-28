@@ -525,7 +525,7 @@ export const TournamentOnline: Page = {
 		// Bouton pour quitter le tournoi
 		if (leaveTournamentBtn) {
 			leaveTournamentBtn.addEventListener('click', () => {
-				window.location.hash = '#/home';
+				window.location.hash = '#/tournamentRoom';
 			});
 		}
 	}

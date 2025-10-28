@@ -1,6 +1,5 @@
 const Clients = require('./clients.js');
 const Rooms = require('./rooms.js');
-const Tournaments = require('./tournaments.js');
 
 function canMatch(p1, p2){
 	if (p1.elo < p2.elo - (300 * Math.log2(1 + p2.wait / 60)) || p1.elo > p2.elo + (300 * Math.log2(1 + p2.wait / 60)))
@@ -21,7 +20,6 @@ class Games {
 	constructor() {
 		this._clients = new Clients();
 		this._rooms = new Rooms();
-		this._tournaments = new Tournaments();
 		this._clientsList = [];
 	}
 
@@ -56,23 +54,6 @@ class Games {
 		return roomId;
 	}
 
-	createTournament(socket, gameMode, gamePoint, tournamentName) {
-		const tournamentId = 'tournament_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
-
-		this._tournaments.createTournament(tournamentId, gameMode, gamePoint, tournamentName)
-
-		const tournament = this._tournaments.findTournament(tournamentId);
-
-		if (socket) {
-			socket.send(JSON.stringify({
-				"method": "create",
-				"tournament": tournament.toJSON()
-			}));
-		}
-
-		return tournamentId;
-	}
-
 	createWaitingP(clients){
 		this._clientsList.push(new waitingP(clients));
 	}
@@ -86,11 +67,6 @@ class Games {
 		const room = this._rooms.findRoom(id);
 		return room;
 	}
-	findTournament(id) {
-		const tournament = this._tournaments.findTournament(id);
-		return tournament;
-	}
-
 
 	removeClient(id) { return this._clients.remove(id); }
 	removeRoom(id) { return this._rooms.remove(id); }

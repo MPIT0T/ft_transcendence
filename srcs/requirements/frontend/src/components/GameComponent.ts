@@ -7,6 +7,7 @@ export class GameComponent {
   private canvas: HTMLCanvasElement | null = null;
   private context: CanvasRenderingContext2D | null = null;
   private animationId: number | null = null;
+  private isPaused: boolean = false; // Pour gérer les pauses entre les buts
 
   // Constantes du jeu (identiques au serveur)
   private readonly CANVAS_WIDTH = 900;
@@ -34,7 +35,12 @@ export class GameComponent {
   setCanStart(canStart: boolean) {
     this.canStart = canStart;
     if (this.canStart) {
-      this.startGame();
+      // Pause de 3 secondes avant de commencer le match
+      this.isPaused = true;
+      setTimeout(() => {
+        this.isPaused = false;
+        this.startGame();
+      }, 3000);
     } else {
       this.pauseGame();
     }
@@ -115,10 +121,12 @@ export class GameComponent {
     const currentTime = Date.now();
     const deltaTime = currentTime - this.lastTime;
     
-    // Mettre à jour la physique du jeu
-    this.updateGamePhysics();
+    // Mettre à jour la physique du jeu seulement si pas en pause
+    if (!this.isPaused) {
+      this.updateGamePhysics();
+    }
     
-    // Dessiner l'état actuel
+    // Dessiner l'état actuel (même pendant la pause)
     this.drawGame();
     
     this.lastTime = currentTime;
@@ -146,11 +154,23 @@ export class GameComponent {
       this.ball.reset(1);
       this.p1.reset();
       this.p2.reset();
+      
+      // Pause de 3 secondes après un but
+      this.isPaused = true;
+      setTimeout(() => {
+        this.isPaused = false;
+      }, 3000);
     } else if (scorer === 2) {
       this.p2Score++;
       this.ball.reset(-1);
       this.p1.reset();
       this.p2.reset();
+      
+      // Pause de 3 secondes après un but
+      this.isPaused = true;
+      setTimeout(() => {
+        this.isPaused = false;
+      }, 3000);
     }
   }
 

@@ -185,14 +185,21 @@ function handleTournamentMove(socket, data) {
 }
 
 async function handleReadyTournament(socket, data) {
-	if (g_Games.findClient(data.clientId) === undefined)
-		throw "Client id not good";
-	if (g_Games.findTournament(data.tournamentId) === undefined)
-		throw "Tournament id not good";
+	const client = g_Games.findClient(data.clientId);
+	const tournament = g_Games.findTournament(data.tournamentId);
+
+	// Ignorer silencieusement si le client ou tournoi n'existe plus
+	if (!client || !tournament) {
+		return;
+	}
 
 	const state = data.state;
 
-	const tournament = g_Games.findTournament(data.tournamentId);
+	if (state === 1) {
+		client.isReady = true;
+	} else {
+		client.isReady = false;
+	}
 
 	await tournament.updatePlayerR(state);
 

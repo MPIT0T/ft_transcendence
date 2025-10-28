@@ -34,7 +34,7 @@ class Tournaments {
 				const removed = tournament.remove(clientId);
 				if (removed) {
 					console.log(`Client ${clientId} retiré du tournoi ${tournamentId}`);
-					
+					tournament.playerR -= 1;
 					// Si le tournoi est vide, le supprimer
 					if (tournament.clients.length === 0) {
 						delete this._tournaments[tournamentId];

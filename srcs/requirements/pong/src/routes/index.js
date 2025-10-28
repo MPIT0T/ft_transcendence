@@ -22,40 +22,25 @@ module.exports = async function (fastify, opts) {
 						case 'rooms':
 							handleGetRooms(socket, data);
 							break;
-						case 'tournaments':
-							handleGetTournaments(socket, data);
-							break;
 						case 'ready':
 							handleReady(socket, data);
-							break;
-						case 'readyT':
-							handleReadyTournament(socket, data);
 							break;
 						case 'join':
 							handleJoinGame(socket, data);
 							break;
-						case 'joinT':
-							handleJoinTournament(socket, data);
+						case 'createR':
+							handleCreateRoom(socket, data);
 							break;
-					case 'createR':
-						handleCreateRoom(socket, data);
-						break;
-					case 'createT':
-						handleCreateTournaments(socket, data);
-						break;
-					case 'move':
-						handleGameMove(socket, data);
-						break;
-					case 'moveT':
-						handleTournamentMove(socket, data);
-						break;
-					case 'leave':
-						leave(clientId);
-						break;
-					default:
-						socket.send(JSON.stringify({
-							method: 'error',
-							message: 'Unknown method: ' + data.method
+						case 'move':
+							handleGameMove(socket, data);
+							break;
+						case 'leave':
+							leave(clientId);
+							break;
+						default:
+							socket.send(JSON.stringify({
+								method: 'error',
+								message: 'Unknown method: ' + data.method
 							}));
 					}
 				} catch (error) {
@@ -164,57 +149,6 @@ function handleGetRooms(socket, data) {
 	}));
 }
 
-function handleGetTournaments(socket, data) {
-	if (g_Games.findClient(data.clientId) === undefined)
-		throw "Client id not good";
-
-	const availableTournaments = Object.values(g_Games._tournaments._tournaments)
-		.filter(tournament => tournament.clients.length < 8)
-		.filter(tournament => tournament.state === "waiting")
-		.map(tournament => ({
-			tournamentId: tournament.tournamentId,
-			tournamentName: tournament.tournamentName,
-			players: `${tournament.clients.length}/8`,
-			gameMode: tournament.gameMode,
-			gamePoint: tournament.gamePoint
-		}));
-
-	socket.send(JSON.stringify({
-		method: 'tournaments',
-		tournaments: availableTournaments
-	}));
-}
-
-function handleJoinTournament(socket, data) {
-	if (g_Games.findClient(data.clientId) === undefined)
-		throw "Client id not good";
-	const tournament = g_Games.findTournament(data.tournamentId);
-
-	if (tournament.clients.length >= 8) {
-		socket.send(JSON.stringify({
-			method: 'joinT',
-			status: 'error',
-			message: 'Failed to join the tournament.'
-		}));
-		return;
-	}
-
-	const tournaments = Object.values(g_Games._tournaments._tournaments);
-	for (const t of tournaments) {
-		const clientIndex = t.clients.findIndex(c => c._clientId === data.clientId);
-		if (clientIndex !== -1) {
-			socket.send(JSON.stringify({
-				method: 'joinT',
-				status: 'error',
-				message: 'Client already in a tournament'
-			}));
-			return;
-		}
-	}
-
-	tournament.join(g_Games.findClient(data.clientId), socket);
-}
-
 async function handleJoinGame(socket, data) {
 	if (g_Games.findClient(data.clientId) === undefined)
 		throw "Client id not good";
@@ -287,26 +221,6 @@ function handleCreateRoom(socket, data) {
 	g_Games.createRoom(socket, data.gameMode, data.gamePoint, data.roomName);
 }
 
-function handleCreateTournaments(socket, data) {
-	if (g_Games.findClient(data.clientId) === undefined)
-		throw "Client id not good";
-
-	const tournaments = Object.values(g_Games._tournaments._tournaments);
-	for (const tournament of tournaments) {
-		const clientIndex = tournament.clients.findIndex(c => c._clientId === data.clientId);
-		if (clientIndex !== -1) {
-			socket.send(JSON.stringify({
-				method: 'joinT',
-				status: 'error',
-				message: 'Client already in the tournament'
-			}));
-			return;
-		}
-	}
-
-	g_Games.createTournament(socket, data.gameMode, data.gamePoint, data.tournamentName);
-}
-
 function handleGameMove(socket, data) {
 	if (g_Games.findClient(data.clientId) === undefined)
 		throw "Client id not good";
@@ -327,42 +241,5 @@ async function handleReady(socket, data) {
 	const room = g_Games.findRoom(data.roomId);
 
 	await room.updatePlayerR(state);
-
-}
-
-function handleTournamentMove(socket, data) {
-	// Trouver le tournoi qui contient cette room
-	// g_Games._tournaments est l'objet Tournaments, qui contient _tournaments (les tournois)
-	const tournamentsObj = g_Games._tournaments._tournaments || {};
-	let tournament = null;
-	
-	// Parcourir tous les tournois pour trouver celui qui contient cette room
-	for (const tournamentId in tournamentsObj) {
-		const t = tournamentsObj[tournamentId];
-		if (t.rooms && t.rooms.findRoom(data.roomId)) {
-			tournament = t;
-			break;
-		}
-	}
-	
-	if (!tournament) {
-		console.error('Tournament not found for room:', data.roomId);
-		return;
-	}
-	
-	tournament.handleMove(socket, data);
-}
-
-async function handleReadyTournament(socket, data) {
-	if (g_Games.findClient(data.clientId) === undefined)
-		throw "Client id not good";
-	if (g_Games.findTournament(data.tournamentId) === undefined)
-		throw "Tournament id not good";
-
-	const state = data.state;
-
-	const tournament = g_Games.findTournament(data.tournamentId);
-
-	await tournament.updatePlayerR(state);
 
 }

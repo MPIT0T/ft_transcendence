@@ -149,6 +149,8 @@ class Tournament {
 
 	join(client, socket) {
 
+		client.isReady = false;
+
 		this.clients.push(client);
 
 		const tournamentUrl = `/tournamentOnline?gameId=${this.tournamentId}`;
@@ -182,15 +184,30 @@ class Tournament {
 		});
 	}
 
+	getPlayerR() {
+		// Compte le nombre de clients qui ont isReady = true
+		let count = 0;
+		this.clients.forEach(client => {
+			if (client.isReady === true) {
+				count++;
+			}
+		});
+		return count;
+	}
+
 	async updatePlayerR(int) {
 
-		this.playerR += int;
+		this.playerR = this.getPlayerR();
+		console.log(`[Tournament] playerR: ${this.playerR}, clients.length: ${this.clients.length}`);
 
 		if (this.state === "playing-tournament" && this.allTournamentRooms.length > 0) {
 			this.broadcastTournamentState();
+			return;
 		}
 
-		if (this.playerR === 8) {
+		// Vérifier qu'il y a exactement 8 joueurs connectés avant de lancer
+		if (this.playerR === 8 && this.clients.length === 8) {
+			console.log('[Tournament] Starting tournament with 8 players!');
 			this.state = "playing-tournament";
 
 			this.generateAllTournamentRooms();
@@ -253,7 +270,62 @@ class Tournament {
 		const quarterPromises = quarterFinalRooms.map(async (roomData) => {
 			const room = this.rooms.findRoom(roomData.roomId);
 
-			if (roomData.player1 && roomData.player1._conection) {
+			// Vérifier les connexions des joueurs
+			const p1Connected = roomData.player1 && roomData.player1._conection && roomData.player1._conection.readyState === 1;
+			const p2Connected = roomData.player2 && roomData.player2._conection && roomData.player2._conection.readyState === 1;
+
+			let winner;
+
+			// Si les deux sont déconnectés, choisir un au hasard
+			if (!p1Connected && !p2Connected) {
+				winner = Math.random() < 0.5 ? roomData.player1 : roomData.player2;
+				roomData.score1 = 0;
+				roomData.score2 = 0;
+				roomData.winner = winner;
+				roomData.status = 'completed';
+				console.log(`[Tournament] Both players disconnected in ${roomData.roomName}, random winner: ${winner._name}`);
+				this.broadcastTournamentState();
+				return winner;
+			}
+
+			// Si seul player1 est déconnecté, player2 gagne
+			if (!p1Connected && p2Connected) {
+				winner = roomData.player2;
+				roomData.score1 = 0;
+				roomData.score2 = 3;
+				roomData.winner = winner;
+				roomData.status = 'completed';
+				console.log(`[Tournament] Player1 disconnected in ${roomData.roomName}, ${winner._name} wins by forfeit`);
+				if (p2Connected) {
+					roomData.player2._conection.send(JSON.stringify({
+						method: "returnToBracket",
+						tournamentId: this.tournamentId
+					}));
+				}
+				this.broadcastTournamentState();
+				return winner;
+			}
+
+			// Si seul player2 est déconnecté, player1 gagne
+			if (p1Connected && !p2Connected) {
+				winner = roomData.player1;
+				roomData.score1 = 3;
+				roomData.score2 = 0;
+				roomData.winner = winner;
+				roomData.status = 'completed';
+				console.log(`[Tournament] Player2 disconnected in ${roomData.roomName}, ${winner._name} wins by forfeit`);
+				if (p1Connected) {
+					roomData.player1._conection.send(JSON.stringify({
+						method: "returnToBracket",
+						tournamentId: this.tournamentId
+					}));
+				}
+				this.broadcastTournamentState();
+				return winner;
+			}
+
+			// Les deux sont connectés, envoyer les messages de début de match
+			if (p1Connected) {
 				const roomUrl = `/gameOnlineTournament?gameId=${roomData.roomId}`;
 				roomData.player1._conection.send(JSON.stringify({
 					method: "startMatch",
@@ -263,7 +335,7 @@ class Tournament {
 					matchRound: roomData.roomName
 				}));
 			}
-			if (roomData.player2 && roomData.player2._conection) {
+			if (p2Connected) {
 				const roomUrl = `/gameOnlineTournament?gameId=${roomData.roomId}`;
 				roomData.player2._conection.send(JSON.stringify({
 					method: "startMatch",
@@ -272,25 +344,27 @@ class Tournament {
 					opponent: roomData.player1._name,
 					matchRound: roomData.roomName
 				}));
-			} await sleep(1000);
+			}
+			
+			await sleep(1000);
 
 			room.state = "playing-game";
 			await room.gameLoop();
 
-			const winner = room.p1Score > room.p2Score ? roomData.player1 : roomData.player2;
+			winner = room.p1Score > room.p2Score ? roomData.player1 : roomData.player2;
 
 			roomData.score1 = room.p1Score;
 			roomData.score2 = room.p2Score;
 			roomData.winner = winner;
 			roomData.status = 'completed';
 
-			if (roomData.player1 && roomData.player1._conection) {
+			if (roomData.player1 && roomData.player1._conection && roomData.player1._conection.readyState === 1) {
 				roomData.player1._conection.send(JSON.stringify({
 					method: "returnToBracket",
 					tournamentId: this.tournamentId
 				}));
 			}
-			if (roomData.player2 && roomData.player2._conection) {
+			if (roomData.player2 && roomData.player2._conection && roomData.player2._conection.readyState === 1) {
 				roomData.player2._conection.send(JSON.stringify({
 					method: "returnToBracket",
 					tournamentId: this.tournamentId
@@ -324,7 +398,62 @@ class Tournament {
 		const semiPromises = semiFinalRooms.map(async (roomData) => {
 			const room = this.rooms.findRoom(roomData.roomId);
 
-			if (roomData.player1 && roomData.player1._conection) {
+			// Vérifier les connexions des joueurs
+			const p1Connected = roomData.player1 && roomData.player1._conection && roomData.player1._conection.readyState === 1;
+			const p2Connected = roomData.player2 && roomData.player2._conection && roomData.player2._conection.readyState === 1;
+
+			let winner;
+
+			// Si les deux sont déconnectés, choisir un au hasard
+			if (!p1Connected && !p2Connected) {
+				winner = Math.random() < 0.5 ? roomData.player1 : roomData.player2;
+				roomData.score1 = 0;
+				roomData.score2 = 0;
+				roomData.winner = winner;
+				roomData.status = 'completed';
+				console.log(`[Tournament] Both players disconnected in ${roomData.roomName}, random winner: ${winner._name}`);
+				this.broadcastTournamentState();
+				return winner;
+			}
+
+			// Si seul player1 est déconnecté, player2 gagne
+			if (!p1Connected && p2Connected) {
+				winner = roomData.player2;
+				roomData.score1 = 0;
+				roomData.score2 = 3;
+				roomData.winner = winner;
+				roomData.status = 'completed';
+				console.log(`[Tournament] Player1 disconnected in ${roomData.roomName}, ${winner._name} wins by forfeit`);
+				if (p2Connected) {
+					roomData.player2._conection.send(JSON.stringify({
+						method: "returnToBracket",
+						tournamentId: this.tournamentId
+					}));
+				}
+				this.broadcastTournamentState();
+				return winner;
+			}
+
+			// Si seul player2 est déconnecté, player1 gagne
+			if (p1Connected && !p2Connected) {
+				winner = roomData.player1;
+				roomData.score1 = 3;
+				roomData.score2 = 0;
+				roomData.winner = winner;
+				roomData.status = 'completed';
+				console.log(`[Tournament] Player2 disconnected in ${roomData.roomName}, ${winner._name} wins by forfeit`);
+				if (p1Connected) {
+					roomData.player1._conection.send(JSON.stringify({
+						method: "returnToBracket",
+						tournamentId: this.tournamentId
+					}));
+				}
+				this.broadcastTournamentState();
+				return winner;
+			}
+
+			// Les deux sont connectés, envoyer les messages de début de match
+			if (p1Connected) {
 				const roomUrl = `/gameOnlineTournament?gameId=${roomData.roomId}`;
 				roomData.player1._conection.send(JSON.stringify({
 					method: "startMatch",
@@ -334,7 +463,7 @@ class Tournament {
 					matchRound: roomData.roomName
 				}));
 			}
-			if (roomData.player2 && roomData.player2._conection) {
+			if (p2Connected) {
 				const roomUrl = `/gameOnlineTournament?gameId=${roomData.roomId}`;
 				roomData.player2._conection.send(JSON.stringify({
 					method: "startMatch",
@@ -350,20 +479,20 @@ class Tournament {
 			room.state = "playing-game";
 			await room.gameLoop();
 
-			const winner = room.p1Score > room.p2Score ? roomData.player1 : roomData.player2;
+			winner = room.p1Score > room.p2Score ? roomData.player1 : roomData.player2;
 
 			roomData.score1 = room.p1Score;
 			roomData.score2 = room.p2Score;
 			roomData.winner = winner;
 			roomData.status = 'completed';
 
-			if (roomData.player1 && roomData.player1._conection) {
+			if (roomData.player1 && roomData.player1._conection && roomData.player1._conection.readyState === 1) {
 				roomData.player1._conection.send(JSON.stringify({
 					method: "returnToBracket",
 					tournamentId: this.tournamentId
 				}));
 			}
-			if (roomData.player2 && roomData.player2._conection) {
+			if (roomData.player2 && roomData.player2._conection && roomData.player2._conection.readyState === 1) {
 				roomData.player2._conection.send(JSON.stringify({
 					method: "returnToBracket",
 					tournamentId: this.tournamentId
@@ -391,48 +520,98 @@ class Tournament {
 
 			const room = this.rooms.findRoom(finalRoomData.roomId);
 
-			if (finalRoomData.player1 && finalRoomData.player1._conection) {
-				const roomUrl = `/gameOnlineTournament?gameId=${finalRoomData.roomId}`;
-				finalRoomData.player1._conection.send(JSON.stringify({
-					method: "startMatch",
-					roomId: finalRoomData.roomId,
-					roomUrl: roomUrl,
-					opponent: finalRoomData.player2._name,
-					matchRound: finalRoomData.roomName
-				}));
+			// Vérifier les connexions des joueurs
+			const p1Connected = finalRoomData.player1 && finalRoomData.player1._conection && finalRoomData.player1._conection.readyState === 1;
+			const p2Connected = finalRoomData.player2 && finalRoomData.player2._conection && finalRoomData.player2._conection.readyState === 1;
+
+			let champion;
+
+			// Si les deux sont déconnectés, choisir un au hasard
+			if (!p1Connected && !p2Connected) {
+				champion = Math.random() < 0.5 ? finalRoomData.player1 : finalRoomData.player2;
+				finalRoomData.score1 = 0;
+				finalRoomData.score2 = 0;
+				finalRoomData.winner = champion;
+				finalRoomData.status = 'completed';
+				console.log(`[Tournament] Both players disconnected in Final, random winner: ${champion._name}`);
 			}
-			if (finalRoomData.player2 && finalRoomData.player2._conection) {
-				const roomUrl = `/gameOnlineTournament?gameId=${finalRoomData.roomId}`;
-				finalRoomData.player2._conection.send(JSON.stringify({
-					method: "startMatch",
-					roomId: finalRoomData.roomId,
-					roomUrl: roomUrl,
-					opponent: finalRoomData.player1._name,
-					matchRound: finalRoomData.roomName
-				}));
-			} await sleep(1000);
-
-			room.state = "playing-game";
-			await room.gameLoop();
-
-			const champion = room.p1Score > room.p2Score ? finalRoomData.player1 : finalRoomData.player2;
-
-			finalRoomData.score1 = room.p1Score;
-			finalRoomData.score2 = room.p2Score;
-			finalRoomData.winner = champion;
-			finalRoomData.status = 'completed';
-
-			if (finalRoomData.player1 && finalRoomData.player1._conection) {
-				finalRoomData.player1._conection.send(JSON.stringify({
-					method: "returnToBracket",
-					tournamentId: this.tournamentId
-				}));
+			// Si seul player1 est déconnecté, player2 gagne
+			else if (!p1Connected && p2Connected) {
+				champion = finalRoomData.player2;
+				finalRoomData.score1 = 0;
+				finalRoomData.score2 = 3;
+				finalRoomData.winner = champion;
+				finalRoomData.status = 'completed';
+				console.log(`[Tournament] Player1 disconnected in Final, ${champion._name} wins by forfeit`);
+				if (p2Connected) {
+					finalRoomData.player2._conection.send(JSON.stringify({
+						method: "returnToBracket",
+						tournamentId: this.tournamentId
+					}));
+				}
 			}
-			if (finalRoomData.player2 && finalRoomData.player2._conection) {
-				finalRoomData.player2._conection.send(JSON.stringify({
-					method: "returnToBracket",
-					tournamentId: this.tournamentId
-				}));
+			// Si seul player2 est déconnecté, player1 gagne
+			else if (p1Connected && !p2Connected) {
+				champion = finalRoomData.player1;
+				finalRoomData.score1 = 3;
+				finalRoomData.score2 = 0;
+				finalRoomData.winner = champion;
+				finalRoomData.status = 'completed';
+				console.log(`[Tournament] Player2 disconnected in Final, ${champion._name} wins by forfeit`);
+				if (p1Connected) {
+					finalRoomData.player1._conection.send(JSON.stringify({
+						method: "returnToBracket",
+						tournamentId: this.tournamentId
+					}));
+				}
+			}
+			// Les deux sont connectés, jouer le match normalement
+			else {
+				if (p1Connected) {
+					const roomUrl = `/gameOnlineTournament?gameId=${finalRoomData.roomId}`;
+					finalRoomData.player1._conection.send(JSON.stringify({
+						method: "startMatch",
+						roomId: finalRoomData.roomId,
+						roomUrl: roomUrl,
+						opponent: finalRoomData.player2._name,
+						matchRound: finalRoomData.roomName
+					}));
+				}
+				if (p2Connected) {
+					const roomUrl = `/gameOnlineTournament?gameId=${finalRoomData.roomId}`;
+					finalRoomData.player2._conection.send(JSON.stringify({
+						method: "startMatch",
+						roomId: finalRoomData.roomId,
+						roomUrl: roomUrl,
+						opponent: finalRoomData.player1._name,
+						matchRound: finalRoomData.roomName
+					}));
+				}
+				
+				await sleep(1000);
+
+				room.state = "playing-game";
+				await room.gameLoop();
+
+				champion = room.p1Score > room.p2Score ? finalRoomData.player1 : finalRoomData.player2;
+
+				finalRoomData.score1 = room.p1Score;
+				finalRoomData.score2 = room.p2Score;
+				finalRoomData.winner = champion;
+				finalRoomData.status = 'completed';
+
+				if (finalRoomData.player1 && finalRoomData.player1._conection && finalRoomData.player1._conection.readyState === 1) {
+					finalRoomData.player1._conection.send(JSON.stringify({
+						method: "returnToBracket",
+						tournamentId: this.tournamentId
+					}));
+				}
+				if (finalRoomData.player2 && finalRoomData.player2._conection && finalRoomData.player2._conection.readyState === 1) {
+					finalRoomData.player2._conection.send(JSON.stringify({
+						method: "returnToBracket",
+						tournamentId: this.tournamentId
+					}));
+				}
 			}
 
 			await sleep(2000);
@@ -447,8 +626,8 @@ class Tournament {
 						method: 'tournamentWinner',
 						winner: champion._name,
 						championId: champion._clientId,
-						finalScore1: room.p1Score,
-						finalScore2: room.p2Score
+						finalScore1: finalRoomData.score1,
+						finalScore2: finalRoomData.score2
 					}));
 				}
 			});
