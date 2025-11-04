@@ -1,7 +1,7 @@
 'use strict'
 const db = require("../../db.js");
 const bcrypt = require('bcrypt');
-const privateKey = require("../register/index.js");
+const privateKey = process.env.USER_SECRET_PASS;
 const jwt = require('jsonwebtoken');
 
 async function loginRoute(fastify, options) {

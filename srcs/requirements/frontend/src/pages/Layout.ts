@@ -408,7 +408,7 @@ export const Layout = {
       // Simple validation (you would do real authentication here)
       if (username && password) {
         try {
-        const res = await fetch('https://0.0.0.0:3000/login', {
+        const res = await fetch('https://127.0.0.1:4430/user/login', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -451,7 +451,7 @@ export const Layout = {
     // Simulate register API call
     if (username && password) {
         try {
-        const res = await fetch('http://localhost:3000/register', {
+        const res = await fetch('/user/register', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

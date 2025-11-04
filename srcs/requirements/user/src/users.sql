@@ -6,7 +6,6 @@ CREATE TABLE[IF NOT EXISTS] users
     password        TEXT NOT NULL,
     created_at      DATE DEFAULT CURRENT_DATE,
     elo             INT DEFAULT 0,
-    token           TEXT UNIQUE,
     avatar          TEXT DEFAULT 'alien.png',
 )
 

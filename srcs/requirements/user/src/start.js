@@ -11,7 +11,7 @@ const { spawn } = require('child_process');
 
 // Get the server address from environment variable, default to 0.0.0.0
 const serverAddr = process.env.SERVER_ADDR || '0.0.0.0';
-const port = process.env.SERVER_PORT || '3001';
+const port = process.env.SERVER_PORT || '3003';
 
 // console.log(`🚀 Starting server on ${serverAddr}:${port}`);
 // console.log(`📁 Using .env file: ${envPath}`);
