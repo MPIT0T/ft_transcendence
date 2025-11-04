@@ -2,8 +2,8 @@
 const db = require("../../db.js");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const PRIVATE_KEY = "secret123123";
 
-const PRIVATE_KEY = process.env.USER_SECRET_PASS;
 
 const addCorsHeaders = (reply) => {
   reply
@@ -13,6 +13,21 @@ const addCorsHeaders = (reply) => {
     .header('Access-Control-Allow-Credentials', 'true');
   return reply;
 };
+
+function insertUser(username, hashedPassword) {
+  return new Promise((resolve, reject) => {
+    try {
+      const stmt = db.prepare('INSERT INTO users (username, password) VALUES (?, ?)');
+      const info = stmt.run(username, hashedPassword);
+      if (!info.changes) {
+        return reject(new Error('Insert failed'));
+      }
+      resolve(info);
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
 
 async function registerRoute(fastify, options) {
   fastify.addHook('preHandler', (req, reply, done) => {
@@ -34,14 +49,11 @@ async function registerRoute(fastify, options) {
     if (!username || !password) {
       return reply.status(400).send({ error: 'Nom d\'utilisateur et mot de passe requis' });
     }
-
     try {
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      await new Promise((resolve, reject) => {
-        if (!db.prepare('INSERT INTO users (username, password) VALUES (?, ?)').run(username, hashedPassword))
-          if (err) return reject(err);
-      });
+
+      const result = await insertUser(username, hashedPassword);
       const token = jwt.sign(
         { username, avatar: 'alien.png' },
         PRIVATE_KEY,

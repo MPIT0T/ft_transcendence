@@ -111,7 +111,7 @@ export const Layout = {
                   bg-gray-800 text-gray-50
                   shadow-[3px_3px_0_#000]
                   hover:bg-gray-700
-                  hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0_#000]
+                  hover:translate-x-[1px] hover:translate-y-[1px]    hover:shadow-[1px_1px_0_#000]
                   transition-all duration-100">
               <span class="text-lg mr-2">👤</span>
               <span data-i18n="login-btn" class="text-xs text-gray-50">Connexion</span>
