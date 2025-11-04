@@ -9,6 +9,8 @@ export class GameComponent {
   private animationId: number | null = null;
   private isPaused: boolean = false; // Pour gérer les pauses entre les buts
 
+  private onScoreChange?: (p1: number, p2: number) => void;
+
   // Constantes du jeu (identiques au serveur)
   private readonly CANVAS_WIDTH = 900;
   private readonly CANVAS_HEIGHT = 600;
@@ -24,12 +26,18 @@ export class GameComponent {
   private p2Score: number = 0;
   private lastTime: number = 0;
 
-  constructor(container: HTMLElement, initialCanStart: boolean = false) {
+  constructor(
+    container: HTMLElement,
+    initialCanStart: boolean = false,
+    onScoreChange?: (p1: number, p2: number) => void
+  ) {
     this.container = container;
     this.canStart = initialCanStart;
+    this.onScoreChange = onScoreChange;
     this.render();              // Crée le HTML
     this.setupCanvas();         // Configure le canvas
     this.setupEventListeners(); // Ajoute les contrôles clavier
+    this.onScoreChange?.(this.p1Score, this.p2Score);
   }
 
   setCanStart(canStart: boolean) {
@@ -51,10 +59,9 @@ export class GameComponent {
       <div class="w-full flex justify-center">
         <canvas 
           id="game-canvas" 
-          class="bg-black border-2 border-white"
+          class="backdrop-blur-2xs border-1 border-gray-50"
           width="900" 
-          height="600"
-          style="image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;">
+          height="600">
         </canvas>
       </div>
     `;
@@ -81,17 +88,16 @@ export class GameComponent {
     if (!this.context) return;
     
     // Clear with black background
-    this.context.fillStyle = "#000000";
-    this.context.fillRect(0, 0, 900, 600);
+    this.context.clearRect(0, 0, 900, 600);
     
     // Draw center line (dashed)
-    this.context.fillStyle = "#FFFFFF";
+    this.context.fillStyle = "#EEEEEE";
     this.context.setLineDash([10, 10]);
     this.context.beginPath();
     this.context.moveTo(450, 0);
     this.context.lineTo(450, 600);
     this.context.strokeStyle = "#FFFFFF";
-    this.context.lineWidth = 2;
+    this.context.lineWidth = 1;
     this.context.stroke();
     this.context.setLineDash([]);
   }
@@ -109,7 +115,7 @@ export class GameComponent {
     // Draw ball (white square)
     this.context.fillRect(this.ball.x, this.ball.y, this.ball.width, this.ball.height);
     
-    this.drawScore();
+    // this.drawScore();
   }
 
   private update = () => {
@@ -154,6 +160,7 @@ export class GameComponent {
       this.ball.reset(1);
       this.p1.reset();
       this.p2.reset();
+      this.onScoreChange?.(this.p1Score, this.p2Score);
       
       // Pause de 3 secondes après un but
       this.isPaused = true;
@@ -165,6 +172,7 @@ export class GameComponent {
       this.ball.reset(-1);
       this.p1.reset();
       this.p2.reset();
+      this.onScoreChange?.(this.p1Score, this.p2Score);
       
       // Pause de 3 secondes après un but
       this.isPaused = true;
@@ -188,8 +196,6 @@ export class GameComponent {
     // Dessiner la balle
     this.context.fillRect(this.ball.x, this.ball.y, this.ball.width, this.ball.height);
     
-    // Dessiner le score
-    this.drawScore();
   }
 
   private drawScore() {
@@ -258,11 +264,21 @@ export class GameComponent {
     
     // Redraw initial state
     this.drawInitialState();
+
+    this.onScoreChange?.(this.p1Score, this.p2Score);
   }
 
   public destroy() {
     this.pauseGame();
     window.removeEventListener('keydown', this.movePlayer);
     window.removeEventListener('keyup', this.stopPlayer);
+  }
+
+  public getScoreP1(): number {
+    return this.p1Score;
+  }
+
+  public getScoreP2(): number {
+    return this.p2Score;
   }
 }

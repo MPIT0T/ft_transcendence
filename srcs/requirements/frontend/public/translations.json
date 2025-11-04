@@ -1,23 +1,23 @@
 {
-    "fr": {
-        "login-btn": "Connexion",
-        "play": "Jouer maintenant",
-        "preview": "Aperçu du Jeu",
-        "modeTitleOnline": "En ligne",
-        "modeTitleTournament": "Tournoi"
-    },
-    "en": {
-        "login-btn":"Login",
-        "play": "Play now",
-        "preview": "Game preview",
-        "modeTitleOnline": "Online",
-        "modeTitleTournament": "Tournament"
-    },
-    "es": {
-        "login-btn": "Iniciar",
-        "play": "Juegar ahora",
-        "preview": "espagnol",
-        "modeTitleOnline": "En línea",
-        "modeTitleTournament": "Torneo"
-    }
+  "fr": {
+    "login-btn": "Connexion",
+    "play": "Jouer maintenant",
+    "preview": "Aperçu du Jeu",
+    "modeTitleOnline": "En ligne",
+    "modeTitleTournament": "Tournoi"
+  },
+  "en": {
+    "login-btn":"Login",
+    "play": "Play now",
+    "preview": "Game preview",
+    "modeTitleOnline": "Online",
+    "modeTitleTournament": "Tournament"
+  },
+  "es": {
+    "login-btn": "Iniciar",
+    "play": "Juegar ahora",
+    "preview": "espagnol",
+    "modeTitleOnline": "En línea",
+    "modeTitleTournament": "Torneo"
+  }
 }

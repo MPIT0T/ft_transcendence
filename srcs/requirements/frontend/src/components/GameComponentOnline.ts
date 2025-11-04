@@ -9,6 +9,8 @@ export class GameComponentOnline {
 	private ws: WebSocket | undefined;                 // WebSocket pour ce jeu
 	private moveMethod: string = 'move';               // Méthode de mouvement ('move' ou 'moveT')
 
+  private onScoreChange?: (p1: number, p2: number) => void;
+
 	// Joueur 1 (gauche)
 	private p1: Player = {
 		x: 20,      // 20px du bord gauche
@@ -40,14 +42,22 @@ export class GameComponentOnline {
 	private p1Score: number = 0;
 	private p2Score: number = 0;
 
-	constructor(container: HTMLElement, initialCanStart: boolean = false, websocket?: WebSocket, moveMethod: string = 'move') {
+	constructor(
+    container: HTMLElement,
+    initialCanStart: boolean = false,
+    onScoreChange?: (p1: number, p2: number) => void,
+    websocket?: WebSocket,
+    moveMethod: string = 'move'
+  ) {
 		this.container = container;
 		this.canStart = initialCanStart;
-		this.ws = websocket;  // Utiliser la WebSocket passée en paramètre
-		this.moveMethod = moveMethod;  // 'move' pour jeu normal, 'moveT' pour tournoi
+    this.onScoreChange = onScoreChange;
+    this.ws = websocket;
+    this.moveMethod = moveMethod;
 		this.render();              // Crée le HTML
 		this.setupCanvas();         // Configure le canvas
 		this.setupEventListeners(); // Ajoute les contrôles clavier
+    this.onScoreChange?.(this.p1Score, this.p2Score);
 	}
 
 	setCanStart(canStart: boolean) {
@@ -79,9 +89,11 @@ export class GameComponentOnline {
 		}
 		if (typeof game.p1Score === "number") {
 			this.p1Score = game.p1Score;
+      this.onScoreChange?.(this.p1Score, this.p2Score);
 		}
 		if (typeof game.p2Score === "number") {
 			this.p2Score = game.p2Score;
+      this.onScoreChange?.(this.p1Score, this.p2Score);
 		}
 		
 		// Redessiner immédiatement si le jeu n'est pas encore démarré
@@ -95,10 +107,9 @@ export class GameComponentOnline {
 			<div class="w-full flex justify-center">
 				<canvas 
 					id="game-canvas" 
-					class="bg-black border-2 border-white"
+					class="border-1 border-gray-50 bg-transparent backdrop-blur-2xs"
 					width="900" 
-					height="600"
-					style="image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;">
+					height="600">
 				</canvas>
 			</div>
 		`;
@@ -124,9 +135,8 @@ export class GameComponentOnline {
 	private drawBackground() {
 		if (!this.context) return;
 
-		// Clear with black background
-		this.context.fillStyle = "#000000";
-		this.context.fillRect(0, 0, 900, 600);
+		// Clear background
+		this.context.clearRect(0, 0, 900, 600);
 
 		// Draw center line (dashed)
 		this.context.fillStyle = "#FFFFFF";
@@ -153,7 +163,7 @@ export class GameComponentOnline {
 		// Draw ball (white square)
 		this.context.fillRect(this.ball.x, this.ball.y, this.ball.width, this.ball.height);
 		
-		this.drawScore();
+		// this.drawScore();
 	}
 
 	private update = () => {
@@ -173,7 +183,7 @@ export class GameComponentOnline {
 		// Draw ball
 		this.context.fillRect(this.ball.x, this.ball.y, this.ball.width, this.ball.height);
 		
-		this.drawScore();
+		this.onScoreChange?.(this.p1Score, this.p2Score);
 	};
 
 	private drawScore() {
