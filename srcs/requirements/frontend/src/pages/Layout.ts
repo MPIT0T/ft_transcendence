@@ -61,14 +61,14 @@ export const Layout = {
   render(content: string): string {
     return `
       <div class="flex flex-col h-screen font-custom font-tiny5">
-        <nav class="fixed w-screen z-20 h-24 flex items-center justify-between backdrop-blur-2xs border-b-1 border-gray-50">
+        <nav class="fixed w-screen z-20 h-24 flex items-center justify-between backdrop-blur-2xs border-b border-gray-50">
           <!-- Navigation gauche -->
           <div class="flex my-5 gap-3 mx-5">
             <button id="home-btn" class="flex items-center px-3 py-1  hover:bg-gray-700 transition-all duration-300">
               <div class="relative inline-block
                   z-10 text-4xl text-transparent bg-clip-text
-                  bg-gradient-to-r from-red-500 via-blue-500 to-green-500
-                  bg-[length:400%_400%] animate-gradientShift">
+                  bg-linear-to-r from-red-500 via-blue-500 to-green-500
+                  bg-size-[400%_400%] animate-gradientShift">
                 ft_
               </div>
             </button>
@@ -111,7 +111,7 @@ export const Layout = {
                   bg-gray-800 text-gray-50
                   shadow-[3px_3px_0_#000]
                   hover:bg-gray-700
-                  hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0_#000]
+                  hover:translate-x-px hover:translate-y-px hover:shadow-[1px_1px_0_#000]
                   transition-all duration-100">
               <span class="text-lg mr-2">👤</span>
               <span data-i18n="login-btn" class="text-xs text-gray-50">Connexion</span>
@@ -129,7 +129,7 @@ export const Layout = {
 
         <!-- Modal Login -->
         <div id="login-modal" class="fixed inset-0 hidden items-center justify-center backdrop-blur-lg z-50">
-          <div class="border-1 border-gray-50 p-8 max-w-md w-full mx-4">
+          <div class="border border-gray-50 p-8 max-w-md w-full mx-4">
             <h3 class="text-2xl font-bold mb-6 text-center text-gray-50">Login</h3>
             
             <form id="login-form" class="space-y-4">
@@ -138,7 +138,7 @@ export const Layout = {
                 <input 
                   type="text" 
                   id="username" 
-                  class="w-full px-3 py-2 border-1 border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50"
+                  class="w-full px-3 py-2 border border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50"
                   placeholder="Enter your username"
                   required
                 >
@@ -149,7 +149,7 @@ export const Layout = {
                 <input 
                   type="password" 
                   id="password" 
-                  class="w-full px-3 py-2 border-1 border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50"
+                  class="w-full px-3 py-2 border border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50"
                   placeholder="Enter your password"
                   required
                 >
@@ -168,13 +168,13 @@ export const Layout = {
               <div class="flex space-x-4 mt-6">
                 <button 
                   type="submit" 
-                  class="flex-1 text-white py-2 px-4 border-1 border-gray-50 hover:border-blue-500 hover:bg-gray-700 transition-all font-bold">
+                  class="flex-1 text-white py-2 px-4 border border-gray-50 hover:border-blue-500 hover:bg-gray-700 transition-all font-bold">
                   LOGIN
                 </button>
                 <button 
                   type="button" 
                   id="cancel-login" 
-                  class="flex-1 text-white py-2 px-4 border-1 border-gray-50 hover:border-red-500 hover:bg-gray-700 transition-all font-bold">
+                  class="flex-1 text-white py-2 px-4 border border-gray-50 hover:border-red-500 hover:bg-gray-700 transition-all font-bold">
                   CANCEL
                 </button>
               </div>
@@ -191,7 +191,7 @@ export const Layout = {
 
         <!-- Modal Register -->
         <div id="register-modal" class="fixed inset-0 hidden items-center justify-center z-50 backdrop-blur-lg">
-          <div class="border-1 border-white p-8 max-w-md w-full mx-4">
+          <div class="border border-white p-8 max-w-md w-full mx-4">
             <h3 class="text-2xl text-gray-50 font-bold mb-6 text-center">Register</h3>
             
             <form id="register-form" class="space-y-4">
@@ -200,7 +200,7 @@ export const Layout = {
                 <input 
                   type="text" 
                   id="reg-username" 
-                  class="w-full px-3 py-2 border-1 border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50"
+                  class="w-full px-3 py-2 border border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50"
                   placeholder="Choose a username"
                   required
                 >
@@ -211,7 +211,7 @@ export const Layout = {
                 <input 
                   type="password" 
                   id="reg-password" 
-                  class="w-full px-3 py-2 border-1 border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50"
+                  class="w-full px-3 py-2 border border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50"
                   placeholder="Create a password"
                   required
                 >
@@ -222,7 +222,7 @@ export const Layout = {
                 <input 
                   type="password" 
                   id="reg-confirm-password" 
-                  class="w-full px-3 py-2 border-1 border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50"
+                  class="w-full px-3 py-2 border border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50"
                   placeholder="Confirm your password"
                   required
                 >
@@ -231,13 +231,13 @@ export const Layout = {
               <div class="flex space-x-4 mt-6">
                 <button 
                   type="submit" 
-                  class="flex-1 text-white py-2 px-4 border-1 border-white hover:border-green-500 hover:bg-gray-700 transition-colors font-bold">
+                  class="flex-1 text-white py-2 px-4 border border-white hover:border-green-500 hover:bg-gray-700 transition-colors font-bold">
                   REGISTER
                 </button>
                 <button 
                   type="button" 
                   id="cancel-register" 
-                  class="flex-1 text-white py-2 px-4 border-1 border-white hover:border-red-500 hover:bg-gray-700 transition-colors font-bold">
+                  class="flex-1 text-white py-2 px-4 border border-white hover:border-red-500 hover:bg-gray-700 transition-colors font-bold">
                   CANCEL
                 </button>
               </div>
@@ -505,8 +505,8 @@ export const Layout = {
         loginBtn.innerHTML = `
         <img src="astronaut.png" alt="avatar" class="w-8 h-8 mr-2" />
         <span class="text-3xl font-bold text-transparent bg-clip-text
-        bg-gradient-to-r from-red-500 via-blue-500 to-green-500
-        bg-[length:400%_400%] animate-gradientShift">${username}</span>
+        bg-linear-to-r from-red-500 via-blue-500 to-green-500
+        bg-size-[400%_400%] animate-gradientShift">${username}</span>
       `;
         loginBtn.className = `
         flex items-center px-3 py-2

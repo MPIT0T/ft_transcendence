@@ -169,7 +169,7 @@ export const TournamentRoom: Page = {
 		let tournamentId;
 		if (ws === undefined) {
 			const host = window.location.host;
-			ws = new WebSocket(`wss://${host}/pong/ws`);
+			ws = new WebSocket(`wss://${host}/tournament/ws`);
 		}
 
 		ws.onmessage = message => {
@@ -188,9 +188,8 @@ export const TournamentRoom: Page = {
 				joinTournament(tournamentId);
 			}
 
-			if (response.method === "join") {
+			if (response.method === "joinT") {
 				if (response.status === "success") {
-					console.log(response.message);
 
 					tournamentId = response.tournamentId;
 					if (tournamentId !== undefined) {

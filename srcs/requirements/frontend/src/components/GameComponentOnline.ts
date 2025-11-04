@@ -1,5 +1,4 @@
 import { Player, Ball } from "../interface/gameInterface";
-import { ws } from "../pages/GameRoom";
 
 export class GameComponentOnline {
 	private container: HTMLElement;                    // Conteneur DOM
@@ -7,6 +6,8 @@ export class GameComponentOnline {
 	private canvas: HTMLCanvasElement | null = null;   // Élément canvas
 	private context: CanvasRenderingContext2D | null = null; // Context 2D
 	private animationId: number | null = null;         // ID de l'animation
+	private ws: WebSocket | undefined;                 // WebSocket pour ce jeu
+	private moveMethod: string = 'move';               // Méthode de mouvement ('move' ou 'moveT')
 
   private onScoreChange?: (p1: number, p2: number) => void;
 
@@ -44,11 +45,15 @@ export class GameComponentOnline {
 	constructor(
     container: HTMLElement,
     initialCanStart: boolean = false,
-    onScoreChange?: (p1: number, p2: number) => void
+    onScoreChange?: (p1: number, p2: number) => void,
+    websocket?: WebSocket,
+    moveMethod: string = 'move'
   ) {
 		this.container = container;
 		this.canStart = initialCanStart;
     this.onScoreChange = onScoreChange;
+    this.ws = websocket;
+    this.moveMethod = moveMethod;
 		this.render();              // Crée le HTML
 		this.setupCanvas();         // Configure le canvas
 		this.setupEventListeners(); // Ajoute les contrôles clavier
@@ -66,22 +71,13 @@ export class GameComponentOnline {
 
 	updateGameState(game: any){
 		if (!game) {
-			console.log("No game state provided.");
 			return;
 		}
 		if (game.player1) {
-			this.p1.x = game.player1.x;
 			this.p1.y = game.player1.y;
-			this.p1.width = game.player1.width;
-			this.p1.height = game.player1.height;
-			this.p1.vel_y = game.player1.vel_y;
 		}
 		if (game.player2) {
-			this.p2.x = game.player2.x;
 			this.p2.y = game.player2.y;
-			this.p2.width = game.player2.width;
-			this.p2.height = game.player2.height;
-			this.p2.vel_y = game.player2.vel_y;
 		}
 		if (game.ball) {
 			this.ball.x = game.ball.x;
@@ -205,16 +201,21 @@ export class GameComponentOnline {
 	private movePlayer = (e: KeyboardEvent) => {
 		// On ne prend que W, S, ArrowUp et ArrowDown
 		if (["KeyW", "KeyS", "ArrowUp", "ArrowDown"].includes(e.code)) {
-			ws?.send(JSON.stringify({ method: "move",type: "UP", key: e.code, roomId: localStorage.getItem('roomId'), clientId: localStorage.getItem('clientId')}));
+			const roomId = localStorage.getItem('roomId');
+			const clientId = localStorage.getItem('clientId');
+			this.ws?.send(JSON.stringify({ method: this.moveMethod, type: "UP", key: e.code, roomId: roomId, clientId: clientId}));
 		}
 	};
 
 	private stopPlayer = (e: KeyboardEvent) => {
 		if (["KeyW", "KeyS", "ArrowUp", "ArrowDown"].includes(e.code)) {
-			ws?.send(JSON.stringify({ method: "move",type: "DOWN", key: e.code, roomId: localStorage.getItem('roomId'), clientId: localStorage.getItem('clientId')}));
+			const roomId = localStorage.getItem('roomId');
+			const clientId = localStorage.getItem('clientId');
+			this.ws?.send(JSON.stringify({ method: this.moveMethod, type: "DOWN", key: e.code, roomId: roomId, clientId: clientId}));
 		}
 
 	};
+
 
 	private startGame() {
 		if (!this.animationId) {
