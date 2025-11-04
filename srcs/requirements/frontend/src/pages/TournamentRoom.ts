@@ -24,7 +24,7 @@ function displayTournament(root: HTMLElement, tournaments: any[]) {
 		tournamentBtn.dataset.tournamentId = tournament.tournamentId;
 		tournamentBtn.innerHTML = `
 			${tournament.tournamentName}<br>
-			<span class="text-sm text-gray-600">${tournament.players}</span>
+			<span class="text-sm text-gray-400">${tournament.players}</span>
 		`;
 		tournamentBtn.addEventListener('click', () => {
 			joinTournament(tournament.tournamentId);
@@ -99,9 +99,7 @@ export const TournamentRoom: Page = {
 					Rafraichir
 				</button>
 			</div>
-			<div class="flex flex-wrap gap-4" id="tournaments-container">
-				
-			</div>
+			<div class="flex flex-wrap gap-4" id="tournaments-container"></div>
 		</div>
 	</div>
 

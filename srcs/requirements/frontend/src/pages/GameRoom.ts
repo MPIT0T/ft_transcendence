@@ -119,9 +119,7 @@ export const GameRoom: Page = {
 					Rafraichir
 				</button>
 			</div>
-			<div class="flex flex-wrap gap-4" id="rooms-container">
-				
-			</div>
+			<div class="flex flex-wrap gap-4" id="rooms-container"></div>
 		</div>
 	</div>
 

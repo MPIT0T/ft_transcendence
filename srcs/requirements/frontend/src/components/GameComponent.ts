@@ -7,6 +7,8 @@ export class GameComponent {
   private context: CanvasRenderingContext2D | null = null; // Context 2D
   private animationId: number | null = null;         // ID de l'animation
 
+  private onScoreChange?: (p1: number, p2: number) => void;
+
   // Joueur 1 (gauche)
   private p1: Player = {
     x: 20,      // 20px du bord gauche
@@ -16,7 +18,7 @@ export class GameComponent {
     vel_y: 0    // Immobile au départ
   };
 
-  // Joueur 2 (droite)  
+  // Joueur 2 (droite)
   private p2: Player = {
     x: 872,     // 572px = 900-20-8 (bord droit - marge - largeur)
     y: 260,     // Centre vertical
@@ -38,12 +40,18 @@ export class GameComponent {
   private p1Score: number = 0;
   private p2Score: number = 0;
 
-  constructor(container: HTMLElement, initialCanStart: boolean = false) {
+  constructor(
+    container: HTMLElement,
+    initialCanStart: boolean = false,
+    onScoreChange?: (p1: number, p2: number) => void
+  ) {
     this.container = container;
     this.canStart = initialCanStart;
+    this.onScoreChange = onScoreChange;
     this.render();              // Crée le HTML
     this.setupCanvas();         // Configure le canvas
     this.setupEventListeners(); // Ajoute les contrôles clavier
+    this.onScoreChange?.(this.p1Score, this.p2Score);
   }
 
   setCanStart(canStart: boolean) {
@@ -60,10 +68,9 @@ export class GameComponent {
       <div class="w-full flex justify-center">
         <canvas 
           id="game-canvas" 
-          class="bg-black border-2 border-white"
+          class="backdrop-blur-2xs border-1 border-gray-50"
           width="900" 
-          height="600"
-          style="image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;">
+          height="600">
         </canvas>
       </div>
     `;
@@ -90,17 +97,16 @@ export class GameComponent {
     if (!this.context) return;
     
     // Clear with black background
-    this.context.fillStyle = "#000000";
-    this.context.fillRect(0, 0, 900, 600);
+    this.context.clearRect(0, 0, 900, 600);
     
     // Draw center line (dashed)
-    this.context.fillStyle = "#FFFFFF";
+    this.context.fillStyle = "#EEEEEE";
     this.context.setLineDash([10, 10]);
     this.context.beginPath();
     this.context.moveTo(450, 0);
     this.context.lineTo(450, 600);
     this.context.strokeStyle = "#FFFFFF";
-    this.context.lineWidth = 2;
+    this.context.lineWidth = 1;
     this.context.stroke();
     this.context.setLineDash([]);
   }
@@ -118,18 +124,18 @@ export class GameComponent {
     // Draw ball (white square)
     this.context.fillRect(this.ball.x, this.ball.y, this.ball.width, this.ball.height);
     
-    this.drawScore();
+    // this.drawScore();
   }
 
   private update = () => {
     if (!this.canStart || !this.context) return;
 
-    
+
     this.animationId = requestAnimationFrame(this.update);
-    
+
     // Draw background
     this.drawBackground();
-    
+
     // Update player 1
     this.context.fillStyle = "#FFFFFF";
     let newP1_y = this.p1.y + this.p1.vel_y;
@@ -137,26 +143,26 @@ export class GameComponent {
       this.p1.y = newP1_y;
     }
     this.context.fillRect(this.p1.x, this.p1.y, this.p1.width, this.p1.height);
-    
+
     // Update player 2
     let newP2_y = this.p2.y + this.p2.vel_y;
     if (!this.playerOutOfBound(newP2_y)) {
       this.p2.y = newP2_y;
     }
     this.context.fillRect(this.p2.x, this.p2.y, this.p2.width, this.p2.height);
-    
+
     // Update ball
     this.ball.vel_x = this.ball.vel_x*1.004;
     this.ball.vel_y = this.ball.vel_y*1.004;
     this.ball.x += this.ball.vel_x;
     this.ball.y += this.ball.vel_y;
     this.context.fillRect(this.ball.x, this.ball.y, this.ball.width, this.ball.height);
-    
+
     // Ball collision with top/bottom walls
     if (this.ball.y <= 0 || (this.ball.y + this.ball.height >= 600)) {
       this.ball.vel_y *= -1;
     }
-    
+
     // Ball collision with paddles
     if (this.detectCollision(this.ball, this.p1)) {
       if (this.ball.vel_x < 0) { // Only bounce if moving towards paddle
@@ -173,17 +179,17 @@ export class GameComponent {
         this.ball.vel_y = (hitPos - 0.5) * 4;
       }
     }
-    
+
     // Score detection
     if (this.ball.x < 0) {
       this.p2Score++;
       this.resetGame(1);
+      this.onScoreChange?.(this.p1Score, this.p2Score);
     } else if (this.ball.x + this.ball.width > 900) {
       this.p1Score++;
       this.resetGame(-1);
+      this.onScoreChange?.(this.p1Score, this.p2Score);
     }
-    
-    this.drawScore();
   };
 
   private drawScore() {
@@ -276,11 +282,21 @@ export class GameComponent {
     
     // Redraw initial state
     this.drawInitialState();
+
+    this.onScoreChange?.(this.p1Score, this.p2Score);
   }
 
   public destroy() {
     this.pauseGame();
     window.removeEventListener('keydown', this.movePlayer);
     window.removeEventListener('keyup', this.stopPlayer);
+  }
+
+  public getScoreP1(): number {
+    return this.p1Score;
+  }
+
+  public getScoreP2(): number {
+    return this.p2Score;
   }
 }

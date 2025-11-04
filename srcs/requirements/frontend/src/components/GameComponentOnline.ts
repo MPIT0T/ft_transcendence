@@ -8,6 +8,8 @@ export class GameComponentOnline {
 	private context: CanvasRenderingContext2D | null = null; // Context 2D
 	private animationId: number | null = null;         // ID de l'animation
 
+  private onScoreChange?: (p1: number, p2: number) => void;
+
 	// Joueur 1 (gauche)
 	private p1: Player = {
 		x: 20,      // 20px du bord gauche
@@ -39,12 +41,18 @@ export class GameComponentOnline {
 	private p1Score: number = 0;
 	private p2Score: number = 0;
 
-	constructor(container: HTMLElement, initialCanStart: boolean = false) {
+	constructor(
+    container: HTMLElement,
+    initialCanStart: boolean = false,
+    onScoreChange?: (p1: number, p2: number) => void
+  ) {
 		this.container = container;
 		this.canStart = initialCanStart;
+    this.onScoreChange = onScoreChange;
 		this.render();              // Crée le HTML
 		this.setupCanvas();         // Configure le canvas
 		this.setupEventListeners(); // Ajoute les contrôles clavier
+    this.onScoreChange?.(this.p1Score, this.p2Score);
 	}
 
 	setCanStart(canStart: boolean) {
@@ -85,9 +93,11 @@ export class GameComponentOnline {
 		}
 		if (typeof game.p1Score === "number") {
 			this.p1Score = game.p1Score;
+      this.onScoreChange?.(this.p1Score, this.p2Score);
 		}
 		if (typeof game.p2Score === "number") {
 			this.p2Score = game.p2Score;
+      this.onScoreChange?.(this.p1Score, this.p2Score);
 		}
 		
 		// Redessiner immédiatement si le jeu n'est pas encore démarré
@@ -101,10 +111,9 @@ export class GameComponentOnline {
 			<div class="w-full flex justify-center">
 				<canvas 
 					id="game-canvas" 
-					class="bg-black border-2 border-white"
+					class="border-1 border-gray-50 bg-transparent backdrop-blur-2xs"
 					width="900" 
-					height="600"
-					style="image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;">
+					height="600">
 				</canvas>
 			</div>
 		`;
@@ -158,7 +167,7 @@ export class GameComponentOnline {
 		// Draw ball (white square)
 		this.context.fillRect(this.ball.x, this.ball.y, this.ball.width, this.ball.height);
 		
-		this.drawScore();
+		// this.drawScore();
 	}
 
 	private update = () => {
@@ -178,7 +187,7 @@ export class GameComponentOnline {
 		// Draw ball
 		this.context.fillRect(this.ball.x, this.ball.y, this.ball.width, this.ball.height);
 		
-		this.drawScore();
+		this.onScoreChange?.(this.p1Score, this.p2Score);
 	};
 
 	private drawScore() {
