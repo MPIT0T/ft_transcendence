@@ -397,7 +397,7 @@ export const Layout = {
     }
   },
 
-  handleLogin(root: HTMLElement): void {
+  async handleLogin(root: HTMLElement): Promise<void> {
     const username = (root.querySelector('#username') as HTMLInputElement).value;
     const password = (root.querySelector('#password') as HTMLInputElement).value;
     const rememberMe = (root.querySelector('#remember-me') as HTMLInputElement).checked;
@@ -405,28 +405,39 @@ export const Layout = {
     console.log('🔐 Login attempt:', { username, rememberMe });
 
     // Simulate login API call
-    setTimeout(() => {
       // Simple validation (you would do real authentication here)
       if (username && password) {
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('username', username);
-        
-        this.showNotification(`Bienvenue ${username} !`);
-        this.updateLoginButton(root, true);
-        
+        try {
+        const res = await fetch('https://0.0.0.0:3000/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({username, password})
+        });
+        if (res.ok) {
+          const data = await res.json();
+          localStorage.setItem('token', data.token); 
+          localStorage.setItem('isLoggedIn', 'true');
+          localStorage.setItem('username', username);
+          this.showNotification(`Bienvenue ${username} !`);
+          this.updateLoginButton(root, true);
+        }
+        else if (res.status === 401) {
+          this.showNotification('Nom d\'utilisateur ou mot de passe invalide', 'error');
+        }
         // Close modal and reset form
-        const loginModal = root.querySelector('#login-modal') as HTMLDivElement;
-        this.closeModal(loginModal);
-        (root.querySelector('#login-form') as HTMLFormElement).reset();
-      } else {
+      } catch(err) {
         this.showNotification('Nom d\'utilisateur ou mot de passe invalide', 'error');
       }
-    }, 1000);
+      const loginModal = root.querySelector('#login-modal') as HTMLDivElement;
+      this.closeModal(loginModal);
+        (root.querySelector('#login-form') as HTMLFormElement).reset();
+    }
   },
 
-  handleRegister(root: HTMLElement): void {
+  async handleRegister(root: HTMLElement): Promise<void> {
     const username = (root.querySelector('#reg-username') as HTMLInputElement).value;
-    const email = (root.querySelector('#reg-email') as HTMLInputElement).value;
     const password = (root.querySelector('#reg-password') as HTMLInputElement).value;
     const confirmPassword = (root.querySelector('#reg-confirm-password') as HTMLInputElement).value;
 
@@ -435,21 +446,36 @@ export const Layout = {
       return;
     }
 
-    console.log('📝 Register attempt:', { username, email });
+    console.log('📝 Register attempt:', { username });
 
     // Simulate register API call
-    setTimeout(() => {
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('username', username);
-      
-      this.showNotification(`Compte créé avec succès ! Bienvenue ${username} !`);
-      this.updateLoginButton(root, true);
-      
-      // Close modal and reset form
+    if (username && password) {
+        try {
+        const res = await fetch('http://localhost:3000/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({username, password})
+        });
+        if (res.ok) {
+          const data = await res.json();
+          localStorage.setItem('token', data.token); 
+          localStorage.setItem('isLoggedIn', 'true');
+          localStorage.setItem('username', username);
+          this.showNotification(`Compte créé avec succès ! Bienvenue ${username} !`);
+          this.updateLoginButton(root, true);
+        }
+        else if (res.status === 401)
+          this.showNotification("Nom d'utilisateur deja utilise", 'error');
+
+      } catch(err) {
+        this.showNotification("Erreur de serveur, veuillez reessayer ulterieurement", 'error');
+      }
       const registerModal = root.querySelector('#register-modal') as HTMLDivElement;
       this.closeModal(registerModal);
       (root.querySelector('#register-form') as HTMLFormElement).reset();
-    }, 1000);
+    }
   },
 
   openModal(modal: HTMLDivElement): void {

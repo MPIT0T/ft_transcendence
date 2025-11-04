@@ -10,6 +10,4 @@ RUN npm install
 
 COPY src/ ./src
 
-RUN sqlite3 /src/user/users.sql
-
 CMD ["node", "src/start.js"]
