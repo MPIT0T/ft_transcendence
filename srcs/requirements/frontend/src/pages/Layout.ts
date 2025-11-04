@@ -184,6 +184,7 @@ export const Layout = {
                 <button type="button" id="signup-btn" class="text-gray-50 hover:underline font-semibold">
                   Sign up here
                 </button>
+                <button type="button" id="github-btn" class="text-md text-white hover:text-blue-500">github</button>
               </div>
             </form>
           </div>
@@ -277,6 +278,13 @@ export const Layout = {
         window.location.hash = '/gameLoby';
       });
     }
+
+    const gihtubBtn = root.querySelector('#gihtub-btn') as HTMLButtonElement;
+    if (gihtubBtn) {
+      gihtubBtn.addEventListener('click', () => {
+        // handle
+      })
+    }
     initPastelBackground();
 
     // Language management
@@ -308,7 +316,7 @@ export const Layout = {
     this.setupRegisterModal(root);
 
     // Check if user is already logged in
-    this.updateLoginButton(root, localStorage.getItem('isLoggedIn') === 'true');
+    this.updateLoginButton(root, sessionStorage.getItem('isLoggedIn') === 'true');
   },
 
   setupLoginModal(root: HTMLElement): void {
@@ -386,7 +394,7 @@ export const Layout = {
   },
 
   handleLoginClick(root: HTMLElement): void {
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true';
     
     if (isLoggedIn) {
       window.location.hash = '/stats'
@@ -404,36 +412,45 @@ export const Layout = {
 
     console.log('🔐 Login attempt:', { username, rememberMe });
 
-    // Simulate login API call
-      // Simple validation (you would do real authentication here)
-      if (username && password) {
-        try {
-        const res = await fetch('https://127.0.0.1:4430/user/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({username, password})
-        });
-        if (res.ok) {
-          const data = await res.json();
-          localStorage.setItem('token', data.token); 
-          localStorage.setItem('isLoggedIn', 'true');
-          localStorage.setItem('username', username);
-          this.showNotification(`Bienvenue ${username} !`);
-          this.updateLoginButton(root, true);
-        }
-        else if (res.status === 401) {
-          this.showNotification('Nom d\'utilisateur ou mot de passe invalide', 'error');
-        }
-        // Close modal and reset form
-      } catch(err) {
+    if (username && password) {
+      const res = await fetch('/user/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({username, password})
+      });
+      if (res.ok) {
+        const data = await res.json();
+        sessionStorage.setItem('token', data.token);
+        sessionStorage.setItem('isLoggedIn', 'true');
+        this.showNotification(`Bienvenue ${username} !`);
+        this.updateLoginButton(root, true);
+      }
+      else if (res.status === 401) {
         this.showNotification('Nom d\'utilisateur ou mot de passe invalide', 'error');
       }
       const loginModal = root.querySelector('#login-modal') as HTMLDivElement;
       this.closeModal(loginModal);
         (root.querySelector('#login-form') as HTMLFormElement).reset();
     }
+  },
+
+  getUserInfoFromJwt(token: string | null) {
+
+    if (!token) {
+      return {
+        username: "anonymous",
+        avatar: "anonymous.png",
+      };
+    }
+    const payloadBase64 = token.split('.')[1];
+    const payloadJson = atob(payloadBase64);
+    const payload = JSON.parse(payloadJson);
+    return {
+      username: payload.username,
+      avatar: payload.avatar
+    };
   },
 
   async handleRegister(root: HTMLElement): Promise<void> {
@@ -460,10 +477,11 @@ export const Layout = {
         });
         if (res.ok) {
           const data = await res.json();
-          localStorage.setItem('token', data.token); 
-          localStorage.setItem('isLoggedIn', 'true');
-          localStorage.setItem('username', username);
+          sessionStorage.setItem('token', data.token);
+          sessionStorage.setItem('isLoggedIn', 'true');
+          sessionStorage.setItem('username', username);
           this.showNotification(`Compte créé avec succès ! Bienvenue ${username} !`);
+
           this.updateLoginButton(root, true);
         }
         else if (res.status === 401)
@@ -503,7 +521,7 @@ export const Layout = {
     root.querySelectorAll<HTMLElement>("[data-i18n]").forEach(el => {
       const key = el.dataset.i18n as keyof typeof t;
 
-      if (key === "login" && localStorage.getItem("isLoggedIn")) return;
+      if (key === "login" && sessionStorage.getItem("isLoggedIn")) return;
 
       if (t[key]) el.textContent = t[key];
     });
@@ -525,11 +543,12 @@ export const Layout = {
     const loginBtn = root.querySelector('#login-btn') as HTMLButtonElement;
     if (loginBtn) {
       if (isLoggedIn) {
-        const username = localStorage.getItem('username') || 'User';
-        const avatarSrc = 'arrow.png'; // API call to fetch image path
+        const username = sessionStorage.getItem('username') || 'User';
+        const userInfo = this.getUserInfoFromJwt(sessionStorage.getItem('token'));
+        const avatarSrc = userInfo.avatar;
 
         loginBtn.innerHTML = `
-        <img src="astronaut-removebg.png" alt="avatar" class="w-8 h-8 mr-2" />
+        <img src="${avatarSrc}" alt="avatar" class="w-8 h-8 mr-2" />
         <span class="text-3xl font-bold text-transparent bg-clip-text
         bg-gradient-to-r from-red-500 via-blue-500 to-green-500
         bg-[length:400%_400%] animate-gradientShift">${username}</span>
@@ -541,7 +560,7 @@ export const Layout = {
       `;
       } else {
         loginBtn.innerHTML = `
-        <img src="anonymous-orange.png" alt="login" class="w-8 h-8 mr-2"/>
+        <img src="anonymous.png" alt="login" class="w-8 h-8 mr-2"/>
         <span data-i18n="login-btn" class="text-2xl text-gray-50">Connexion</span>
       `;
         loginBtn.className = `
