@@ -22,23 +22,14 @@ module.exports = async function (fastify, opts) {
 						case 'rooms':
 							handleGetRooms(socket, data);
 							break;
-						case 'tournaments':
-							handleGetTournaments(socket, data);
-							break;
 						case 'ready':
 							handleReady(socket, data);
 							break;
 						case 'join':
 							handleJoinGame(socket, data);
 							break;
-						case 'joinT':
-							handleJoinTournament(socket, data);
-							break;
 						case 'createR':
 							handleCreateRoom(socket, data);
-							break;
-						case 'createT':
-							handleCreateTournaments(socket, data);
 							break;
 						case 'move':
 							handleGameMove(socket, data);
@@ -72,6 +63,13 @@ module.exports = async function (fastify, opts) {
 				console.log('Client disconnected:', clientId);
 			});
 		});
+
+		fastify.get('/status', function handler(request, reply) {
+			reply.code(200).header('Content-Type', 'text/plain').send('OK');
+		});
+		fastify.get('/statusPlayer', function handler(request, reply) {
+			reply.code(200).header('Content-Type', 'text/plain').send(getPlayer());
+		});
 	});
 }
 
@@ -79,7 +77,6 @@ function removeClient(clientId) {
 
 	const client = g_Games.findClient(clientId);
 	if (!client) {
-		console.log('Client not found:', clientId);
 		return;
 	}
 
@@ -102,11 +99,14 @@ function removeClient(clientId) {
 	g_Games.removeClient(clientId);
 }
 
+function getPlayer() {
+	return Object.keys(g_Games._clients._clients).length.toString();
+}
+
 function leave(clientId) {
 
 	const client = g_Games.findClient(clientId);
 	if (!client) {
-		console.log('Client not found:', clientId);
 		return;
 	}
 
@@ -147,57 +147,6 @@ function handleGetRooms(socket, data) {
 		method: 'rooms',
 		rooms: availableRooms
 	}));
-}
-
-function handleGetTournaments(socket, data) {
-	if (g_Games.findClient(data.clientId) === undefined)
-		throw "Client id not good";
-
-	const availableTournaments = Object.values(g_Games._tournaments._tournaments)
-		.filter(tournament => tournament.clients.length < 8)
-		.filter(tournament => tournament.state === "waiting")
-		.map(tournament => ({
-			tournamentId: tournament.tournamentId,
-			tournamentName: tournament.tournamentName,
-			players: `${tournament.clients.length}/8`,
-			gameMode: tournament.gameMode,
-			gamePoint: tournament.gamePoint
-		}));
-
-	socket.send(JSON.stringify({
-		method: 'tournaments',
-		tournaments: availableTournaments
-	}));
-}
-
-function handleJoinTournament(socket, data) {
-	if (g_Games.findClient(data.clientId) === undefined)
-		throw "Client id not good";
-	const tournament = g_Games.findTournament(data.tournamentId);
-
-	if (tournament.clients.length >= 8) {
-		socket.send(JSON.stringify({
-			method: 'joinT',
-			status: 'error',
-			message: 'Failed to join the tournament.'
-		}));
-		return;
-	}
-
-	const tournaments = Object.values(g_Games._tournaments._tournaments);
-	for (const t of tournaments) {
-		const clientIndex = t.clients.findIndex(c => c._clientId === data.clientId);
-		if (clientIndex !== -1) {
-			socket.send(JSON.stringify({
-				method: 'join',
-				status: 'error',
-				message: 'Client already in a tournament'
-			}));
-			return;
-		}
-	}
-
-	tournament.join(g_Games.findClient(data.clientId), socket);
 }
 
 async function handleJoinGame(socket, data) {
@@ -270,26 +219,6 @@ function handleCreateRoom(socket, data) {
 	}
 
 	g_Games.createRoom(socket, data.gameMode, data.gamePoint, data.roomName);
-}
-
-function handleCreateTournaments(socket, data) {
-	if (g_Games.findClient(data.clientId) === undefined)
-		throw "Client id not good";
-
-	const tournaments = Object.values(g_Games._tournaments._tournaments);
-	for (const tournament of tournaments) {
-		const clientIndex = tournament.clients.findIndex(c => c._clientId === data.clientId);
-		if (clientIndex !== -1) {
-			socket.send(JSON.stringify({
-				method: 'joinT',
-				status: 'error',
-				message: 'Client already in the tournament'
-			}));
-			return;
-		}
-	}
-	
-	g_Games.createTournament(socket, data.gameMode, data.gamePoint, data.tournamentName);
 }
 
 function handleGameMove(socket, data) {

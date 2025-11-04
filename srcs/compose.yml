@@ -73,6 +73,19 @@ services:
       - transcendence
     restart: always
 
+  tournament:
+    container_name: trans-tournament
+    build:
+      context: requirements/tournament/
+    develop:
+      watch:
+        - action: sync+restart
+          path: requirements/tournament/src
+          target: app/src
+    networks:
+      - transcendence
+    restart: always
+
 networks:
   transcendence:
     name: transcendence

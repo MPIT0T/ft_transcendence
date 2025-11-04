@@ -1,9 +1,13 @@
-class Player {
-	constructor(playerNumber) {
+export class Player {
+    playerNumber: number;
+    x: number;
+    y: number;
+    width: number = 8;
+    height: number = 80;
+    vel_y: number = 0;
+
+    constructor(playerNumber: number) {
         this.playerNumber = playerNumber;
-        this.width = 8;
-        this.height = 80;
-        this.vel_y = 0;
         
         if (playerNumber === 1) {
             this.x = 20;
@@ -12,9 +16,9 @@ class Player {
             this.x = 872;
             this.y = 260;
         }
-	}
+    }
 
-	updatePosition(canvasHeight = 600) {
+    updatePosition(canvasHeight: number = 600): void {
         const newY = this.y + this.vel_y;
         
         if (newY >= 0 && newY <= canvasHeight - this.height) {
@@ -22,31 +26,12 @@ class Player {
         }
     }
 
-	setVelocity(vel) {
+    setVelocity(vel: number): void {
         this.vel_y = vel;
     }
 
-    reset() {
+    reset(): void {
         this.y = 260;
         this.vel_y = 0;
     }
-
-	toJSON() {
-		return {
-			playerNumber: this.playerNumber,
-			x: this.x,
-			y: this.y,
-			width: this.width,
-			height: this.height,
-			vel_y: this.vel_y
-		};
-	}
-
-    toJsonMove() {
-		return {
-			y: this.y,
-		};
-	}
 }
-
-module.exports = Player;
