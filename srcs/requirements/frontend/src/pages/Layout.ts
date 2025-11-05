@@ -427,13 +427,13 @@ export const Layout = {
         sessionStorage.setItem('username', username);
         this.showNotification(`Bienvenue ${username} !`);
         this.updateLoginButton(root, true);
+        const loginModal = root.querySelector('#login-modal') as HTMLDivElement;
+        this.closeModal(loginModal);
+        (root.querySelector('#login-form') as HTMLFormElement).reset();
       }
       else if (res.status === 401) {
         this.showNotification('Nom d\'utilisateur ou mot de passe invalide', 'error');
       }
-      const loginModal = root.querySelector('#login-modal') as HTMLDivElement;
-      this.closeModal(loginModal);
-        (root.querySelector('#login-form') as HTMLFormElement).reset();
     }
   },
 
@@ -467,6 +467,7 @@ export const Layout = {
     console.log('📝 Register attempt:', { username });
 
     // Simulate register API call
+    let stayInModale = false;
     if (username && password) {
         try {
         const res = await fetch('/user/register', {
@@ -485,15 +486,26 @@ export const Layout = {
 
           this.updateLoginButton(root, true);
         }
-        else if (res.status === 401)
-          this.showNotification("Nom d'utilisateur deja utilise", 'error');
+        else if (res.status === 400)
+        {
+          const data = await res.json();
 
+          this.showNotification(data.error, 'error');
+          stayInModale = true;
+        }
+        else if (res.status === 401)
+        {
+          this.showNotification("Nom d'utilisateur deja utilise", 'error');
+          stayInModale = true;
+        }
       } catch(err) {
         this.showNotification("Erreur de serveur, veuillez reessayer ulterieurement", 'error');
       }
-      const registerModal = root.querySelector('#register-modal') as HTMLDivElement;
-      this.closeModal(registerModal);
-      (root.querySelector('#register-form') as HTMLFormElement).reset();
+      if (!stayInModale) {
+        const registerModal = root.querySelector('#register-modal') as HTMLDivElement;
+        this.closeModal(registerModal);
+        (root.querySelector('#register-form') as HTMLFormElement).reset();
+      }
     }
   },
 

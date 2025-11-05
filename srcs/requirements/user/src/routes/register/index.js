@@ -49,6 +49,9 @@ async function registerRoute(fastify, options) {
     if (!username || !password) {
       return reply.status(400).send({ error: 'Nom d\'utilisateur et mot de passe requis' });
     }
+    const regex = /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{6,18}$/;
+    if (!regex.test(password))
+      return reply.status(400).send({ error: 'Le mot de passe doit faire entre 6 et 18 charateres et avoir au moins 1 majuscule et 1 chiffre'});
     try {
       const hashedPassword = await bcrypt.hash(password, 10);
 
