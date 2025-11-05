@@ -256,6 +256,28 @@ export const Layout = {
     `;
   },
 
+  async handleGithubLogin(root: HTMLElement, code: string): Promise<void>  {
+
+    const res = await fetch("/user/github", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({code})
+    })
+    if (res.ok) {
+      const data = await res.json();
+      const userInfo = await this.getUserInfoFromJwt(data.token);
+      sessionStorage.setItem('token', data.token);
+      sessionStorage.setItem('isLoggedIn', 'true');
+      sessionStorage.setItem('username', userInfo.username);
+      this.showNotification(`Bienvenue ${userInfo.username} !`);
+      this.updateLoginButton(root, true);
+      const loginModal = root.querySelector('#login-modal') as HTMLDivElement;
+      this.closeModal(loginModal);
+      (root.querySelector('#login-form') as HTMLFormElement).reset();
+    }
+  },
+
+
   mount(root: HTMLElement): void {
     // Navigation buttons
     const homeBtn = root.querySelector('#home-btn') as HTMLButtonElement;
@@ -361,6 +383,18 @@ export const Layout = {
     const cancelRegisterBtn = root.querySelector('#cancel-register') as HTMLButtonElement;
     const registerForm = root.querySelector('#register-form') as HTMLFormElement;
     const backToLoginBtn = root.querySelector('#back-to-login') as HTMLButtonElement;
+    const githubBtn = root.querySelector('#github-btn') as HTMLButtonElement;
+
+    if (githubBtn) {
+      window.addEventListener('message', (event) => {
+        if (event.origin !== window.origin) return; // sécurité
+        if (event.data.type === 'github-auth') {
+          const code = event.data.code;
+          this.handleGithubLogin(root, code);
+        }
+      })
+    }
+
 
     // Cancel button
     if (cancelRegisterBtn) {
@@ -375,6 +409,27 @@ export const Layout = {
         this.closeModal(registerModal);
       }
     });
+
+    // Github registration
+    const clientId = "Ov23libyRMWHw34E2bL0";
+    const redirectUri = "https://127.0.0.1:4430/oauth-callback.html";
+    const scope = "read:user";
+
+    if (githubBtn) {
+      githubBtn.addEventListener('click', () => {
+        const width = 600;
+        const height = 700;
+        const left = window.screen.width / 2 - width / 2;
+        const top = window.screen.height / 2 - height / 2;
+
+        const githubWindow = window.open(
+          `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}`,
+          'GitHub OAuth',
+          `width=${width},height=${height},top=${top},left=${left}`
+        );
+      });
+    }
+
 
     // Register form submission
     if (registerForm) {
