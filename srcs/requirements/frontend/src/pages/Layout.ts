@@ -424,6 +424,7 @@ export const Layout = {
         const data = await res.json();
         sessionStorage.setItem('token', data.token);
         sessionStorage.setItem('isLoggedIn', 'true');
+        sessionStorage.setItem('username', username);
         this.showNotification(`Bienvenue ${username} !`);
         this.updateLoginButton(root, true);
       }

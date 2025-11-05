@@ -24,24 +24,25 @@ async function loginRoute(fastify, options) {
 
         const user =  await getUserbyUsername(username);
         if (!user) {
-            return reply.status(401).send({ error: 'Invalid username or password' });
+            return reply.status(401).send({error: 'Invalid username or password'});
         }
-        bcrypt.compare(user.password, password, function(err, res) {
-        if (err){
-            return reply.status(500).send({ error: 'Database error' });
-        }
+        const res = await bcrypt.compare(password, user.password);
         if (res) {
-            const payload = {
-                username: username,
-                avatar: user.avatar
-            };
-            const token = jwt.sign(payload, privateKey, {expiresIn: '1h'});
-            return reply.send({ success: true, message: 'Connection effectué avec succès !', token});
+            const token = jwt.sign(
+                { username, avatar: user.avatar },
+                privateKey,
+                { expiresIn: '1h' }
+            );
+
+            return reply.send({
+                success: true,
+                message: 'Connection effectué avec succès !',
+                token
+            });
         } else {
             return reply.status(401).send({ error: 'Invalid username or password' });
         }
         });
-    });
 }
 
 module.exports = loginRoute;
