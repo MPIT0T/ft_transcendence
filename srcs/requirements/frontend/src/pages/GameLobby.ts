@@ -125,7 +125,9 @@ export const GameLoby: Page = {
 		const localBtn = root.querySelector('#local-mode') as HTMLButtonElement;
 		if (localBtn) {
 			localBtn.addEventListener('click', () => {
-				window.location.hash = '/game';
+				const p = '/game';
+				history.pushState(null, '', p);
+				window.dispatchEvent(new PopStateEvent('popstate'));
 			});
 		}
 
@@ -133,7 +135,9 @@ export const GameLoby: Page = {
 		const onlineBtn = root.querySelector('#online-mode') as HTMLButtonElement;
 		if (onlineBtn) {
 			onlineBtn.addEventListener('click', () => {
-				window.location.hash = '/gameRoom';
+				const p = '/gameRoom';
+				history.pushState(null, '', p);
+				window.dispatchEvent(new PopStateEvent('popstate'));
 			});
 		}
 
@@ -142,7 +146,9 @@ export const GameLoby: Page = {
 		const tournamentBtn = root.querySelector('#tournament-mode') as HTMLButtonElement;
 		if (tournamentBtn) {
 			tournamentBtn.addEventListener('click', () => {
-				window.location.hash = '/tournamentRoom';
+				const p = '/tournamentRoom';
+				history.pushState(null, '', p);
+				window.dispatchEvent(new PopStateEvent('popstate'));
 			});
 		}
 
@@ -175,14 +181,14 @@ export const GameLoby: Page = {
 			}, 1000);
 		}
 
-		// Hash change handler to clear intervals
-		const hashChangeHandler = (event: HashChangeEvent) => {
+		// popstate handler to clear intervals
+		const popstateHandler = (event: PopStateEvent) => {
 			const highestId = window.setInterval(() => {}, 0);
 			for (let i = 1; i <= highestId; i++) {
 				window.clearInterval(i);
 			}
-			window.removeEventListener('hashchange', hashChangeHandler);
+			window.removeEventListener('popstate', popstateHandler);
 		};
-		window.addEventListener('hashchange', hashChangeHandler);
+		window.addEventListener('popstate', popstateHandler);
 	}
 };

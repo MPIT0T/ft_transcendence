@@ -402,13 +402,19 @@ export const TournamentOnline: Page = {
 				
 				// Rediriger vers la page de jeu après 1 seconde
 				setTimeout(() => {
-					window.location.hash = response.roomUrl;
+					// navigate using History API instead of hash
+					const raw = response.roomUrl || '/';
+					const p = raw.startsWith('#') ? raw.replace(/^#\/?/, '/') : (raw.startsWith('/') ? raw : '/' + raw);
+					history.pushState(null, '', p);
+					window.dispatchEvent(new PopStateEvent('popstate'));
 				}, 1000);
 			}				// 🔙 Retour au bracket après un match
 				if (response.method === "returnToBracket") {
-					// Rediriger vers le bracket après 2 secondes
+					// Rediriger vers le bracket après 2 secondes (History API)
 					setTimeout(() => {
-						window.location.hash = `/tournamentOnline`;
+						const p = '/tournamentOnline';
+						history.pushState(null, '', p);
+						window.dispatchEvent(new PopStateEvent('popstate'));
 					}, 2000);
 				}
 
@@ -439,7 +445,9 @@ export const TournamentOnline: Page = {
 		// Bouton pour quitter le tournoi
 		if (leaveTournamentBtn) {
 			leaveTournamentBtn.addEventListener('click', () => {
-				window.location.hash = '#/tournamentRoom';
+				const p = '/tournamentRoom';
+				history.pushState(null, '', p);
+				window.dispatchEvent(new PopStateEvent('popstate'));
 			});
 		}
 	}

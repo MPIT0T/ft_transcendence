@@ -234,7 +234,11 @@ export const GameRoom: Page = {
 						matchmakingModal.classList.remove('flex');
 					}
 
-					window.location.hash = response.url;
+					// navigate using History API
+					const raw = response.url || '/';
+					const p = raw.startsWith('#') ? raw.replace(/^#\/?/, '/') : (raw.startsWith('/') ? raw : '/' + raw);
+					history.pushState(null, '', p);
+					window.dispatchEvent(new PopStateEvent('popstate'));
 				} else {
 					alert(response.message);
 				}

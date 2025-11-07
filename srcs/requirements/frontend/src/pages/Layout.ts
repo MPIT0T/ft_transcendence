@@ -260,21 +260,27 @@ export const Layout = {
     const homeBtn = root.querySelector('#home-btn') as HTMLButtonElement;
     if (homeBtn) {
       homeBtn.addEventListener('click', () => {
-        window.location.hash = '/';
+        const p = '/';
+        history.pushState(null, '', p);
+        window.dispatchEvent(new PopStateEvent('popstate'));
       });
     }
 
     const statsBtn = root.querySelector('#stats-btn') as HTMLButtonElement;
     if (statsBtn) {
       statsBtn.addEventListener('click', () => {
-        window.location.hash = '/stats';
+        const p = '/stats';
+        history.pushState(null, '', p);
+        window.dispatchEvent(new PopStateEvent('popstate'));
       });
     }
 
     const gameBtn = root.querySelector('#game-btn') as HTMLButtonElement;
     if (gameBtn) {
       gameBtn.addEventListener('click', () => {
-        window.location.hash = '/gameLoby';
+        const p = '/gameLoby';
+        history.pushState(null, '', p);
+        window.dispatchEvent(new PopStateEvent('popstate'));
       });
     }
     initPastelBackground();
@@ -389,7 +395,9 @@ export const Layout = {
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     
     if (isLoggedIn) {
-      window.location.hash = '/stats'
+      const p = '/stats';
+      history.pushState(null, '', p);
+      window.dispatchEvent(new PopStateEvent('popstate'));
     } else {
       // Open login modal
       const loginModal = root.querySelector('#login-modal') as HTMLDivElement;

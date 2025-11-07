@@ -98,7 +98,7 @@ export const GameOnline: Page = {
       currentGame.destroy();
     }
 
-    const hashChangeHandler = (event: HashChangeEvent) => {
+    const popstateHandler = (event: PopStateEvent) => {
       const payLoad = {
         "method": "leave",
         "clientId": clientId
@@ -106,8 +106,8 @@ export const GameOnline: Page = {
       if (ws)
         ws.send(JSON.stringify(payLoad));
 
-      window.removeEventListener('hashchange', hashChangeHandler);
+      window.removeEventListener('popstate', popstateHandler);
     };
-    window.addEventListener('hashchange', hashChangeHandler);
+    window.addEventListener('popstate', popstateHandler);
   }
 }

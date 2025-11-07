@@ -198,7 +198,11 @@ export const TournamentRoom: Page = {
 						localStorage.setItem('tournamentId', tournamentId);
 					}
 
-					window.location.hash = response.url;
+					// navigate using History API
+					const raw = response.url || '/';
+					const p = raw.startsWith('#') ? raw.replace(/^#\/?/, '/') : (raw.startsWith('/') ? raw : '/' + raw);
+					history.pushState(null, '', p);
+					window.dispatchEvent(new PopStateEvent('popstate'));
 				} else {
 					alert(response.message);
 				}

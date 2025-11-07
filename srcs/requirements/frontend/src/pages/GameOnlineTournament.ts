@@ -25,9 +25,9 @@ export const GameOnlineTournament: Page = {
   },
 
   mount(root) {
-    // Extraire le roomId depuis l'URL (?gameId=...)
-    const urlParams = new URLSearchParams(window.location.hash.split('?')[1]);
-    let roomId = urlParams.get('gameId');
+  // Extraire le roomId depuis l'URL (?gameId=...)
+  const urlParams = new URLSearchParams(window.location.search);
+  let roomId = urlParams.get('gameId');
     
     // Sauvegarder le roomId dans localStorage
     if (roomId) {
@@ -120,9 +120,11 @@ export const GameOnlineTournament: Page = {
             localStorage.setItem('tournamentId', response.tournamentId);
           }
           
-          // Rediriger vers la page du tournoi après un délai
+          // Rediriger vers la page du tournoi après un délai (History API)
           setTimeout(() => {
-            window.location.hash = '/tournamentOnline';
+            const p = '/tournamentOnline';
+            history.pushState(null, '', p);
+            window.dispatchEvent(new PopStateEvent('popstate'));
           }, 2000);
         }
       }
@@ -133,8 +135,8 @@ export const GameOnlineTournament: Page = {
       currentGame.destroy();
     }
 
-    // Handler pour le changement de hash (si le joueur quitte manuellement)
-    const hashChangeHandler = (event: HashChangeEvent) => {
+  // Handler pour le popstate (si le joueur quitte manuellement)
+  const popstateHandler = (event: PopStateEvent) => {
       
       const payLoad = {
         "method": "leave",
@@ -147,9 +149,9 @@ export const GameOnlineTournament: Page = {
       localStorage.removeItem('matchRound');
       localStorage.removeItem('matchOpponent');
 
-      window.removeEventListener('hashchange', hashChangeHandler);
+      window.removeEventListener('popstate', popstateHandler);
     };
-    
-    window.addEventListener('hashchange', hashChangeHandler);
+
+    window.addEventListener('popstate', popstateHandler);
   }
 }
