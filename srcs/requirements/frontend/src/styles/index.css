@@ -93,7 +93,18 @@
         0% { filter: hue-rotate(0deg); }
         100% { filter: hue-rotate(359deg); }
     }
+    @keyframes bounceHigh {
+        0%, 100% {
+            transform: translateY(-50%);
+            animation-timing-function: cubic-bezier(1, 0, 1, 1);
+        }
+        50% {
+            transform: none;
+            animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+        }
+    }
 
+    --animate-bounceHigh: bounceHigh 1s infinite;
     --animate-gradientShift: gradientShift 4s ease infinite;
     --animate-arrowBlink: arrowBlink 1s infinite;
     --animate-arrowHue: arrowHue 6s linear infinite;

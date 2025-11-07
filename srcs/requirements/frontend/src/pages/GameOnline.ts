@@ -1,6 +1,7 @@
 import type { Page } from "../interface/gameInterface.js"
 import { GameComponentOnline } from "../components/GameComponentOnline.js";
 import { ws } from "./GameRoom.js";
+import { sleep } from "../utils/sleep.js"
 
 let currentGame: GameComponentOnline | null = null;
 let timerInterval: number | null = null;
@@ -13,29 +14,33 @@ export const GameOnline: Page = {
   <div class="absolute inset-0 bg-gradient-to-r from-red-500 to-blue-500 opacity-30"></div>
   <div class="relative z-10">
     <div class="flex items-center justify-between px-6 pt-2">
-      <span class="font-semibold text-5xl">???</span>
+      <span id="player-1-name" class="font-semibold text-5xl">???</span>
       <span id="score" class="text-5xl font-extrabold tracking-wide"></span>
-      <span class="font-semibold text-5xl">???</span>
+      <span id="player-2-name" class="font-semibold text-5xl">???</span>
     </div>
     <div class="flex items-center justify-between px-6 pb-2 text-md opacity-90">
-      <span>W/S</span>
+      <span id="player-1-elo"></span>
       <span id="timer">00:00</span>
-      <span>↑/↓</span>
+      <span id="player-2-elo"></span>
     </div>
   </div>
 </div>
 <div class="flex-1 p-5 flex flex-col items-center justify-center bg-transparent">
   <div id="game-container" class="mb-8"></div>
 </div>
-<div id="waiting-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-  <div class="bg-white border-4 border-black p-8 max-w-md w-full mx-4">
+<div id="waiting-modal" class="fixed inset-0 backdrop-blur-lg flex items-center justify-center z-50">
+  <div class="bg-transparent border-gray-50 border-1 p-8 max-w-md w-full mx-4">
     <div class="text-center">
-      <h2 class="text-3xl font-bold mb-4">⏳ Attente...</h2>
-      <p class="text-xl mb-6">En attente d'autres joueurs</p>
+      <h2 class="text-3xl text-gray-50 font-bold mb-4">Attente...</h2>
+      <p class="text-xl text-gray-300 mb-6">En attente d'autres joueurs</p>
       <div class="flex justify-center mb-4">
-        <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-black"></div>
+        <div class="h-16 flex items-center justify-center gap-3">
+          <span class="h-2 w-2 bg-white animate-bounceHigh [animation-delay:0ms]"></span>
+          <span class="h-2 w-2 bg-white animate-bounceHigh [animation-delay:150ms]"></span>
+          <span class="h-2 w-2 bg-white animate-bounceHigh [animation-delay:300ms]"></span>
+        </div>
       </div>
-      <p class="text-gray-600">Le jeu démarrera automatiquement quand tous les joueurs seront prêts</p>
+      <p class="text-gray-400">Le jeu démarrera automatiquement quand tous les joueurs seront prêts</p>
     </div>
   </div>
 </div>
@@ -49,16 +54,15 @@ export const GameOnline: Page = {
     let canStart = false;
     let waiting = true;
 
-    let player1Name: string = "";
-    let player2Name: string = "";
-    let player1Elo: number = 0;
-    let player2Elo: number = 0;
-
     const gameContainer = root.querySelector('#game-container') as HTMLElement;
     const score = root.querySelector('#score') as HTMLElement;
     const timerEl = root.querySelector('#timer') as HTMLElement;
     const player1NameEl = root.querySelector('#player-1-name') as HTMLElement;
+    const player1EloEl = root.querySelector('#player-1-elo') as HTMLElement;
     const player2NameEl = root.querySelector('#player-2-name') as HTMLElement;
+    const player2EloEl = root.querySelector('#player-2-elo') as HTMLElement;
+    const waitingModal = root.querySelector('#waiting-modal') as HTMLElement;
+
 
     const formatTime = (s: number) => {
       const hours = Math.floor(s / 3600);
@@ -94,7 +98,9 @@ export const GameOnline: Page = {
     currentGame = new GameComponentOnline(
       gameContainer,
       canStart,
-      (p1, p2) => { score.textContent = `${p1} : ${p2}`},
+      (p1, p2) => {
+        score.textContent = `${p1} : ${p2}`
+      },
       ws
     );
 
@@ -111,10 +117,9 @@ export const GameOnline: Page = {
 
 
     // Récupérer le modal
-    const waitingModal = root.querySelector('#waiting-modal') as HTMLElement;
 
     if (ws) {
-      ws.onmessage = message => {
+      ws.onmessage = async message => {
 
         const response = JSON.parse(message.data);
         //connect
@@ -125,22 +130,27 @@ export const GameOnline: Page = {
           if (waitingModal) {
             waitingModal.classList.add('hidden');
           }
-          
-          if (currentGame)
+
+          if (currentGame) {
             currentGame.setCanStart(canStart);
-            player1Name = response.room.clients[0].name;
-            player2Name = response.room.clients[1].name;
-            player1Elo = response.room.clients[0].elo;
-            player2Elo = response.room.clients[1].elo;
+            player1NameEl.textContent = response.room.clients[0].name;
+            player2NameEl.textContent = response.room.clients[1].name;
+            player1EloEl.textContent = response.room.clients[0].elo;
+            player2EloEl.textContent = response.room.clients[1].elo;
+            await sleep(3000);
             startTimer();
           }
         }
 
         if (response.method === "update") {
-
           const game = response.room;
           if (currentGame && game) {
             currentGame.updateGameState(game);
+            if (response.isGoal) {
+              stopTimer();
+              await sleep(3000);
+              startTimer();
+            }
           }
         }
 
@@ -148,27 +158,31 @@ export const GameOnline: Page = {
           if (currentGame) {
             currentGame.destroy();
             stopTimer();
+            await sleep(5000);
+            window.location.hash = '/gameRoom';
           }
         }
       }
-    }
 
 
-    // Cleanup previous game if exists
-    if (currentGame) {
-      currentGame.destroy();
-    }
-
-    const hashChangeHandler = (event: HashChangeEvent) => {
-      const payLoad = {
-        "method": "leave",
-        "clientId": clientId
+      // Cleanup previous game if exists
+      if (currentGame) {
+        currentGame.destroy();
       }
-      if (ws)
-        ws.send(JSON.stringify(payLoad));
 
-      window.removeEventListener('hashchange', hashChangeHandler);
-    };
-    window.addEventListener('hashchange', hashChangeHandler);
+      const hashChangeHandler = (event: HashChangeEvent) => {
+        const payLoad = {
+          "method": "leave",
+          "clientId": clientId
+        }
+        if (ws)
+          ws.send(JSON.stringify(payLoad));
+
+        window.removeEventListener('hashchange', hashChangeHandler);
+      };
+      window.addEventListener('hashchange', hashChangeHandler);
+    } else {
+      window.location.hash = '/gameRoom'; //TODO add notification
+    }
   }
 }

@@ -29,8 +29,8 @@ const getPath = (): string => {
   let path = window.location.hash.slice(1) || "/";
 
   if (path.includes('?')) {
-        path = path.split('?')[0];
-    }
+    path = path.split('?')[0];
+  }
   return path;
 }
 
