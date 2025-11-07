@@ -178,8 +178,8 @@ export const TournamentOnline: Page = {
 	},
 
 	mount(root: HTMLElement): void {
-		const tournamentId = localStorage.getItem('tournamentId');
-		const clientId = localStorage.getItem('clientId');
+		const tournamentId = sessionStorage.getItem('tournamentId');
+		const clientId = sessionStorage.getItem('clientId');
 
 		const tournamentNameEl = root.querySelector('#tournament-name') as HTMLElement;
 		const playerCountEl = root.querySelector('#player-count') as HTMLElement;
@@ -396,9 +396,9 @@ export const TournamentOnline: Page = {
 
 			// 🎮 Redirection vers un match
 			if (response.method === "startMatch") {
-				// Sauvegarder les infos du match dans localStorage
-				localStorage.setItem('matchRound', response.matchRound);
-				localStorage.setItem('matchOpponent', response.opponent);
+				// Sauvegarder les infos du match dans sessionStorage
+				sessionStorage.setItem('matchRound', response.matchRound);
+				sessionStorage.setItem('matchOpponent', response.opponent);
 				
 				// Rediriger vers la page de jeu après 1 seconde
 				setTimeout(() => {

@@ -180,7 +180,7 @@ export const TournamentRoom: Page = {
 			if (response.method === "connect") {
 				clientId = response.clientId;
 				if (clientId !== undefined) {
-					localStorage.setItem('clientId', clientId);
+					sessionStorage.setItem('clientId', clientId);
 				}
 				reloadTournaments(root);
 			}
@@ -195,7 +195,7 @@ export const TournamentRoom: Page = {
 
 					tournamentId = response.tournamentId;
 					if (tournamentId !== undefined) {
-						localStorage.setItem('tournamentId', tournamentId);
+						sessionStorage.setItem('tournamentId', tournamentId);
 					}
 
 					// navigate using History API

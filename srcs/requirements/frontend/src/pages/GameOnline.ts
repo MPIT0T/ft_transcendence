@@ -36,8 +36,8 @@ export const GameOnline: Page = {
 
 
   mount(root) {
-    let roomId = localStorage.getItem('roomId');
-    let clientId = localStorage.getItem('clientId');
+    let roomId = sessionStorage.getItem('roomId');
+    let clientId = sessionStorage.getItem('clientId');
     let canStart = false;
     let waiting = true;
 

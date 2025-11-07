@@ -210,7 +210,7 @@ export const GameRoom: Page = {
 			if (response.method === "connect") {
 				clientId = response.clientId;
 				if (clientId !== undefined) {
-					localStorage.setItem('clientId', clientId);
+					sessionStorage.setItem('clientId', clientId);
 				}
 				reloadRooms(root);
 			}
@@ -224,7 +224,7 @@ export const GameRoom: Page = {
 
 					roomId = response.room.roomId;
 					if (roomId !== undefined) {
-						localStorage.setItem('roomId', roomId);
+						sessionStorage.setItem('roomId', roomId);
 					}
 
 					// Fermer le modal de matchmaking si ouvert
