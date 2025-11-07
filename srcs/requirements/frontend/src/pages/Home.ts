@@ -174,7 +174,7 @@ export const Home: Page = {
       Règles :
     </h4>
     <ul class="text-lg lg:text-xl text-gray-400 space-y-2 leading-relaxed">
-      <li>• Utilisez votre raquette pour renvoyer la balle.</li>
+      <li">• Utilisez votre raquette pour renvoyer la balle.</li>
       <li>• Marquez un point quand la balle dépasse la raquette adverse.</li>
       <li>• La balle rebondit sur les murs haut et bas.</li>
       <li>• Premier à 5 points gagne la partie.</li>
