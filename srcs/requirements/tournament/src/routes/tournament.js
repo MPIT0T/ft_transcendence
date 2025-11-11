@@ -199,7 +199,6 @@ class Tournament {
 	async updatePlayerR(int) {
 		
 		this.playerR = this.getPlayerR();
-		console.log('this.playerR && this.clients.length =>', this.playerR, this.clients.length);
 
 		if (this.state === "playing-tournament" && this.allTournamentRooms.length > 0) {
 			this.broadcastTournamentState();
