@@ -85,7 +85,7 @@ function leave(clientId) {
 		return;
 	}
 
-	//adde remouve tournament
+	g_Games._tournaments.removeClientsTournament(clientId);
 
 }
 
