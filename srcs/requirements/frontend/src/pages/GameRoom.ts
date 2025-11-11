@@ -125,6 +125,25 @@ export const GameRoom: Page = {
 		</div>
 	</div>
 
+	<!-- Modal Matchmaking -->
+	<div id="matchmaking-modal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center z-50">
+		<div class="bg-white border-4 border-black p-8 max-w-md w-full mx-4">
+			<div class="text-center">
+				<h2 class="text-3xl font-bold mb-4">🎮 Matchmaking</h2>
+				<p class="text-xl mb-6">Recherche d'un adversaire...</p>
+				<div class="flex justify-center mb-6">
+					<div class="animate-spin rounded-full h-16 w-16 border-b-4 border-black"></div>
+				</div>
+				<p class="text-gray-600 mb-6">Veuillez patienter pendant que nous trouvons un joueur de votre niveau</p>
+				<button 
+					id="cancel-matchmaking" 
+					class="w-full bg-red-500 text-white py-3 px-6 border-2 border-black hover:bg-red-600 transition-colors font-bold">
+					QUITTER LE MATCHMAKING
+				</button>
+			</div>
+		</div>
+	</div>
+
 	<!-- Modal Create Room -->
 	<div id="create-room-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
 		<div class="bg-white border-4 border-black p-8 max-w-md w-full mx-4">
@@ -191,7 +210,7 @@ export const GameRoom: Page = {
 			if (response.method === "connect") {
 				clientId = response.clientId;
 				if (clientId !== undefined) {
-					localStorage.setItem('clientId', clientId);
+					sessionStorage.setItem('clientId', clientId);
 				}
 				reloadRooms(root);
 			}
@@ -205,10 +224,21 @@ export const GameRoom: Page = {
 
 					roomId = response.room.roomId;
 					if (roomId !== undefined) {
-						localStorage.setItem('roomId', roomId);
+						sessionStorage.setItem('roomId', roomId);
 					}
 
-					window.location.hash = response.url;
+					// Fermer le modal de matchmaking si ouvert
+					const matchmakingModal = root.querySelector('#matchmaking-modal') as HTMLDivElement;
+					if (matchmakingModal) {
+						matchmakingModal.classList.add('hidden');
+						matchmakingModal.classList.remove('flex');
+					}
+
+					// navigate using History API
+					const raw = response.url || '/';
+					const p = raw.startsWith('#') ? raw.replace(/^#\/?/, '/') : (raw.startsWith('/') ? raw : '/' + raw);
+					history.pushState(null, '', p);
+					window.dispatchEvent(new PopStateEvent('popstate'));
 				} else {
 					alert(response.message);
 				}
@@ -223,10 +253,38 @@ export const GameRoom: Page = {
 		const vsBtn = root.querySelector('#vs-btn') as HTMLButtonElement;
 		const createRoomBtn = root.querySelector('#create-room-btn') as HTMLButtonElement;
 		const reloadBtn = root.querySelector('#reload-btn') as HTMLButtonElement;
+		const matchmakingModal = root.querySelector('#matchmaking-modal') as HTMLDivElement;
+		const cancelMatchmakingBtn = root.querySelector('#cancel-matchmaking') as HTMLButtonElement;
 
 		if (vsBtn) {
 			vsBtn.addEventListener('click', () => {
+				// Afficher le modal de matchmaking
+				if (matchmakingModal) {
+					matchmakingModal.classList.remove('hidden');
+					matchmakingModal.classList.add('flex');
+				}
+				
+				// Lancer la recherche de match
 				joinRoom("ranked");
+			});
+		}
+
+		// Bouton pour quitter le matchmaking
+		if (cancelMatchmakingBtn) {
+			cancelMatchmakingBtn.addEventListener('click', () => {
+				const payLoad = {
+					"method": "leave",
+					"clientId": clientId
+				};
+				if (ws) {
+					ws.send(JSON.stringify(payLoad));
+				}
+				
+				// Fermer le modal
+				if (matchmakingModal) {
+					matchmakingModal.classList.add('hidden');
+					matchmakingModal.classList.remove('flex');
+				}
 			});
 		}
 

@@ -191,16 +191,16 @@ export class GameComponentOnline {
 	private movePlayer = (e: KeyboardEvent) => {
 		// On ne prend que W, S, ArrowUp et ArrowDown
 		if (["KeyW", "KeyS", "ArrowUp", "ArrowDown"].includes(e.code)) {
-			const roomId = localStorage.getItem('roomId');
-			const clientId = localStorage.getItem('clientId');
+			const roomId = sessionStorage.getItem('roomId');
+			const clientId = sessionStorage.getItem('clientId');
 			this.ws?.send(JSON.stringify({ method: this.moveMethod, type: "UP", key: e.code, roomId: roomId, clientId: clientId}));
 		}
 	};
 
 	private stopPlayer = (e: KeyboardEvent) => {
 		if (["KeyW", "KeyS", "ArrowUp", "ArrowDown"].includes(e.code)) {
-			const roomId = localStorage.getItem('roomId');
-			const clientId = localStorage.getItem('clientId');
+			const roomId = sessionStorage.getItem('roomId');
+			const clientId = sessionStorage.getItem('clientId');
 			this.ws?.send(JSON.stringify({ method: this.moveMethod, type: "DOWN", key: e.code, roomId: roomId, clientId: clientId}));
 		}
 

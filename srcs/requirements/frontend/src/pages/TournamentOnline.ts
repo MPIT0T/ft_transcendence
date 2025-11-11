@@ -178,8 +178,8 @@ export const TournamentOnline: Page = {
 	},
 
 	mount(root: HTMLElement): void {
-		const tournamentId = localStorage.getItem('tournamentId');
-		const clientId = localStorage.getItem('clientId');
+		const tournamentId = sessionStorage.getItem('tournamentId');
+		const clientId = sessionStorage.getItem('clientId');
 
 		const tournamentNameEl = root.querySelector('#tournament-name') as HTMLElement;
 		const playerCountEl = root.querySelector('#player-count') as HTMLElement;
@@ -396,19 +396,25 @@ export const TournamentOnline: Page = {
 
 			// 🎮 Redirection vers un match
 			if (response.method === "startMatch") {
-				// Sauvegarder les infos du match dans localStorage
-				localStorage.setItem('matchRound', response.matchRound);
-				localStorage.setItem('matchOpponent', response.opponent);
+				// Sauvegarder les infos du match dans sessionStorage
+				sessionStorage.setItem('matchRound', response.matchRound);
+				sessionStorage.setItem('matchOpponent', response.opponent);
 				
 				// Rediriger vers la page de jeu après 1 seconde
 				setTimeout(() => {
-					window.location.hash = response.roomUrl;
+					// navigate using History API instead of hash
+					const raw = response.roomUrl || '/';
+					const p = raw.startsWith('#') ? raw.replace(/^#\/?/, '/') : (raw.startsWith('/') ? raw : '/' + raw);
+					history.pushState(null, '', p);
+					window.dispatchEvent(new PopStateEvent('popstate'));
 				}, 1000);
 			}				// 🔙 Retour au bracket après un match
 				if (response.method === "returnToBracket") {
-					// Rediriger vers le bracket après 2 secondes
+					// Rediriger vers le bracket après 2 secondes (History API)
 					setTimeout(() => {
-						window.location.hash = `/tournamentOnline`;
+						const p = '/tournamentOnline';
+						history.pushState(null, '', p);
+						window.dispatchEvent(new PopStateEvent('popstate'));
 					}, 2000);
 				}
 
@@ -439,7 +445,9 @@ export const TournamentOnline: Page = {
 		// Bouton pour quitter le tournoi
 		if (leaveTournamentBtn) {
 			leaveTournamentBtn.addEventListener('click', () => {
-				window.location.hash = '#/tournamentRoom';
+				const p = '/tournamentRoom';
+				history.pushState(null, '', p);
+				window.dispatchEvent(new PopStateEvent('popstate'));
 			});
 		}
 	}

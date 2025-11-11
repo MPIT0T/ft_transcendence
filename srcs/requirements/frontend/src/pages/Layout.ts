@@ -260,28 +260,34 @@ export const Layout = {
     const homeBtn = root.querySelector('#home-btn') as HTMLButtonElement;
     if (homeBtn) {
       homeBtn.addEventListener('click', () => {
-        window.location.hash = '/';
+        const p = '/';
+        history.pushState(null, '', p);
+        window.dispatchEvent(new PopStateEvent('popstate'));
       });
     }
 
     const statsBtn = root.querySelector('#stats-btn') as HTMLButtonElement;
     if (statsBtn) {
       statsBtn.addEventListener('click', () => {
-        window.location.hash = '/stats';
+        const p = '/stats';
+        history.pushState(null, '', p);
+        window.dispatchEvent(new PopStateEvent('popstate'));
       });
     }
 
     const gameBtn = root.querySelector('#game-btn') as HTMLButtonElement;
     if (gameBtn) {
       gameBtn.addEventListener('click', () => {
-        window.location.hash = '/gameLoby';
+        const p = '/gameLoby';
+        history.pushState(null, '', p);
+        window.dispatchEvent(new PopStateEvent('popstate'));
       });
     }
     initPastelBackground();
 
     // Language management
     const langButtons = root.querySelectorAll('[data-lang]') as NodeListOf<HTMLButtonElement>;
-    const currentLang = localStorage.getItem('language') || 'fr';
+    const currentLang = sessionStorage.getItem('language') || 'fr';
     
     this.setActiveLanguage(root, currentLang);
     
@@ -308,7 +314,7 @@ export const Layout = {
     this.setupRegisterModal(root);
 
     // Check if user is already logged in
-    this.updateLoginButton(root, localStorage.getItem('isLoggedIn') === 'true');
+    this.updateLoginButton(root, sessionStorage.getItem('isLoggedIn') === 'true');
   },
 
   setupLoginModal(root: HTMLElement): void {
@@ -386,10 +392,12 @@ export const Layout = {
   },
 
   handleLoginClick(root: HTMLElement): void {
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true';
     
     if (isLoggedIn) {
-      window.location.hash = '/stats'
+      const p = '/stats';
+      history.pushState(null, '', p);
+      window.dispatchEvent(new PopStateEvent('popstate'));
     } else {
       // Open login modal
       const loginModal = root.querySelector('#login-modal') as HTMLDivElement;
@@ -408,8 +416,8 @@ export const Layout = {
     setTimeout(() => {
       // Simple validation (you would do real authentication here)
       if (username && password) {
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('username', username);
+        sessionStorage.setItem('isLoggedIn', 'true');
+        sessionStorage.setItem('username', username);
         
         this.showNotification(`Bienvenue ${username} !`);
         this.updateLoginButton(root, true);
@@ -439,8 +447,8 @@ export const Layout = {
 
     // Simulate register API call
     setTimeout(() => {
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('username', username);
+      sessionStorage.setItem('isLoggedIn', 'true');
+      sessionStorage.setItem('username', username);
       
       this.showNotification(`Compte créé avec succès ! Bienvenue ${username} !`);
       this.updateLoginButton(root, true);
@@ -463,7 +471,7 @@ export const Layout = {
   },
 
   async changeLanguage(root: HTMLElement, lang: string): Promise<void> {
-    localStorage.setItem("language", lang);
+    sessionStorage.setItem("language", lang);
     this.setActiveLanguage(root, lang);
 
     console.log(`Changed language to ${lang}`);
@@ -477,7 +485,7 @@ export const Layout = {
     root.querySelectorAll<HTMLElement>("[data-i18n]").forEach(el => {
       const key = el.dataset.i18n as keyof typeof t;
 
-      if (key === "login" && localStorage.getItem("isLoggedIn")) return;
+      if (key === "login" && sessionStorage.getItem("isLoggedIn")) return;
 
       if (t[key]) el.textContent = t[key];
     });
@@ -499,7 +507,7 @@ export const Layout = {
     const loginBtn = root.querySelector('#login-btn') as HTMLButtonElement;
     if (loginBtn) {
       if (isLoggedIn) {
-        const username = localStorage.getItem('username') || 'User';
+        const username = sessionStorage.getItem('username') || 'User';
         const avatarSrc = 'arrow.png'; // API call to fetch image path
 
         loginBtn.innerHTML = `

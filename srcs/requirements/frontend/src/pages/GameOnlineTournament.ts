@@ -25,20 +25,20 @@ export const GameOnlineTournament: Page = {
   },
 
   mount(root) {
-    // Extraire le roomId depuis l'URL (?gameId=...)
-    const urlParams = new URLSearchParams(window.location.hash.split('?')[1]);
-    let roomId = urlParams.get('gameId');
+  // Extraire le roomId depuis l'URL (?gameId=...)
+  const urlParams = new URLSearchParams(window.location.search);
+  let roomId = urlParams.get('gameId');
     
-    // Sauvegarder le roomId dans localStorage
+    // Sauvegarder le roomId dans sessionStorage
     if (roomId) {
-      localStorage.setItem('roomId', roomId);
+      sessionStorage.setItem('roomId', roomId);
     } else {
-      // Fallback vers localStorage si pas dans l'URL
-      roomId = localStorage.getItem('roomId');
+      // Fallback vers sessionStorage si pas dans l'URL
+      roomId = sessionStorage.getItem('roomId');
     }
     
-    const clientId = localStorage.getItem('clientId');
-    const tournamentId = localStorage.getItem('tournamentId');
+    const clientId = sessionStorage.getItem('clientId');
+    const tournamentId = sessionStorage.getItem('tournamentId');
     let canStart = false;
     let waiting = true;
 
@@ -50,9 +50,9 @@ export const GameOnlineTournament: Page = {
     currentGame.setCanStart(canStart);
 
     // Afficher les infos du match si disponibles
-    const matchRound = localStorage.getItem('matchRound');
-    const matchOpponent = localStorage.getItem('matchOpponent');
-    const playerName = localStorage.getItem('username') || 'Player';
+    const matchRound = sessionStorage.getItem('matchRound');
+    const matchOpponent = sessionStorage.getItem('matchOpponent');
+    const playerName = sessionStorage.getItem('username') || 'Player';
     
     if (matchRound) {
       matchTitleEl.textContent = matchRound;
@@ -112,17 +112,19 @@ export const GameOnlineTournament: Page = {
         if (response.method === "returnToBracket") {
           
           // Nettoyer les infos du match
-          localStorage.removeItem('matchRound');
-          localStorage.removeItem('matchOpponent');
+          sessionStorage.removeItem('matchRound');
+          sessionStorage.removeItem('matchOpponent');
           
           // Sauvegarder le tournamentId pour revenir au bon tournoi
           if (response.tournamentId) {
-            localStorage.setItem('tournamentId', response.tournamentId);
+            sessionStorage.setItem('tournamentId', response.tournamentId);
           }
           
-          // Rediriger vers la page du tournoi après un délai
+          // Rediriger vers la page du tournoi après un délai (History API)
           setTimeout(() => {
-            window.location.hash = '/tournamentOnline';
+            const p = '/tournamentOnline';
+            history.pushState(null, '', p);
+            window.dispatchEvent(new PopStateEvent('popstate'));
           }, 2000);
         }
       }
@@ -133,8 +135,8 @@ export const GameOnlineTournament: Page = {
       currentGame.destroy();
     }
 
-    // Handler pour le changement de hash (si le joueur quitte manuellement)
-    const hashChangeHandler = (event: HashChangeEvent) => {
+  // Handler pour le popstate (si le joueur quitte manuellement)
+  const popstateHandler = (event: PopStateEvent) => {
       
       const payLoad = {
         "method": "leave",
@@ -144,12 +146,12 @@ export const GameOnlineTournament: Page = {
         ws.send(JSON.stringify(payLoad));
 
       // Nettoyer les infos du match
-      localStorage.removeItem('matchRound');
-      localStorage.removeItem('matchOpponent');
+      sessionStorage.removeItem('matchRound');
+      sessionStorage.removeItem('matchOpponent');
 
-      window.removeEventListener('hashchange', hashChangeHandler);
+      window.removeEventListener('popstate', popstateHandler);
     };
-    
-    window.addEventListener('hashchange', hashChangeHandler);
+
+    window.addEventListener('popstate', popstateHandler);
   }
 }

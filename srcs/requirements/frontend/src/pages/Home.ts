@@ -213,7 +213,9 @@ export const Home: Page = {
 		const gameBtn = root.querySelector('#play-btn') as HTMLButtonElement;
 		if (gameBtn) {
 			gameBtn.addEventListener('click', () => {
-				window.location.hash = '/gameLoby';
+				const p = '/gameLoby';
+				history.pushState(null, '', p);
+				window.dispatchEvent(new PopStateEvent('popstate'));
 			})
 		}
 
@@ -221,7 +223,7 @@ export const Home: Page = {
 		const statsBtn = root.querySelector('#stats-btn') as HTMLButtonElement;
 		if (statsBtn) {
 			statsBtn.addEventListener('click', () => {
-				window.history.pushState({}, "", '/stats');
+				window.history.pushState({}, "", 'stats');
 				window.dispatchEvent(new PopStateEvent('popstate'));
 			});
 		}
