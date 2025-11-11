@@ -159,12 +159,14 @@ export const GameOnline: Page = {
             currentGame.destroy();
             stopTimer();
             await sleep(5000);
-            window.location.hash = '/gameRoom';
+            const p = '/gameRoom';
+            history.pushState(null, '', p);
+            window.dispatchEvent(new PopStateEvent('popstate'));
           }
         }
       }
 
-
+    }
     // Cleanup previous game if exists
     if (currentGame) {
       currentGame.destroy();
