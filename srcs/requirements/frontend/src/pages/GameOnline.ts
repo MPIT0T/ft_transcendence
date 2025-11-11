@@ -178,6 +178,9 @@ export const GameOnline: Page = {
         "clientId": clientId
       }
 
+      if (ws)
+        ws.send(JSON.stringify(payLoad));
+
       window.removeEventListener('popstate', popstateHandler);
     };
     window.addEventListener('popstate', popstateHandler);

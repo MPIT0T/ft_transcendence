@@ -457,6 +457,25 @@ export const TournamentOnline: Page = {
 				window.dispatchEvent(new PopStateEvent('popstate'));
 			});
 		}
+
+		const popstateHandler = (event: PopStateEvent) => {
+			const path = window.location.pathname.toLowerCase();
+			// If we're still on a tournament-related page (Tournament Online or Game Online), don't notify server about leaving
+			if (path.includes('tournamentonline') || path.includes('gameonlinetournament')) {
+				window.removeEventListener('popstate', popstateHandler);
+				return;
+			}
+			const payLoad = {
+				"method": "leave",
+				"clientId": clientId
+			}
+
+			if (ws)
+				ws.send(JSON.stringify(payLoad));
+
+			window.removeEventListener('popstate', popstateHandler);
+		};
+		window.addEventListener('popstate', popstateHandler);
 	}
 };
 

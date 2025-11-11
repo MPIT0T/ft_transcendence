@@ -197,8 +197,9 @@ class Tournament {
 	}
 
 	async updatePlayerR(int) {
-
+		
 		this.playerR = this.getPlayerR();
+		console.log('this.playerR && this.clients.length =>', this.playerR, this.clients.length);
 
 		if (this.state === "playing-tournament" && this.allTournamentRooms.length > 0) {
 			this.broadcastTournamentState();
@@ -206,7 +207,7 @@ class Tournament {
 		}
 
 		// Vérifier qu'il y a exactement 8 joueurs connectés avant de lancer
-		if (this.playerR === 8 && this.clients.length === 8) {
+		if (this.playerR === 8 && this.clients.length === 8 && this.state === "waiting") {
 			this.state = "playing-tournament";
 
 			this.generateAllTournamentRooms();
