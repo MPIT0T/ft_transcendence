@@ -23,49 +23,56 @@ const routes: Record<string, Page> = {
 }
 
 const getPath = (): string => {
-  // const hash = window.location.hash || "/";
-  // const path = hash.replace(/^#/, "");
-  // return path;
-  let path = window.location.hash.slice(1) || "/";
-
-  if (path.includes('?')) {
-    path = path.split('?')[0];
-  }
+  // strip possible base path if your app is not at site root
+  const base = ""; // ex: "/app" if deployed under a subpath
+  let path = window.location.pathname.replace(base, "") || "/";
+  // keep querystring if needed:
+  // if (path.includes('?')) path = path.split('?')[0];
   return path;
 }
-
-
 
 export function startRouter(){
   const root = document.getElementById("root")!;
 
   const render = () => {
-	const path = getPath();
-	const page = routes[path];
-	
-	if (page) {
-	  // Render page content inside layout
-	  const pageContent = page.render();
-	  const layoutHTML = Layout.render(pageContent);
-	  root.innerHTML = layoutHTML;
-	  
-	  // Mount layout first
-	  Layout.mount(root);
-	  
-	  // Then mount page-specific functionality
-	  const pageContentElement = root.querySelector('#page-content') as HTMLElement;
-	  if (pageContentElement) {
-		page.mount(pageContentElement);
-	  }
-	} else {
-	  // Handle 404
-	  const notFoundHTML = Layout.render('<h1 class="text-3xl text-red-500">404 - Page Not Found</h1>');
-	  root.innerHTML = notFoundHTML;
-	  Layout.mount(root);
-	}
+    const path = getPath();
+    const page = routes[path];
+    if (page) {
+      const pageContent = page.render();
+      const layoutHTML = Layout.render(pageContent);
+      root.innerHTML = layoutHTML;
+      Layout.mount(root);
+      const pageContentElement = root.querySelector('#page-content') as HTMLElement;
+      if (pageContentElement) page.mount(pageContentElement);
+    } else {
+      const notFoundHTML = Layout.render('<h1 class="text-3xl text-red-500">404 - Page Not Found</h1>');
+      root.innerHTML = notFoundHTML;
+      Layout.mount(root);
+    }
   }
 
-  window.addEventListener("hashchange", render);
+  // navigation helper
+  const navigate = (to: string) => {
+    if (window.location.pathname !== to) {
+      history.pushState(null, '', to);
+      render();
+    }
+  }
+
+  // intercept internal links (add data-link attr or intercept same-origin links)
+  document.addEventListener('click', (e) => {
+    const a = (e.target as HTMLElement).closest && (e.target as HTMLElement).closest('a');
+    if (!a) return;
+    const href = a.getAttribute('href');
+    if (!href) return;
+    // only intercept internal links (no protocol, same origin)
+    if (href.startsWith('/') && !a.hasAttribute('data-external')) {
+      e.preventDefault();
+      navigate(href);
+    }
+  });
+
+  window.addEventListener("popstate", render);
   window.addEventListener("load", render);
   render();
 }

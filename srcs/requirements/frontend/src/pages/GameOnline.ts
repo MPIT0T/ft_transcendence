@@ -49,8 +49,8 @@ export const GameOnline: Page = {
 
 
   mount(root) {
-    let roomId = localStorage.getItem('roomId');
-    let clientId = localStorage.getItem('clientId');
+    let roomId = sessionStorage.getItem('roomId');
+    let clientId = sessionStorage.getItem('clientId');
     let canStart = false;
     let waiting = true;
 
@@ -159,30 +159,30 @@ export const GameOnline: Page = {
             currentGame.destroy();
             stopTimer();
             await sleep(5000);
-            window.location.hash = '/gameRoom';
+            const p = '/gameRoom';
+            history.pushState(null, '', p);
+            window.dispatchEvent(new PopStateEvent('popstate'));
           }
         }
       }
 
+    }
+    // Cleanup previous game if exists
+    if (currentGame) {
+      currentGame.destroy();
+    }
 
-      // Cleanup previous game if exists
-      if (currentGame) {
-        currentGame.destroy();
+    const popstateHandler = (event: PopStateEvent) => {
+      const payLoad = {
+        "method": "leave",
+        "clientId": clientId
       }
 
-      const hashChangeHandler = (event: HashChangeEvent) => {
-        const payLoad = {
-          "method": "leave",
-          "clientId": clientId
-        }
-        if (ws)
-          ws.send(JSON.stringify(payLoad));
+      if (ws)
+        ws.send(JSON.stringify(payLoad));
 
-        window.removeEventListener('hashchange', hashChangeHandler);
-      };
-      window.addEventListener('hashchange', hashChangeHandler);
-    } else {
-      window.location.hash = '/gameRoom'; //TODO add notification
-    }
+      window.removeEventListener('popstate', popstateHandler);
+    };
+    window.addEventListener('popstate', popstateHandler);
   }
 }

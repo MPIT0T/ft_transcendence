@@ -85,7 +85,7 @@ function leave(clientId) {
 		return;
 	}
 
-	//adde remouve tournament
+	g_Games._tournaments.removeClientsTournament(clientId);
 
 }
 
@@ -111,7 +111,7 @@ function handleGetTournaments(socket, data) {
 	}));
 }
 
-function handleJoinTournament(socket, data) {
+async function handleJoinTournament(socket, data) {
 	if (g_Games.findClient(data.clientId) === undefined)
 		throw "Client id not good";
 	const tournament = g_Games.findTournament(data.tournamentId);

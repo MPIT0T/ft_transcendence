@@ -208,7 +208,7 @@ export const GameRoom: Page = {
 			if (response.method === "connect") {
 				clientId = response.clientId;
 				if (clientId !== undefined) {
-					localStorage.setItem('clientId', clientId);
+					sessionStorage.setItem('clientId', clientId);
 				}
 				reloadRooms(root);
 			}
@@ -222,7 +222,7 @@ export const GameRoom: Page = {
 
 					roomId = response.room.roomId;
 					if (roomId !== undefined) {
-						localStorage.setItem('roomId', roomId);
+						sessionStorage.setItem('roomId', roomId);
 					}
 
 					// Fermer le modal de matchmaking si ouvert
@@ -232,7 +232,11 @@ export const GameRoom: Page = {
 						matchmakingModal.classList.remove('flex');
 					}
 
-					window.location.hash = response.url;
+					// navigate using History API
+					const raw = response.url || '/';
+					const p = raw.startsWith('#') ? raw.replace(/^#\/?/, '/') : (raw.startsWith('/') ? raw : '/' + raw);
+					history.pushState(null, '', p);
+					window.dispatchEvent(new PopStateEvent('popstate'));
 				} else {
 					alert(response.message);
 				}

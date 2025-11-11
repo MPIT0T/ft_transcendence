@@ -178,7 +178,7 @@ export const TournamentRoom: Page = {
 			if (response.method === "connect") {
 				clientId = response.clientId;
 				if (clientId !== undefined) {
-					localStorage.setItem('clientId', clientId);
+					sessionStorage.setItem('clientId', clientId);
 				}
 				reloadTournaments(root);
 			}
@@ -193,10 +193,14 @@ export const TournamentRoom: Page = {
 
 					tournamentId = response.tournamentId;
 					if (tournamentId !== undefined) {
-						localStorage.setItem('tournamentId', tournamentId);
+						sessionStorage.setItem('tournamentId', tournamentId);
 					}
 
-					window.location.hash = response.url;
+					// navigate using History API
+					const raw = response.url || '/';
+					const p = raw.startsWith('#') ? raw.replace(/^#\/?/, '/') : (raw.startsWith('/') ? raw : '/' + raw);
+					history.pushState(null, '', p);
+					window.dispatchEvent(new PopStateEvent('popstate'));
 				} else {
 					alert(response.message);
 				}
