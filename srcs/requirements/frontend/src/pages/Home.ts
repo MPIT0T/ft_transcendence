@@ -141,7 +141,7 @@ export const Home: Page = {
   <div class="flex justify-center gap-4 mb-8">
     <button 
       id="play-btn" 
-      class="px-12 py-8 backdrop-blur-2xs border-1 border-gray-50 text-gray-50 text-7xl font-semibold transform hover:bg-gray-700 hover:bg-opacity-10 duration-200 shadow-lg">
+      class="px-12 py-7 backdrop-blur-2xs border-1 border-gray-50 text-gray-50 text-4xl font-bold transform hover:bg-gray-700 hover:bg-opacity-10 duration-200">
       Jouer maintenant
     </button>
   </div>
@@ -174,7 +174,7 @@ export const Home: Page = {
       Règles :
     </h4>
     <ul class="text-lg lg:text-xl text-gray-400 space-y-2 leading-relaxed">
-      <li>• Utilisez votre raquette pour renvoyer la balle.</li>
+      <li">• Utilisez votre raquette pour renvoyer la balle.</li>
       <li>• Marquez un point quand la balle dépasse la raquette adverse.</li>
       <li>• La balle rebondit sur les murs haut et bas.</li>
       <li>• Premier à 5 points gagne la partie.</li>

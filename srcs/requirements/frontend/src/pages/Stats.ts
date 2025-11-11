@@ -43,6 +43,11 @@ const Stats: StatsPage = {
   <div id="content-container" class="w-[1200px] h-[700px]">
     ${activeTab === 'profile' ? this.renderProfile() : this.renderHistory()}
   </div>
+  <div class="w-[1200px] flex items-center justify-center p-6 gap-6">
+    <button class="text-blue-500  px-6 py-2 text-2xl font-bold backdrop-blur-2xs hover:bg-gray-700 hover:bg-opacity-50">🇫🇷</button>
+    <button class="text-red-500  px-6 py-2 text-2xl font-bold backdrop-blur-2xs hover:bg-gray-700 hover:bg-opacity-50">🇬🇧</button>
+    <button class="text-yellow-400  px-6 py-2 text-2xl font-bold backdrop-blur-2xs hover:bg-gray-700 hover:bg-opacity-50">🇪🇸</button>
+  </div>
 </div>
   `;
 },
@@ -71,6 +76,10 @@ const Stats: StatsPage = {
     <div class="text-center mb-6">
       <p class="text-sm text-gray-600 bg-gray-200 font-semibold mb-1 p-2">LUCA@GMAIL.COM</p>
       <p class="text-xs text-blue-500 underline cursor-pointer" id="change-mail">CHANGE MAIL</p>
+    </div>
+
+    <div class="text-center mb-6">
+      <button class="px-3 py-3 font-bold border-1 border-gray-50 backdrop-blur-2xs text-2xl hover:border-red-500 hover:bg-gray-700 text-gray-50 transition-transform">Se déconnecter</button>
     </div>
 
     <!-- Main stats -->
@@ -118,7 +127,7 @@ const Stats: StatsPage = {
   </div>
 
   <!-- Friends Lists -->
-  <div class="space-y-6">
+  <div class="grid grid-cols-2 lg:grid-cols-1 gap-6">
     <!-- Online Friends -->
     <div class="backdrop-blur-2xs border-1 border-gray-50 p-6">
       <h3 class="text-lg font-semibold mb-4 text-gray-100">Online Friends</h3>

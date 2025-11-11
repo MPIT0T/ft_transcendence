@@ -52,7 +52,19 @@
     --color-green-900: oklch(0.393 0.095 152.535);
     --color-green-950: oklch(0.266 0.065 152.934);
 
-    --text-title: 13rem;
+    --color-yellow-50: oklch(0.987 0.026 102.212);
+    --color-yellow-100: oklch(0.973 0.071 103.193);
+    --color-yellow-200: oklch(0.945 0.129 101.54);
+    --color-yellow-300: oklch(0.905 0.182 98.111);
+    --color-yellow-400: oklch(0.852 0.199 91.936);
+    --color-yellow-500: oklch(0.795 0.184 86.047);
+    --color-yellow-600: oklch(0.681 0.162 75.834);
+    --color-yellow-700: oklch(0.554 0.135 66.442);
+    --color-yellow-800: oklch(0.476 0.114 61.907);
+    --color-yellow-900: oklch(0.421 0.095 57.708);
+    --color-yellow-950: oklch(0.286 0.066 53.813);
+
+    --text-title: 11rem;
     --text-title--line-height: 1;
 
     --blur-4xs: 1px;
@@ -81,7 +93,18 @@
         0% { filter: hue-rotate(0deg); }
         100% { filter: hue-rotate(359deg); }
     }
+    @keyframes bounceHigh {
+        0%, 100% {
+            transform: translateY(-50%);
+            animation-timing-function: cubic-bezier(1, 0, 1, 1);
+        }
+        50% {
+            transform: none;
+            animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+        }
+    }
 
+    --animate-bounceHigh: bounceHigh 1s infinite;
     --animate-gradientShift: gradientShift 4s ease infinite;
     --animate-arrowBlink: arrowBlink 1s infinite;
     --animate-arrowHue: arrowHue 6s linear infinite;

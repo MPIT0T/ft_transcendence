@@ -184,6 +184,7 @@ export const Layout = {
                 <button type="button" id="signup-btn" class="text-gray-50 hover:underline font-semibold">
                   Sign up here
                 </button>
+                <button type="button" id="github-btn" class="text-md text-white hover:text-blue-500">github</button>
               </div>
             </form>
           </div>
@@ -255,6 +256,28 @@ export const Layout = {
     `;
   },
 
+  async handleGithubLogin(root: HTMLElement, code: string): Promise<void>  {
+
+    const res = await fetch("/user/github", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({code})
+    })
+    if (res.ok) {
+      const data = await res.json();
+      const userInfo = await this.getUserInfoFromJwt(data.token);
+      sessionStorage.setItem('token', data.token);
+      sessionStorage.setItem('isLoggedIn', 'true');
+      sessionStorage.setItem('username', userInfo.username);
+      this.showNotification(`Bienvenue ${userInfo.username} !`);
+      this.updateLoginButton(root, true);
+      const loginModal = root.querySelector('#login-modal') as HTMLDivElement;
+      this.closeModal(loginModal);
+      (root.querySelector('#login-form') as HTMLFormElement).reset();
+    }
+  },
+
+
   mount(root: HTMLElement): void {
     // Navigation buttons
     const homeBtn = root.querySelector('#home-btn') as HTMLButtonElement;
@@ -282,6 +305,13 @@ export const Layout = {
         history.pushState(null, '', p);
         window.dispatchEvent(new PopStateEvent('popstate'));
       });
+    }
+
+    const gihtubBtn = root.querySelector('#gihtub-btn') as HTMLButtonElement;
+    if (gihtubBtn) {
+      gihtubBtn.addEventListener('click', () => {
+        // handle
+      })
     }
     initPastelBackground();
 
@@ -359,6 +389,18 @@ export const Layout = {
     const cancelRegisterBtn = root.querySelector('#cancel-register') as HTMLButtonElement;
     const registerForm = root.querySelector('#register-form') as HTMLFormElement;
     const backToLoginBtn = root.querySelector('#back-to-login') as HTMLButtonElement;
+    const githubBtn = root.querySelector('#github-btn') as HTMLButtonElement;
+
+    if (githubBtn) {
+      window.addEventListener('message', (event) => {
+        if (event.origin !== window.origin) return; // sécurité
+        if (event.data.type === 'github-auth') {
+          const code = event.data.code;
+          this.handleGithubLogin(root, code);
+        }
+      })
+    }
+
 
     // Cancel button
     if (cancelRegisterBtn) {
@@ -373,6 +415,27 @@ export const Layout = {
         this.closeModal(registerModal);
       }
     });
+
+    // Github registration
+    const clientId = "Ov23libyRMWHw34E2bL0";
+    const redirectUri = "https://127.0.0.1:4430/oauth-callback.html";
+    const scope = "read:user";
+
+    if (githubBtn) {
+      githubBtn.addEventListener('click', () => {
+        const width = 600;
+        const height = 700;
+        const left = window.screen.width / 2 - width / 2;
+        const top = window.screen.height / 2 - height / 2;
+
+        const githubWindow = window.open(
+          `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}`,
+          'GitHub OAuth',
+          `width=${width},height=${height},top=${top},left=${left}`
+        );
+      });
+    }
+
 
     // Register form submission
     if (registerForm) {
@@ -405,36 +468,57 @@ export const Layout = {
     }
   },
 
-  handleLogin(root: HTMLElement): void {
+  async handleLogin(root: HTMLElement): Promise<void> {
     const username = (root.querySelector('#username') as HTMLInputElement).value;
     const password = (root.querySelector('#password') as HTMLInputElement).value;
     const rememberMe = (root.querySelector('#remember-me') as HTMLInputElement).checked;
 
     console.log('🔐 Login attempt:', { username, rememberMe });
 
-    // Simulate login API call
-    setTimeout(() => {
-      // Simple validation (you would do real authentication here)
-      if (username && password) {
+    if (username && password) {
+      const res = await fetch('/user/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({username, password})
+      });
+      if (res.ok) {
+        const data = await res.json();
+        sessionStorage.setItem('token', data.token);
         sessionStorage.setItem('isLoggedIn', 'true');
         sessionStorage.setItem('username', username);
-        
         this.showNotification(`Bienvenue ${username} !`);
         this.updateLoginButton(root, true);
-        
-        // Close modal and reset form
         const loginModal = root.querySelector('#login-modal') as HTMLDivElement;
         this.closeModal(loginModal);
         (root.querySelector('#login-form') as HTMLFormElement).reset();
-      } else {
+      }
+      else if (res.status === 401) {
         this.showNotification('Nom d\'utilisateur ou mot de passe invalide', 'error');
       }
-    }, 1000);
+    }
   },
 
-  handleRegister(root: HTMLElement): void {
+  getUserInfoFromJwt(token: string | null) {
+
+    if (!token) {
+      return {
+        username: "anonymous",
+        avatar: "anonymous.png",
+      };
+    }
+    const payloadBase64 = token.split('.')[1];
+    const payloadJson = atob(payloadBase64);
+    const payload = JSON.parse(payloadJson);
+    return {
+      username: payload.username,
+      avatar: payload.avatar
+    };
+  },
+
+  async handleRegister(root: HTMLElement): Promise<void> {
     const username = (root.querySelector('#reg-username') as HTMLInputElement).value;
-    const email = (root.querySelector('#reg-email') as HTMLInputElement).value;
     const password = (root.querySelector('#reg-password') as HTMLInputElement).value;
     const confirmPassword = (root.querySelector('#reg-confirm-password') as HTMLInputElement).value;
 
@@ -443,21 +527,49 @@ export const Layout = {
       return;
     }
 
-    console.log('📝 Register attempt:', { username, email });
+    console.log('📝 Register attempt:', { username });
 
     // Simulate register API call
-    setTimeout(() => {
-      sessionStorage.setItem('isLoggedIn', 'true');
-      sessionStorage.setItem('username', username);
-      
-      this.showNotification(`Compte créé avec succès ! Bienvenue ${username} !`);
-      this.updateLoginButton(root, true);
-      
-      // Close modal and reset form
-      const registerModal = root.querySelector('#register-modal') as HTMLDivElement;
-      this.closeModal(registerModal);
-      (root.querySelector('#register-form') as HTMLFormElement).reset();
-    }, 1000);
+    let stayInModale = false;
+    if (username && password) {
+        try {
+        const res = await fetch('/user/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({username, password})
+        });
+        if (res.ok) {
+          const data = await res.json();
+          sessionStorage.setItem('token', data.token);
+          sessionStorage.setItem('isLoggedIn', 'true');
+          sessionStorage.setItem('username', username);
+          this.showNotification(`Compte créé avec succès ! Bienvenue ${username} !`);
+
+          this.updateLoginButton(root, true);
+        }
+        else if (res.status === 400)
+        {
+          const data = await res.json();
+
+          this.showNotification(data.error, 'error');
+          stayInModale = true;
+        }
+        else if (res.status === 401)
+        {
+          this.showNotification("Nom d'utilisateur deja utilise", 'error');
+          stayInModale = true;
+        }
+      } catch(err) {
+        this.showNotification("Erreur de serveur, veuillez reessayer ulterieurement", 'error');
+      }
+      if (!stayInModale) {
+        const registerModal = root.querySelector('#register-modal') as HTMLDivElement;
+        this.closeModal(registerModal);
+        (root.querySelector('#register-form') as HTMLFormElement).reset();
+      }
+    }
   },
 
   openModal(modal: HTMLDivElement): void {
@@ -508,13 +620,14 @@ export const Layout = {
     if (loginBtn) {
       if (isLoggedIn) {
         const username = sessionStorage.getItem('username') || 'User';
-        const avatarSrc = 'arrow.png'; // API call to fetch image path
+        const userInfo = this.getUserInfoFromJwt(sessionStorage.getItem('token'));
+        const avatarSrc = userInfo.avatar;
 
         loginBtn.innerHTML = `
-        <img src="astronaut-removebg.png" alt="avatar" class="w-8 h-8 mr-2" />
+        <img src="${avatarSrc}" alt="avatar" class="w-8 h-8 mr-2" />
         <span class="text-3xl font-bold text-transparent bg-clip-text
-        bg-linear-to-r from-red-500 via-blue-500 to-green-500
-        bg-size-[400%_400%] animate-gradientShift">${username}</span>
+        bg-gradient-to-r from-red-500 via-blue-500 to-green-500
+        bg-[length:400%_400%] animate-gradientShift">${username}</span>
       `;
         loginBtn.className = `
         flex items-center px-3 py-2
@@ -523,7 +636,7 @@ export const Layout = {
       `;
       } else {
         loginBtn.innerHTML = `
-        <img src="anonymous-orange.png" alt="login" class="w-8 h-8 mr-2"/>
+        <img src="anonymous.png" alt="login" class="w-8 h-8 mr-2"/>
         <span data-i18n="login-btn" class="text-2xl text-gray-50">Connexion</span>
       `;
         loginBtn.className = `

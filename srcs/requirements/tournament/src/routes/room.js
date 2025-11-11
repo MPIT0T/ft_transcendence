@@ -191,6 +191,7 @@ class Room {
 		if (scorer === 1 || scorer === 2) {
 			const payLoad = {
 				"method": "update",
+                "isGoal": "true",
 				"room": this.toJsonGoal(),
 			};
 

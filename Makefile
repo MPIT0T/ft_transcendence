@@ -1,12 +1,20 @@
 include srcs/.env
 
+SECRETS_DIR = secrets
+SECRETS_FILES = ssl_certificate ssl_certificate_key
+SECRETS = ${addprefix ${SECRETS_DIR}/, ${SECRETS_FILES}}
+
 all: dev
 
-dev: build_dev
-	docker compose -f srcs/compose.yml up
+%/ssl_certificate %/ssl_certificate_key:
+	@mkdir -p ${@D}
+	openssl req -x509 -newkey rsa:2048 -keyout $(@D)/ssl_certificate_key -out $(@D)/ssl_certificate -days 365 -nodes -subj "/CN=localhost" 2> /dev/null
 
-prod: build_prod
-	docker compose -f srcs/compose.yml up -d
+dev: ${SECRETS}
+	TARGET=dev docker compose -f srcs/compose.yml up --watch
+
+prod: ${SECRETS}
+	TARGET=prod docker compose -f srcs/compose.yml up -d
 
 build_dev: secrets
 	TARGET=dev docker compose -f srcs/compose.yml build --no-cache
@@ -33,20 +41,12 @@ mysql:
 	docker compose -f srcs/compose.yml exec mariadb mysql
 
 clean:
-	docker compose -f srcs/compose.yml down --volumes --rmi all
+	docker compose -f srcs/compose.yml down --volumes --remove-orphans --rmi all
 
 fclean: clean
 	rm -rf secrets/
 
 re: fclean all
-
-secrets:
-	@mkdir -p $@
-# 	openssl rand -hex -out $@/db_root_password 6
-# 	openssl rand -hex -out $@/db_password 6
-# 	openssl rand -hex -out $@/wp_admin_password 6
-# 	openssl rand -hex -out $@/wp_password 6
-	openssl req -x509 -newkey rsa:2048 -keyout $@/ssl_certificate_key -out $@/ssl_certificate -days 365 -nodes -subj "/CN=localhost" 2> /dev/null
 
 help:
 	@echo "Makefile for Docker Compose"
@@ -65,4 +65,4 @@ help:
 	@echo "  clean   - Remove volumes and stop services"
 	@echo "  help    - Show this help message"
 
-.PHONY: all dev prod build_prod build_dev down start stop logs prune mysql re fclean clean secrets
+.PHONY: all dev prod build_prod build_dev down start stop logs prune mysql re fclean clean
