@@ -11,7 +11,7 @@ const Stats: StatsPage = {
 <div class="h-screen bg-transparent p-6 flex flex-col items-center justify-center">
   <!-- Header avec onglets -->
   <div class="mb-6 w-[1200px]">
-    <div class="relative backdrop-blur-xs border-1 border-gray-50 flex overflow-hidden">
+  <div class="relative backdrop-blur-xs border border-gray-50 flex overflow-hidden">
       <!-- Sliding indicator -->
       <div id="tab-indicator" class="absolute top-0 left-0 h-full w-1/2 bg-gray-700 transition-transform duration-300 ease-in-out" style="transform:${indicatorTransform};"></div>
       <button 
@@ -19,8 +19,8 @@ const Stats: StatsPage = {
         class="relative z-10 flex-1 px-6 py-3 text-center transition-colors duration-200 hover:bg-gray-700/40 text-white">
         <div class="relative inline-block">
           <div class="relative z-10 text-7xl text-transparent bg-clip-text
-              bg-gradient-to-r from-red-500 via-blue-500 to-green-500
-              bg-[length:200%_100%] bg-[position:0%_100%]">
+              bg-linear-to-r from-red-500 via-blue-500 to-green-500
+              bg-size-[200%_100%] bg-position-[0%_100%]">
             Profil
           </div>
         </div>
@@ -30,8 +30,8 @@ const Stats: StatsPage = {
       class="relative z-10 flex-1 px-6 py-3 text-center transition-colors duration-200 hover:bg-gray-700/40 text-white">
       <div class="relative inline-block">
           <div class="relative z-10 text-7xl text-transparent bg-clip-text
-              bg-gradient-to-r from-red-500 via-blue-500 to-green-500
-              bg-[length:200%_100%] bg-[position:100%_100%]">
+              bg-linear-to-r from-red-500 via-blue-500 to-green-500
+              bg-size-[200%_100%] bg-position-[100%_100%]">
             Historique
           </div>
         </div>
@@ -57,7 +57,7 @@ const Stats: StatsPage = {
     return `
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
   <!-- Profil Section -->
-  <div class="backdrop-blur-2xs border-1 border-gray-50 p-6">
+  <div class="backdrop-blur-2xs border border-gray-50 p-6">
     <!-- Avatar -->
     <div class="text-center mb-6">
       <div class="w-20 h-20 bg-gray-300 rounded-full mx-auto mb-3 flex items-center justify-center">
@@ -79,7 +79,7 @@ const Stats: StatsPage = {
     </div>
 
     <div class="text-center mb-6">
-      <button class="px-3 py-3 font-bold border-1 border-gray-50 backdrop-blur-2xs text-2xl hover:border-red-500 hover:bg-gray-700 text-gray-50 transition-transform">Se déconnecter</button>
+  <button class="px-3 py-3 font-bold border border-gray-50 backdrop-blur-2xs text-2xl hover:border-red-500 hover:bg-gray-700 text-gray-50 transition-transform">Se déconnecter</button>
     </div>
 
     <!-- Main stats -->
@@ -100,7 +100,7 @@ const Stats: StatsPage = {
   </div>
 
   <!-- Detailed stats -->
-  <div class="backdrop-blur-2xs border-1 border-gray-50 p-6">
+  <div class="backdrop-blur-2xs border border-gray-50 p-6">
     <h3 class="text-lg font-semibold mb-4 text-gray-100">Statistiques</h3>
     <div class="space-y-4">
       <div class="flex justify-between items-center py-2 border-b border-gray-700">
@@ -126,59 +126,77 @@ const Stats: StatsPage = {
     </div>
   </div>
 
-  <!-- Friends Lists -->
-  <div class="grid grid-cols-2 lg:grid-cols-1 gap-6">
-    <!-- Online Friends -->
-    <div class="backdrop-blur-2xs border-1 border-gray-50 p-6">
-      <h3 class="text-lg font-semibold mb-4 text-gray-100">Online Friends</h3>
-      <ul class="space-y-3">
-        <li class="flex items-center justify-between">
-          <span class="text-gray-700 flex items-center">
-            <span class="w-2 h-2 bg-green-500 mr-2"></span>
-              BOB
-          </span>
-          <button class="px-3 py-1 text-xs bg-blue-500 text-white hover:bg-blue-600 transition-colors">
-            Invite
-          </button>
-        </li>
-        <li class="flex items-center justify-between">
-          <span class="text-gray-700 flex items-center">
-            <span class="w-2 h-2 bg-green-500 mr-2"></span>
-            Mike
-          </span>
-          <button class="px-3 py-1 text-xs bg-blue-500 text-white hover:bg-blue-600 transition-colors">
-            Invite
-          </button>
-        </li>
-        <li class="flex items-center justify-between">
-          <span class="text-gray-700 flex items-center">
-            <span class="w-2 h-2 bg-green-500 mr-2"></span>
-            Mathis
-          </span>
-          <button class="px-3 py-1 text-xs bg-blue-500 text-white hover:bg-blue-600 transition-colors">
-            Invite
-          </button>
-        </li>
-      </ul>
+  <!-- Friends Lists with tabs -->
+  <div class="backdrop-blur-2xs border border-gray-50 p-6">
+  <h3 class="text-lg font-semibold text-gray-100">Friends</h3>
+  
+  <div class="mb-4">
+  <label for="add-friend-input" class="block text-sm text-gray-300 mb-2">Ajouter un ami</label>
+  <div class="flex gap-2">
+  <input id="add-friend-input" type="text" placeholder="Nom de l'ami" class="flex-1 px-3 py-2 bg-white/5 border border-gray-700 text-sm text-gray-100 rounded" />
+  <button id="add-friend-btn" class="px-3 py-2 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition-colors">Ajouter</button>
+  </div>
+  </div>
+  
+  <div class="mb-4 flex items-center justify-between">
+    <div class="relative w-56">
+      <div id="friends-tab-indicator" class="absolute top-0 left-0 h-full w-1/2 bg-gray-700 rounded-md transition-transform duration-200" style="transform: translateX(0%);"></div>
+      <div class="relative z-10 flex">
+        <button id="friends-online-tab" class="flex-1 px-3 py-2 text-sm text-white text-center">Online</button>
+        <button id="friends-offline-tab" class="flex-1 px-3 py-2 text-sm text-white text-center">Offline</button>
+      </div>
     </div>
+  </div>
 
-    <!-- Offline Friends -->
-    <div class="backdrop-blur-2xs border-1 border-gray-50 p-6">
-      <h3 class="text-lg font-semibold mb-4 text-gray-100">Offline Friends</h3>
-      <ul class="space-y-3">
-        <li class="flex items-center">
-          <span class="w-2 h-2 bg-gray-400 rounded-full mr-2"></span>
-          <span class="text-gray-700">Lucas</span>
-        </li>
-        <li class="flex items-center">
-          <span class="w-2 h-2 bg-gray-400 rounded-full mr-2"></span>
-          <span class="text-gray-700">Marie</span>
-        </li>
-        <li class="flex items-center">
-          <span class="w-2 h-2 bg-gray-400 rounded-full mr-2"></span>
-          <span class="text-gray-700">Jean</span>
-        </li>
-      </ul>
+    <div id="friends-container">
+      <div id="online-friends" class="space-y-3">
+        <ul>
+          <li class="flex items-center justify-between">
+            <span class="text-gray-700 flex items-center">
+              <span class="w-2 h-2 bg-green-500 mr-2"></span>
+              BOB
+            </span>
+            <button class="invite-btn px-3 py-1 text-xs bg-blue-500 text-white hover:bg-blue-600 transition-colors">
+              Invite
+            </button>
+          </li>
+          <li class="flex items-center justify-between">
+            <span class="text-gray-700 flex items-center">
+              <span class="w-2 h-2 bg-green-500 mr-2"></span>
+              Mike
+            </span>
+            <button class="invite-btn px-3 py-1 text-xs bg-blue-500 text-white hover:bg-blue-600 transition-colors">
+              Invite
+            </button>
+          </li>
+          <li class="flex items-center justify-between">
+            <span class="text-gray-700 flex items-center">
+              <span class="w-2 h-2 bg-green-500 mr-2"></span>
+              Mathis
+            </span>
+            <button class="invite-btn px-3 py-1 text-xs bg-blue-500 text-white hover:bg-blue-600 transition-colors">
+              Invite
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <div id="offline-friends" class="space-y-3 hidden">
+        <ul>
+          <li class="flex items-center">
+            <span class="w-2 h-2 bg-gray-400 rounded-full mr-2"></span>
+            <span class="text-gray-700">Lucas</span>
+          </li>
+          <li class="flex items-center">
+            <span class="w-2 h-2 bg-gray-400 rounded-full mr-2"></span>
+            <span class="text-gray-700">Marie</span>
+          </li>
+          <li class="flex items-center">
+            <span class="w-2 h-2 bg-gray-400 rounded-full mr-2"></span>
+            <span class="text-gray-700">Jean</span>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </div>
@@ -416,16 +434,39 @@ const Stats: StatsPage = {
       });
     }
 
-    // Invite buttons
-    const inviteButtons = root.querySelectorAll('button') as NodeListOf<HTMLButtonElement>;
-    inviteButtons.forEach(btn => {
-      if (btn.textContent?.includes('Invite')) {
+    // Friends tabs (Online / Offline)
+    const onlineTab = root.querySelector('#friends-online-tab') as HTMLButtonElement | null;
+    const offlineTab = root.querySelector('#friends-offline-tab') as HTMLButtonElement | null;
+    const tabIndicator = root.querySelector('#friends-tab-indicator') as HTMLDivElement | null;
+    const onlineSection = root.querySelector('#online-friends') as HTMLElement | null;
+    const offlineSection = root.querySelector('#offline-friends') as HTMLElement | null;
+
+    const showOnline = () => {
+      if (tabIndicator) tabIndicator.style.transform = 'translateX(0%)';
+      if (onlineSection) onlineSection.classList.remove('hidden');
+      if (offlineSection) offlineSection.classList.add('hidden');
+    };
+
+    const showOffline = () => {
+      if (tabIndicator) tabIndicator.style.transform = 'translateX(100%)';
+      if (offlineSection) offlineSection.classList.remove('hidden');
+      if (onlineSection) onlineSection.classList.add('hidden');
+    };
+
+    if (onlineTab) onlineTab.addEventListener('click', showOnline);
+    if (offlineTab) offlineTab.addEventListener('click', showOffline);
+
+    // Invite buttons (scoped to friends container)
+    const friendsContainer = root.querySelector('#friends-container') as HTMLElement | null;
+    const inviteButtons = friendsContainer ? friendsContainer.querySelectorAll('.invite-btn') as NodeListOf<HTMLButtonElement> : null;
+    if (inviteButtons) {
+      inviteButtons.forEach(btn => {
         btn.addEventListener('click', (e) => {
           const friendName = btn.closest('li')?.querySelector('span')?.textContent?.trim();
           alert(`🎮 Invitation envoyée à ${friendName} !`);
         });
-      }
-    });
+      });
+    }
   }
 }
 export default Stats

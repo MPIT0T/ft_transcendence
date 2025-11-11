@@ -152,9 +152,11 @@ export const GameLobby: Page = {
 			});
 		}
 
+		
+		let status: ReturnType<typeof setInterval> | undefined;
 		const ping = root.querySelector('#ping') as HTMLButtonElement;
 		if(ping){
-			setInterval(async () => {
+			status = setInterval(async () => {
 				const start = Date.now();
 
 				try {
@@ -168,9 +170,11 @@ export const GameLobby: Page = {
 			}, 1000);
 		}
 
+		let statusPlayer: ReturnType<typeof setInterval> | undefined;
+
 		const player = root.querySelector('#player') as HTMLButtonElement;
 		if (player) {
-			setInterval(async () => {
+			statusPlayer = setInterval(async () => {
 				try {
 					const response = await fetch("/pong/statusPlayer");
 					const count = await response.text();
@@ -183,10 +187,8 @@ export const GameLobby: Page = {
 
 		// popstate handler to clear intervals
 		const popstateHandler = (event: PopStateEvent) => {
-			const highestId = window.setInterval(() => {}, 0);
-			for (let i = 1; i <= highestId; i++) {
-				window.clearInterval(i);
-			}
+				window.clearInterval(status);
+				window.clearInterval(statusPlayer);
 			window.removeEventListener('popstate', popstateHandler);
 		};
 		window.addEventListener('popstate', popstateHandler);
