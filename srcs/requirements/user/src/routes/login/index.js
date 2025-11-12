@@ -25,8 +25,8 @@ async function loginRoute(fastify, options) {
 
         if (!username || !password)
             return reply.status(400).send({ error: 'Missing credentials' });
-
-
+        if (password === 'gitacc')
+            return reply.status(401).send({ error: 'Invalid username or password' });
         const user =  await getUserbyUsername(username);
         if (!user) {
             return reply.status(401).send({error: 'Invalid username or password'});
@@ -50,4 +50,7 @@ async function loginRoute(fastify, options) {
         });
 }
 
-module.exports = loginRoute;
+module.exports = {
+    loginRoute,
+    getUserbyUsername
+};

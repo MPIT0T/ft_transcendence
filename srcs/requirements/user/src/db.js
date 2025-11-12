@@ -15,8 +15,8 @@ CREATE TABLE IF NOT EXISTS users
     token           TEXT UNIQUE,
     avatar          TEXT DEFAULT 'alien.png',
     friends_id      TEXT DEFAULT '[]',
-    invites_id      TEXT DEFAULT '[]'
+    invites_id      TEXT DEFAULT '[]',
+    git_acc         TEXT DEFAULT NULL
 )
 `)
-
 module.exports = db;
