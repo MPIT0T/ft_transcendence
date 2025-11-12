@@ -45,9 +45,6 @@
       ${activeTab === 'profile' ? this.renderProfile() : this.renderHistory()}
     </div>
     <div class="w-[1200px] flex items-center justify-center p-6 gap-6">
-      <button class="text-blue-500  px-6 py-2 text-2xl font-bold backdrop-blur-2xs hover:bg-gray-700 hover:bg-opacity-50">🇫🇷</button>
-      <button class="text-red-500  px-6 py-2 text-2xl font-bold backdrop-blur-2xs hover:bg-gray-700 hover:bg-opacity-50">🇬🇧</button>
-      <button class="text-yellow-400  px-6 py-2 text-2xl font-bold backdrop-blur-2xs hover:bg-gray-700 hover:bg-opacity-50">🇪🇸</button>
       <button class="px-6 py-2 text-2xl font-bold backdrop-blur-2xs hover:bg-gray-700/50">🇫🇷</button>
       <button class="px-6 py-2 text-2xl font-bold backdrop-blur-2xs hover:bg-gray-700/50">🇬🇧</button>
       <button class="px-6 py-2 text-2xl font-bold backdrop-blur-2xs hover:bg-gray-700/50">🇪🇸</button>
