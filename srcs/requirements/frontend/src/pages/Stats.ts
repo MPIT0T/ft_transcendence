@@ -58,46 +58,29 @@
       return `
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <!-- Profil Section -->
-    <div class="backdrop-blur-2xs border-1 border-gray-50 p-6">
+    <div class="backdrop-blur-2xs border-1 border-gray-50 p-6 h-full flex flex-col">
       <!-- Avatar -->
       <div class="text-center mb-6">
-        <div class="w-20 h-20 bg-gray-300 rounded-full mx-auto mb-3 flex items-center justify-center">
-          <span class="text-3xl">👤</span>
+        <div class="w-20 h-20 bg-transparent mx-auto mb-3 flex items-center justify-center">
+          <img id="change-profile-picture" src="anonymous.png" alt="profile picture"/>
         </div>
-        <p class="text-xs text-blue-500 underline cursor-pointer" id="change-avatar">CHANGE AVATAR</p>
       </div>
   
       <!-- Username -->
-      <div class="text-center mb-6">
-        <p class="text-sm text-gray-600 bg-gray-200 font-semibold mb-1 p-2">${sessionStorage.getItem('username')}</p>
-        <p class="text-xs text-blue-500 underline cursor-pointer" id="change-username">CHANGE USERNAME</p>
+      <div class="border-b border-gray-700 mb-6">
+        <p class="text-3xl text-gray-50 font-semibold">${sessionStorage.getItem('username')}</p>
       </div>
   
-      <!-- Mail -->
-      <div class="text-center mb-6">
-        <p class="text-sm text-gray-600 bg-gray-200 font-semibold mb-1 p-2">LUCA@GMAIL.COM</p>
-        <p class="text-xs text-blue-500 underline cursor-pointer" id="change-mail">CHANGE MAIL</p>
+      <!-- Elo -->
+      <div class="border-b border-gray-700 mb-6">
+        <p class="text-2xl text-gray-200 font-semibold">1326</p>
       </div>
   
-      <div class="text-center mb-6">
-        <button class="px-3 py-3 font-bold border-1 border-gray-50 backdrop-blur-2xs text-2xl hover:border-red-500 hover:bg-gray-700 text-gray-50 transition-transform" id="sign-out-btn">Se déconnecter</button>
+      <div class="text-center mt-auto w-full">
+        <button class="px-3 py-3 w-full font-bold border-1 border-gray-50 backdrop-blur-2xs text-2xl hover:border-red-500 hover:bg-gray-700/50 text-gray-50 transition-transform" id="sign-out-btn">Se déconnecter</button>
       </div>
   
-      <!-- Main stats -->
-      <div class="grid grid-cols-3 gap-4 text-center mt-8">
-        <div>
-          <div class="text-2xl font-bold text-gray-800" id="stats-rank">2</div>
-          <div class="text-sm text-gray-600">Rank</div>
-        </div>
-        <div>
-          <div class="text-2xl font-bold text-gray-800" id="stats-win-rate">42%</div>
-          <div class="text-sm text-gray-600">Win Rate</div>
-        </div>
-        <div>
-          <div class="text-2xl font-bold text-gray-800" id="stats-friends">0</div>
-          <div class="text-sm text-gray-600">Friends</div>
-        </div>
-      </div>
+      
     </div>
   
     <!-- Detailed stats -->
@@ -125,6 +108,21 @@
           <span class="text-sm font-bold text-blue-600" id="stats-playtime">12h 34m</span>
         </div>
       </div>
+        <!-- Main stats -->
+        <div class="grid grid-cols-3 gap-4 text-center mt-8">
+            <div>
+                <div class="text-2xl font-bold text-gray-800" id="stats-rank">2</div>
+                <div class="text-sm text-gray-600">Rank</div>
+            </div>
+            <div>
+                <div class="text-2xl font-bold text-gray-800" id="stats-win-rate">42%</div>
+                <div class="text-sm text-gray-600">Win Rate</div>
+            </div>
+            <div>
+                <div class="text-2xl font-bold text-gray-800" id="stats-friends">0</div>
+                <div class="text-sm text-gray-600">Friends</div>
+            </div>
+        </div>
     </div>
   
     <!-- Friends Lists -->
