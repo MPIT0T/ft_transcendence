@@ -50,6 +50,10 @@ async function githubAuthRoute(fastify, options) {
     return reply.status(204).send();
   });
 
+  fastify.get('/', async (request, reply) => {
+    return reply.ok({message: request.body.message});
+  });
+
   fastify.post('/', async (request, reply) => {
     addCorsHeaders(reply);
 
