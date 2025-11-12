@@ -10,7 +10,7 @@ const Stats: StatsPage = {
 		return `
 <div class="h-screen bg-transparent p-6 flex flex-col items-center justify-center">
 	<!-- Header avec onglets -->
-	<div class="mb-6 w-[1200px]">
+		<div class="mb-6 w-full max-w-[1200px] mx-auto">
 	<div class="relative backdrop-blur-xs border border-gray-50 flex overflow-hidden">
 			<!-- Sliding indicator -->
 			<div id="tab-indicator" class="absolute top-0 left-0 h-full w-1/2 bg-gray-700 transition-transform duration-300 ease-in-out" style="transform:${indicatorTransform};"></div>
@@ -40,10 +40,10 @@ const Stats: StatsPage = {
 	</div>
 
 	<!-- Contenu dynamique -->
-	<div id="content-container" class="w-[1200px] h-[700px]">
+		<div id="content-container" class="w-full max-w-[1200px] mx-auto min-h-[700px]">
 		${activeTab === 'profile' ? this.renderProfile() : this.renderHistory()}
 	</div>
-	<div class="w-[1200px] flex items-center justify-center p-6 gap-6">
+		<div class="w-full max-w-[1200px] mx-auto flex items-center justify-center p-6 gap-6">
 		<button class="text-blue-500  px-6 py-2 text-2xl font-bold backdrop-blur-2xs hover:bg-gray-700 hover:bg-opacity-50">🇫🇷</button>
 		<button class="text-red-500  px-6 py-2 text-2xl font-bold backdrop-blur-2xs hover:bg-gray-700 hover:bg-opacity-50">🇬🇧</button>
 		<button class="text-yellow-400  px-6 py-2 text-2xl font-bold backdrop-blur-2xs hover:bg-gray-700 hover:bg-opacity-50">🇪🇸</button>
