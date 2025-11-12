@@ -251,6 +251,7 @@ class Room {
 		// 	game: {
 		// 		winner: winner,
 		// 		gamePoint: this.gamePoint,
+		//		gameMode: this.gameMode,
 		// 		finalScore: {
 		// 			player1: this.p1Score,
 		// 			player2: this.p2Score

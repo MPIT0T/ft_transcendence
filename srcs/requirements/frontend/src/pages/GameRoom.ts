@@ -115,9 +115,6 @@ export const GameRoom: Page = {
 		<div class="backdrop-blur-2xs border-1 border-gray-50 p-6">
 			<div class="flex justify-between items-center mb-6">
 				<h2 class="text-2xl text-gray-50 font-bold">Available rooms</h2>
-				<button id="reload-btn" class="px-4 py-2 font-bold text-gray-50 border-1 border-gray-50 hover:bg-gray-700 transition-colors">
-					Rafraichir
-				</button>
 			</div>
 			<div class="flex flex-wrap gap-4" id="rooms-container"></div>
 		</div>
@@ -250,7 +247,6 @@ export const GameRoom: Page = {
 		// page buttons
 		const vsBtn = root.querySelector('#vs-btn') as HTMLButtonElement;
 		const createRoomBtn = root.querySelector('#create-room-btn') as HTMLButtonElement;
-		const reloadBtn = root.querySelector('#reload-btn') as HTMLButtonElement;
 		const matchmakingModal = root.querySelector('#matchmaking-modal') as HTMLDivElement;
 		const cancelMatchmakingBtn = root.querySelector('#cancel-matchmaking') as HTMLButtonElement;
 
@@ -261,7 +257,7 @@ export const GameRoom: Page = {
 					matchmakingModal.classList.remove('hidden');
 					matchmakingModal.classList.add('flex');
 				}
-				
+
 				// Lancer la recherche de match
 				joinRoom("ranked");
 			});
@@ -277,7 +273,7 @@ export const GameRoom: Page = {
 				if (ws) {
 					ws.send(JSON.stringify(payLoad));
 				}
-				
+
 				// Fermer le modal
 				if (matchmakingModal) {
 					matchmakingModal.classList.add('hidden');
@@ -291,12 +287,6 @@ export const GameRoom: Page = {
 				const modal = root.querySelector('#create-room-modal') as HTMLDivElement;
 				modal.classList.remove('hidden');
 				modal.classList.add('flex');
-			});
-		}
-
-		if (reloadBtn) {
-			reloadBtn.addEventListener('click', () => {
-				reloadRooms(root);
 			});
 		}
 
@@ -326,5 +316,17 @@ export const GameRoom: Page = {
 				createRoom(root);
 			});
 		}
+
+		let statusRoom: ReturnType<typeof setInterval> | undefined;
+		statusRoom = setInterval(async () => {
+			reloadRooms(root);
+		}, 1000);
+
+		const popstateHandler = (event: PopStateEvent) => {
+			window.clearInterval(statusRoom);
+			window.removeEventListener('popstate', popstateHandler);
+		};
+		window.addEventListener('popstate', popstateHandler);
+
 	},
 };
