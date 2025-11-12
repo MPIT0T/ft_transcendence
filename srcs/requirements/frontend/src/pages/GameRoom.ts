@@ -124,18 +124,21 @@ export const GameRoom: Page = {
 	</div>
 
 	<!-- Modal Matchmaking -->
-	<div id="matchmaking-modal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center z-50">
-		<div class="bg-white border-4 border-black p-8 max-w-md w-full mx-4">
+	<div id="matchmaking-modal" class="fixed inset-0 backdrop-blur-lg hidden items-center justify-center z-50">
+		<div class="border-1 border-gray-50 p-8 max-w-md w-full mx-4">
 			<div class="text-center">
-				<h2 class="text-3xl font-bold mb-4">🎮 Matchmaking</h2>
-				<p class="text-xl mb-6">Recherche d'un adversaire...</p>
-				<div class="flex justify-center mb-6">
-					<div class="animate-spin rounded-full h-16 w-16 border-b-4 border-black"></div>
-				</div>
-				<p class="text-gray-600 mb-6">Veuillez patienter pendant que nous trouvons un joueur de votre niveau</p>
+				<h2 class="text-3xl text-gray-50 font-bold mb-4">Matchmaking en cours</h2>
+				<div class="flex justify-center mb-4">
+          <div class="h-16 flex items-center justify-center gap-3">
+            <span class="h-2 w-2 bg-white animate-bounceHigh [animation-delay:0ms]"></span>
+            <span class="h-2 w-2 bg-white animate-bounceHigh [animation-delay:150ms]"></span>
+            <span class="h-2 w-2 bg-white animate-bounceHigh [animation-delay:300ms]"></span>
+          </div>
+        </div>
+				<p class="text-gray-400 mb-6">Veuillez patienter pendant que nous cherchons un adversaire</p>
 				<button 
 					id="cancel-matchmaking" 
-					class="w-full bg-red-500 text-white py-3 px-6 border-2 border-black hover:bg-red-600 transition-colors font-bold">
+					class="w-full text-gray-50 py-3 px-6 border-1 border-gray-50 hover:border-red-500 hover:bg-gray-700 transition-colors font-bold">
 					QUITTER LE MATCHMAKING
 				</button>
 			</div>
