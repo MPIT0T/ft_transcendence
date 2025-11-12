@@ -13,7 +13,8 @@ CREATE TABLE IF NOT EXISTS users
     created_at      DATE DEFAULT CURRENT_DATE,
     elo             INTEGER DEFAULT 0,
     token           TEXT UNIQUE,
-    avatar          TEXT DEFAULT 'alien.png'
+    avatar          TEXT DEFAULT 'alien.png',
+    git_acc         TEXT DEFAULT NULL
 )
 `)
 module.exports = db;

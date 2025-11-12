@@ -301,12 +301,6 @@ export const Layout = {
       });
     }
 
-    const gihtubBtn = root.querySelector('#gihtub-btn') as HTMLButtonElement;
-    if (gihtubBtn) {
-      gihtubBtn.addEventListener('click', () => {
-        // handle
-      })
-    }
     initPastelBackground();
 
     // Language management
@@ -377,6 +371,8 @@ export const Layout = {
       });
     }
   },
+
+
 
   setupRegisterModal(root: HTMLElement): void {
     const registerModal = root.querySelector('#register-modal') as HTMLDivElement;
