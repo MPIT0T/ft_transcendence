@@ -86,6 +86,19 @@ services:
       - transcendence
     restart: always
 
+  user_handling:
+      container_name: trans-user
+      build:
+        context: requirements/user/
+      develop:
+        watch:
+          - action: sync+restart
+            path: requirements/user/Dockerfile
+            target: app/src
+      networks:
+        - transcendence
+      restart: always
+
 networks:
   transcendence:
     name: transcendence
