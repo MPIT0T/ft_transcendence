@@ -17,7 +17,7 @@
         <div id="tab-indicator" class="absolute top-0 left-0 h-full w-1/2 bg-gray-700 transition-transform duration-300 ease-in-out" style="transform:${indicatorTransform};"></div>
         <button 
           id="profile-tab"
-          class="relative z-10 flex-1 px-6 py-3 text-center transition-colors duration-200 hover:bg-gray-700/40 text-white">
+          class="relative z-10 flex-1 px-6 py-3 text-center transition-colors duration-200 hover:bg-gray-700/50 text-white">
           <div class="relative inline-block">
             <div class="relative z-10 text-7xl text-transparent bg-clip-text
                 bg-gradient-to-r from-red-500 via-blue-500 to-green-500
@@ -28,7 +28,7 @@
       </button>
       <button 
         id="history-tab"
-        class="relative z-10 flex-1 px-6 py-3 text-center transition-colors duration-200 hover:bg-gray-700/40 text-white">
+        class="relative z-10 flex-1 px-6 py-3 text-center transition-colors duration-200 hover:bg-gray-700/50 text-white">
         <div class="relative inline-block">
             <div class="relative z-10 text-7xl text-transparent bg-clip-text
                 bg-gradient-to-r from-red-500 via-blue-500 to-green-500
@@ -48,6 +48,9 @@
       <button class="text-blue-500  px-6 py-2 text-2xl font-bold backdrop-blur-2xs hover:bg-gray-700 hover:bg-opacity-50">🇫🇷</button>
       <button class="text-red-500  px-6 py-2 text-2xl font-bold backdrop-blur-2xs hover:bg-gray-700 hover:bg-opacity-50">🇬🇧</button>
       <button class="text-yellow-400  px-6 py-2 text-2xl font-bold backdrop-blur-2xs hover:bg-gray-700 hover:bg-opacity-50">🇪🇸</button>
+      <button class="px-6 py-2 text-2xl font-bold backdrop-blur-2xs hover:bg-gray-700/50">🇫🇷</button>
+      <button class="px-6 py-2 text-2xl font-bold backdrop-blur-2xs hover:bg-gray-700/50">🇬🇧</button>
+      <button class="px-6 py-2 text-2xl font-bold backdrop-blur-2xs hover:bg-gray-700/50">🇪🇸</button>
     </div>
   </div>
     `;

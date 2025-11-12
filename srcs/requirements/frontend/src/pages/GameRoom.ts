@@ -20,7 +20,7 @@ function displayRooms(root: HTMLElement, rooms: any[]) {
 
 	rooms.forEach(room => {
 		const roomBtn = document.createElement('button');
-		roomBtn.className = 'room-btn text-gray-50 px-6 py-3 border-1 backdrop-blur-2xs border-gray-50 hover:bg-gray-700 transition-colors';
+		roomBtn.className = 'room-btn text-gray-50 px-6 py-3 border-1 backdrop-blur-2xs border-gray-50 hover:bg-gray-700/50 transition-colors';
 		roomBtn.dataset.roomId = room.roomId;
 		roomBtn.innerHTML = `
             ${room.roomName}<br>
@@ -80,7 +80,7 @@ export const GameRoom: Page = {
 			<div class="text-center mb-8">
 				<div class="flex justify-center space-x-4">
 					
-					<button id="vs-btn" class="px-10 py-3 font-bold text-2xl border-1 border-gray-50 text-gray-50 hover:bg-gray-700 transition-colors mb-5">
+					<button id="vs-btn" class="px-10 py-3 font-bold text-2xl border-1 border-gray-50 text-gray-50 hover:bg-gray-700/50 transition-colors mb-5">
 						Jouer
 					</button>
 					</div>
@@ -99,7 +99,7 @@ export const GameRoom: Page = {
 			<div class="text-center mb-8">
 				<div class="flex justify-center space-x-4">
 					
-					<button id="create-room-btn" class="px-10 py-3 text-2xl text-gray-50 border-1 border-gray-50 hover:bg-gray-700 transition-colors mb-5">
+					<button id="create-room-btn" class="px-10 py-3 text-2xl text-gray-50 border-1 border-gray-50 hover:bg-gray-700/50 transition-colors mb-5">
 						Créer une partie
 					</button>
 				</div>
@@ -115,7 +115,7 @@ export const GameRoom: Page = {
 		<div class="backdrop-blur-2xs border-1 border-gray-50 p-6">
 			<div class="flex justify-between items-center mb-6">
 				<h2 class="text-2xl text-gray-50 font-bold">Available rooms</h2>
-				<button id="reload-btn" class="px-4 py-2 font-bold text-gray-50 border-1 border-gray-50 hover:bg-gray-700 transition-colors">
+				<button id="reload-btn" class="px-4 py-2 font-bold text-gray-50 border-1 border-gray-50 hover:bg-gray-700/50 transition-colors">
 					Rafraichir
 				</button>
 			</div>
@@ -138,7 +138,7 @@ export const GameRoom: Page = {
 				<p class="text-gray-400 mb-6">Veuillez patienter pendant que nous cherchons un adversaire</p>
 				<button 
 					id="cancel-matchmaking" 
-					class="w-full text-gray-50 py-3 px-6 border-1 border-gray-50 hover:border-red-500 hover:bg-gray-700 transition-colors font-bold">
+					class="w-full text-gray-50 py-3 px-6 border-1 border-gray-50 hover:border-red-500 hover:bg-gray-700/50 transition-colors font-bold">
 					QUITTER LE MATCHMAKING
 				</button>
 			</div>
@@ -183,13 +183,13 @@ export const GameRoom: Page = {
 				<div class="flex space-x-4 mt-6">
 					<button 
 						type="submit" 
-						class="flex-1 text-white py-2 px-4 border-1 border-gray-50 hover:bg-gray-700 hover:border-green-500 transition-colors font-bold">
+						class="flex-1 text-white py-2 px-4 border-1 border-gray-50 hover:bg-gray-700/50 hover:border-green-500 transition-colors font-bold">
 						CRÉER
 					</button>
 					<button 
 						type="button" 
 						id="cancel-create" 
-						class="flex-1 text-white py-2 px-4 border-1 border-gray-50 hover:bg-gray-700 hover:border-red-500 transition-colors font-bold">
+						class="flex-1 text-white py-2 px-4 border-1 border-gray-50 hover:bg-gray-700/50 hover:border-red-500 transition-colors font-bold">
 						ANNULER
 					</button>
 				</div>

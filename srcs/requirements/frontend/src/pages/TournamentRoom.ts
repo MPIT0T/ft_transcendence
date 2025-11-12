@@ -20,7 +20,7 @@ function displayTournament(root: HTMLElement, tournaments: any[]) {
 
 	tournaments.forEach(tournament => {
 		const tournamentBtn = document.createElement('button');
-		tournamentBtn.className = 'tournament-btn text-gray-50 px-6 py-3 border-1 backdrop-blur-2xs border-gray-50 hover:bg-gray-700 transition-colors';
+		tournamentBtn.className = 'tournament-btn text-gray-50 px-6 py-3 border-1 backdrop-blur-2xs border-gray-50 hover:bg-gray-700/50 transition-colors';
 		tournamentBtn.dataset.tournamentId = tournament.tournamentId;
 		tournamentBtn.innerHTML = `
 			${tournament.tournamentName}<br>
@@ -79,7 +79,7 @@ export const TournamentRoom: Page = {
 			</div>
 			<div class="text-center mb-8">
 				<div class="flex justify-center space-x-4">
-					<button id="create-tournament-btn" class="px-8 py-3 font-bold text-2xl mb-5 border-1 text-gray-50 border-gray-50 hover:bg-gray-700 transition-colors">
+					<button id="create-tournament-btn" class="px-8 py-3 font-bold text-2xl mb-5 border-1 text-gray-50 border-gray-50 hover:bg-gray-700/50 transition-colors">
 						Créer un tournoi
 					</button>
 				</div>
@@ -95,7 +95,7 @@ export const TournamentRoom: Page = {
 		<div class="border-1 border-gray-50 backdrop-blur-2xs p-6">
 			<div class="flex justify-between items-center mb-6">
 				<h2 class="text-2xl text-gray-50 font-bold">Available Tournament</h2>
-				<button id="reload-btn" class="px-4 py-2 font-bold text-gray-50 border-1 border-gray-50 hover:bg-gray-700 transition-colors">
+				<button id="reload-btn" class="px-4 py-2 font-bold text-gray-50 border-1 border-gray-50 hover:bg-gray-700/50 transition-colors">
 					Rafraichir
 				</button>
 			</div>
@@ -149,13 +149,13 @@ export const TournamentRoom: Page = {
 				<div class="flex space-x-4 mt-6">
 					<button 
 						type="submit" 
-						class="flex-1 text-white py-2 px-4 border-1 border-gray-50 hover:bg-gray-700 hover:border-green-500 transition-colors font-bold">
+						class="flex-1 text-white py-2 px-4 border-1 border-gray-50 hover:bg-gray-700/50 hover:border-green-500 transition-colors font-bold">
 						CRÉER
 					</button>
 					<button 
 						type="button" 
 						id="cancel-create" 
-						class="flex-1 text-white py-2 px-4 border-1 border-gray-50 hover:bg-gray-700 hover:border-red-500 transition-colors font-bold">
+						class="flex-1 text-white py-2 px-4 border-1 border-gray-50 hover:bg-gray-700/50 hover:border-red-500 transition-colors font-bold">
 						ANNULER
 					</button>
 				</div>
