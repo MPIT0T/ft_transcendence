@@ -452,6 +452,7 @@ export const TournamentOnline: Page = {
 				if (ws)
 					ws.send(JSON.stringify(payLoad));
 
+				window.removeEventListener('popstate', popstateHandler);
 				const p = '/tournamentRoom';
 				history.pushState(null, '', p);
 				window.dispatchEvent(new PopStateEvent('popstate'));
