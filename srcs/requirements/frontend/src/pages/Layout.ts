@@ -274,6 +274,18 @@ export const Layout = {
       const loginModal = root.querySelector('#login-modal') as HTMLDivElement;
       this.closeModal(loginModal);
       (root.querySelector('#login-form') as HTMLFormElement).reset();
+      const username = userInfo.username;
+      (globalThis as any).loginIntervalId = setInterval(async () => {
+        try {
+          await fetch('/user/login/ping', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username })
+          });
+        } catch (err) {
+          console.error(err);
+        }
+      }, 60000);
     }
   },
 
@@ -493,8 +505,18 @@ export const Layout = {
         const loginModal = root.querySelector('#login-modal') as HTMLDivElement;
         this.closeModal(loginModal);
         (root.querySelector('#login-form') as HTMLFormElement).reset();
-      }
-      else if (res.status === 401) {
+        (globalThis as any).loginIntervalId = setInterval(async () => {
+          try {
+            await fetch('/user/login/ping', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ username })
+            });
+          } catch (err) {
+            console.error(err);
+          }
+        }, 60000);
+      } else if (res.status === 401) {
         this.showNotification('Nom d\'utilisateur ou mot de passe invalide', 'error');
       }
     }
@@ -548,6 +570,17 @@ export const Layout = {
           this.showNotification(`Compte créé avec succès ! Bienvenue ${username} !`);
 
           this.updateLoginButton(root, true);
+          (globalThis as any).loginIntervalId = setInterval(async () => {
+            try {
+              await fetch('/user/login/ping', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username })
+              });
+            } catch (err) {
+              console.error(err);
+            }
+          }, 60000);
         }
         else if (res.status === 400)
         {

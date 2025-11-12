@@ -5,9 +5,10 @@ const privateKey = "secret123123";
 const jwt = require('jsonwebtoken');
 
 
-function getUserbyUsername(username)
-{
-    const stmt = db.prepare(`SELECT * FROM users WHERE username = ?`);
+function getUserbyUsername(username) {
+    const stmt = db.prepare(`SELECT *
+                             FROM users
+                             WHERE username = ?`);
     let user = null;
 
     user = stmt.get(username);
@@ -15,6 +16,10 @@ function getUserbyUsername(username)
 }
 
 async function loginRoute(fastify, options) {
+    fastify.post('/ping', async (req, res) => {
+        ;
+    });
+
     fastify.post('/', async (request, reply) => {
         const {username, password} = request.body;
 
