@@ -80,7 +80,7 @@ const Stats: StatsPage = {
     </div>
 
     <div class="text-center mb-6">
-      <button class="px-3 py-3 font-bold border-1 border-gray-50 backdrop-blur-2xs text-2xl hover:border-red-500 hover:bg-gray-700 text-gray-50 transition-transform">Se déconnecter</button>
+      <button class="px-3 py-3 font-bold border-1 border-gray-50 backdrop-blur-2xs text-2xl hover:border-red-500 hover:bg-gray-700 text-gray-50 transition-transform" id="sign-out-btn">Se déconnecter</button>
     </div>
 
     <!-- Main stats -->
@@ -403,6 +403,7 @@ const Stats: StatsPage = {
           sessionStorage.removeItem('token');
           sessionStorage.removeItem('username');
           Layout.updateLoginButton(document.body, false);
+          clearInterval((globalThis as any).loginIntervalId);
         });
       }
 
@@ -441,4 +442,5 @@ const Stats: StatsPage = {
       });
     }
   }
+
   export default Stats

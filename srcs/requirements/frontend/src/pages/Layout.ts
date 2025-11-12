@@ -291,7 +291,7 @@ export const Layout = {
         } catch (err) {
           console.error(err);
         }
-      }, 60000);
+      }, 1000);
     }
   },
 
@@ -521,7 +521,7 @@ export const Layout = {
           } catch (err) {
             console.error(err);
           }
-        }, 60000);
+        }, 30000);
       } else if (res.status === 401) {
         this.showNotification('Nom d\'utilisateur ou mot de passe invalide', 'error');
       }
@@ -586,7 +586,7 @@ export const Layout = {
             } catch (err) {
               console.error(err);
             }
-          }, 60000);
+          }, 1000);
         }
         else if (res.status === 400)
         {

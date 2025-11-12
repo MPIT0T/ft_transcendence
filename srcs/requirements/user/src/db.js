@@ -16,7 +16,8 @@ CREATE TABLE IF NOT EXISTS users
     avatar          TEXT DEFAULT 'alien.png',
     friends_id      TEXT DEFAULT '[]',
     invites_id      TEXT DEFAULT '[]',
-    git_acc         TEXT DEFAULT NULL
+    git_acc         TEXT DEFAULT NULL,
+    last_ping       DATETIME DEFAULT CURRENT_DATE
 )
 `)
 module.exports = db;
