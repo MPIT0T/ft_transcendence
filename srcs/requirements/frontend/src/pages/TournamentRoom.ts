@@ -124,7 +124,6 @@ export const TournamentRoom: Page = {
 					<label class="block text-sm font-bold mb-2 text-gray-200">Number of Players:</label>
 					<select id="player-count" class="w-full px-3 py-2 border-1 border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50">
 						<option value="8">8</option>
-						<option value="4">4</option>
 					</select>
 				</div>
 				
@@ -142,7 +141,6 @@ export const TournamentRoom: Page = {
 					<label class="block text-sm font-bold mb-2 text-gray-200">Game Mode:</label>
 					<select id="game-mode" class="w-full px-3 py-2 border-1 border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50">
 						<option value="classic">Classic Pong</option>
-						<option value="power-up">Power-up Mode</option>
 					</select>
 				</div>
 				

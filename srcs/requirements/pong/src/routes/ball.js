@@ -6,8 +6,8 @@ class Ball {
     }
 
     reset(direction = 1) {
-        this.x = 450;
-        this.y = 300;
+        this.x = 446;
+        this.y = 296;
         this.vel_x = direction * 5;
         this.vel_y = (Math.random() - 0.5) * 6;
     }

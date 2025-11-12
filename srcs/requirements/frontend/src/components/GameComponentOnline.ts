@@ -31,8 +31,8 @@ export class GameComponentOnline {
 
 	// Balle
 	private ball: Ball = {
-		x: 450,     // Centre horizontal
-		y: 300,     // Centre vertical
+		x: 446,     // Centre horizontal
+		y: 296,     // Centre vertical
 		width: 8,   // Carrée
 		height: 8,
 		vel_x: 6,   //3 Se déplace vers la droite
@@ -139,12 +139,12 @@ export class GameComponentOnline {
 		this.context.clearRect(0, 0, 900, 600);
 
 		// Draw center line (dashed)
-		this.context.fillStyle = "#FFFFFF";
+		this.context.fillStyle = "#dbdbdb";
 		this.context.setLineDash([10, 10]);
 		this.context.beginPath();
 		this.context.moveTo(450, 0);
 		this.context.lineTo(450, 600);
-		this.context.strokeStyle = "#FFFFFF";
+		this.context.strokeStyle = "#dbdbdb";
 		this.context.lineWidth = 2;
 		this.context.stroke();
 		this.context.setLineDash([]);

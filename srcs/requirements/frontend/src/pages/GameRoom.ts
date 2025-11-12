@@ -168,9 +168,8 @@ export const GameRoom: Page = {
 				
 				<div>
 					<label class="block text-sm font-bold mb-2">Mode de Jeu :</label>
-					<select id="game-mode" class="w-full px-3 py-2 border-1 border-gray-400 focus:outline-none focus:border-gray-50">
+					<select id="game-mode" class="w-full px-3 py-2 text-gray-200 border-1 border-gray-400 focus:outline-none focus:border-gray-50">
 						<option value="classic">Pong Classique</option>
-						<option value="power-up">Mode Power-Ups</option>
 					</select>
 				</div>
 				
