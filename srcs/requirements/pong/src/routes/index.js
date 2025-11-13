@@ -22,6 +22,9 @@ module.exports = async function (fastify, opts) {
 						case 'rooms':
 							await handleGetRooms(socket, data);
 							break;
+						case 'friends':
+							await handleGetFriends(socket, data);
+							break;
 						case 'ready':
 							await handleReady(socket, data);
 							break;
@@ -125,6 +128,23 @@ function leave(clientId) {
 			break;
 		}
 	}
+}
+
+function handleGetFriends(socket, data) {
+	if (g_Games.findClient(data.clientId) === undefined)
+		throw "Client id not good";
+
+	const availableFriends = Object.values(g_Games._clients._clients)
+		.filter(c => c._clientId !== data.clientId)
+		.map(c => ({
+			username: c._name,
+			elo: c._elo
+		}));
+
+	socket.send(JSON.stringify({
+		method: 'friends',
+		friends: availableFriends
+	}));
 }
 
 

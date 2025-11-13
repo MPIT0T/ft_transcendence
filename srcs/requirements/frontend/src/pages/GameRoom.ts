@@ -34,9 +34,8 @@ function displayFriends(root: HTMLElement, friends: any[]) {
 		friendBtn.dataset.friendsId = friend.friendsId;
 		friendBtn.innerHTML = `
 			<div class="w-full flex items-center">
-				<div class="flex-1 min-w-0 font-semibold truncate mr-4">${friend.username || friend.name || 'Unknown'}</div>
-				<div class="w-20 text-md text-gray-300 text-right mr-4">${(friend.elo ?? friend.Elo ?? friend.rating) ? 'Elo: ' + (friend.elo ?? friend.Elo ?? friend.rating) : ''}</div>
-				<div class="w-28 text-md text-gray-300 text-right mr-4">${friend.status || ''}</div>
+				<div class="flex-1 min-w-0 font-semibold truncate mr-4">${friend.username || 'Unknown'}</div>
+				<div class="w-20 text-md text-gray-300 text-right mr-4">${(friend.elo) ? 'Elo: ' + friend.elo : ''}</div>
 			</div>
 		`;
 		friendBtn.addEventListener('click', () => {
@@ -301,6 +300,10 @@ export const GameRoom: Page = {
 			if (response.method === "rooms") {
 				displayRooms(root, response.rooms);
 			}
+
+			if (response.method === "friends") {
+				displayFriends(root, response.friends);
+			}
 		}
 
 		// page buttons
@@ -379,7 +382,7 @@ export const GameRoom: Page = {
 		let statusRoom: ReturnType<typeof setInterval> | undefined;
 		statusRoom = setInterval(async () => {
 			reloadRooms(root);
-			// reloadFriends(root);
+			reloadFriends(root);
 		}, 1000);
 
 		const popstateHandler = (event: PopStateEvent) => {
