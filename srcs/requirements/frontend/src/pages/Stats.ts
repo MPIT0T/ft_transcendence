@@ -57,7 +57,7 @@ const Stats: StatsPage = {
 		return `
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 	<!-- Profil Section -->
-	<div class="backdrop-blur-2xs border-1 border-gray-50 p-6">
+	<div class="backdrop-blur-2xs border-1 border-gray-50 p-6 h-full flex flex-col">
 		<!-- Avatar -->
       <div class="text-center mb-6">
           <div class="w-20 h-20 bg-transparent mx-auto mb-3 flex items-center justify-center">
@@ -77,7 +77,7 @@ const Stats: StatsPage = {
           <span class="text-xl text-gray-400">elo</span>
       </div>
 
-		<div class="text-center mt-auto mb-6 w-full">
+		<div class="text-center mt-auto w-full">
         <button class="px-3 py-3 w-full font-bold border-1 border-gray-50 backdrop-blur-2xs text-2xl hover:border-red-500 hover:bg-gray-700 text-gray-50 transition-transform">Se déconnecter</button>
 		</div>
 	</div>
@@ -107,41 +107,41 @@ const Stats: StatsPage = {
 				<span class="text-sm font-bold text-blue-600" id="stats-playtime">12h 34m</span>
 			</div>
 		</div>
-      <!-- Main stats -->
-      <div class="grid grid-cols-3 gap-4 text-center mt-8">
-          <div>
-              <div class="text-2xl font-bold text-gray-800" id="stats-rank">2</div>
-              <div class="text-sm text-gray-600">Rank</div>
-          </div>
-          <div>
-              <div class="text-2xl font-bold text-gray-800" id="stats-win-rate">42%</div>
-              <div class="text-sm text-gray-600">Win Rate</div>
-          </div>
-          <div>
-              <div class="text-2xl font-bold text-gray-800" id="stats-friends">0</div>
-              <div class="text-sm text-gray-600">Friends</div>
-          </div>
+    <!-- Main stats -->
+    <div class="grid grid-cols-3 gap-4 text-center mt-8">
+      <div>
+        <div class="text-2xl font-bold text-gray-800" id="stats-rank">2</div>
+        <div class="text-sm text-gray-600">Rang</div>
       </div>
+      <div>
+        <div class="text-2xl font-bold text-gray-800" id="stats-win-rate">42%</div>
+        <div class="text-sm text-gray-600">Win Rate</div>
+      </div>
+      <div>
+        <div class="text-2xl font-bold text-gray-800" id="stats-friends">0</div>
+        <div class="text-sm text-gray-600">Amis</div>
+      </div>
+    </div>
 	</div>
 
 	<!-- Friends Lists with tabs -->
 	<div class="backdrop-blur-2xs border border-gray-50 p-6">
-		<h3 class="text-lg font-semibold text-gray-100">Friends</h3>
+		<h3 class="text-lg font-semibold text-gray-100">Amis</h3>
 		
 		<div class="mb-4">
 			<label for="add-friend-input" class="block text-sm text-gray-300 mb-2">Ajouter un ami</label>
 			<div class="flex gap-2">
-				<input id="add-friend-input" type="text" placeholder="Nom de l'ami" class="flex-1 px-3 py-2 bg-white/5 border border-gray-700 text-sm text-gray-100 rounded" />
-				<button id="add-friend-btn" class="px-3 py-2 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition-colors">Ajouter</button>
+				<input id="add-friend-input" type="text" placeholder="Nom de l'ami" class="flex-1 px-3 py-2 bg-white/5 border border-gray-700 text-sm text-gray-100 focus:outline-none focus:border-gray-400" />
+				<button id="add-friend-btn" class="px-3 py-2 border-1 border-gray-400 text-white text-sm hover:bg-gray-700/50 hover:border-blue-500 transition-colors">Ajouter</button>
 			</div>
 		</div>
 		
 		<div class="mb-4 flex items-center justify-between">
 			<div class="relative w-56">
-				<div id="friends-tab-indicator" class="absolute top-0 left-0 h-full w-1/2 bg-gray-700 rounded-md transition-transform duration-200" style="transform: translateX(0%);"></div>
+				<div id="friends-tab-indicator" class="absolute top-0 left-0 h-full w-1/2 bg-gray-700 transition-transform duration-200" style="transform: translateX(0%);"></div>
 				<div class="relative z-10 flex">
-					<button id="friends-online-tab" class="flex-1 px-3 py-2 text-sm text-white text-center">Online</button>
-					<button id="friends-offline-tab" class="flex-1 px-3 py-2 text-sm text-white text-center">Offline</button>
+					<button id="friends-online-tab" class="flex-1 px-3 py-2 text-sm hover:bg-gray-700/50 text-white text-center">Online</button>
+					<button id="friends-offline-tab" class="flex-1 px-3 py-2 text-sm hover:bg-gray-700/50 text-white text-center">Offline</button>
 				</div>
 			</div>
 	</div>
