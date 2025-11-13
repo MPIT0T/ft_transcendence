@@ -14,18 +14,53 @@ const reloadRooms = function (root: HTMLElement) {
 		ws.send(JSON.stringify(payLoad));
 }
 
+const reloadFriends = function (root: HTMLElement) {
+
+	const payLoad = {
+		"method": "friends",
+		"clientId": clientId
+	}
+	if (ws)
+		ws.send(JSON.stringify(payLoad));
+}
+
+function displayFriends(root: HTMLElement, friends: any[]) {
+	const container = root.querySelector('#friends-container') as HTMLDivElement;
+	container.innerHTML = ''; // Vider le container
+
+	friends.forEach(friend => {
+		const friendBtn = document.createElement('button');
+		friendBtn.className = 'friend-btn text-gray-50 px-6 py-3 border-1 backdrop-blur-2xs border-gray-50 hover:bg-gray-700 transition-colors';
+		friendBtn.dataset.friendId = friend.friendId;
+		friendBtn.innerHTML = `
+            ${friend.friendName}<br>
+            <span class="text-sm text-gray-400">${friend.players}</span>
+        `;
+		friendBtn.addEventListener('click', () => {
+			inviteFriends(friend.friendsId);
+		});
+
+		container.appendChild(friendBtn);
+	});
+}
+
+
 function displayRooms(root: HTMLElement, rooms: any[]) {
 	const container = root.querySelector('#rooms-container') as HTMLDivElement;
 	container.innerHTML = ''; // Vider le container
 
 	rooms.forEach(room => {
 		const roomBtn = document.createElement('button');
-		roomBtn.className = 'room-btn text-gray-50 px-6 py-3 border-1 backdrop-blur-2xs border-gray-50 hover:bg-gray-700 transition-colors';
+		roomBtn.className = 'room-btn w-full text-left flex items-center justify-between text-gray-50 px-4 py-3 border-1 backdrop-blur-2xs border-gray-50 hover:bg-gray-700 transition-colors';
 		roomBtn.dataset.roomId = room.roomId;
 		roomBtn.innerHTML = `
-            ${room.roomName}<br>
-            <span class="text-sm text-gray-400">${room.players}</span>
-        `;
+			<div class="w-full flex items-center">
+				<div class="flex-1 min-w-0 font-semibold truncate mr-4">${room.roomName}</div>
+				<div class="w-28 text-sm text-gray-300 text-right mr-4">${room.gameMode || ''}</div>
+				<div class="w-20 text-sm text-gray-400 text-right mr-4">${room.players}</div>
+				<div class="w-20 text-xs text-gray-400 text-right">${room.gamePoint ? room.gamePoint + ' pts' : ''}</div>
+			</div>
+		`;
 		roomBtn.addEventListener('click', () => {
 			joinRoom(room.roomId);
 		});
@@ -44,7 +79,7 @@ const createRoom = function (root: HTMLElement): void {
 		"clientId": clientId,
 		"roomName": roomName,
 		"gamePoint": gamePoint,
-		"gameMode": gameMode
+		"gameMode": "1V1"
 	}
 	if (ws)
 		ws.send(JSON.stringify(payLoad));
@@ -56,6 +91,16 @@ const createRoom = function (root: HTMLElement): void {
 
 	// Reset form
 	(root.querySelector('#create-room-form') as HTMLFormElement).reset();
+}
+
+const inviteFriends = function (friendsId: string) {
+	const payLoad = {
+		"method": "invite",
+		"clientId": clientId,
+		"friendsId": friendsId
+	}
+	if (ws)
+		ws.send(JSON.stringify(payLoad));
 }
 
 const joinRoom = function (roomId: string) {
@@ -73,14 +118,14 @@ export const GameRoom: Page = {
 		return `
 	<div class="max-w-6xl mx-auto p-6 space-y-6">
 
-		<div class="backdrop-blur-2xs border-1 border-gray-50 p-8">
+		<div class="backdrop-blur-2xs border border-gray-50 p-8">
 			<div class="flex justify-center">
-				<h1 class="text-4xl z-10 text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-blue-500 to-green-500 bg-[length:400%_400%] animate-gradientShift font-bold text-center mb-5">Ranked Game</h1>
+				<h1 class="text-4xl z-10 text-transparent bg-clip-text bg-linear-to-r from-red-500 via-blue-500 to-green-500 bg-size-[400%_400%] animate-gradientShift font-bold text-center mb-5">Ranked Game</h1>
 			</div>
 			<div class="text-center mb-8">
 				<div class="flex justify-center space-x-4">
 					
-					<button id="vs-btn" class="px-10 py-3 font-bold text-2xl border-1 border-gray-50 text-gray-50 hover:bg-gray-700 transition-colors mb-5">
+					<button id="vs-btn" class="px-10 py-3 font-bold text-2xl border border-gray-50 text-gray-50 hover:bg-gray-700 transition-colors mb-5">
 						Jouer
 					</button>
 					</div>
@@ -92,14 +137,14 @@ export const GameRoom: Page = {
 			</div>
 		</div>
 
-		<div class="backdrop-blur-2xs border-1 border-gray-50 p-8">
+		<div class="backdrop-blur-2xs border border-gray-50 p-8">
 			<div class="flex justify-center">
-				<h1 class="text-4xl z-10 text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-blue-500 to-green-500 bg-[length:400%_400%] animate-gradientShift font-bold text-center mb-5">Friendly Game</h1>
+				<h1 class="text-4xl z-10 text-transparent bg-clip-text bg-linear-to-r from-red-500 via-blue-500 to-green-500 bg-size-[400%_400%] animate-gradientShift font-bold text-center mb-5">Friendly Game</h1>
 			</div>
 			<div class="text-center mb-8">
 				<div class="flex justify-center space-x-4">
 					
-					<button id="create-room-btn" class="px-10 py-3 text-2xl text-gray-50 border-1 border-gray-50 hover:bg-gray-700 transition-colors mb-5">
+					<button id="create-room-btn" class="px-10 py-3 text-2xl text-gray-50 border border-gray-50 hover:bg-gray-700 transition-colors mb-5">
 						Créer une partie
 					</button>
 				</div>
@@ -111,12 +156,24 @@ export const GameRoom: Page = {
 			</div>
 		</div>
 
-		<!-- Available Rooms Section -->
-		<div class="backdrop-blur-2xs border-1 border-gray-50 p-6">
-			<div class="flex justify-between items-center mb-6">
-				<h2 class="text-2xl text-gray-50 font-bold">Available rooms</h2>
+		<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+			<!-- Available Rooms Section -->	
+			<div class="backdrop-blur-2xs border border-gray-50 p-6">
+				<div class="flex justify-between items-center mb-6">
+					<h2 class="text-lg text-gray-50 font-bold ">Available rooms</h2>
+				</div>
+				<!-- Fixed-height scrollable area (one row per room) -->
+				<div class="flex flex-col gap-3 overflow-y-auto max-h-64 p-2" id="rooms-container"></div>
 			</div>
-			<div class="flex flex-wrap gap-4" id="rooms-container"></div>
+
+			<!-- Available frends Section -->
+			<div class="backdrop-blur-2xs border border-gray-50 p-6">
+				<div class="flex justify-between items-center mb-6">
+					<h2 class="text-lg text-gray-50 font-bold">Available Friends</h2>
+				</div>
+				<!-- Fixed-height scrollable area -->
+				<div class="flex flex-wrap gap-4 overflow-y-auto max-h-64 p-2" id="friends-container"></div>
+			</div>
 		</div>
 	</div>
 
@@ -141,7 +198,7 @@ export const GameRoom: Page = {
 
 	<!-- Modal Create Room -->
 	<div id="create-room-modal" class="fixed inset-0 backdrop-blur-lg hidden items-center justify-center z-50">
-		<div class="border-1 border-gray-50 p-8 max-w-md w-full mx-4">
+		<div class="border border-gray-50 p-8 max-w-md w-full mx-4">
 			<h3 class="text-2xl text-gray-50 font-bold mb-6 text-center">Créer une partie</h3>
 			
 			<form id="create-room-form" class="space-y-4">
@@ -150,7 +207,7 @@ export const GameRoom: Page = {
 					<input 
 						type="text" 
 						id="room-name" 
-						class="w-full px-3 py-2 border-1 border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50"
+						class="w-full px-3 py-2 border border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50"
 						placeholder="Enter room name"
 						required
 					>
@@ -158,7 +215,7 @@ export const GameRoom: Page = {
 				
 				<div>
 					<label class="block text-sm font-bold mb-2 text-gray-200">Points maximum :</label>
-					<select id="game-point" class="w-full px-3 py-2 border-1 border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50">
+					<select id="game-point" class="w-full px-3 py-2 border border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50">
 						<option value="3">3</option>
 						<option value="5">5</option>
 						<option value="10">10</option>
@@ -168,7 +225,7 @@ export const GameRoom: Page = {
 				
 				<div>
 					<label class="block text-sm font-bold mb-2">Mode de Jeu :</label>
-					<select id="game-mode" class="w-full px-3 py-2 text-gray-200 border-1 border-gray-400 focus:outline-none focus:border-gray-50">
+					<select id="game-mode" class="w-full px-3 py-2 text-gray-200 border border-gray-400 focus:outline-none focus:border-gray-50">
 						<option value="classic">Pong Classique</option>
 					</select>
 				</div>
@@ -176,13 +233,13 @@ export const GameRoom: Page = {
 				<div class="flex space-x-4 mt-6">
 					<button 
 						type="submit" 
-						class="flex-1 text-white py-2 px-4 border-1 border-gray-50 hover:bg-gray-700 hover:border-green-500 transition-colors font-bold">
+						class="flex-1 text-white py-2 px-4 border border-gray-50 hover:bg-gray-700 hover:border-green-500 transition-colors font-bold">
 						CRÉER
 					</button>
 					<button 
 						type="button" 
 						id="cancel-create" 
-						class="flex-1 text-white py-2 px-4 border-1 border-gray-50 hover:bg-gray-700 hover:border-red-500 transition-colors font-bold">
+						class="flex-1 text-white py-2 px-4 border border-gray-50 hover:bg-gray-700 hover:border-red-500 transition-colors font-bold">
 						ANNULER
 					</button>
 				</div>
@@ -319,6 +376,7 @@ export const GameRoom: Page = {
 		let statusRoom: ReturnType<typeof setInterval> | undefined;
 		statusRoom = setInterval(async () => {
 			reloadRooms(root);
+			// reloadFriends(root);
 		}, 1000);
 
 		const popstateHandler = (event: PopStateEvent) => {
