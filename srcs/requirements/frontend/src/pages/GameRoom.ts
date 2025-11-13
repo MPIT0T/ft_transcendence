@@ -30,12 +30,15 @@ function displayFriends(root: HTMLElement, friends: any[]) {
 
 	friends.forEach(friend => {
 		const friendBtn = document.createElement('button');
-		friendBtn.className = 'friend-btn text-gray-50 px-6 py-3 border-1 backdrop-blur-2xs border-gray-50 hover:bg-gray-700 transition-colors';
-		friendBtn.dataset.friendId = friend.friendId;
+		friendBtn.className = 'friend-btn w-full text-left flex items-center justify-between text-gray-50 px-4 py-3 border-1 backdrop-blur-2xs border-gray-50 hover:bg-gray-700 transition-colors';
+		friendBtn.dataset.friendsId = friend.friendsId;
 		friendBtn.innerHTML = `
-            ${friend.friendName}<br>
-            <span class="text-sm text-gray-400">${friend.players}</span>
-        `;
+			<div class="w-full flex items-center">
+				<div class="flex-1 min-w-0 font-semibold truncate mr-4">${friend.username || friend.name || 'Unknown'}</div>
+				<div class="w-20 text-md text-gray-300 text-right mr-4">${(friend.elo ?? friend.Elo ?? friend.rating) ? 'Elo: ' + (friend.elo ?? friend.Elo ?? friend.rating) : ''}</div>
+				<div class="w-28 text-md text-gray-300 text-right mr-4">${friend.status || ''}</div>
+			</div>
+		`;
 		friendBtn.addEventListener('click', () => {
 			inviteFriends(friend.friendsId);
 		});
@@ -56,9 +59,9 @@ function displayRooms(root: HTMLElement, rooms: any[]) {
 		roomBtn.innerHTML = `
 			<div class="w-full flex items-center">
 				<div class="flex-1 min-w-0 font-semibold truncate mr-4">${room.roomName}</div>
-				<div class="w-28 text-sm text-gray-300 text-right mr-4">${room.gameMode || ''}</div>
-				<div class="w-20 text-sm text-gray-400 text-right mr-4">${room.players}</div>
-				<div class="w-20 text-xs text-gray-400 text-right">${room.gamePoint ? room.gamePoint + ' pts' : ''}</div>
+				<div class="w-28 text-md text-gray-300 text-right mr-4">${room.gameMode || ''}</div>
+				<div class="w-20 text-md text-gray-400 text-right mr-4">${room.players}</div>
+				<div class="w-20 text-sm text-gray-400 text-right">${room.gamePoint ? room.gamePoint + ' pts' : ''}</div>
 			</div>
 		`;
 		roomBtn.addEventListener('click', () => {
@@ -116,7 +119,7 @@ const joinRoom = function (roomId: string) {
 export const GameRoom: Page = {
 	render() {
 		return `
-	<div class="max-w-6xl mx-auto p-6 space-y-6">
+	<div class="max-w-6xl mx-auto pt-20 space-y-6">
 
 		<div class="backdrop-blur-2xs border border-gray-50 p-8">
 			<div class="flex justify-center">
@@ -157,22 +160,22 @@ export const GameRoom: Page = {
 		</div>
 
 		<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-			<!-- Available Rooms Section -->	
+			<!-- Available Rooms Section -->
 			<div class="backdrop-blur-2xs border border-gray-50 p-6">
-				<div class="flex justify-between items-center mb-6">
-					<h2 class="text-lg text-gray-50 font-bold ">Available rooms</h2>
+				<div class="flex justify-between items-center mb-3">
+					<h2 class="text-xl text-gray-50 font-bold ">Available rooms</h2>
 				</div>
 				<!-- Fixed-height scrollable area (one row per room) -->
-				<div class="flex flex-col gap-3 overflow-y-auto max-h-64 p-2" id="rooms-container"></div>
+				<div class="flex flex-col gap-3 overflow-y-auto max-h-56 p-2" id="rooms-container"></div>
 			</div>
 
 			<!-- Available frends Section -->
 			<div class="backdrop-blur-2xs border border-gray-50 p-6">
-				<div class="flex justify-between items-center mb-6">
-					<h2 class="text-lg text-gray-50 font-bold">Available Friends</h2>
+				<div class="flex justify-between items-center mb-3">
+					<h2 class="text-xl text-gray-50 font-bold">Available Friends</h2>
 				</div>
 				<!-- Fixed-height scrollable area -->
-				<div class="flex flex-wrap gap-4 overflow-y-auto max-h-64 p-2" id="friends-container"></div>
+				<div class="flex flex-col gap-3 overflow-y-auto max-h-56 p-2" id="friends-container"></div>
 			</div>
 		</div>
 	</div>
