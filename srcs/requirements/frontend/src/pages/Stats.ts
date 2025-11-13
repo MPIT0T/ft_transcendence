@@ -67,20 +67,20 @@
       </div>
   
       <!-- Username -->
-      <div class="border-b border-gray-700 mb-6">
-        <p class="text-3xl text-gray-50 font-semibold">${sessionStorage.getItem('username')}</p>
+      <div class="flex justify-between items-center border-b border-gray-700 mb-6">
+        <span class="text-3xl text-gray-50 font-semibold">${sessionStorage.getItem('username')}</span>
+        <span class="text-xl text-gray-400">pseudo</span>
       </div>
   
       <!-- Elo -->
-      <div class="border-b border-gray-700 mb-6">
-        <p class="text-2xl text-gray-200 font-semibold">1326</p>
+      <div class="flex justify-between items-center border-b border-gray-700 mb-6">
+        <span class="text-3xl text-gray-50 font-semibold">1365</span>
+        <span class="text-xl text-gray-400">elo</span>
       </div>
   
       <div class="text-center mt-auto w-full">
         <button class="px-3 py-3 w-full font-bold border-1 border-gray-50 backdrop-blur-2xs text-2xl hover:border-red-500 hover:bg-gray-700/50 text-gray-50 transition-transform" id="sign-out-btn">Se déconnecter</button>
       </div>
-  
-      
     </div>
   
     <!-- Detailed stats -->
@@ -110,18 +110,18 @@
       </div>
         <!-- Main stats -->
         <div class="grid grid-cols-3 gap-4 text-center mt-8">
-            <div>
-                <div class="text-2xl font-bold text-gray-800" id="stats-rank">2</div>
-                <div class="text-sm text-gray-600">Rank</div>
-            </div>
-            <div>
-                <div class="text-2xl font-bold text-gray-800" id="stats-win-rate">42%</div>
-                <div class="text-sm text-gray-600">Win Rate</div>
-            </div>
-            <div>
-                <div class="text-2xl font-bold text-gray-800" id="stats-friends">0</div>
-                <div class="text-sm text-gray-600">Friends</div>
-            </div>
+          <div>
+            <div class="text-2xl font-bold text-gray-800" id="stats-rank">2</div>
+            <div class="text-sm text-gray-600">Rank</div>
+          </div>
+          <div>
+            <div class="text-2xl font-bold text-gray-800" id="stats-win-rate">42%</div>
+            <div class="text-sm text-gray-600">Win Rate</div>
+          </div>
+          <div>
+            <div class="text-2xl font-bold text-gray-800" id="stats-friends">0</div>
+            <div class="text-sm text-gray-600">Friends</div>
+          </div>
         </div>
     </div>
   
