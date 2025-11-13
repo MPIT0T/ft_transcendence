@@ -432,6 +432,28 @@ const Stats: StatsPage = {
       });
     }
 
+    // Friends tabs (Online / Offline)
+    const onlineTab = root.querySelector('#friends-online-tab') as HTMLButtonElement | null;
+    const offlineTab = root.querySelector('#friends-offline-tab') as HTMLButtonElement | null;
+    const tabIndicator = root.querySelector('#friends-tab-indicator') as HTMLDivElement | null;
+    const onlineSection = root.querySelector('#online-friends') as HTMLElement | null;
+    const offlineSection = root.querySelector('#offline-friends') as HTMLElement | null;
+
+    const showOnline = () => {
+      if (tabIndicator) tabIndicator.style.transform = 'translateX(0%)';
+      if (onlineSection) onlineSection.classList.remove('hidden');
+      if (offlineSection) offlineSection.classList.add('hidden');
+    };
+
+    const showOffline = () => {
+      if (tabIndicator) tabIndicator.style.transform = 'translateX(100%)';
+      if (offlineSection) offlineSection.classList.remove('hidden');
+      if (onlineSection) onlineSection.classList.add('hidden');
+    };
+
+    if (onlineTab) onlineTab.addEventListener('click', showOnline);
+    if (offlineTab) offlineTab.addEventListener('click', showOffline);
+
     // Invite buttons
     const inviteButtons = root.querySelectorAll('button') as NodeListOf<HTMLButtonElement>;
     inviteButtons.forEach(btn => {
