@@ -41,6 +41,11 @@ export const GameOnline: Page = {
         </div>
       </div>
       <p class="text-gray-400">Le jeu démarrera automatiquement quand tous les joueurs seront prêts</p>
+      <button 
+					id="cancel-matchmaking" 
+					class="w-full bg-red-500 text-white py-3 px-6 border-2 border-black hover:bg-red-600 transition-colors font-bold">
+					QUITTER LE MATCHMAKING
+			</button>
     </div>
   </div>
 </div>
@@ -49,8 +54,8 @@ export const GameOnline: Page = {
 
 
   mount(root) {
-    let roomId = localStorage.getItem('roomId');
-    let clientId = localStorage.getItem('clientId');
+    let roomId = sessionStorage.getItem('roomId');
+    let clientId = sessionStorage.getItem('clientId');
     let canStart = false;
     let waiting = true;
 
@@ -62,6 +67,7 @@ export const GameOnline: Page = {
     const player2NameEl = root.querySelector('#player-2-name') as HTMLElement;
     const player2EloEl = root.querySelector('#player-2-elo') as HTMLElement;
     const waitingModal = root.querySelector('#waiting-modal') as HTMLElement;
+    const cancelMatchmakingBtn = root.querySelector('#cancel-matchmaking') as HTMLButtonElement;
 
 
     const formatTime = (s: number) => {
@@ -78,6 +84,24 @@ export const GameOnline: Page = {
       if (timerEl) {
         timerEl.textContent = formatTime(elapsedSeconds);
       }
+    }
+
+    // Bouton pour quitter le matchmaking
+    if (cancelMatchmakingBtn) {
+      cancelMatchmakingBtn.addEventListener('click', () => {
+        const payLoad = {
+          "method": "leave",
+          "clientId": clientId
+        };
+        if (ws) {
+          ws.send(JSON.stringify(payLoad));
+        }
+        window.removeEventListener('popstate', popstateHandler);
+        const p = '/gameRoom';
+        history.pushState(null, '', p);
+        window.dispatchEvent(new PopStateEvent('popstate'));
+
+      });
     }
 
     const startTimer = () => {
@@ -159,30 +183,30 @@ export const GameOnline: Page = {
             currentGame.destroy();
             stopTimer();
             await sleep(5000);
-            window.location.hash = '/gameRoom';
+            const p = '/gameRoom';
+            history.pushState(null, '', p);
+            window.dispatchEvent(new PopStateEvent('popstate'));
           }
         }
       }
 
+    }
+    // Cleanup previous game if exists
+    if (currentGame) {
+      currentGame.destroy();
+    }
 
-      // Cleanup previous game if exists
-      if (currentGame) {
-        currentGame.destroy();
+    const popstateHandler = (event: PopStateEvent) => {
+      const payLoad = {
+        "method": "leave",
+        "clientId": clientId
       }
 
-      const hashChangeHandler = (event: HashChangeEvent) => {
-        const payLoad = {
-          "method": "leave",
-          "clientId": clientId
-        }
-        if (ws)
-          ws.send(JSON.stringify(payLoad));
+      if (ws)
+        ws.send(JSON.stringify(payLoad));
 
-        window.removeEventListener('hashchange', hashChangeHandler);
-      };
-      window.addEventListener('hashchange', hashChangeHandler);
-    } else {
-      window.location.hash = '/gameRoom'; //TODO add notification
-    }
+      window.removeEventListener('popstate', popstateHandler);
+    };
+    window.addEventListener('popstate', popstateHandler);
   }
 }

@@ -174,9 +174,8 @@ export const GameRoom: Page = {
 				
 				<div>
 					<label class="block text-sm font-bold mb-2">Mode de Jeu :</label>
-					<select id="game-mode" class="w-full px-3 py-2 border-1 border-gray-400 focus:outline-none focus:border-gray-50">
+					<select id="game-mode" class="w-full px-3 py-2 text-gray-200 border-1 border-gray-400 focus:outline-none focus:border-gray-50">
 						<option value="classic">Pong Classique</option>
-						<option value="power-up">Mode Power-Ups</option>
 					</select>
 				</div>
 				
@@ -211,7 +210,7 @@ export const GameRoom: Page = {
 			if (response.method === "connect") {
 				clientId = response.clientId;
 				if (clientId !== undefined) {
-					localStorage.setItem('clientId', clientId);
+					sessionStorage.setItem('clientId', clientId);
 				}
 				reloadRooms(root);
 			}
@@ -225,7 +224,7 @@ export const GameRoom: Page = {
 
 					roomId = response.room.roomId;
 					if (roomId !== undefined) {
-						localStorage.setItem('roomId', roomId);
+						sessionStorage.setItem('roomId', roomId);
 					}
 
 					// Fermer le modal de matchmaking si ouvert
@@ -235,7 +234,11 @@ export const GameRoom: Page = {
 						matchmakingModal.classList.remove('flex');
 					}
 
-					window.location.hash = response.url;
+					// navigate using History API
+					const raw = response.url || '/';
+					const p = raw.startsWith('#') ? raw.replace(/^#\/?/, '/') : (raw.startsWith('/') ? raw : '/' + raw);
+					history.pushState(null, '', p);
+					window.dispatchEvent(new PopStateEvent('popstate'));
 				} else {
 					alert(response.message);
 				}
@@ -249,7 +252,6 @@ export const GameRoom: Page = {
 		// page buttons
 		const vsBtn = root.querySelector('#vs-btn') as HTMLButtonElement;
 		const createRoomBtn = root.querySelector('#create-room-btn') as HTMLButtonElement;
-		const reloadBtn = root.querySelector('#reload-btn') as HTMLButtonElement;
 		const matchmakingModal = root.querySelector('#matchmaking-modal') as HTMLDivElement;
 		const cancelMatchmakingBtn = root.querySelector('#cancel-matchmaking') as HTMLButtonElement;
 
@@ -260,7 +262,7 @@ export const GameRoom: Page = {
 					matchmakingModal.classList.remove('hidden');
 					matchmakingModal.classList.add('flex');
 				}
-				
+
 				// Lancer la recherche de match
 				joinRoom("ranked");
 			});
@@ -276,7 +278,7 @@ export const GameRoom: Page = {
 				if (ws) {
 					ws.send(JSON.stringify(payLoad));
 				}
-				
+
 				// Fermer le modal
 				if (matchmakingModal) {
 					matchmakingModal.classList.add('hidden');
@@ -290,12 +292,6 @@ export const GameRoom: Page = {
 				const modal = root.querySelector('#create-room-modal') as HTMLDivElement;
 				modal.classList.remove('hidden');
 				modal.classList.add('flex');
-			});
-		}
-
-		if (reloadBtn) {
-			reloadBtn.addEventListener('click', () => {
-				reloadRooms(root);
 			});
 		}
 
@@ -325,5 +321,17 @@ export const GameRoom: Page = {
 				createRoom(root);
 			});
 		}
+
+		let statusRoom: ReturnType<typeof setInterval> | undefined;
+		statusRoom = setInterval(async () => {
+			reloadRooms(root);
+		}, 1000);
+
+		const popstateHandler = (event: PopStateEvent) => {
+			window.clearInterval(statusRoom);
+			window.removeEventListener('popstate', popstateHandler);
+		};
+		window.addEventListener('popstate', popstateHandler);
+
 	},
 };

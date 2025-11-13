@@ -37,7 +37,8 @@ class Room {
 
 		this.clients.push(client);
 
-		const roomUrl = `/gameOnline?gameId=${this.roomId}`;
+		// const roomUrl = `/gameOnline?gameId=${this.roomId}`;
+		const roomUrl = `/gameOnline`;
 
 		socket.send(JSON.stringify({
 			method: 'join',
@@ -81,7 +82,7 @@ class Room {
 
 
 	async updatePlayerR(int) {
-		
+
 		this.playerR += int;
 		if (this.playerR === 2) {
 			this.state = "playing-game";
@@ -110,22 +111,22 @@ class Room {
 
 
 	updatePlayer(socket, data) {
-        this.clients.forEach(c => {
+		this.clients.forEach(c => {
 			if (c._conection && c._conection === socket) {
-                const player = c._player === 1 ? this.player1 : this.player2;
-                
-                if (data.type === "UP") {
-                    if (data.key === "KeyW" || data.key === "ArrowUp") {
-                        player.setVelocity(-8); // Monter
-                    } else if (data.key === "KeyS" || data.key === "ArrowDown") {
-                        player.setVelocity(8); // Descendre
-                    }
-                } else if (data.type === "DOWN") {
-                    player.setVelocity(0);
-                }
-            }
-        });
-    }
+				const player = c._player === 1 ? this.player1 : this.player2;
+
+				if (data.type === "UP") {
+					if (data.key === "KeyW" || data.key === "ArrowUp") {
+						player.setVelocity(-8); // Monter
+					} else if (data.key === "KeyS" || data.key === "ArrowDown") {
+						player.setVelocity(8); // Descendre
+					}
+				} else if (data.type === "DOWN") {
+					player.setVelocity(0);
+				}
+			}
+		});
+	}
 
 	async gameLoop() {
 		let lastTime = Date.now();
@@ -186,7 +187,7 @@ class Room {
 			this.player1.reset();
 			this.player2.reset();
 		}
-		
+
 		if (scorer === 1 || scorer === 2) {
 			const payLoad = {
 				"method": "update",
@@ -207,7 +208,7 @@ class Room {
 
 		// 6. Vérifier la condition de victoire
 		if (this.p1Score >= this.gamePoint || this.p2Score >= this.gamePoint) {
-			
+
 			const payLoad = {
 				"method": "update",
 				"room": this.toJsonUpdate(),
@@ -221,12 +222,12 @@ class Room {
 				}
 			});
 
-			
+
 			this.state = "ended";
 		}
 	}
 
-	sendGameEnd() {
+	async sendGameEnd() {
 		const winner = this.p1Score > this.p2Score ? 1 : 2;
 		// const winner = this.p1Score >= this.gamePoint ? 1 : 2;
 
@@ -245,6 +246,33 @@ class Room {
 				c._conection.send(JSON.stringify(payLoad));
 			}
 		});
+		
+		// const bodyPayload = {
+		// 	game: {
+		// 		winner: winner,
+		// 		gamePoint: this.gamePoint,
+		//		gameMode: this.gameMode,
+		// 		finalScore: {
+		// 			player1: this.p1Score,
+		// 			player2: this.p2Score
+		// 		}
+		// 	},
+		// 	clients: this.clients.map(client => client.id || client)
+		// };
+		// try {
+		// 	const res = await fetch('/user/api/posting-game', { //change post name
+		// 		method: 'POST',
+		// 		headers: { 'Content-Type': 'application/json' },
+		// 		body: JSON.stringify(bodyPayload),
+		// 	});
+
+		// 	if (!res.ok) {
+		// 		const bodyText = await res.text().catch(() => '');
+		// 		console.log('sendGameEnd - failed posting game result:', res.status, res.statusText, bodyText);
+		// 	}
+		// } catch (err) {
+		// 	console.log('sendGameEnd - fetch error:', err);
+		// }
 	}
 
 	toJSON() {
@@ -263,7 +291,7 @@ class Room {
 			player2: this.player2?.toJSON ? this.player2.toJSON() : this.player2,
 		};
 	}
-	
+
 	toJsonUpdate() {
 		return {
 			ball: this.ball?.toJSON ? this.ball.toJSON() : this.ball,
@@ -281,7 +309,7 @@ class Room {
 			player2: this.player2?.toJsonMove ? this.player2.toJsonMove() : this.player2,
 		};
 	}
-	
+
 	toJsonJoin() {
 		return {
 			roomId: this.roomId,

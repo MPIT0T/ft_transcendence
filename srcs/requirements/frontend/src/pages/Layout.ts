@@ -66,7 +66,7 @@ declare global {
 export const Layout = {
   render(content: string): string {
     return `
-      <div class="flex flex-col h-screen font-custom font-tiny5">
+      <div class="flex flex-col h-screen font-custom font-tiny5 ">
         <nav class="fixed w-screen z-20 h-24 flex items-center justify-between backdrop-blur-2xs border-b border-gray-50">
           <!-- Navigation gauche -->
           <div class="flex my-5 gap-3 mx-5">
@@ -289,21 +289,27 @@ export const Layout = {
     const homeBtn = root.querySelector('#home-btn') as HTMLButtonElement;
     if (homeBtn) {
       homeBtn.addEventListener('click', () => {
-        window.location.hash = '/';
+        const p = '/';
+        history.pushState(null, '', p);
+        window.dispatchEvent(new PopStateEvent('popstate'));
       });
     }
 
     const statsBtn = root.querySelector('#stats-btn') as HTMLButtonElement;
     if (statsBtn) {
       statsBtn.addEventListener('click', () => {
-        window.location.hash = '/stats';
+        const p = '/stats';
+        history.pushState(null, '', p);
+        window.dispatchEvent(new PopStateEvent('popstate'));
       });
     }
 
     const gameBtn = root.querySelector('#game-btn') as HTMLButtonElement;
     if (gameBtn) {
       gameBtn.addEventListener('click', () => {
-        window.location.hash = '/gameLoby';
+        const p = '/gameLoby';
+        history.pushState(null, '', p);
+        window.dispatchEvent(new PopStateEvent('popstate'));
       });
     }
 
@@ -311,7 +317,7 @@ export const Layout = {
 
     // Language management
     const langButtons = root.querySelectorAll('[data-lang]') as NodeListOf<HTMLButtonElement>;
-    const currentLang = localStorage.getItem('language') || 'fr';
+    const currentLang = sessionStorage.getItem('language') || 'fr';
     
     this.setActiveLanguage(root, currentLang);
     
@@ -458,7 +464,9 @@ export const Layout = {
     const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true';
     
     if (isLoggedIn) {
-      window.location.hash = '/stats'
+      const p = '/stats';
+      history.pushState(null, '', p);
+      window.dispatchEvent(new PopStateEvent('popstate'));
     } else {
       // Open login modal
       const loginModal = root.querySelector('#login-modal') as HTMLDivElement;
@@ -581,7 +589,7 @@ export const Layout = {
   },
 
   async changeLanguage(root: HTMLElement, lang: string): Promise<void> {
-    localStorage.setItem("language", lang);
+    sessionStorage.setItem("language", lang);
     this.setActiveLanguage(root, lang);
 
     console.log(`Changed language to ${lang}`);

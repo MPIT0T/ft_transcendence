@@ -9,6 +9,8 @@ class Client {
 		this.isReady = false; // Initialiser le statut ready à false
 	}
 
+	
+
 	toJSON() {
 		return {
 				name: this._name,

@@ -125,7 +125,9 @@ export const GameLobby: Page = {
 		const localBtn = root.querySelector('#local-mode') as HTMLButtonElement;
 		if (localBtn) {
 			localBtn.addEventListener('click', () => {
-				window.location.hash = '/game';
+				const p = '/game';
+				history.pushState(null, '', p);
+				window.dispatchEvent(new PopStateEvent('popstate'));
 			});
 		}
 
@@ -133,7 +135,9 @@ export const GameLobby: Page = {
 		const onlineBtn = root.querySelector('#online-mode') as HTMLButtonElement;
 		if (onlineBtn) {
 			onlineBtn.addEventListener('click', () => {
-				window.location.hash = '/gameRoom';
+				const p = '/gameRoom';
+				history.pushState(null, '', p);
+				window.dispatchEvent(new PopStateEvent('popstate'));
 			});
 		}
 
@@ -142,13 +146,17 @@ export const GameLobby: Page = {
 		const tournamentBtn = root.querySelector('#tournament-mode') as HTMLButtonElement;
 		if (tournamentBtn) {
 			tournamentBtn.addEventListener('click', () => {
-				window.location.hash = '/tournamentRoom';
+				const p = '/tournamentRoom';
+				history.pushState(null, '', p);
+				window.dispatchEvent(new PopStateEvent('popstate'));
 			});
 		}
 
+		
+		let status: ReturnType<typeof setInterval> | undefined;
 		const ping = root.querySelector('#ping') as HTMLButtonElement;
 		if(ping){
-			setInterval(async () => {
+			status = setInterval(async () => {
 				const start = Date.now();
 
 				try {
@@ -162,9 +170,11 @@ export const GameLobby: Page = {
 			}, 1000);
 		}
 
+		let statusPlayer: ReturnType<typeof setInterval> | undefined;
+
 		const player = root.querySelector('#player') as HTMLButtonElement;
 		if (player) {
-			setInterval(async () => {
+			statusPlayer = setInterval(async () => {
 				try {
 					const response = await fetch("/pong/statusPlayer");
 					const count = await response.text();
@@ -175,14 +185,12 @@ export const GameLobby: Page = {
 			}, 1000);
 		}
 
-		// Hash change handler to clear intervals
-		const hashChangeHandler = (event: HashChangeEvent) => {
-			const highestId = window.setInterval(() => {}, 0);
-			for (let i = 1; i <= highestId; i++) {
-				window.clearInterval(i);
-			}
-			window.removeEventListener('hashchange', hashChangeHandler);
+		// popstate handler to clear intervals
+		const popstateHandler = (event: PopStateEvent) => {
+				window.clearInterval(status);
+				window.clearInterval(statusPlayer);
+			window.removeEventListener('popstate', popstateHandler);
 		};
-		window.addEventListener('hashchange', hashChangeHandler);
+		window.addEventListener('popstate', popstateHandler);
 	}
 };
