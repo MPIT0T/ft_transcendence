@@ -11,13 +11,13 @@ const Stats: StatsPage = {
 		return `
 <div class="bg-transparent flex flex-col w-[60vw] pt-20 items-start">
 	<!-- Header avec onglets -->
-		<div class="mb-6 w-[60vw] mx-auto">
-	<div class="relative backdrop-blur-2xs border border-gray-50 flex overflow-hidden">
+  <div class="mb-6 w-[60vw] mx-auto">
+	  <div class="relative backdrop-blur-2xs border border-gray-50 flex overflow-hidden">
 			<!-- Sliding indicator -->
 			<div id="tab-indicator" class="absolute top-0 left-0 h-full w-1/2 bg-gray-700 transition-transform duration-300 ease-in-out" style="transform:${indicatorTransform};"></div>
 			<button 
-				id="profile-tab"
-				class="relative z-10 flex-1 px-6 py-3 text-center transition-colors duration-200 hover:bg-gray-700/50 text-white">
+		    	id="profile-tab"
+				  class="relative z-10 flex-1 px-6 py-3 text-center transition-colors duration-200 hover:bg-gray-700/50 text-white">
 				<div class="relative inline-block">
 					<div class="relative z-10 text-7xl text-transparent bg-clip-text
 							bg-linear-to-r from-red-500 via-blue-500 to-green-500
@@ -25,11 +25,11 @@ const Stats: StatsPage = {
 						Profil
 					</div>
 				</div>
-		</button>
-		<button 
-			id="history-tab"
-			class="relative z-10 flex-1 px-6 py-3 text-center transition-colors duration-200 hover:bg-gray-700/50 text-white">
-			<div class="relative inline-block">
+		  </button>
+		  <button 
+			    id="history-tab"
+			    class="relative z-10 flex-1 px-6 py-3 text-center transition-colors duration-200 hover:bg-gray-700/50 text-white">
+			  <div class="relative inline-block">
 					<div class="relative z-10 text-7xl text-transparent bg-clip-text
 							bg-linear-to-r from-red-500 via-blue-500 to-green-500
 							bg-size-[200%_100%] bg-position-[100%_100%]">
@@ -203,149 +203,149 @@ const Stats: StatsPage = {
 
   renderHistory() {
           return `
-              <div class="space-y-6">
-                  <!-- Filtres -->
-                  <div class="bg-white p-6">
-                      <div class="flex flex-wrap gap-4 items-center">
-                          <div>
-                              <label class="block text-sm font-medium text-gray-700 mb-1">Période :</label>
-                              <select class="px-3 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                  <option>Dernière semaine</option>
-                                  <option>Dernier mois</option>
-                                  <option>Tout</option>
-                              </select>
-                          </div>
-                          <div>
-                              <label class="block text-sm font-medium text-gray-700 mb-1">Résultat :</label>
-                              <select class="px-3 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                  <option>Tous</option>
-                                  <option>Victoires</option>
-                                  <option>Défaites</option>
-                              </select>
-                          </div>
-                          <button class="mt-6 px-4 py-2 bg-blue-500 text-white hover:bg-blue-600 transition-colors">
-                              Filtrer
-                          </button>
-                      </div>
-                  </div>
-  
-                  <!-- Historique des matches -->
-                  <div class="bg-white overflow-hidden">
-                      <div class="px-6 py-4 border-b border-gray-200">
-                          <h3 class="text-lg font-semibold text-gray-800">📈 Historique des matches</h3>
-                      </div>
-                      
-                      <div class="overflow-x-auto">
-                          <table class="w-full">
-                              <thead class="bg-gray-50">
-                                  <tr>
-                                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Adversaire</th>
-                                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Score</th>
-                                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Résultat</th>
-                                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durée</th>
-                                  </tr>
-                              </thead>
-                              <tbody class="bg-white divide-y divide-gray-200">
-                                  <tr class="hover:bg-gray-50">
-                                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">15/01/2024 14:30</td>
-                                      <td class="px-6 py-4 whitespace-nowrap">
-                                          <div class="flex items-center">
-                                              <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center mr-3">
-                                                  <span class="text-sm">👤</span>
-                                              </div>
-                                              <span class="text-sm font-medium text-gray-900">BOB</span>
-                                          </div>
-                                      </td>
-                                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">5 - 3</td>
-                                      <td class="px-6 py-4 whitespace-nowrap">
-                                          <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                              ✅ Victoire
-                                          </span>
-                                      </td>
-                                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">5m 23s</td>
-                                  </tr>
-                                  <tr class="hover:bg-gray-50">
-                                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">14/01/2024 20:15</td>
-                                      <td class="px-6 py-4 whitespace-nowrap">
-                                          <div class="flex items-center">
-                                              <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center mr-3">
-                                                  <span class="text-sm">👤</span>
-                                              </div>
-                                              <span class="text-sm font-medium text-gray-900">Mike</span>
-                                          </div>
-                                      </td>
-                                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2 - 5</td>
-                                      <td class="px-6 py-4 whitespace-nowrap">
-                                          <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
-                                              ❌ Défaite
-                                          </span>
-                                      </td>
-                                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">3m 45s</td>
-                                  </tr>
-                                  <tr class="hover:bg-gray-50">
-                                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">13/01/2024 16:42</td>
-                                      <td class="px-6 py-4 whitespace-nowrap">
-                                          <div class="flex items-center">
-                                              <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center mr-3">
-                                                  <span class="text-sm">👤</span>
-                                              </div>
-                                              <span class="text-sm font-medium text-gray-900">Mathis</span>
-                                          </div>
-                                      </td>
-                                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">5 - 1</td>
-                                      <td class="px-6 py-4 whitespace-nowrap">
-                                          <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                              ✅ Victoire
-                                          </span>
-                                      </td>
-                                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">4m 12s</td>
-                                  </tr>
-                                  <tr class="hover:bg-gray-50">
-                                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">12/01/2024 11:20</td>
-                                      <td class="px-6 py-4 whitespace-nowrap">
-                                          <div class="flex items-center">
-                                              <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center mr-3">
-                                                  <span class="text-sm">👤</span>
-                                              </div>
-                                              <span class="text-sm font-medium text-gray-900">Jean</span>
-                                          </div>
-                                      </td>
-                                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">3 - 5</td>
-                                      <td class="px-6 py-4 whitespace-nowrap">
-                                          <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
-                                              ❌ Défaite
-                                          </span>
-                                      </td>
-                                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">6m 38s</td>
-                                  </tr>
-                              </tbody>
-                          </table>
-                      </div>
-                  </div>
-  
-                  <!-- Statistiques de la période -->
-                  <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                      <div class="bg-white p-6 text-center">
-                          <div class="text-3xl font-bold text-blue-600">4</div>
-                          <div class="text-sm text-gray-600">Parties cette semaine</div>
-                      </div>
-                      <div class="bg-white p-6 text-center">
-                          <div class="text-3xl font-bold text-green-600">2</div>
-                          <div class="text-sm text-gray-600">Victoires</div>
-                      </div>
-                      <div class="bg-white p-6 text-center">
-                          <div class="text-3xl font-bold text-red-600">2</div>
-                          <div class="text-sm text-gray-600">Défaites</div>
-                      </div>
-                      <div class="bg-white p-6 text-center">
-                          <div class="text-3xl font-bold text-purple-600">50%</div>
-                          <div class="text-sm text-gray-600">Winrate</div>
-                      </div>
-                  </div>
+<div class="space-y-6">
+  <!-- Filtres -->
+  <div class="bg-white p-6">
+    <div class="flex flex-wrap gap-4 items-center">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Période :</label>
+        <select class="px-3 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <option>Dernière semaine</option>
+          <option>Dernier mois</option>
+          <option>Tout</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Résultat :</label>
+        <select class="px-3 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <option>Tous</option>
+          <option>Victoires</option>
+          <option>Défaites</option>
+        </select>
+      </div>
+      <button class="mt-6 px-4 py-2 bg-blue-500 text-white hover:bg-blue-600 transition-colors">
+        Filtrer
+      </button>
+    </div>
+  </div>
+
+    <!-- Historique des matches -->
+  <div class="bg-white overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h3 class="text-lg font-semibold text-gray-800">📈 Historique des matches</h3>
+    </div>
+      
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Adversaire</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Score</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Résultat</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durée</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr class="hover:bg-gray-50">
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">15/01/2024 14:30</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="flex items-center">
+                <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center mr-3">
+                  <span class="text-sm">👤</span>
+                </div>
+                <span class="text-sm font-medium text-gray-900">BOB</span>
               </div>
-          `;
-      },
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">5 - 3</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                ✅ Victoire
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">5m 23s</td>
+          </tr>
+          <tr class="hover:bg-gray-50">
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">14/01/2024 20:15</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="flex items-center">
+                <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center mr-3">
+                  <span class="text-sm">👤</span>
+                </div>
+                <span class="text-sm font-medium text-gray-900">Mike</span>
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2 - 5</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
+                ❌ Défaite
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">3m 45s</td>
+          </tr>
+          <tr class="hover:bg-gray-50">
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">13/01/2024 16:42</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="flex items-center">
+                <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center mr-3">
+                  <span class="text-sm">👤</span>
+                </div>
+                <span class="text-sm font-medium text-gray-900">Mathis</span>
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">5 - 1</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                ✅ Victoire
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">4m 12s</td>
+          </tr>
+          <tr class="hover:bg-gray-50">
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">12/01/2024 11:20</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="flex items-center">
+                <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center mr-3">
+                  <span class="text-sm">👤</span>
+                </div>
+                <span class="text-sm font-medium text-gray-900">Jean</span>
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">3 - 5</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
+                ❌ Défaite
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">6m 38s</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+<!-- Statistiques de la période -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+    <div class="bg-white p-6 text-center">
+      <div class="text-3xl font-bold text-blue-600">4</div>
+      <div class="text-sm text-gray-600">Parties cette semaine</div>
+    </div>
+    <div class="bg-white p-6 text-center">
+      <div class="text-3xl font-bold text-green-600">2</div>
+      <div class="text-sm text-gray-600">Victoires</div>
+    </div>
+    <div class="bg-white p-6 text-center">
+      <div class="text-3xl font-bold text-red-600">2</div>
+      <div class="text-sm text-gray-600">Défaites</div>
+    </div>
+    <div class="bg-white p-6 text-center">
+      <div class="text-3xl font-bold text-purple-600">50%</div>
+      <div class="text-sm text-gray-600">Winrate</div>
+    </div>
+  </div>
+</div>
+`;
+  },
 
   mount(root) {
     // Gestion des onglets
