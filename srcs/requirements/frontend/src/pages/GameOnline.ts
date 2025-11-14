@@ -10,7 +10,7 @@ let elapsedSeconds: number = 0;
 export const GameOnline: Page = {
   render() {
     return `
-<div class="relative overflow-hidden text-gray-50 text-lg border-1 border-gray-50 backdrop-blur-2xs">
+<div class="relative overflow-hidden text-gray-50 text-lg border border-gray-50 backdrop-blur-2xs">
   <div class="absolute inset-0 bg-gradient-to-r from-red-500 to-blue-500 opacity-30"></div>
   <div class="relative z-10">
     <div class="flex items-center justify-between px-6 pt-2">
@@ -29,7 +29,7 @@ export const GameOnline: Page = {
   <div id="game-container" class="mb-8"></div>
 </div>
 <div id="waiting-modal" class="fixed inset-0 backdrop-blur-lg flex items-center justify-center z-50">
-  <div class="bg-transparent border-gray-50 border-1 p-8 max-w-md w-full mx-4">
+  <div class="bg-transparent border-gray-50 border p-8 max-w-md w-full mx-4">
     <div class="text-center">
       <h2 class="text-3xl text-gray-50 font-bold mb-4">Attente...</h2>
       <p class="text-xl text-gray-300 mb-6">En attente d'autres joueurs</p>

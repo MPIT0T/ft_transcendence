@@ -57,7 +57,7 @@ const Stats: StatsPage = {
 		return `
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 	<!-- Profil Section -->
-	<div class="backdrop-blur-2xs border-1 border-gray-50 p-6 h-full flex flex-col">
+	<div class="backdrop-blur-2xs border border-gray-50 p-6 h-full flex flex-col">
 		<!-- Avatar -->
       <div class="text-center mb-6">
           <div class="w-20 h-20 bg-transparent mx-auto mb-3 flex items-center justify-center">
@@ -78,12 +78,12 @@ const Stats: StatsPage = {
       </div>
 
 		<div class="text-center mt-auto w-full">
-        <button class="px-3 py-3 w-full font-bold border-1 border-gray-50 backdrop-blur-2xs text-2xl hover:border-red-500 hover:bg-gray-700 text-gray-50 transition-transform">Se déconnecter</button>
+        <button class="px-3 py-3 w-full font-bold border border-gray-50 backdrop-blur-2xs text-2xl hover:border-red-500 hover:bg-gray-700 text-gray-50 transition-transform">Se déconnecter</button>
 		</div>
 	</div>
 
 	<!-- Detailed stats -->
-	<div class="backdrop-blur-2xs border-1 border-gray-50 p-6">
+	<div class="backdrop-blur-2xs border border-gray-50 p-6">
 		<h3 class="text-lg font-semibold mb-4 text-gray-100">Statistiques</h3>
 		<div class="space-y-4">
 			<div class="flex justify-between items-center py-2 border-b border-gray-700">
@@ -132,7 +132,7 @@ const Stats: StatsPage = {
 			<label for="add-friend-input" class="block text-sm text-gray-300 mb-2">Ajouter un ami</label>
 			<div class="flex gap-2">
 				<input id="add-friend-input" type="text" placeholder="Nom de l'ami" class="flex-1 px-3 py-2 bg-white/5 border border-gray-700 text-sm text-gray-100 focus:outline-none focus:border-gray-400" />
-				<button id="add-friend-btn" class="px-3 py-2 border-1 border-gray-400 text-white text-sm hover:bg-gray-700/50 hover:border-blue-500 transition-colors">Ajouter</button>
+				<button id="add-friend-btn" class="px-3 py-2 border border-gray-400 text-white text-sm hover:bg-gray-700/50 hover:border-blue-500 transition-colors">Ajouter</button>
 			</div>
 		</div>
 		

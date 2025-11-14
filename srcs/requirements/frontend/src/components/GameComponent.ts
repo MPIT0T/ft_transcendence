@@ -59,7 +59,7 @@ export class GameComponent {
       <div class="w-full flex justify-center">
         <canvas 
           id="game-canvas" 
-          class="backdrop-blur-2xs border-1 border-gray-50"
+          class="backdrop-blur-2xs border border-gray-50"
           width="900" 
           height="600">
         </canvas>

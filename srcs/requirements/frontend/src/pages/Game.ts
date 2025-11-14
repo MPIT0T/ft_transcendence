@@ -8,7 +8,7 @@ let elapsedSeconds: number = 0;
 export const Game: Page = {
   render() {
     return `
-<div class="relative overflow-hidden text-gray-50 text-lg border-1 border-gray-50 backdrop-blur-2xs">
+<div class="relative overflow-hidden text-gray-50 text-lg border border-gray-50 backdrop-blur-2xs">
   <div class="absolute inset-0 bg-gradient-to-r from-red-500 to-blue-500 opacity-30"></div>
   <div class="relative z-10">
     <div class="flex items-center justify-between px-6 pt-2">
@@ -30,12 +30,12 @@ export const Game: Page = {
   <div class="flex gap-4 items-center mb-8">
     <button
         id="start-btn"
-        class="px-6 py-3 font-bold text-lg transition border-1 border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-gray-700/50 hover:border-green-500">
+        class="px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-gray-700/50 hover:border-green-500">
       Jouer
     </button>
     <button
         id="restart-btn"
-        class="px-6 py-3 font-bold text-lg transition border-1 border-gray-50 backdrop-blur-2xs text-gray-50 hover:border-blue-500 hover:bg-gray-700/50">
+        class="px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:border-blue-500 hover:bg-gray-700/50">
       Recommencer
     </button>
   </div>
@@ -108,11 +108,11 @@ export const Game: Page = {
         canStart = !canStart;
         // Update button appearance
         if (canStart) {
-          startBtn.className = "px-6 py-3 font-bold text-lg transition border-1 border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-gray-700/50 hover:border-red-500";
+          startBtn.className = "px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-gray-700/50 hover:border-red-500";
           startBtn.textContent = "Pause";
           startTimer();
         } else {
-          startBtn.className = "px-6 py-3 font-bold text-lg transition border-1 border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-gray-700/50 hover:border-blue-500";
+          startBtn.className = "px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-gray-700/50 hover:border-blue-500";
           startBtn.textContent = "Jouer";
           stopTimer()
         }
@@ -135,7 +135,7 @@ export const Game: Page = {
           updateTimerDisplay();
 
           // Reset button to START state
-          startBtn.className = "px-6 py-3 font-bold text-lg transition border-1 border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-gray-700/50 hover:border-blue-500";
+          startBtn.className = "px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-gray-700/50 hover:border-blue-500";
           startBtn.textContent = "Jouer";
 
           // Restart the game

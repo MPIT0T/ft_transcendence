@@ -7,7 +7,7 @@ export const GameLobby: Page = {
 			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-64 flex-1">
 
 				<!-- Mode Local -->
-				<button id="local-mode" class="relative group w-full backdrop-blur-2xs border-1 border-gray-50 p-6 transition-all duration-300 hover:bg-gray-700/50 text-left">
+				<button id="local-mode" class="relative group w-full backdrop-blur-2xs border border-gray-50 p-6 transition-all duration-300 hover:bg-gray-700/50 text-left">
 					<div class="text-center mt-8">
 						<div class="relative inline-block mb-4
 								relative z-10 text-7xl text-transparent bg-clip-text
@@ -44,7 +44,7 @@ export const GameLobby: Page = {
 
 
 				<!-- Mode Online -->
-				<button id="online-mode" class="relative group w-full backdrop-blur-2xs border-1 border-gray-50 p-6 transition-all duration-300 hover:bg-gray-700/50 text-left">
+				<button id="online-mode" class="relative group w-full backdrop-blur-2xs border border-gray-50 p-6 transition-all duration-300 hover:bg-gray-700/50 text-left">
 					<div class="text-center mt-8">
 						<div id="mode-online-title" class="relative inline-block
 								relative z-10 text-7xl text-transparent bg-clip-text mb-4
@@ -80,7 +80,7 @@ export const GameLobby: Page = {
 				</button>
 
 				<!-- Mode Tournoi -->
-				<button id="tournament-mode" class="relative group w-full backdrop-blur-2xs border-1 border-gray-50 p-6 transition-all duration-300 hover:bg-gray-700/50 text-left">
+				<button id="tournament-mode" class="relative group w-full backdrop-blur-2xs border border-gray-50 p-6 transition-all duration-300 hover:bg-gray-700/50 text-left">
 					<div class="text-center mt-8">
 						<div id="mode-tournament-title" class="relative inline-block
 								relative z-10 text-7xl text-transparent bg-clip-text mb-4

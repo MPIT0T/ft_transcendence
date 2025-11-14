@@ -107,7 +107,7 @@ export class GameComponentOnline {
 			<div class="w-full flex justify-center">
 				<canvas 
 					id="game-canvas" 
-					class="border-1 border-gray-50 bg-transparent backdrop-blur-2xs"
+					class="border border-gray-50 bg-transparent backdrop-blur-2xs"
 					width="900" 
 					height="600">
 				</canvas>

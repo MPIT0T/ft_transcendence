@@ -20,7 +20,7 @@ function displayTournament(root: HTMLElement, tournaments: any[]) {
 
 	tournaments.forEach(tournament => {
 		const tournamentBtn = document.createElement('button');
-		tournamentBtn.className = 'tournament-btn text-gray-50 px-6 py-3 border-1 backdrop-blur-2xs border-gray-50 hover:bg-gray-700/50 transition-colors';
+		tournamentBtn.className = 'tournament-btn text-gray-50 px-6 py-3 border backdrop-blur-2xs border-gray-50 hover:bg-gray-700/50 transition-colors';
 		tournamentBtn.dataset.tournamentId = tournament.tournamentId;
 		tournamentBtn.innerHTML = `
 			${tournament.tournamentName}<br>
@@ -73,13 +73,13 @@ export const TournamentRoom: Page = {
 		return `
 	<div class="max-w-6xl mx-auto p-6 space-y-6">
 
-		<div class="border-1 border-gray-50 backdrop-blur-2xs p-8">
+		<div class="border border-gray-50 backdrop-blur-2xs p-8">
 			<div class="flex justify-center">
 				<h1 class="text-4xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-blue-500 to-green-500 bg-[length:400%_400%] animate-gradientShift mb-5">Tournament</h1>
 			</div>
 			<div class="text-center mb-8">
 				<div class="flex justify-center space-x-4">
-					<button id="create-tournament-btn" class="px-8 py-3 font-bold text-2xl mb-5 border-1 text-gray-50 border-gray-50 hover:bg-gray-700/50 transition-colors">
+					<button id="create-tournament-btn" class="px-8 py-3 font-bold text-2xl mb-5 border text-gray-50 border-gray-50 hover:bg-gray-700/50 transition-colors">
 						Créer un tournoi
 					</button>
 				</div>
@@ -92,10 +92,10 @@ export const TournamentRoom: Page = {
 		</div>
 
 		<!-- Available Tournament Section -->
-		<div class="border-1 border-gray-50 backdrop-blur-2xs p-6">
+		<div class="border border-gray-50 backdrop-blur-2xs p-6">
 			<div class="flex justify-between items-center mb-6">
 				<h2 class="text-2xl text-gray-50 font-bold">Available Tournament</h2>
-				<button id="reload-btn" class="px-4 py-2 font-bold text-gray-50 border-1 border-gray-50 hover:bg-gray-700/50 transition-colors">
+				<button id="reload-btn" class="px-4 py-2 font-bold text-gray-50 border border-gray-50 hover:bg-gray-700/50 transition-colors">
 					Rafraichir
 				</button>
 			</div>
@@ -105,7 +105,7 @@ export const TournamentRoom: Page = {
 
 	<!-- Modal Create Tournament -->
 	<div id="create-tournament-modal" class="fixed inset-0 backdrop-blur-lg hidden items-center justify-center z-50">
-		<div class="border-1 border-gray-50 p-8 max-w-md w-full mx-4">
+		<div class="border border-gray-50 p-8 max-w-md w-full mx-4">
 			<h3 class="text-2xl font-bold mb-6 text-gray-50 text-center">Create a Tournament</h3>
 			
 			<form id="create-tournament-form" class="space-y-4">
@@ -114,7 +114,7 @@ export const TournamentRoom: Page = {
 					<input 
 						type="text" 
 						id="tournament-name" 
-						class="w-full px-3 py-2 border-1 border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50"
+						class="w-full px-3 py-2 border border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50"
 						placeholder="Enter Tournament name"
 						required
 					>
@@ -122,14 +122,14 @@ export const TournamentRoom: Page = {
 
 				<div>
 					<label class="block text-sm font-bold mb-2 text-gray-200">Number of Players:</label>
-					<select id="player-count" class="w-full px-3 py-2 border-1 border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50">
+					<select id="player-count" class="w-full px-3 py-2 border border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50">
 						<option value="8">8</option>
 					</select>
 				</div>
 				
 				<div>
 					<label class="block text-sm font-bold mb-2 text-gray-200">Party Point(s):</label>
-					<select id="game-point" class="w-full px-3 py-2 border-1 border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50">
+					<select id="game-point" class="w-full px-3 py-2 border border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50">
 						<option value="3">3</option>
 						<option value="5">5</option>
 						<option value="10">10</option>
@@ -139,7 +139,7 @@ export const TournamentRoom: Page = {
 				
 				<div>
 					<label class="block text-sm font-bold mb-2 text-gray-200">Game Mode:</label>
-					<select id="game-mode" class="w-full px-3 py-2 border-1 border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50">
+					<select id="game-mode" class="w-full px-3 py-2 border border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50">
 						<option value="classic">Classic Pong</option>
 					</select>
 				</div>
@@ -147,13 +147,13 @@ export const TournamentRoom: Page = {
 				<div class="flex space-x-4 mt-6">
 					<button 
 						type="submit" 
-						class="flex-1 text-white py-2 px-4 border-1 border-gray-50 hover:bg-gray-700/50 hover:border-green-500 transition-colors font-bold">
+						class="flex-1 text-white py-2 px-4 border border-gray-50 hover:bg-gray-700/50 hover:border-green-500 transition-colors font-bold">
 						CRÉER
 					</button>
 					<button 
 						type="button" 
 						id="cancel-create" 
-						class="flex-1 text-white py-2 px-4 border-1 border-gray-50 hover:bg-gray-700/50 hover:border-red-500 transition-colors font-bold">
+						class="flex-1 text-white py-2 px-4 border border-gray-50 hover:bg-gray-700/50 hover:border-red-500 transition-colors font-bold">
 						ANNULER
 					</button>
 				</div>
