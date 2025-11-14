@@ -9,9 +9,9 @@ const Stats: StatsPage = {
 		const indicatorTransform = activeTab === 'profile'
 			? 'translateX(0%)' : 'translateX(100%)';
 		return `
-<div class="bg-transparent flex flex-col w-[70vw] pt-20 items-start">
+<div class="bg-transparent flex flex-col w-[60vw] pt-20 items-start">
 	<!-- Header avec onglets -->
-		<div class="mb-6 w-[70vw] mx-auto">
+		<div class="mb-6 w-[60vw] mx-auto">
 	<div class="relative backdrop-blur-2xs border border-gray-50 flex overflow-hidden">
 			<!-- Sliding indicator -->
 			<div id="tab-indicator" class="absolute top-0 left-0 h-full w-1/2 bg-gray-700 transition-transform duration-300 ease-in-out" style="transform:${indicatorTransform};"></div>
@@ -40,10 +40,10 @@ const Stats: StatsPage = {
 		</div>
 	</div>
 
-	<div id="content-container" class="w-[70vw] mx-auto min-h-[60vh] max-h-[70vh] overflow-y-auto">
+	<div id="content-container" class="w-[60vw] mx-auto min-h-[60vh] max-h-[60vh] overflow-y-auto">
 		${activeTab === 'profile' ? this.renderProfile() : this.renderHistory()}
 	</div>
-		<div class="w-[70vw] mx-auto flex items-center justify-center p-6 gap-6">
+		<div class="w-[60vw] mx-auto flex items-center justify-center p-6 gap-6">
 		<button class="text-blue-500  px-6 py-2 text-2xl font-bold backdrop-blur-2xs hover:bg-gray-700/50">🇫🇷</button>
 		<button class="text-red-500  px-6 py-2 text-2xl font-bold backdrop-blur-2xs hover:bg-gray-700/50">🇬🇧</button>
 		<button class="text-yellow-400  px-6 py-2 text-2xl font-bold backdrop-blur-2xs hover:bg-gray-700/50">🇪🇸</button>
@@ -140,8 +140,8 @@ const Stats: StatsPage = {
 			<div class="relative w-56">
 				<div id="friends-tab-indicator" class="absolute top-0 left-0 h-full w-1/2 bg-gray-700 transition-transform duration-200" style="transform: translateX(0%);"></div>
 				<div class="relative z-10 flex">
-					<button id="friends-online-tab" class="flex-1 px-3 py-2 text-sm hover:bg-gray-700/50 text-white text-center">Online</button>
-					<button id="friends-offline-tab" class="flex-1 px-3 py-2 text-sm hover:bg-gray-700/50 text-white text-center">Offline</button>
+					<button id="friends-online-tab" class="flex-1 px-3 py-2 text-sm hover:bg-gray-700/50 text-white text-center">En Ligne</button>
+					<button id="friends-offline-tab" class="flex-1 px-3 py-2 text-sm hover:bg-gray-700/50 text-white text-center">Hors Ligne</button>
 				</div>
 			</div>
 	</div>
