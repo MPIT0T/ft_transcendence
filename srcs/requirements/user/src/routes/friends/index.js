@@ -1,3 +1,4 @@
+/*
 'use strict';
 const db = require("../../db.js");
 
@@ -15,7 +16,7 @@ function getUserFromId(friendsIds) {
 }
 
 async function friendsHandling(fastify, options) {
-	fastify.post('/get_friend_request', async (req, reply) => {
+	fastify.post('/get-friend-request', async (req, reply) => {
     // sending all your friends requests
 		const { username } = req.body || {};
 		if (!username) {
@@ -36,7 +37,7 @@ async function friendsHandling(fastify, options) {
 		}
   });
 
-	fastify.post('/get_friends', async (req, reply) => {
+	fastify.post('/get-friends', async (req, reply) => {
 		// sending all your friends
 		const { username } = req.body || {};
 		if (!username) {
@@ -57,7 +58,7 @@ async function friendsHandling(fastify, options) {
 		}
   });
 
-	fastify.post('/invite_request', async (req, reply) => {
+	fastify.post('/invite-request', async (req, reply) => {
 		// send a friend request
 		const { author, invited } = req.body || {};
 		if (!author) {
@@ -82,7 +83,9 @@ async function friendsHandling(fastify, options) {
 		catch (err) {
 			return reply.status(500).send({ error: 'Erreur serveur' });
 		}
-  });
+	});
 }
 
 module.exports = friendsHandling;
+
+*/

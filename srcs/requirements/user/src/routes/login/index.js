@@ -64,7 +64,6 @@ async function loginRoute(fastify, options) {
             return reply.status(404).send({ error: 'Utilisateur non trouvé' });
         return reply.ok();
     });
-
 }
 
 module.exports = {
