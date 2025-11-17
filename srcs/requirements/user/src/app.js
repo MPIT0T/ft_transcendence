@@ -8,7 +8,7 @@ const options = {}
 module.exports = async function (fastify, opts) {
   fastify.register(AutoLoad, {
     dir: path.join(__dirname, 'plugins'),
-    options: Object.assign({}, opts)
+    options: Object.assign({}, opts),
   })
 
   fastify.register(AutoLoad, {
