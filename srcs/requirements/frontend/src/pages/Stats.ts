@@ -79,7 +79,7 @@ const Stats: StatsPage = {
 		</div>
 
 		<div class="text-center mb-6">
-	<button class="px-3 py-3 font-bold border border-gray-50 backdrop-blur-2xs text-2xl hover:border-red-500 hover:bg-gray-700 text-gray-50 transition-transform">Se déconnecter</button>
+	<button class="px-3 py-3 font-bold border border-gray-50 backdrop-blur-2xs text-2xl hover:border-red-500 hover:bg-gray-700 text-gray-50 transition-transform" id="disconnectBtn">Se déconnecter</button>
 		</div>
 
 		<!-- Main stats -->
@@ -397,20 +397,6 @@ const Stats: StatsPage = {
 		renderContent();
 	},
 
-	mountProfileEvents(root: HTMLElement) {
-		// Change username
-		const changeUsername = root.querySelector('#change-username') as HTMLElement;
-		if (changeUsername) {
-			changeUsername.addEventListener('click', () => {
-				const newUsername = prompt('Nouveau nom d\'utilisateur:', 'LUCAS');
-				if (newUsername) {
-					const usernameSpan = root.querySelector('#change-username')?.previousElementSibling;
-					if (usernameSpan) {
-						usernameSpan.textContent = newUsername.toUpperCase();
-					}
-				}
-			});
-		}
     mountProfileEvents(root: HTMLElement) {
       // Change username
       const changeUsername = root.querySelector('#change-username') as HTMLElement;
