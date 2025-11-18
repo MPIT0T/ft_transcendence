@@ -192,6 +192,7 @@ class Room {
 			const payLoad = {
 				"method": "update",
 				"room": this.toJsonGoal(),
+                "isGoal": true,
 			};
 
 			this.clients.forEach(c => {
@@ -228,12 +229,12 @@ class Room {
 	}
 
 	async sendGameEnd() {
-		const winner = this.p1Score > this.p2Score ? 1 : 2;
-		// const winner = this.p1Score >= this.gamePoint ? 1 : 2;
+        const winner = this.p1Score > this.p2Score ? 1 : this.p1Score < this.p2Score ? 2 : 0;
+        const winnerName = winner === 1 ? this.clients[0].name : winner === 2 ? this.clients[1].name : "No one";
 
-		const payLoad = {
+        const payLoad = {
 			"method": "gameEnd",
-			"winner": winner,
+			"winner": winnerName,
 			"finalScore": {
 				"player1": this.p1Score,
 				"player2": this.p2Score
@@ -246,33 +247,6 @@ class Room {
 				c._conection.send(JSON.stringify(payLoad));
 			}
 		});
-		
-		// const bodyPayload = {
-		// 	game: {
-		// 		winner: winner,
-		// 		gamePoint: this.gamePoint,
-		//		gameMode: this.gameMode,
-		// 		finalScore: {
-		// 			player1: this.p1Score,
-		// 			player2: this.p2Score
-		// 		}
-		// 	},
-		// 	clients: this.clients.map(client => client.id || client)
-		// };
-		// try {
-		// 	const res = await fetch('/user/api/posting-game', { //change post name
-		// 		method: 'POST',
-		// 		headers: { 'Content-Type': 'application/json' },
-		// 		body: JSON.stringify(bodyPayload),
-		// 	});
-
-		// 	if (!res.ok) {
-		// 		const bodyText = await res.text().catch(() => '');
-		// 		console.log('sendGameEnd - failed posting game result:', res.status, res.statusText, bodyText);
-		// 	}
-		// } catch (err) {
-		// 	console.log('sendGameEnd - fetch error:', err);
-		// }
 	}
 
 	toJSON() {

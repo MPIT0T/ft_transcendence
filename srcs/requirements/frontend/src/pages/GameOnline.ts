@@ -41,11 +41,24 @@ export const GameOnline: Page = {
         </div>
       </div>
       <p class="text-gray-400">Le jeu démarrera automatiquement quand tous les joueurs seront prêts</p>
-      <button 
-					id="cancel-matchmaking" 
-					class="w-full bg-red-500 text-white py-3 px-6 border-2 border-black hover:bg-red-600 transition-colors font-bold">
-					QUITTER LE MATCHMAKING
+      <button
+					id="cancel-matchmaking"
+					class="w-full text-gray-50 py-3 px-6 border border-gray-50 hover:border-red-500 hover:bg-gray-700/50 transition-colors font-bold">
+        Quitter le matchmaking
 			</button>
+    </div>
+  </div>
+</div>
+<div id="winner-modal" class="fixed inset-0 backdrop-blur-lg flex items-center justify-center z-50 hidden">
+  <div class="bg-transparent border-gray-50 border p-8 max-w-md w-full mx-4">
+    <div class="text-center">
+      <h2 id="winner-text" class="text-3xl text-gray-50 font-bold mb-4">Félicitations !</h2>
+      <p id="winner-subtext" class="text-xl text-gray-300 mb-6">Vous avez gagné la partie.</p>
+      <button 
+          id="close-winner-modal"
+          class="w-full text-gray-50 py-3 px-6 border border-gray-50 hover:border-green-500 hover:bg-gray-700/50 transition-colors font-bold">
+        Retourner au salon
+      </button>
     </div>
   </div>
 </div>
@@ -69,6 +82,17 @@ export const GameOnline: Page = {
     const waitingModal = root.querySelector('#waiting-modal') as HTMLElement;
     const cancelMatchmakingBtn = root.querySelector('#cancel-matchmaking') as HTMLButtonElement;
 
+    const popstateHandler = (event: PopStateEvent) => {
+      const payLoad = {
+        "method": "leave",
+        "clientId": clientId
+      }
+
+      if (ws)
+        ws.send(JSON.stringify(payLoad));
+
+      window.removeEventListener('popstate', popstateHandler);
+    };
 
     const formatTime = (s: number) => {
       const hours = Math.floor(s / 3600);
@@ -180,33 +204,42 @@ export const GameOnline: Page = {
 
         if (response.method === "gameEnd") {
           if (currentGame) {
+            const winner = currentGame.getScores().p1Score > currentGame.getScores().p2Score ? player1NameEl.textContent :  currentGame.getScores().p1Score < currentGame.getScores().p2Score ? player2NameEl.textContent : "Personne";
             currentGame.destroy();
             stopTimer();
-            await sleep(5000);
-            const p = '/gameRoom';
-            history.pushState(null, '', p);
-            window.dispatchEvent(new PopStateEvent('popstate'));
+            const winnerModal = root.querySelector('#winner-modal') as HTMLElement;
+            const winnerText = root.querySelector('#winner-text') as HTMLElement;
+            const winnerSubtext = root.querySelector('#winner-subtext') as HTMLElement;
+            const closeWinnerModalBtn = root.querySelector('#close-winner-modal') as HTMLButtonElement;
+
+            if (winnerText) winnerText.textContent = "Partie terminée !";
+            if (winnerSubtext) winnerSubtext.textContent = `${winner} a gagné la partie.`;
+
+            if (winnerModal) {
+              winnerModal.classList.remove('hidden');
+            }
+
+            if (closeWinnerModalBtn) {
+              closeWinnerModalBtn.addEventListener('click', () => {
+                window.removeEventListener('popstate', popstateHandler);
+                const p = '/gameRoom';
+                history.pushState(null, '', p);
+                window.dispatchEvent(new PopStateEvent('popstate'));
+              });
+            }
           }
         }
       }
-
+    } else {
+      window.removeEventListener('popstate', popstateHandler);
+      const p = '/gameRoom';
+      history.pushState(null, '', p);
+      window.dispatchEvent(new PopStateEvent('popstate'));
     }
     // Cleanup previous game if exists
     if (currentGame) {
       currentGame.destroy();
     }
-
-    const popstateHandler = (event: PopStateEvent) => {
-      const payLoad = {
-        "method": "leave",
-        "clientId": clientId
-      }
-
-      if (ws)
-        ws.send(JSON.stringify(payLoad));
-
-      window.removeEventListener('popstate', popstateHandler);
-    };
     window.addEventListener('popstate', popstateHandler);
   }
 }

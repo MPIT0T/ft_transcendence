@@ -12,9 +12,9 @@ class Client {
 		return {
 				name: this._name,
 				elo: this._elo,
+                player: this._player,
 		};
 	}
-
 }
 
 module.exports = Client;

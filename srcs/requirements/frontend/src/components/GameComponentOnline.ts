@@ -235,4 +235,8 @@ export class GameComponentOnline {
 		window.removeEventListener('keydown', this.movePlayer);
 		window.removeEventListener('keyup', this.stopPlayer);
 	}
+
+  public getScores() {
+    return { p1Score: this.p1Score, p2Score: this.p2Score };
+  }
 }
