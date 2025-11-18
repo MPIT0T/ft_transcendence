@@ -1,7 +1,7 @@
 'use strict';
 const db = require("../../db.js");
 
-function getUserFromId(friendsIds)
+function getFriendsFromId(friendsIds)
 {
     if (typeof friendsIds !== 'string') {
         return [];
@@ -15,4 +15,4 @@ function getUserFromId(friendsIds)
     return allFriendsNames;
 }
 
-module.exports = getUserFromId;
+module.exports = getFriendsFromId;

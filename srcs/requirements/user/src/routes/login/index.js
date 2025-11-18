@@ -16,7 +16,7 @@ async function loginRoute(fastify, options) {
             return reply.status(401).send({ error: 'Invalid username or password' });
         const user =  await getUserbyUsername(username);
         if (!user) {
-            return reply.status(401).send({error: 'Invalid username or password'});
+            return reply.status(401).send({ error: 'Invalid username or password'});
         }
         const res = await bcrypt.compare(password, user.password);
         if (res) {

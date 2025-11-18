@@ -1,6 +1,6 @@
 'use strict';
 const db = require("../../../db.js");
-const getUserFromId = require("../index.js");
+const getFriendsFromId = require("../index.js");
 
 async function getFriendsRoute(fastify, options) {
     fastify.post('/', async (req, reply) => {
@@ -15,7 +15,7 @@ async function getFriendsRoute(fastify, options) {
             if (!user) {
                 return reply.status(404).send({error: "utilisateur non trouvé"});
             }
-            const friendsNames = getUserFromId(user.friends_id);
+            const friendsNames = getFriendsFromId(user.friends_id);
             return reply.status(200).send({friends: friendsNames});
         } catch (err) {
             return reply.status(500).send({error: 'Erreur serveur'});
