@@ -23,7 +23,7 @@ async function inviteRequestRoute(fastify, options) {
             const newInvites = invites.join(',');
             const updateStmt = db.prepare('UPDATE users SET invites_id = ? WHERE id = ?');
             updateStmt.run(newInvites, uinvited.id);
-            return reply.status(200).send({"demande envoyée" });
+            return reply.status(200).send({message: "demande envoyée" });
         }
         catch (err) {
             return reply.status(500).send({ error: 'Erreur serveur' });
