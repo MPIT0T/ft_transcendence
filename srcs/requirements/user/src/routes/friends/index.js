@@ -3,8 +3,11 @@ const db = require("../../db.js");
 
 function getUserFromId(friendsIds)
 {
-    const allFriendsIds = friendsIds.split(',');
+    if (typeof friendsIds !== 'string') {
+        return [];
+    }
     const allFriendsNames = [];
+    const allFriendsIds = friendsIds.split(',');
     const stmt = db.prepare('SELECT username FROM users WHERE id = ?');
 
     for (const id of allFriendsIds)

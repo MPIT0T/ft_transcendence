@@ -23,4 +23,5 @@ async function loginPingRoute(fastify, options) {
     });
 }
 
+
 module.exports = loginPingRoute;

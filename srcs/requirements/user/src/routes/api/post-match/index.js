@@ -30,8 +30,8 @@ async function apiPostMatchRoute(fastify, options) {
 
         if (!usernames || !scores)
             return reply.status(400).send({error: 'Missing credentials'});
-        const userWinner = await getUserbyUsername(usernames[winner]);
-        const userLooser = await getUserbyUsername(usernames[1 - winner]);
+        const userWinner = await getUserbyUsername(usernames[winner - 1]);
+        const userLooser = await getUserbyUsername(usernames[2 - winner]);
         if (!userWinner || !userLooser)
             return reply.status(400).send({ error: 'Account not found' });
         userWinner.match_history = userWinner.match_history || "";

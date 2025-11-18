@@ -16,7 +16,8 @@ async function inviteRequestRoute(fastify, options) {
                 return reply.status(404).send({ error: "utilisateur non trouvé" });
             }
             let invites = uinvited.invites_id.split(',');
-            if (invites.includes(uauthor.id)) {
+            let friends = uinvited.friends_id.split(',');
+            if (invites.includes(uauthor.id) || friends.includes(uauthor.id)) {
                 return reply.status(403).send({error: "demande deja envoyée"});
             }
             uinvited.invites_id += (uinvited.invites_id) ? ("," + uauthor.id) : uauthor.id;

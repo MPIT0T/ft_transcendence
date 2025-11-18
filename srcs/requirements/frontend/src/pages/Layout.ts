@@ -291,7 +291,7 @@ export const Layout = {
         } catch (err) {
           console.error(err);
         }
-      }, 1000);
+      }, 30000);
     }
   },
 
