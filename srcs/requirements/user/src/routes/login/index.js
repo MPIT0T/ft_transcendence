@@ -3,21 +3,12 @@ const db = require("../../db.js");
 const bcrypt = require('bcrypt');
 const privateKey = "secret123123";
 const jwt = require('jsonwebtoken');
-
-
-function getUserbyUsername(username) {
-    const stmt = db.prepare(`SELECT *
-                             FROM users
-                             WHERE username = ?`);
-    let user = null;
-
-    user = stmt.get(username);
-    return user;
-}
+const {getUserbyUsername} = require("../../utils.js");
 
 async function loginRoute(fastify, options) {
-    fastify.post('/', async (request, reply) => {
-        const {username, password} = request.body;
+
+    fastify.post('/', async (req, reply) => {
+        const {username, password} = req.body;
 
         if (!username || !password)
             return reply.status(400).send({ error: 'Missing credentials' });
@@ -46,7 +37,4 @@ async function loginRoute(fastify, options) {
     });
 }
 
-module.exports = {
-    loginRoute,
-    getUserbyUsername
-};
+module.exports = loginRoute;

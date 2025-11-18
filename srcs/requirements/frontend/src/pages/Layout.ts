@@ -436,7 +436,7 @@ export const Layout = {
 
     // Github registration
     const clientId = "Ov23libyRMWHw34E2bL0";
-    const redirectUri = "https://127.0.0.1:4430/oauth-callback.html";
+    const redirectUri = "https://z1r5p5:4430/oauth-callback.html";
     const scope = "read:user";
 
     if (githubBtn) {

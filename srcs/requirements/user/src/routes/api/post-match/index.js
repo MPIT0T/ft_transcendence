@@ -1,6 +1,6 @@
 'use strict';
 const db = require("../../../db.js");
-const { getUserbyUsername } = require("../../login");
+const { getUserbyUsername } = require("../../../utils.js");
 
 function create_matchHistory(is_winner, scores, second, elo)
 {

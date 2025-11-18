@@ -23,5 +23,18 @@ async function loginPingRoute(fastify, options) {
     });
 }
 
+let is_started = false;
+
+async function setOnlineRoute(fastify, options) {
+    fastify.post('/', async (req, reply) => {
+        if (is_started)
+            return reply.status(200).send({message: 'Ok'});
+        setInterval(async () => {
+        }, 31000);
+        is_started = true;
+        return reply.status(200).send({message: 'Ok'});
+    });
+}
+
 
 module.exports = loginPingRoute;
