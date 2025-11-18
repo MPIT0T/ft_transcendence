@@ -1,6 +1,7 @@
-import type { StatsPage } from "../interface/gameInterface.js"
+  import type { StatsPage } from "../interface/gameInterface.js"
+  import {Layout} from "./Layout";
 
-let activeTab: 'profile' | 'history' = 'profile';
+  let activeTab: 'profile' | 'history' = 'profile';
 
 const Stats: StatsPage = {
 	render() {
@@ -410,6 +411,33 @@ const Stats: StatsPage = {
 				}
 			});
 		}
+    mountProfileEvents(root: HTMLElement) {
+      // Change username
+      const changeUsername = root.querySelector('#change-username') as HTMLElement;
+      if (changeUsername) {
+        changeUsername.addEventListener('click', () => {
+          const newUsername = prompt('Nouveau nom d\'utilisateur:', 'LUCAS');
+            if (newUsername) {
+              const usernameSpan = root.querySelector('#change-username')?.previousElementSibling;
+                if (usernameSpan) {
+                  usernameSpan.textContent = newUsername.toUpperCase();
+                }
+            }
+        });
+      }
+
+      // Disconnect
+      const disconnectBtn = root.querySelector('#sign-out-btn') as HTMLButtonElement;
+      if (disconnectBtn) {
+        disconnectBtn.addEventListener('click', () => {
+          sessionStorage.removeItem('isLoggedIn');
+          sessionStorage.removeItem('token');
+          sessionStorage.removeItem('username');
+          Layout.updateLoginButton(document.body, false);
+          clearInterval((globalThis as any).loginIntervalId);
+        });
+      }
+
 
 		// Change mail
 		const changeMail = root.querySelector('#change-mail') as HTMLElement;

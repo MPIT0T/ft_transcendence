@@ -57,6 +57,12 @@ const initPastelBackground = () => {
     loop();
 };
 
+declare global {
+  interface Window {
+    githubAuthListenerAdded?: boolean;
+  }
+}
+
 export const Layout = {
   render(content: string): string {
     return `
@@ -274,6 +280,18 @@ export const Layout = {
       const loginModal = root.querySelector('#login-modal') as HTMLDivElement;
       this.closeModal(loginModal);
       (root.querySelector('#login-form') as HTMLFormElement).reset();
+      const username = userInfo.username;
+      (globalThis as any).loginIntervalId = setInterval(async () => {
+        try {
+          await fetch('/user/login/ping', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username })
+          });
+        } catch (err) {
+          console.error(err);
+        }
+      }, 30000);
     }
   },
 
@@ -307,12 +325,6 @@ export const Layout = {
       });
     }
 
-    const gihtubBtn = root.querySelector('#gihtub-btn') as HTMLButtonElement;
-    if (gihtubBtn) {
-      gihtubBtn.addEventListener('click', () => {
-        // handle
-      })
-    }
     initPastelBackground();
 
     // Language management
@@ -384,6 +396,8 @@ export const Layout = {
     }
   },
 
+
+
   setupRegisterModal(root: HTMLElement): void {
     const registerModal = root.querySelector('#register-modal') as HTMLDivElement;
     const cancelRegisterBtn = root.querySelector('#cancel-register') as HTMLButtonElement;
@@ -391,16 +405,20 @@ export const Layout = {
     const backToLoginBtn = root.querySelector('#back-to-login') as HTMLButtonElement;
     const githubBtn = root.querySelector('#github-btn') as HTMLButtonElement;
 
-    if (githubBtn) {
-      window.addEventListener('message', (event) => {
-        if (event.origin !== window.origin) return; // sécurité
+    window.githubAuthListenerAdded = window.githubAuthListenerAdded || false;
+
+    if (!window.githubAuthListenerAdded) {
+      const handler = (event: MessageEvent) => {
+        if (event.origin !== window.origin) return;
         if (event.data.type === 'github-auth') {
           const code = event.data.code;
           this.handleGithubLogin(root, code);
         }
-      })
-    }
+      };
 
+      window.addEventListener('message', handler);
+      window.githubAuthListenerAdded = true;
+    }
 
     // Cancel button
     if (cancelRegisterBtn) {
@@ -493,8 +511,18 @@ export const Layout = {
         const loginModal = root.querySelector('#login-modal') as HTMLDivElement;
         this.closeModal(loginModal);
         (root.querySelector('#login-form') as HTMLFormElement).reset();
-      }
-      else if (res.status === 401) {
+        (globalThis as any).loginIntervalId = setInterval(async () => {
+          try {
+            await fetch('/user/login/ping', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ username })
+            });
+          } catch (err) {
+            console.error(err);
+          }
+        }, 30000);
+      } else if (res.status === 401) {
         this.showNotification('Nom d\'utilisateur ou mot de passe invalide', 'error');
       }
     }
@@ -548,6 +576,17 @@ export const Layout = {
           this.showNotification(`Compte créé avec succès ! Bienvenue ${username} !`);
 
           this.updateLoginButton(root, true);
+          (globalThis as any).loginIntervalId = setInterval(async () => {
+            try {
+              await fetch('/user/login/ping', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username })
+              });
+            } catch (err) {
+              console.error(err);
+            }
+          }, 1000);
         }
         else if (res.status === 400)
         {

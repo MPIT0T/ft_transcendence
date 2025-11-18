@@ -5,9 +5,10 @@ const privateKey = "secret123123";
 const jwt = require('jsonwebtoken');
 
 
-function getUserbyUsername(username)
-{
-    const stmt = db.prepare(`SELECT * FROM users WHERE username = ?`);
+function getUserbyUsername(username) {
+    const stmt = db.prepare(`SELECT *
+                             FROM users
+                             WHERE username = ?`);
     let user = null;
 
     user = stmt.get(username);
@@ -20,8 +21,8 @@ async function loginRoute(fastify, options) {
 
         if (!username || !password)
             return reply.status(400).send({ error: 'Missing credentials' });
-
-
+        if (password === 'gitacc')
+            return reply.status(401).send({ error: 'Invalid username or password' });
         const user =  await getUserbyUsername(username);
         if (!user) {
             return reply.status(401).send({error: 'Invalid username or password'});
@@ -42,7 +43,10 @@ async function loginRoute(fastify, options) {
         } else {
             return reply.status(401).send({ error: 'Invalid username or password' });
         }
-        });
+    });
 }
 
-module.exports = loginRoute;
+module.exports = {
+    loginRoute,
+    getUserbyUsername
+};

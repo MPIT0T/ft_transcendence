@@ -19,10 +19,10 @@ function insertUser(username, hashedPassword) {
     try {
       const stmt = db.prepare('INSERT INTO users (username, password) VALUES (?, ?)');
       const info = stmt.run(username, hashedPassword);
-      if (!info.changes) {
-        return reject(new Error('Insert failed'));
-      }
-      resolve(info);
+        if (!info.changes) {
+          return reject(new Error('Insert failed'));
+        }
+        resolve(info);
     } catch (err) {
       reject(err);
     }
@@ -70,7 +70,7 @@ async function registerRoute(fastify, options) {
       });
 
     } catch (err) {
-      if (err.toString() == "SqliteError: UNIQUE constraint failed: users.username")
+        if (err.toString() == "SqliteError: UNIQUE constraint failed: users.username")
         return reply.status(401).send({ error: "Nom d'utilisateur deja utilise" });
       console.error('Erreur:', err);
       return reply.status(500).send({ error: ('Erreur serveur ' + err.toString())});
