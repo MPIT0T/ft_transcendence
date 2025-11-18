@@ -248,6 +248,26 @@ export const GameRoom: Page = {
 			</form>
 		</div>
 	</div>
+
+	<!-- Modal Challenge Received -->
+	<div id="challenge-modal" class="fixed inset-0 backdrop-blur-lg hidden items-center justify-center z-50">
+		<div class="border border-gray-50 p-8 max-w-md w-full mx-4">
+			<h3 class="text-2xl text-gray-50 font-bold mb-4 text-center">Défi reçu</h3>
+			<p id="challenge-text" class="text-gray-200 text-center mb-6">Un joueur vous invite à rejoindre une partie.</p>
+			<div class="flex space-x-4 mt-2">
+				<button 
+					id="challenge-accept" 
+					class="flex-1 text-white py-2 px-4 border border-gray-50 hover:bg-gray-700 hover:border-green-500 transition-colors font-bold">
+					ACCEPTER
+				</button>
+				<button 
+					id="challenge-decline" 
+					class="flex-1 text-white py-2 px-4 border border-gray-50 hover:bg-gray-700 hover:border-red-500 transition-colors font-bold">
+					REFUSER
+				</button>
+			</div>
+		</div>
+	</div>
 		`;
 	},
 
@@ -303,6 +323,56 @@ export const GameRoom: Page = {
 
 			if (response.method === "friends") {
 				displayFriends(root, response.friends);
+			}
+
+			// Afficher un modal de challenge avec Accept/Refuse
+			if (response.method === "challenge") {
+				const challengeModal = root.querySelector('#challenge-modal') as HTMLDivElement;
+				const challengeText = root.querySelector('#challenge-text') as HTMLParagraphElement;
+				const acceptBtn = root.querySelector('#challenge-accept') as HTMLButtonElement;
+				const declineBtn = root.querySelector('#challenge-decline') as HTMLButtonElement;
+
+				// Renseigner le texte et stocker le roomId sur le modal
+				const challenger = response.from || 'Un joueur';
+				const roomIdFromServer = response.roomId;
+				if (challengeText) challengeText.textContent = `${challenger} vous défie ! Voulez-vous accepter ?`;
+				if (challengeModal && roomIdFromServer) (challengeModal as any).dataset.roomId = roomIdFromServer;
+
+				// Afficher le modal
+				if (challengeModal) {
+					challengeModal.classList.remove('hidden');
+					challengeModal.classList.add('flex');
+				}
+
+				// Handler Accept: renvoyer un payload 'invite' avec roomId
+				const onAccept = () => {
+					const rid = (challengeModal as any)?.dataset?.roomId || roomIdFromServer;
+					const payLoad = {
+						method: 'invite',
+						clientId: clientId,
+						roomId: rid
+					};
+					if (ws) ws.send(JSON.stringify(payLoad));
+
+					// Fermer le modal
+					challengeModal.classList.add('hidden');
+					challengeModal.classList.remove('flex');
+
+					// Nettoyer les handlers
+					acceptBtn?.removeEventListener('click', onAccept);
+					declineBtn?.removeEventListener('click', onDecline);
+				};
+
+				// Handler Refuse: juste fermer le modal
+				const onDecline = () => {
+					challengeModal.classList.add('hidden');
+					challengeModal.classList.remove('flex');
+					acceptBtn?.removeEventListener('click', onAccept);
+					declineBtn?.removeEventListener('click', onDecline);
+				};
+
+				acceptBtn?.addEventListener('click', onAccept);
+				declineBtn?.addEventListener('click', onDecline);
 			}
 		}
 

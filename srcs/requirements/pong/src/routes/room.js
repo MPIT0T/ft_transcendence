@@ -66,6 +66,24 @@ class Room {
 
 	}
 
+	leave(reason = 'Room closed') {
+		const payLoad = {
+			method: 'leave',
+			status: 'success',
+			message: reason,
+			roomId: this.roomId
+		};
+
+		this.clients.forEach(c => {
+			if (c._conection && typeof c._conection.send === 'function') {
+				c._conection.send(JSON.stringify(payLoad));
+			}
+		});
+
+		this.state = 'ended';
+		this.clients = [];
+	}
+
 	remove(clientId) {
 		const idx = this.clients.findIndex(c => c.clientId === clientId);
 		if (idx !== -1) {
@@ -79,6 +97,8 @@ class Room {
 		}
 		return false;
 	}
+
+
 
 
 	async updatePlayerR(int) {
