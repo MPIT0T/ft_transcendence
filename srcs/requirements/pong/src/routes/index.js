@@ -15,24 +15,33 @@ module.exports = async function (fastify, opts) {
 
 			const clientId = g_Games.createClient(socket)
 
-			socket.on('message', (message) => {
+			socket.on('message', async (message) => {
 				try {
 					const data = JSON.parse(message.toString());
 					switch (data.method) {
 						case 'rooms':
-							handleGetRooms(socket, data);
+							await handleGetRooms(socket, data);
+							break;
+						case 'friends':
+							await handleGetFriends(socket, data);
+							break;
+						case 'chalenge':
+							await handleChallenge(socket, data);
+							break;
+						case 'invite':
+							await handleInvite(socket, data);
 							break;
 						case 'ready':
-							handleReady(socket, data);
+							await handleReady(socket, data);
 							break;
 						case 'join':
-							handleJoinGame(socket, data);
+							await handleJoinGame(socket, data);
 							break;
 						case 'createR':
-							handleCreateRoom(socket, data);
+							await handleCreateRoom(socket, data);
 							break;
 						case 'move':
-							handleGameMove(socket, data);
+							await handleGameMove(socket, data);
 							break;
 						case 'leave':
 							leave(clientId);
@@ -127,6 +136,23 @@ function leave(clientId) {
 	}
 }
 
+function handleGetFriends(socket, data) {
+	if (g_Games.findClient(data.clientId) === undefined)
+		throw "Client id not good";
+
+	const availableFriends = Object.values(g_Games._clients._clients)
+		.filter(c => c._clientId !== data.clientId)
+		.map(c => ({
+			username: c._name,
+			elo: c._elo
+		}));
+
+	socket.send(JSON.stringify({
+		method: 'friends',
+		friends: availableFriends
+	}));
+}
+
 
 function handleGetRooms(socket, data) {
 	if (g_Games.findClient(data.clientId) === undefined)
@@ -147,6 +173,49 @@ function handleGetRooms(socket, data) {
 		method: 'rooms',
 		rooms: availableRooms
 	}));
+}
+
+function handleChallenge(socket, data) {
+	if (g_Games.findClient(data.clientId) === undefined)
+		throw "Client id not good";
+	
+	const roomId = g_Games.createRoom(null, "challenge", 8, "chalenge");
+	const room = g_Games.findRoom(roomId);
+
+	c1 = g_Games.findClient(data.clientId);
+	room.join(c1._client, c1._client._conection);
+
+	c2 = g_Games.findClientName(data.friend);
+
+	const payLoad = {
+		"method": "challenge",
+		"roomId": roomId,
+	};
+
+	if (c2._conection && typeof c2._conection.send === 'function') {
+		c2._conection.send(JSON.stringify(payLoad));
+	}
+}
+
+
+function handleInvite(socket, data) {
+	if (g_Games.findClient(data.clientId) === undefined)
+		throw "Client id not good";
+	const roomId = data.roomId;
+
+	if (g_Games.findRoom(data.roomId) === undefined)
+		throw "Room id not good";
+	
+	const room = g_Games.findRoom(data.roomId);
+
+	if(data.response === "yes")
+	{
+		c2 = g_Games.findClient(data.clientId);
+		room.join(c2._client, c1._client._conection);
+	}
+	else if (data.response === "no"){
+		room.leave();
+	}
 }
 
 async function handleJoinGame(socket, data) {

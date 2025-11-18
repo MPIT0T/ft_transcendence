@@ -63,6 +63,12 @@ class Games {
 		const client = this._clients.findClient(id);
 		return client;
 	}
+
+	findClientName(name){
+		return Object.values(this._clients.getAllClients()).find(c => c && c._name === name);
+	}
+	
+
 	findRoom(id) {
 		const room = this._rooms.findRoom(id);
 		return room;
@@ -91,7 +97,7 @@ class Games {
 			for (const c2 of this._clientsList) {
 				if (c1 === c2 || !canMatch(c1, c2))
 					continue ;
-				const roomId = this.createRoom(null, "classic" , 10 ,"ranked");
+				const roomId = this.createRoom(null, "ranked" , 10 ,"ranked");
 				const room = this.findRoom(roomId);
 				room.join(c1._client, c1._client._conection);
 				room.join(c2._client, c2._client._conection);

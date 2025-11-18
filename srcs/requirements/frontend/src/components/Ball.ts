@@ -9,8 +9,8 @@ export class Ball {
     vel_y: number;
 
     constructor() {
-        this.x = 450;
-        this.y = 300;
+        this.x = 446;
+        this.y = 296;
         this.vel_x = 5;
         this.vel_y = 0;
         this.reset(1);

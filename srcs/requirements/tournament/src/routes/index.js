@@ -14,24 +14,24 @@ module.exports = async function (fastify, opts) {
 
 			const clientId = g_Games.createClient(socket)
 
-			socket.on('message', (message) => {
+			socket.on('message', async (message) => {
 				try {
 					const data = JSON.parse(message.toString());
 					switch (data.method) {
 						case 'tournaments':
-							handleGetTournaments(socket, data);
+							await handleGetTournaments(socket, data);
 							break;
 						case 'readyT':
-							handleReadyTournament(socket, data);
+							await handleReadyTournament(socket, data);
 							break;
 						case 'joinT':
-							handleJoinTournament(socket, data);
+							await handleJoinTournament(socket, data);
 							break;
 						case 'createT':
-							handleCreateTournaments(socket, data);
+							await handleCreateTournaments(socket, data);
 							break;
 						case 'moveT':
-							handleTournamentMove(socket, data);
+							await handleTournamentMove(socket, data);
 							break;
 						case 'leave':
 							leave(clientId);

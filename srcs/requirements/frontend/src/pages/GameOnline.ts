@@ -41,6 +41,11 @@ export const GameOnline: Page = {
         </div>
       </div>
       <p class="text-gray-400">Le jeu démarrera automatiquement quand tous les joueurs seront prêts</p>
+      <button 
+					id="cancel-matchmaking" 
+					class="w-full bg-red-500 text-white py-3 px-6 border-2 border-black hover:bg-red-600 transition-colors font-bold">
+					QUITTER LE MATCHMAKING
+			</button>
     </div>
   </div>
 </div>
@@ -62,6 +67,7 @@ export const GameOnline: Page = {
     const player2NameEl = root.querySelector('#player-2-name') as HTMLElement;
     const player2EloEl = root.querySelector('#player-2-elo') as HTMLElement;
     const waitingModal = root.querySelector('#waiting-modal') as HTMLElement;
+    const cancelMatchmakingBtn = root.querySelector('#cancel-matchmaking') as HTMLButtonElement;
 
 
     const formatTime = (s: number) => {
@@ -78,6 +84,24 @@ export const GameOnline: Page = {
       if (timerEl) {
         timerEl.textContent = formatTime(elapsedSeconds);
       }
+    }
+
+    // Bouton pour quitter le matchmaking
+    if (cancelMatchmakingBtn) {
+      cancelMatchmakingBtn.addEventListener('click', () => {
+        const payLoad = {
+          "method": "leave",
+          "clientId": clientId
+        };
+        if (ws) {
+          ws.send(JSON.stringify(payLoad));
+        }
+        window.removeEventListener('popstate', popstateHandler);
+        const p = '/gameRoom';
+        history.pushState(null, '', p);
+        window.dispatchEvent(new PopStateEvent('popstate'));
+
+      });
     }
 
     const startTimer = () => {
@@ -150,6 +174,24 @@ export const GameOnline: Page = {
               stopTimer();
               await sleep(3000);
               startTimer();
+            }
+          }
+        }
+
+        if (response.method === "leave") {
+          if (waitingModal) {
+            // Afficher un message indiquant que l'autre joueur a refusé
+            if (waitingModal) {
+              const title = waitingModal.querySelector('h2');
+              const paragraphs = waitingModal.querySelectorAll('p');
+              if (title) title.textContent = 'Match annulé';
+              if (paragraphs.length > 0) {
+              paragraphs[0].textContent = "L'autre joueur a refusé le match";
+              if (paragraphs[1]) paragraphs[1].textContent = '';
+              }
+              const cancelBtn = waitingModal.querySelector('#cancel-matchmaking') as HTMLButtonElement | null;
+              if (cancelBtn) cancelBtn.textContent = 'RETOUR';
+              waitingModal.classList.remove('hidden');
             }
           }
         }

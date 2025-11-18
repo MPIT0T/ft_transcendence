@@ -1,6 +1,9 @@
 @import "tailwindcss";
 @source "../../public/**/*.html" "../**/*.{ts,tsx,js,jsx}";
 
+/* Global base font-size reduced to 80% (for whole site) as requested */
+html { font-size: 80%; }
+
 @theme {
     --font-tiny5: "Tiny5", sans-serif;
 

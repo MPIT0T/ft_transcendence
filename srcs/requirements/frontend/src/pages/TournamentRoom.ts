@@ -95,9 +95,6 @@ export const TournamentRoom: Page = {
 		<div class="border-1 border-gray-50 backdrop-blur-2xs p-6">
 			<div class="flex justify-between items-center mb-6">
 				<h2 class="text-2xl text-gray-50 font-bold">Available Tournament</h2>
-				<button id="reload-btn" class="px-4 py-2 font-bold text-gray-50 border-1 border-gray-50 hover:bg-gray-700 transition-colors">
-					Rafraichir
-				</button>
 			</div>
 			<div class="flex flex-wrap gap-4" id="tournaments-container"></div>
 		</div>
@@ -124,7 +121,6 @@ export const TournamentRoom: Page = {
 					<label class="block text-sm font-bold mb-2 text-gray-200">Number of Players:</label>
 					<select id="player-count" class="w-full px-3 py-2 border-1 border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50">
 						<option value="8">8</option>
-						<option value="4">4</option>
 					</select>
 				</div>
 				
@@ -142,7 +138,6 @@ export const TournamentRoom: Page = {
 					<label class="block text-sm font-bold mb-2 text-gray-200">Game Mode:</label>
 					<select id="game-mode" class="w-full px-3 py-2 border-1 border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50">
 						<option value="classic">Classic Pong</option>
-						<option value="power-up">Power-up Mode</option>
 					</select>
 				</div>
 				
@@ -213,19 +208,12 @@ export const TournamentRoom: Page = {
 
 		// page buttons
 		const createTournamentBtn = root.querySelector('#create-tournament-btn') as HTMLButtonElement;
-		const reloadBtn = root.querySelector('#reload-btn') as HTMLButtonElement;
 
 		if (createTournamentBtn) {
 			createTournamentBtn.addEventListener('click', () => {
 				const modal = root.querySelector('#create-tournament-modal') as HTMLDivElement;
 				modal.classList.remove('hidden');
 				modal.classList.add('flex');
-			});
-		}
-
-		if (reloadBtn) {
-			reloadBtn.addEventListener('click', () => {
-				reloadTournaments(root);
 			});
 		}
 
@@ -255,5 +243,17 @@ export const TournamentRoom: Page = {
 				createTournament(root);
 			});
 		}
+
+		let statusTournament: ReturnType<typeof setInterval> | undefined;
+		statusTournament = setInterval(async () => {
+			reloadTournaments(root);
+		}, 1000);
+
+		const popstateHandler = (event: PopStateEvent) => {
+			window.clearInterval(statusTournament);
+			window.removeEventListener('popstate', popstateHandler);
+		};
+		window.addEventListener('popstate', popstateHandler);
+
 	},
 };

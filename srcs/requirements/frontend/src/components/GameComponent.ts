@@ -91,12 +91,12 @@ export class GameComponent {
     this.context.clearRect(0, 0, 900, 600);
     
     // Draw center line (dashed)
-    this.context.fillStyle = "#EEEEEE";
+    this.context.fillStyle = "#dbdbdb";
     this.context.setLineDash([10, 10]);
     this.context.beginPath();
     this.context.moveTo(450, 0);
     this.context.lineTo(450, 600);
-    this.context.strokeStyle = "#FFFFFF";
+    this.context.strokeStyle = "#dbdbdb";
     this.context.lineWidth = 1;
     this.context.stroke();
     this.context.setLineDash([]);
