@@ -145,11 +145,12 @@ const Stats: StatsPage = {
 		</div>
 		
 		<div class="mb-4 flex items-center justify-between">
-			<div class="relative w-56">
-				<div id="friends-tab-indicator" class="absolute top-0 left-0 h-full w-1/2 bg-gray-700 rounded-md transition-transform duration-200" style="transform: translateX(0%);"></div>
+			<div class="relative w-60">
+				<div id="friends-tab-indicator" class="absolute top-0 left-0 h-full w-1/3 bg-gray-700 rounded-md transition-transform duration-200" style="transform: translateX(0%);"></div>
 				<div class="relative z-10 flex">
 					<button id="friends-online-tab" class="flex-1 px-3 py-2 text-sm text-white text-center">Online</button>
 					<button id="friends-offline-tab" class="flex-1 px-3 py-2 text-sm text-white text-center">Offline</button>
+					<button id="friends-request-tab" class="flex-1 px-3 py-2 text-sm text-white text-center">Request</button>
 				</div>
 			</div>
 	</div>
@@ -202,6 +203,9 @@ const Stats: StatsPage = {
 						<span class="text-gray-200">Jean</span>
 					</li>
 				</ul>
+			</div>
+			<div id="request-friends" class="space-y-3">
+				<ul id="request-friends-container"></ul>
 			</div>
 		</div>
 	</div>
@@ -466,25 +470,37 @@ const Stats: StatsPage = {
 		// Friends tabs (Online / Offline)
 		const onlineTab = root.querySelector('#friends-online-tab') as HTMLButtonElement | null;
 		const offlineTab = root.querySelector('#friends-offline-tab') as HTMLButtonElement | null;
+		const requestTab = root.querySelector('#friends-request-tab') as HTMLButtonElement | null;
 		const tabIndicator = root.querySelector('#friends-tab-indicator') as HTMLDivElement | null;
 		const onlineSection = root.querySelector('#online-friends') as HTMLElement | null;
 		const offlineSection = root.querySelector('#offline-friends') as HTMLElement | null;
+		const requestSection = root.querySelector('#request-friends') as HTMLElement | null;
 
 		const showOnline = () => {
 			if (tabIndicator) tabIndicator.style.transform = 'translateX(0%)';
 			if (onlineSection) onlineSection.classList.remove('hidden');
 			if (offlineSection) offlineSection.classList.add('hidden');
+			if (requestSection) requestSection.classList.add('hidden');
 		};
 
 		const showOffline = () => {
 			if (tabIndicator) tabIndicator.style.transform = 'translateX(100%)';
 			if (offlineSection) offlineSection.classList.remove('hidden');
 			if (onlineSection) onlineSection.classList.add('hidden');
+			if (requestSection) requestSection.classList.add('hidden');
+		};
+
+		const showRequestTab = () => {
+			if (tabIndicator) tabIndicator.style.transform = 'translateX(200%)';
+			if (requestSection) requestSection.classList.remove('hidden');
+			if (onlineSection) onlineSection.classList.add('hidden');
+			if (offlineSection) offlineSection.classList.add('hidden');
+			this.showFriendRequest(root);
 		};
 
 		if (onlineTab) onlineTab.addEventListener('click', showOnline);
 		if (offlineTab) offlineTab.addEventListener('click', showOffline);
-
+		if (requestTab) requestTab.addEventListener('click', showRequestTab);
 	},
 
   handleAddFriendClick(root: HTMLElement) {
@@ -530,6 +546,87 @@ const Stats: StatsPage = {
           const msg = err.error || 'Impossible d\'envoyer l\'invitation';
           Layout.showNotification(msg, 'error');
         });
-  }
+  },
+
+	showFriendRequest(root: HTMLElement) {
+		const currentUser = sessionStorage.getItem('username');
+		const container = root.querySelector('#request-friends-container') as HTMLDivElement;
+		container.innerHTML = '';
+
+		if (!currentUser) {
+			Layout.showNotification('Vous devez être connecté', 'error');
+			return;
+		}
+
+		fetch('/user/friends/get-friend-request', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+			},
+			body: JSON.stringify({
+				username: currentUser,
+			})
+		})
+			.then(res => {
+				if (!res.ok) {
+					return res.json().then(data => Promise.reject(data));
+				}
+				return res.json(); // <-- return the actual JSON
+			})
+			.then((data: { invites: { username: string }[] }) => {
+
+				const usernames = data.invites
+					.filter((entry) => entry && entry.username)
+					.map((entry) => entry.username);
+
+				usernames.forEach((username: string) => {
+					const li = document.createElement('li');
+					li.className = 'flex items-center justify-between';
+					li.innerHTML = `
+					<span class="text-gray-200 flex items-center">
+						<span class="w-2 h-2 bg-green-500 mr-2"></span>
+						${username}
+					</span>
+					<button class="invite-btn px-3 py-1 text-xs bg-blue-500 text-white hover:bg-blue-600 transition-colors" id="Btn-${username}">
+						Accept
+					</button>
+				`;
+					const btn = li.querySelector('button') as HTMLButtonElement;
+					btn.addEventListener('click', () => {
+						this.acceptFriendRequest(username, li);
+					});
+
+					container.appendChild(li);
+				});
+			})
+			.catch(err => {
+				const msg = err.error || 'Impossible de recevoir les requetes d\'amis';
+				Layout.showNotification(msg, 'error');
+			});
+	},
+
+	acceptFriendRequest(username: string, element: HTMLElement) {
+		fetch('/user/friends/accept-request', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+			},
+			body: JSON.stringify({ author: sessionStorage.getItem('username'), accepted: username })
+		})
+			.then(res => {
+				if (!res.ok) {
+					return res.json().then(data => Promise.reject(data));
+				}
+				element.remove();
+				Layout.showNotification(`Vous avez accepté ${username}`, 'success');
+			})
+			.catch(err => {
+				const msg = err.error || `Impossible d'accepter ${username}`;
+				Layout.showNotification(msg, 'error');
+			});
+	}
 }
+
 export default Stats
