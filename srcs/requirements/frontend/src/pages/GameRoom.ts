@@ -31,7 +31,7 @@ function displayFriends(root: HTMLElement, friends: any[]) {
 	friends.forEach(friend => {
 		const friendBtn = document.createElement('button');
 		friendBtn.className = 'friend-btn w-full text-left flex items-center justify-between text-gray-50 px-4 py-3 border-1 backdrop-blur-2xs border-gray-50 hover:bg-gray-700 transition-colors';
-		friendBtn.dataset.friendsId = friend.friendsId;
+		friendBtn.dataset.username = friend.username;
 		friendBtn.innerHTML = `
 			<div class="w-full flex items-center">
 				<div class="flex-1 min-w-0 font-semibold truncate mr-4">${friend.username || 'Unknown'}</div>
@@ -39,7 +39,7 @@ function displayFriends(root: HTMLElement, friends: any[]) {
 			</div>
 		`;
 		friendBtn.addEventListener('click', () => {
-			inviteFriends(friend.friendsId);
+			inviteFriends(friend.username);
 		});
 
 		container.appendChild(friendBtn);
@@ -95,11 +95,11 @@ const createRoom = function (root: HTMLElement): void {
 	(root.querySelector('#create-room-form') as HTMLFormElement).reset();
 }
 
-const inviteFriends = function (friendsId: string) {
+const inviteFriends = function (friend: string) {
 	const payLoad = {
-		"method": "invite",
+		"method": "challenge",
 		"clientId": clientId,
-		"friendsId": friendsId
+		"friend": friend
 	}
 	if (ws)
 		ws.send(JSON.stringify(payLoad));
@@ -285,7 +285,6 @@ export const GameRoom: Page = {
 				if (clientId !== undefined) {
 					sessionStorage.setItem('clientId', clientId);
 				}
-				reloadRooms(root);
 			}
 			if (response.method === "create") {
 				roomId = response.room.roomId;
@@ -350,7 +349,9 @@ export const GameRoom: Page = {
 					const payLoad = {
 						method: 'invite',
 						clientId: clientId,
-						roomId: rid
+						roomId: rid,
+						to: challenger,
+						accepted: 'yes'
 					};
 					if (ws) ws.send(JSON.stringify(payLoad));
 
@@ -369,6 +370,16 @@ export const GameRoom: Page = {
 					challengeModal.classList.remove('flex');
 					acceptBtn?.removeEventListener('click', onAccept);
 					declineBtn?.removeEventListener('click', onDecline);
+
+					const rid = (challengeModal as any)?.dataset?.roomId || roomIdFromServer;
+					const payLoad = {
+						method: 'invite',
+						clientId: clientId,
+						roomId: rid,
+						to: challenger,
+						accepted: 'no'
+					};
+					if (ws) ws.send(JSON.stringify(payLoad));
 				};
 
 				acceptBtn?.addEventListener('click', onAccept);

@@ -184,6 +184,11 @@ export const GameOnline: Page = {
             if (waitingModal) {
               const title = waitingModal.querySelector('h2');
               const paragraphs = waitingModal.querySelectorAll('p');
+                const dots = waitingModal.querySelector('.h-16') as HTMLElement | null;
+                if (dots) {
+                dots.classList.add('hidden');
+                dots.style.display = 'none';
+                }
               if (title) title.textContent = 'Match annulé';
               if (paragraphs.length > 0) {
               paragraphs[0].textContent = "L'autre joueur a refusé le match";

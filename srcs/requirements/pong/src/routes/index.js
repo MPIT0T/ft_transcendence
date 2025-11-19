@@ -25,7 +25,7 @@ module.exports = async function (fastify, opts) {
 						case 'friends':
 							await handleGetFriends(socket, data);
 							break;
-						case 'chalenge':
+						case 'challenge':
 							await handleChallenge(socket, data);
 							break;
 						case 'invite':
@@ -178,22 +178,34 @@ function handleGetRooms(socket, data) {
 function handleChallenge(socket, data) {
 	if (g_Games.findClient(data.clientId) === undefined)
 		throw "Client id not good";
-	
-	const roomId = g_Games.createRoom(null, "challenge", 8, "chalenge");
+
+	const roomId = g_Games.createRoom(null, "challenge", 8, "challenge");
 	const room = g_Games.findRoom(roomId);
 
-	c1 = g_Games.findClient(data.clientId);
-	room.join(c1._client, c1._client._conection);
+	const challenger = g_Games.findClient(data.clientId);
+	room.join(challenger, challenger._conection);
 
-	c2 = g_Games.findClientName(data.friend);
+	// Friend by name
+	const friendClient = g_Games.findClientName(data.friend);
+	if (!friendClient) {
+		if (challenger._conection && typeof challenger._conection.send === 'function') {
+			challenger._conection.send(JSON.stringify({
+				method: 'challenge',
+				status: 'error',
+				message: 'Friend not found'
+			}));
+		}
+		return;
+	}
 
 	const payLoad = {
-		"method": "challenge",
-		"roomId": roomId,
+		method: 'challenge',
+		roomId: roomId,
+		from: challenger._name
 	};
 
-	if (c2._conection && typeof c2._conection.send === 'function') {
-		c2._conection.send(JSON.stringify(payLoad));
+	if (friendClient._conection && typeof friendClient._conection.send === 'function') {
+		friendClient._conection.send(JSON.stringify(payLoad));
 	}
 }
 
@@ -208,13 +220,25 @@ function handleInvite(socket, data) {
 	
 	const room = g_Games.findRoom(data.roomId);
 
-	if(data.response === "yes")
-	{
-		c2 = g_Games.findClient(data.clientId);
-		room.join(c2._client, c1._client._conection);
-	}
-	else if (data.response === "no"){
-		room.leave();
+	if (data.accepted === 'yes') {
+		const joiningClient = g_Games.findClient(data.clientId);
+		if (!joiningClient) {
+			throw 'Joining client not found';
+		}
+		const alreadyInRoom = room.clients.some(c => c._clientId === joiningClient._clientId);
+		if (alreadyInRoom) {
+			if (joiningClient._conection && typeof joiningClient._conection.send === 'function') {
+				joiningClient._conection.send(JSON.stringify({
+					method: 'invite',
+					status: 'error',
+					message: 'Already in room'
+				}));
+			}
+			return;
+		}
+		room.join(joiningClient, joiningClient._conection);
+	} else if (data.accepted === 'no') {
+		room.leave('Invitation refusée');
 	}
 }
 
