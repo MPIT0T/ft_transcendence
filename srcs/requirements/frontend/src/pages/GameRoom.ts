@@ -2,6 +2,7 @@ import type { Page } from "../interface/gameInterface.js"
 
 export let ws: WebSocket | undefined;
 let clientId: string | undefined;
+let pendingChallengeFriend: string | undefined;
 
 // Additional methods
 const reloadRooms = function (root: HTMLElement) {
@@ -96,13 +97,14 @@ const createRoom = function (root: HTMLElement): void {
 }
 
 const inviteFriends = function (friend: string) {
-	const payLoad = {
-		"method": "challenge",
-		"clientId": clientId,
-		"friend": friend
+	pendingChallengeFriend = friend;
+	const modal = document.querySelector('#challenge-points-modal') as HTMLDivElement | null;
+	const friendLabel = document.querySelector('#challenge-friend-label') as HTMLSpanElement | null;
+	if (friendLabel) friendLabel.textContent = friend;
+	if (modal) {
+		modal.classList.remove('hidden');
+		modal.classList.add('flex');
 	}
-	if (ws)
-		ws.send(JSON.stringify(payLoad));
 }
 
 const joinRoom = function (roomId: string) {
@@ -249,6 +251,35 @@ export const GameRoom: Page = {
 		</div>
 	</div>
 
+	<!-- Modal Challenge Points -->
+	<div id="challenge-points-modal" class="fixed inset-0 backdrop-blur-lg hidden items-center justify-center z-50">
+		<div class="border border-gray-50 p-8 max-w-md w-full mx-4">
+			<h3 class="text-2xl text-gray-50 font-bold mb-6 text-center">Inviter <span id="challenge-friend-label" class="text-blue-400"></span></h3>
+			<div>
+				<label class="block text-sm font-bold mb-2 text-gray-200">Points maximum :</label>
+				<select id="challenge-game-point" class="w-full px-3 py-2 border border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50">
+					<option value="3">3</option>
+					<option value="5">5</option>
+					<option value="8" selected>8</option>
+					<option value="10">10</option>
+					<option value="15">15</option>
+				</select>
+			</div>
+			<div class="flex space-x-4 mt-6">
+				<button 
+					id="challenge-send" 
+					class="flex-1 text-white py-2 px-4 border border-gray-50 hover:bg-gray-700 hover:border-green-500 transition-colors font-bold">
+					ENVOYER L'INVITATION
+				</button>
+				<button 
+					id="challenge-cancel" 
+					class="flex-1 text-white py-2 px-4 border border-gray-50 hover:bg-gray-700 hover:border-red-500 transition-colors font-bold">
+					ANNULER
+				</button>
+			</div>
+		</div>
+	</div>
+
 	<!-- Modal Challenge Received -->
 	<div id="challenge-modal" class="fixed inset-0 backdrop-blur-lg hidden items-center justify-center z-50">
 		<div class="border border-gray-50 p-8 max-w-md w-full mx-4">
@@ -351,7 +382,7 @@ export const GameRoom: Page = {
 						clientId: clientId,
 						roomId: rid,
 						to: challenger,
-						accepted: 'yes'
+						response: 'yes'
 					};
 					if (ws) ws.send(JSON.stringify(payLoad));
 
@@ -377,7 +408,7 @@ export const GameRoom: Page = {
 						clientId: clientId,
 						roomId: rid,
 						to: challenger,
-						accepted: 'no'
+						response: 'no'
 					};
 					if (ws) ws.send(JSON.stringify(payLoad));
 				};
@@ -438,6 +469,12 @@ export const GameRoom: Page = {
 		const cancelBtn = root.querySelector('#cancel-create') as HTMLButtonElement;
 		const createForm = root.querySelector('#create-room-form') as HTMLFormElement;
 
+		// Challenge points modal elements
+		const challengeModal = root.querySelector('#challenge-points-modal') as HTMLDivElement;
+		const challengeSendBtn = root.querySelector('#challenge-send') as HTMLButtonElement;
+		const challengeCancelBtn = root.querySelector('#challenge-cancel') as HTMLButtonElement;
+		const challengePointsSelect = root.querySelector('#challenge-game-point') as HTMLSelectElement;
+
 		if (cancelBtn) {
 			cancelBtn.addEventListener('click', () => {
 				modal.classList.add('hidden');
@@ -457,6 +494,33 @@ export const GameRoom: Page = {
 			createForm.addEventListener('submit', (e) => {
 				e.preventDefault();
 				createRoom(root);
+			});
+		}
+
+		// Challenge actions
+		if (challengeCancelBtn) {
+			challengeCancelBtn.addEventListener('click', () => {
+				challengeModal.classList.add('hidden');
+				challengeModal.classList.remove('flex');
+				pendingChallengeFriend = undefined;
+			});
+		}
+
+		if (challengeSendBtn) {
+			challengeSendBtn.addEventListener('click', () => {
+				if (!pendingChallengeFriend) return;
+				const gp = parseInt(challengePointsSelect?.value || '8', 10);
+				const payLoad = {
+					method: 'challenge',
+					clientId: clientId,
+					friend: pendingChallengeFriend,
+					gamePoint: gp,
+				};
+				if (ws) ws.send(JSON.stringify(payLoad));
+				// close modal
+				challengeModal.classList.add('hidden');
+				challengeModal.classList.remove('flex');
+				pendingChallengeFriend = undefined;
 			});
 		}
 

@@ -179,7 +179,8 @@ function handleChallenge(socket, data) {
 	if (g_Games.findClient(data.clientId) === undefined)
 		throw "Client id not good";
 
-	const roomId = g_Games.createRoom(null, "challenge", 8, "challenge");
+	const points = (typeof data.gamePoint === 'number') ? data.gamePoint : parseInt(data.gamePoint, 10) || 8;
+	const roomId = g_Games.createRoom(null, "challenge", points, "challenge");
 	const room = g_Games.findRoom(roomId);
 
 	const challenger = g_Games.findClient(data.clientId);
@@ -220,7 +221,7 @@ function handleInvite(socket, data) {
 	
 	const room = g_Games.findRoom(data.roomId);
 
-	if (data.accepted === 'yes') {
+	if (data.response === 'yes') {
 		const joiningClient = g_Games.findClient(data.clientId);
 		if (!joiningClient) {
 			throw 'Joining client not found';
@@ -237,7 +238,7 @@ function handleInvite(socket, data) {
 			return;
 		}
 		room.join(joiningClient, joiningClient._conection);
-	} else if (data.accepted === 'no') {
+	} else if (data.response === 'no') {
 		room.leave('Invitation refusée');
 	}
 }
