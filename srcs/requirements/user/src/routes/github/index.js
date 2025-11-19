@@ -5,7 +5,7 @@ const fetch = require('node-fetch');
 const privateKey = "secret123123";
 const GITHUB_CLIENT_ID = 'Ov23libyRMWHw34E2bL0';
 const GITHUB_CLIENT_SECRET = '6bda1291461c3ecbe7a9c970481fbf7369ae7e56';
-const {getUserbyUsername} = require('../login');
+const {getUserbyUsername} = require('../../utils.js');
 
 const db = require('../../db.js');
 

@@ -436,7 +436,7 @@ export const Layout = {
 
     // Github registration
     const clientId = "Ov23libyRMWHw34E2bL0";
-    const redirectUri = "https://127.0.0.1:4430/oauth-callback.html";
+    const redirectUri = "https://z1r5p5:4430/oauth-callback.html";
     const scope = "read:user";
 
     if (githubBtn) {
@@ -586,7 +586,7 @@ export const Layout = {
             } catch (err) {
               console.error(err);
             }
-          }, 1000);
+          }, 30000);
         }
         else if (res.status === 400)
         {
@@ -652,6 +652,10 @@ export const Layout = {
         btn.className = 'w-8 h-6 transition hover:bg-gray-800 ';
       }
     });
+  },
+
+  isLoggedIn(): boolean {
+    return !!localStorage.getItem('access_token');
   },
 
   updateLoginButton(root: HTMLElement, isLoggedIn: boolean): void {

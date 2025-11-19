@@ -1,7 +1,13 @@
   import type { StatsPage } from "../interface/gameInterface.js"
   import {Layout} from "./Layout";
 
-  let activeTab: 'profile' | 'history' = 'profile';
+let activeTab: 'profile' | 'history' = 'profile';
+
+if (!Layout.isLoggedIn()) {
+  const p = '/';
+  history.pushState(null, '', p);
+  window.dispatchEvent(new PopStateEvent('popstate'));
+}
 
 const Stats: StatsPage = {
 	render() {
@@ -393,12 +399,20 @@ const Stats: StatsPage = {
 			historyTab.addEventListener('click', switchToHistory);
 		}
 
-		// Initial content/events mount based on active tab
+    // Initial content/events mount based on active tab
+
 		renderContent();
 	},
 
-    mountProfileEvents(root: HTMLElement) {
+  mountProfileEvents(root: HTMLElement) {
       // Change username
+      const addFriendBtn = root.querySelector('#add-friend-btn') as HTMLButtonElement;
+      if (addFriendBtn) {
+        addFriendBtn.addEventListener('click', () => {
+          this.handleAddFriendClick(root);
+        });
+      }
+
       const changeUsername = root.querySelector('#change-username') as HTMLElement;
       if (changeUsername) {
         changeUsername.addEventListener('click', () => {
@@ -413,7 +427,7 @@ const Stats: StatsPage = {
       }
 
       // Disconnect
-      const disconnectBtn = root.querySelector('#sign-out-btn') as HTMLButtonElement;
+      const disconnectBtn = root.querySelector('#disconnectBtn') as HTMLButtonElement;
       if (disconnectBtn) {
         disconnectBtn.addEventListener('click', () => {
           sessionStorage.removeItem('isLoggedIn');
@@ -421,9 +435,11 @@ const Stats: StatsPage = {
           sessionStorage.removeItem('username');
           Layout.updateLoginButton(document.body, false);
           clearInterval((globalThis as any).loginIntervalId);
+          const p = '/';
+          history.pushState(null, '', p);
+          window.dispatchEvent(new PopStateEvent('popstate'));
         });
       }
-
 
 		// Change mail
 		const changeMail = root.querySelector('#change-mail') as HTMLElement;
@@ -469,17 +485,51 @@ const Stats: StatsPage = {
 		if (onlineTab) onlineTab.addEventListener('click', showOnline);
 		if (offlineTab) offlineTab.addEventListener('click', showOffline);
 
-		// Invite buttons (scoped to friends container)
-		const friendsContainer = root.querySelector('#friends-container') as HTMLElement | null;
-		const inviteButtons = friendsContainer ? friendsContainer.querySelectorAll('.invite-btn') as NodeListOf<HTMLButtonElement> : null;
-		if (inviteButtons) {
-			inviteButtons.forEach(btn => {
-				btn.addEventListener('click', (e) => {
-					const friendName = btn.closest('li')?.querySelector('span')?.textContent?.trim();
-					alert(`🎮 Invitation envoyée à ${friendName} !`);
-				});
-			});
-		}
-	}
+	},
+
+  handleAddFriendClick(root: HTMLElement) {
+      const input = root.querySelector('#add-friend-input') as HTMLInputElement;
+      const invitedUsername = input?.value?.trim();
+
+      if (!invitedUsername) {
+        Layout.showNotification('Veuillez entrer un nom d\'utilisateur', 'error');
+        return;
+      }
+
+      const currentUser = sessionStorage.getItem('username');
+      if (!currentUser) {
+        Layout.showNotification('Vous devez être connecté', 'error');
+        return;
+      }
+
+      if (invitedUsername === currentUser) {
+        Layout.showNotification('Vous ne pouvez pas vous ajouter vous-même !', 'error');
+        return;
+      }
+
+      fetch('/user/friends/invite-request', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          author: currentUser,
+          invited: invitedUsername
+        })
+      })
+        .then(res => {
+          if (res.ok) {
+            Layout.showNotification(`Invitation envoyée à ${invitedUsername} !`);
+            input.value = '';
+          } else {
+            return res.json().then(data => Promise.reject(data));
+          }
+        })
+        .catch(err => {
+          const msg = err.error || 'Impossible d\'envoyer l\'invitation';
+          Layout.showNotification(msg, 'error');
+        });
+  }
 }
 export default Stats
