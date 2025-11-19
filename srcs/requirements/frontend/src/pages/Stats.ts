@@ -67,9 +67,13 @@ const Stats: StatsPage = {
 		<!-- Avatar -->
 		<div class="text-center mb-6">
 				<div class="w-20 h-20 rounded-full mx-auto mb-3 flex items-center justify-center border border-gray-50">
-				<span class="text-3xl">👤</span>
+				<img src=${Layout.getUserInfoFromJwt(sessionStorage.getItem('token')).avatar} alt="avatar"/>
 			</div>
-			<p class="text-xs text-blue-500 underline cursor-pointer" id="change-avatar">CHANGE AVATAR</p>
+			<select class="text-xs text-blue-500 underline cursor-pointer" id="change-avatar">
+				<option value="">change avatar</option>
+				<option value="alien">alien</option>
+				<option value="astronaut">astronaut</option>
+			</select>
 		</div>
 
 		<!-- Username -->
