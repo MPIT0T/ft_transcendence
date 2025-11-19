@@ -1,6 +1,6 @@
 'use strict';
 const db = require("../../../db.js");
-const getFriendsFromId = require("../index.js");
+const { getFriendsFromId } = require("../index.js");
 
 async function friendRequestRoute(fastify, options) {
     fastify.post('/', async (req, reply) => {

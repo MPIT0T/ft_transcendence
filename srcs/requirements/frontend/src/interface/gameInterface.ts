@@ -33,6 +33,8 @@ interface StatsPage extends Page {
   mountProfileEvents(root: HTMLElement): void;
   handleAddFriendClick(root: HTMLElement): void;
   showFriendRequest(root: HTMLElement): void;
+  showOnlineFriends(root: HTMLElement): void;
+  showOfflineFriends(root: HTMLElement): void;
   acceptFriendRequest(username: string, element: HTMLElement): void;
 }
 

@@ -20,7 +20,7 @@ async function setOnlineRoute(fastify, options) {
                 const stmt = db.prepare('UPDATE users SET online = ? WHERE id = ?');
                 stmt.run(user.online, user.id);
             }
-        }, 31000);
+        }, 10000);
         is_started = true;
         return reply.status(200).send({message: 'Ok'});
     });

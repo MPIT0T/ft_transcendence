@@ -15,4 +15,22 @@ function getFriendsFromId(friendsIds)
     return allFriendsNames;
 }
 
-module.exports = getFriendsFromId;
+function getStatusFromId(friendsIds)
+{
+    if (typeof friendsIds !== 'string') {
+        return [];
+    }
+    const allFriendsStatus = [];
+    const allFriendsIds = friendsIds.split(',');
+    const stmt = db.prepare('SELECT online FROM users WHERE id = ?');
+
+    for (const id of allFriendsIds)
+        allFriendsStatus.push(stmt.get(id));
+    return allFriendsStatus;
+}
+
+module.exports =
+    {
+        getFriendsFromId,
+        getStatusFromId,
+    };

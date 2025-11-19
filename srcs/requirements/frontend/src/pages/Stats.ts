@@ -157,52 +157,12 @@ const Stats: StatsPage = {
 
 		<div id="friends-container">
 			<div id="online-friends" class="space-y-3">
-				<ul>
-					<li class="flex items-center justify-between">
-						<span class="text-gray-200 flex items-center">
-							<span class="w-2 h-2 bg-green-500 mr-2"></span>
-							BOB
-						</span>
-						<button class="invite-btn px-3 py-1 text-xs bg-blue-500 text-white hover:bg-blue-600 transition-colors">
-							Invite
-						</button>
-					</li>
-					<li class="flex items-center justify-between">
-						<span class="text-gray-200 flex items-center">
-							<span class="w-2 h-2 bg-green-500 mr-2"></span>
-							Mike
-						</span>
-						<button class="invite-btn px-3 py-1 text-xs bg-blue-500 text-white hover:bg-blue-600 transition-colors">
-							Invite
-						</button>
-					</li>
-					<li class="flex items-center justify-between">
-						<span class="text-gray-200 flex items-center">
-							<span class="w-2 h-2 bg-green-500 mr-2"></span>
-							Mathis
-						</span>
-						<button class="invite-btn px-3 py-1 text-xs bg-blue-500 text-white hover:bg-blue-600 transition-colors">
-							Invite
-						</button>
-					</li>
+				<ul id="online-friends-container">
 				</ul>
 			</div>
 
 			<div id="offline-friends" class="space-y-3 hidden">
-				<ul>
-					<li class="flex items-center">
-						<span class="w-2 h-2 bg-gray-400 rounded-full mr-2"></span>
-						<span class="text-gray-200">Lucas</span>
-					</li>
-					<li class="flex items-center">
-						<span class="w-2 h-2 bg-gray-400 rounded-full mr-2"></span>
-						<span class="text-gray-200">Marie</span>
-					</li>
-					<li class="flex items-center">
-						<span class="w-2 h-2 bg-gray-400 rounded-full mr-2"></span>
-						<span class="text-gray-200">Jean</span>
-					</li>
-				</ul>
+				<ul id="offline-friends-container"></ul>
 			</div>
 			<div id="request-friends" class="space-y-3">
 				<ul id="request-friends-container"></ul>
@@ -481,6 +441,7 @@ const Stats: StatsPage = {
 			if (onlineSection) onlineSection.classList.remove('hidden');
 			if (offlineSection) offlineSection.classList.add('hidden');
 			if (requestSection) requestSection.classList.add('hidden');
+			this.showOnlineFriends(root);
 		};
 
 		const showOffline = () => {
@@ -488,6 +449,7 @@ const Stats: StatsPage = {
 			if (offlineSection) offlineSection.classList.remove('hidden');
 			if (onlineSection) onlineSection.classList.add('hidden');
 			if (requestSection) requestSection.classList.add('hidden');
+			this.showOfflineFriends(root);
 		};
 
 		const showRequestTab = () => {
@@ -572,7 +534,7 @@ const Stats: StatsPage = {
 				if (!res.ok) {
 					return res.json().then(data => Promise.reject(data));
 				}
-				return res.json(); // <-- return the actual JSON
+				return res.json();
 			})
 			.then((data: { invites: { username: string }[] }) => {
 
@@ -585,7 +547,10 @@ const Stats: StatsPage = {
 					li.className = 'flex items-center justify-between';
 					li.innerHTML = `
 					<span class="text-gray-200 flex items-center">
-						<span class="w-2 h-2 bg-green-500 mr-2"></span>
+						<span class="inline-block w-2 h-2 mr-2 relative">
+  					<span class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0 
+               border-l-[4px] border-r-[4px] border-b-[6px] border-l-transparent border-r-transparent border-b-purple-500"></span>
+						</span>
 						${username}
 					</span>
 					<button class="invite-btn px-3 py-1 text-xs bg-blue-500 text-white hover:bg-blue-600 transition-colors" id="Btn-${username}">
@@ -626,7 +591,120 @@ const Stats: StatsPage = {
 				const msg = err.error || `Impossible d'accepter ${username}`;
 				Layout.showNotification(msg, 'error');
 			});
+	},
+
+	showOnlineFriends(root: HTMLElement) {
+		const currentUser = sessionStorage.getItem('username');
+		const container = root.querySelector('#online-friends-container') as HTMLDivElement;
+		container.innerHTML = '';
+
+		if (!currentUser) {
+			Layout.showNotification('Vous devez être connecté', 'error');
+			return;
+		}
+
+		fetch('/user/friends/get-friends', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+			},
+			body: JSON.stringify({
+				username: currentUser,
+			})
+		})
+			.then(res => {
+				if (!res.ok) {
+					return res.json().then(data => Promise.reject(data));
+				}
+				return res.json();
+			})
+			.then((data: { friends: { username: string }[], friendsStatus: { online: boolean}[] }) => {
+				const usersWithStatus = data.friends
+					.filter(entry => entry && entry.username)
+					.map((entry, index) => ({
+						username: entry.username,
+						online: data.friendsStatus[index]?.online ?? false
+					}));
+				usersWithStatus.forEach((user) => {
+					if (user.online)
+					{
+						const li = document.createElement('li');
+						li.className = 'flex items-center justify-between';
+						li.innerHTML = `
+						<span class="text-gray-200 flex items-center">
+						<span class="w-2 h-2 bg-green-500 mr-2"></span>
+            ${user.username}
+            </span>
+        		`;
+						container.appendChild(li);
+					}
+				});
+			})
+			.catch(err => {
+				const msg = err.error || 'Impossible de recevoir les requetes d\'amis';
+				Layout.showNotification(msg, 'error');
+			});
+	},
+
+	showOfflineFriends(root: HTMLElement){
+		const currentUser = sessionStorage.getItem('username');
+		const container = root.querySelector('#offline-friends-container') as HTMLDivElement;
+		container.innerHTML = '';
+
+		if (!currentUser) {
+			Layout.showNotification('Vous devez être connecté', 'error');
+			return;
+		}
+
+		fetch('/user/friends/get-friends', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+			},
+			body: JSON.stringify({
+				username: currentUser,
+			})
+		})
+			.then(res => {
+				if (!res.ok) {
+					return res.json().then(data => Promise.reject(data));
+				}
+				return res.json();
+			})
+			.then((data: { friends: { username: string }[], friendsStatus: { online: boolean}[] }) => {
+				const usersWithStatus = data.friends
+					.filter(entry => entry && entry.username)
+					.map((entry, index) => ({
+						username: entry.username,
+						online: data.friendsStatus[index]?.online ?? false
+				}));
+				usersWithStatus.forEach((user) => {
+					if (!user.online)
+					{
+						const li = document.createElement('li');
+						li.className = 'flex items-center';
+						li.innerHTML = `
+						<span class="w-2 h-2 bg-gray-400 rounded-full mr-2"></span>
+            <span class="text-gray-200">${user.username}</span>
+        		`;
+						container.appendChild(li);
+					}
+				});
+			})
+			.catch(err => {
+				const msg = err.error || 'Impossible de recevoir les requetes d\'amis';
+				Layout.showNotification(msg, 'error');
+			});
 	}
 }
+
+/*	<li class="flex items-center justify-between">
+	<span class="text-gray-200 flex items-center">
+	<span class="w-2 h-2 bg-green-500 mr-2"></span>
+	BOB
+	</span>
+	</li>*/
 
 export default Stats
