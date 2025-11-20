@@ -67,7 +67,7 @@ const Stats: StatsPage = {
 		<!-- Avatar -->
 		<div class="text-center mb-6">
 				<div class="w-20 h-20 rounded-full mx-auto mb-3 flex items-center justify-center border border-gray-50">
-				<img src=${Layout.getUserInfoFromJwt(sessionStorage.getItem('token')).avatar} alt="avatar"/>
+				<img src=${Layout.getUserInfoFromJwt(sessionStorage.getItem('token')).avatar} alt="avatar" class="w-12"/>
 			</div>
 			<select class="text-xs text-blue-500 underline cursor-pointer" id="change-avatar">
 				<option value="">change avatar</option>
@@ -373,6 +373,9 @@ const Stats: StatsPage = {
 	},
 
   mountProfileEvents(root: HTMLElement) {
+
+			this.showOnlineFriends(root);
+
       // Change username
       const addFriendBtn = root.querySelector('#add-friend-btn') as HTMLButtonElement;
       if (addFriendBtn) {
@@ -445,7 +448,13 @@ const Stats: StatsPage = {
 			if (onlineSection) onlineSection.classList.remove('hidden');
 			if (offlineSection) offlineSection.classList.add('hidden');
 			if (requestSection) requestSection.classList.add('hidden');
+			window.clearInterval((globalThis as any).showOfflineFriendsIntervalId);
+			window.clearInterval((globalThis as any).showFriendRequestIntervalId);
 			this.showOnlineFriends(root);
+			clearInterval((globalThis as any).showOnlineFriendsIntervalId);
+			(globalThis as any).showOnlineFriendsIntervalId = setInterval(async () => {
+				this.showOnlineFriends(root);
+			}, 5000);
 		};
 
 		const showOffline = () => {
@@ -453,7 +462,13 @@ const Stats: StatsPage = {
 			if (offlineSection) offlineSection.classList.remove('hidden');
 			if (onlineSection) onlineSection.classList.add('hidden');
 			if (requestSection) requestSection.classList.add('hidden');
+			window.clearInterval((globalThis as any).showOnlineFriendsIntervalId);
+			window.clearInterval((globalThis as any).showFriendRequestIntervalId);
 			this.showOfflineFriends(root);
+			clearInterval((globalThis as any).showOfflineFriendsIntervalId);
+			(globalThis as any).showOfflineFriendsIntervalId = setInterval(async () => {
+				this.showOfflineFriends(root);
+			}, 5000);
 		};
 
 		const showRequestTab = () => {
@@ -461,7 +476,13 @@ const Stats: StatsPage = {
 			if (requestSection) requestSection.classList.remove('hidden');
 			if (onlineSection) onlineSection.classList.add('hidden');
 			if (offlineSection) offlineSection.classList.add('hidden');
+			window.clearInterval((globalThis as any).showOnlineFriendsIntervalId);
+			window.clearInterval((globalThis as any).showOfflineFriendsIntervalId);
 			this.showFriendRequest(root);
+			clearInterval((globalThis as any).showFriendRequestIntervalId);
+			(globalThis as any).showFriendRequestIntervalId = setInterval(async () => {
+				this.showFriendRequest(root);
+			}, 5000);
 		};
 
 		if (onlineTab) onlineTab.addEventListener('click', showOnline);
@@ -515,64 +536,62 @@ const Stats: StatsPage = {
   },
 
 	showFriendRequest(root: HTMLElement) {
-		const currentUser = sessionStorage.getItem('username');
-		const container = root.querySelector('#request-friends-container') as HTMLDivElement;
-		container.innerHTML = '';
+	const currentUser = sessionStorage.getItem('username');
+	const container = root.querySelector('#request-friends-container') as HTMLDivElement;
 
-		if (!currentUser) {
-			Layout.showNotification('Vous devez être connecté', 'error');
-			return;
-		}
+	if (!currentUser) {
+		Layout.showNotification('Vous devez être connecté', 'error');
+		return;
+	}
 
-		fetch('/user/friends/get-friend-request', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				'Authorization': `Bearer ${sessionStorage.getItem('token')}`
-			},
-			body: JSON.stringify({
-				username: currentUser,
-			})
+	fetch('/user/friends/get-friend-request', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+		},
+		body: JSON.stringify({
+			username: currentUser,
 		})
-			.then(res => {
-				if (!res.ok) {
-					return res.json().then(data => Promise.reject(data));
-				}
-				return res.json();
-			})
-			.then((data: { invites: { username: string }[] }) => {
+	})
+		.then(res => {
+			container.innerHTML = '';
+			if (!res.ok) {
+				return res.json().then(data => Promise.reject(data));
+			}
+			return res.json();
+		})
+		.then((data: { invites: { username: string }[] }) => {
 
-				const usernames = data.invites
-					.filter((entry) => entry && entry.username)
-					.map((entry) => entry.username);
-
-				usernames.forEach((username: string) => {
-					const li = document.createElement('li');
-					li.className = 'flex items-center justify-between';
-					li.innerHTML = `
-					<span class="text-gray-200 flex items-center">
-						<span class="inline-block w-2 h-2 mr-2 relative">
-  					<span class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0 
-               border-l-[4px] border-r-[4px] border-b-[6px] border-l-transparent border-r-transparent border-b-purple-500"></span>
-						</span>
-						${username}
+			const usernames = data.invites
+				.filter((entry) => entry && entry.username)
+				.map((entry) => entry.username);
+			usernames.forEach((username: string) => {
+				const li = document.createElement('li');
+				li.className = 'flex items-center justify-between';
+				li.innerHTML = `
+				<span class="text-gray-200 flex items-center">
+					<span class="inline-block w-2 h-2 mr-2 relative">
+					<span class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0 
+						 border-l-[4px] border-r-[4px] border-b-[6px] border-l-transparent border-r-transparent border-b-purple-500"></span>
 					</span>
-					<button class="invite-btn px-3 py-1 text-xs bg-blue-500 text-white hover:bg-blue-600 transition-colors" id="Btn-${username}">
-						Accept
-					</button>
-				`;
-					const btn = li.querySelector('button') as HTMLButtonElement;
-					btn.addEventListener('click', () => {
-						this.acceptFriendRequest(username, li);
-					});
-
-					container.appendChild(li);
+					${username}
+				</span>
+				<button class="invite-btn px-3 py-1 text-xs bg-blue-500 text-white hover:bg-blue-600 transition-colors" id="Btn-${username}">
+					Accept
+				</button>
+			`;
+				const btn = li.querySelector('button') as HTMLButtonElement;
+				btn.addEventListener('click', () => {
+					this.acceptFriendRequest(username, li);
 				});
-			})
-			.catch(err => {
-				const msg = err.error || 'Impossible de recevoir les requetes d\'amis';
-				Layout.showNotification(msg, 'error');
+				container.appendChild(li);
 			});
+		})
+		.catch(err => {
+			const msg = err.error || 'Impossible de recevoir les requetes d\'amis';
+			Layout.showNotification(msg, 'error');
+		});
 	},
 
 	acceptFriendRequest(username: string, element: HTMLElement) {
@@ -600,7 +619,6 @@ const Stats: StatsPage = {
 	showOnlineFriends(root: HTMLElement) {
 		const currentUser = sessionStorage.getItem('username');
 		const container = root.querySelector('#online-friends-container') as HTMLDivElement;
-		container.innerHTML = '';
 
 		if (!currentUser) {
 			Layout.showNotification('Vous devez être connecté', 'error');
@@ -618,12 +636,13 @@ const Stats: StatsPage = {
 			})
 		})
 			.then(res => {
+				container.innerHTML = '';
 				if (!res.ok) {
 					return res.json().then(data => Promise.reject(data));
 				}
 				return res.json();
 			})
-			.then((data: { friends: { username: string }[], friendsStatus: { online: boolean}[] }) => {
+			.then((data: { friends: { username: string }[], friendsStatus: { online: boolean }[] }) => {
 				const usersWithStatus = data.friends
 					.filter(entry => entry && entry.username)
 					.map((entry, index) => ({
@@ -631,16 +650,15 @@ const Stats: StatsPage = {
 						online: data.friendsStatus[index]?.online ?? false
 					}));
 				usersWithStatus.forEach((user) => {
-					if (user.online)
-					{
+					if (user.online) {
 						const li = document.createElement('li');
 						li.className = 'flex items-center justify-between';
 						li.innerHTML = `
-						<span class="text-gray-200 flex items-center">
-						<span class="w-2 h-2 bg-green-500 mr-2"></span>
-            ${user.username}
-            </span>
-        		`;
+					<span class="text-gray-200 flex items-center">
+					<span class="w-2 h-2 bg-green-500 mr-2"></span>
+					${user.username}
+					</span>
+					`;
 						container.appendChild(li);
 					}
 				});
@@ -651,10 +669,9 @@ const Stats: StatsPage = {
 			});
 	},
 
-	showOfflineFriends(root: HTMLElement){
+	showOfflineFriends(root: HTMLElement) {
 		const currentUser = sessionStorage.getItem('username');
 		const container = root.querySelector('#offline-friends-container') as HTMLDivElement;
-		container.innerHTML = '';
 
 		if (!currentUser) {
 			Layout.showNotification('Vous devez être connecté', 'error');
@@ -672,27 +689,27 @@ const Stats: StatsPage = {
 			})
 		})
 			.then(res => {
+				container.innerHTML = '';
 				if (!res.ok) {
 					return res.json().then(data => Promise.reject(data));
 				}
 				return res.json();
 			})
-			.then((data: { friends: { username: string }[], friendsStatus: { online: boolean}[] }) => {
+			.then((data: { friends: { username: string }[], friendsStatus: { online: boolean }[] }) => {
 				const usersWithStatus = data.friends
 					.filter(entry => entry && entry.username)
 					.map((entry, index) => ({
 						username: entry.username,
 						online: data.friendsStatus[index]?.online ?? false
-				}));
+					}));
 				usersWithStatus.forEach((user) => {
-					if (!user.online)
-					{
+					if (!user.online) {
 						const li = document.createElement('li');
 						li.className = 'flex items-center';
 						li.innerHTML = `
-						<span class="w-2 h-2 bg-gray-400 rounded-full mr-2"></span>
-            <span class="text-gray-200">${user.username}</span>
-        		`;
+					<span class="w-2 h-2 bg-gray-400 rounded-full mr-2"></span>
+					<span class="text-gray-200">${user.username}</span>
+					`;
 						container.appendChild(li);
 					}
 				});
@@ -704,11 +721,12 @@ const Stats: StatsPage = {
 	}
 }
 
-/*	<li class="flex items-center justify-between">
-	<span class="text-gray-200 flex items-center">
-	<span class="w-2 h-2 bg-green-500 mr-2"></span>
-	BOB
-	</span>
-	</li>*/
+const popstateHandler = (event: PopStateEvent) => {
+	window.clearInterval((globalThis as any).showOnlineFriendsIntervalId);
+	window.clearInterval((globalThis as any).showOfflineFriendsIntervalId);
+	window.clearInterval((globalThis as any).showFriendRequestIntervalId);
+	window.removeEventListener('popstate', popstateHandler);
+};
+window.addEventListener('popstate', popstateHandler);
 
 export default Stats
