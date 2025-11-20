@@ -67,12 +67,14 @@ const Stats: StatsPage = {
 		<!-- Avatar -->
 		<div class="text-center mb-6">
 				<div class="w-20 h-20 rounded-full mx-auto mb-3 flex items-center justify-center border border-gray-50">
-				<img src=${Layout.getUserInfoFromJwt(sessionStorage.getItem('token')).avatar} alt="avatar" class="w-12"/>
+				<img src=${Layout.getUserInfoFromJwt(sessionStorage.getItem('token')).avatar} id="user-avatar" alt="avatar" class="w-12"/>
 			</div>
 			<select class="text-xs text-blue-500 underline cursor-pointer" id="change-avatar">
 				<option value="">change avatar</option>
-				<option value="alien">alien</option>
-				<option value="astronaut">astronaut</option>
+				<option value="alien.png">alien</option>
+				<option value="astronaut.png">astronaut</option>
+				<option value="martian.png">martian</option>
+				<option value="robot.png">robot</option>
 			</select>
 		</div>
 
@@ -429,8 +431,10 @@ const Stats: StatsPage = {
 		// Change avatar
 		const changeAvatar = root.querySelector('#change-avatar') as HTMLElement;
 		if (changeAvatar) {
-			changeAvatar.addEventListener('click', () => {
-				alert('🎨 Fonctionnalité de changement d\'avatar à venir !');
+			changeAvatar.addEventListener('change', (event) => {
+				const target = event.target as HTMLSelectElement;
+				const selectedValue = target.value;
+				this.changeNewAvatar(root, selectedValue);
 			});
 		}
 
@@ -669,6 +673,61 @@ const Stats: StatsPage = {
 			});
 	},
 
+	changeNewAvatar(root: HTMLElement, newAvatar: string) {
+		const currentUser = sessionStorage.getItem('username');
+		const token = sessionStorage.getItem('token');
+
+		if (!currentUser) {
+			Layout.showNotification('Vous devez être connecté', 'error');
+			return;
+		}
+
+		console.log('URL:', '/user/api/change-avatar');
+		console.log('Token:', token);
+		console.log('Body:', { username: currentUser, avatar: newAvatar });
+
+		fetch('/user/api/change-avatar', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${token}`
+			},
+			body: JSON.stringify({
+				username: currentUser,
+				avatar: newAvatar
+			})
+		})
+			.then(async (res) => {
+				const text = await res.text();
+				let data;
+				try {
+					data = JSON.parse(text);
+				} catch {
+					data = text;
+				}
+
+				console.log('Response status:', res.status);
+				console.log('Response data:', data);
+
+				if (!res.ok) {
+					return Promise.reject(data);
+				}
+				return data;
+			})
+			.then((data: { message: string; token?: string }) => {
+				if (data.token) {
+					sessionStorage.setItem('token', data.token);
+					this.updateAvatar(root);
+				}
+				Layout.showNotification(data.message || 'Avatar changé avec succès', 'success');
+			})
+			.catch(err => {
+				console.error('Fetch error:', err);
+				const msg = (err && (err.error || err.message)) || 'Impossible de changer d\'avatar';
+				Layout.showNotification(msg, 'error');
+			});
+	},
+
 	showOfflineFriends(root: HTMLElement) {
 		const currentUser = sessionStorage.getItem('username');
 		const container = root.querySelector('#offline-friends-container') as HTMLDivElement;
@@ -718,6 +777,16 @@ const Stats: StatsPage = {
 				const msg = err.error || 'Impossible de recevoir les requetes d\'amis';
 				Layout.showNotification(msg, 'error');
 			});
+	},
+
+	updateAvatar() {
+		const avatar = document.getElementById('user-avatar') as HTMLImageElement;
+
+		if (avatar)
+		{
+			avatar.src = Layout.getUserInfoFromJwt(sessionStorage.getItem('token')).avatar;
+			Layout.updateAvatar();
+		}
 	}
 }
 

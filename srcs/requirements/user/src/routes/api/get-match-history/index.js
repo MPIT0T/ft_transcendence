@@ -3,7 +3,7 @@ const db = require("../../../db.js");
 
 async function apiMatchHistoRoute(fastify, options) {
 
-    fastify.post('/get-match-history', async (req, reply) => {
+    fastify.post('/', async (req, reply) => {
         //send match history from a user via username search
         const {username} = req.body || {};
         if (!username) {

@@ -36,6 +36,8 @@ interface StatsPage extends Page {
   showOnlineFriends(root: HTMLElement): void;
   showOfflineFriends(root: HTMLElement): void;
   acceptFriendRequest(username: string, element: HTMLElement): void;
+  changeNewAvatar(root: HTMLElement, newAvatar: string): void;
+  updateAvatar(): void;
 }
 
 export type { Player, Ball, GameState , Page, StatsPage};
