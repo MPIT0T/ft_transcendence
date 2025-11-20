@@ -96,8 +96,9 @@ async function githubAuthRoute(fastify, options) {
           find_username =  await githubRegister(user.login, user.avatar_url, user.url);
         count++;
       }
+      const finalUser = getUserbyUsername(find_username);
       const token = jwt.sign(
-          { username: find_username , avatar: user.avatar_url },
+          { username: find_username , avatar: finalUser.avatar },
           privateKey,
           { expiresIn: '1h' }
       );

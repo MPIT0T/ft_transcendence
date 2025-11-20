@@ -434,7 +434,8 @@ const Stats: StatsPage = {
 			changeAvatar.addEventListener('change', (event) => {
 				const target = event.target as HTMLSelectElement;
 				const selectedValue = target.value;
-				this.changeNewAvatar(root, selectedValue);
+				if (target.value != '')
+					this.changeNewAvatar(root, selectedValue);
 			});
 		}
 
@@ -682,10 +683,6 @@ const Stats: StatsPage = {
 			return;
 		}
 
-		console.log('URL:', '/user/api/change-avatar');
-		console.log('Token:', token);
-		console.log('Body:', { username: currentUser, avatar: newAvatar });
-
 		fetch('/user/api/change-avatar', {
 			method: 'POST',
 			headers: {
@@ -717,7 +714,7 @@ const Stats: StatsPage = {
 			.then((data: { message: string; token?: string }) => {
 				if (data.token) {
 					sessionStorage.setItem('token', data.token);
-					this.updateAvatar(root);
+					this.updateAvatar();
 				}
 				Layout.showNotification(data.message || 'Avatar changé avec succès', 'success');
 			})
