@@ -291,7 +291,7 @@ export const Layout = {
         } catch (err) {
           console.error(err);
         }
-      }, 30000);
+      }, 29000);
     }
   },
 
@@ -436,7 +436,7 @@ export const Layout = {
 
     // Github registration
     const clientId = "Ov23libyRMWHw34E2bL0";
-    const redirectUri = "https://z1r5p5:4430/oauth-callback.html";
+    const redirectUri = "https://127.0.0.1:4430/oauth-callback.html";
     const scope = "read:user";
 
     if (githubBtn) {
@@ -521,7 +521,7 @@ export const Layout = {
           } catch (err) {
             console.error(err);
           }
-        }, 30000);
+        }, 29000);
       } else if (res.status === 401) {
         this.showNotification('Nom d\'utilisateur ou mot de passe invalide', 'error');
       }
@@ -586,7 +586,7 @@ export const Layout = {
             } catch (err) {
               console.error(err);
             }
-          }, 30000);
+          }, 29000);
         }
         else if (res.status === 400)
         {
@@ -667,7 +667,7 @@ export const Layout = {
         const avatarSrc = userInfo.avatar;
 
         loginBtn.innerHTML = `
-        <img src="${avatarSrc}" alt="avatar" class="w-8 h-8 mr-2" />
+        <img src="${avatarSrc}" alt="avatar" id="user-avatar-layout" class="w-8 h-8 mr-2" />
         <span class="text-3xl font-bold text-transparent bg-clip-text
         bg-gradient-to-r from-red-500 via-blue-500 to-green-500
         bg-[length:400%_400%] animate-gradientShift">${username}</span>
@@ -719,5 +719,12 @@ export const Layout = {
       es: 'Español'
     };
     return names[lang as keyof typeof names] || lang;
+  },
+
+  updateAvatar() {
+    const avatar = document.getElementById('user-avatar-layout') as HTMLImageElement;
+
+    if (avatar)
+      avatar.src = Layout.getUserInfoFromJwt(sessionStorage.getItem('token')).avatar;
   }
 };

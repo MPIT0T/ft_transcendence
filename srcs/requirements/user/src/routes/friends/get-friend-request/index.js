@@ -1,11 +1,11 @@
 'use strict';
 const db = require("../../../db.js");
-const getFriendsFromId = require("../index.js");
+const { getFriendsFromId } = require("../index.js");
 
 async function friendRequestRoute(fastify, options) {
     fastify.post('/', async (req, reply) => {
         // sending all your friends requests
-        const {username} = req.body || {};
+        const { username } = req.body || {};
         if (!username) {
             return reply.status(400).send({error: "nom d'utilisateur requis"});
         }
