@@ -24,7 +24,8 @@ async function loginRoute(fastify, options) {
                 JWT_SECRET,
                 { expiresIn: '7d' }
             );
-
+            const stmt = db.prepare("UPDATE users SET online = ? WHERE id = ?");
+            stmt.run(1, user.id);
             return reply.send({
                 success: true,
                 message: 'Connection effectué avec succès !',

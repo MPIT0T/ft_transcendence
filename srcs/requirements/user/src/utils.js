@@ -44,10 +44,24 @@ function checkToken(token, username){
     }
 }
 
+function errorToken(authorization, username)
+{
+    if (!authorization || !authorization.startsWith('Bearer ')) {
+        return "Token manquant ou invalide";
+    }
+    const token = authorization.split(' ')[1];
+    if (!checkToken(token, username))
+    {
+        return "Token manquant ou invalide";
+    }
+    return "";
+}
+
 module.exports = {
     getUserbyUsername,
     getUserbyId,
     sqliteCurrentTimestamp,
     checkToken,
+    errorToken,
     JWT_SECRET
 }

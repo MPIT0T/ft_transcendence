@@ -1,6 +1,7 @@
 'use strict';
 const db = require("../../../db.js");
 const { getFriendsFromId } = require("../index.js");
+const {checkToken, errorToken} = require("../../../utils");
 
 async function friendRequestRoute(fastify, options) {
     fastify.post('/', async (req, reply) => {
@@ -8,6 +9,10 @@ async function friendRequestRoute(fastify, options) {
         const { username } = req.body || {};
         if (!username) {
             return reply.status(400).send({error: "nom d'utilisateur requis"});
+        }
+        if (errorToken(req.headers['authorization'], username))
+        {
+            return reply.status(401).send({error: "Token manquant ou invalide"});
         }
         try {
             const stmt = db.prepare('SELECT invites_id FROM users WHERE username = ?');

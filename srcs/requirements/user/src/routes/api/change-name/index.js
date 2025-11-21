@@ -2,6 +2,7 @@
 const db = require("../../../db.js");
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = require("../../../utils.js");
+const {errorToken} = require("../../../utils");
 
 async function apiChangeUsernameRoute(fastify, options) {
 
@@ -10,6 +11,10 @@ async function apiChangeUsernameRoute(fastify, options) {
         const { username, newUsername} = req.body || {};
         if (!username) {
             return reply.status(400).send({ error: "missing credentials" });
+        }
+        if (errorToken(req.headers['authorization'], username))
+        {
+            return reply.status(401).send({error: "Token manquant ou invalide"});
         }
         try {
             const prepUserAvatar = db.prepare('SELECT avatar from users where username = ?');
