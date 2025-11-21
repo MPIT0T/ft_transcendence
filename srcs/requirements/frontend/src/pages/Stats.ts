@@ -221,12 +221,12 @@ const Stats: StatsPage = {
 																<th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Adversaire</th>
 																<th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Score</th>
 																<th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Résultat</th>
-																<th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Durée</th>
+																<th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Évolution elo</th>
 																	</tr>
-															</thead>
-													<tbody class="bg-transparent divide-y divide-gray-800">
+													</thead>
+													<tbody class="bg-transparent divide-y divide-gray-800" id="history-container">
 														<tr class="hover:bg-gray-700/40">
-															<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">15/01/2024 14:30</td>
+															<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">14/01/2024 20:15</td>
 																			<td class="px-6 py-4 whitespace-nowrap">
 																					<div class="flex items-center">
 																	<div class="w-8 h-8 rounded-full flex items-center justify-center mr-3 border border-gray-50">
@@ -242,7 +242,7 @@ const Stats: StatsPage = {
 																					</span>
 																			</td>
 															<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">5m 23s</td>
-																	</tr>
+														</tr>
 														<tr class="hover:bg-gray-700/40">
 															<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">14/01/2024 20:15</td>
 																			<td class="px-6 py-4 whitespace-nowrap">
@@ -323,6 +323,66 @@ const Stats: StatsPage = {
 									</div>
 							</div>
 					`;
+		if (sessionStorage.getItem('token') && sessionStorage.getItem('token')) {
+			const currentUser = sessionStorage.getItem('username');
+			const container = document.querySelector('#history-container') as HTMLTableSectionElement;
+
+			fetch('/user/api/get-match-history', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+				},
+				body: JSON.stringify({
+					username: currentUser,
+				})
+			})
+			.then(res => {
+				container.innerHTML = '';
+				if (!res.ok) {
+					return res.json().then(data => Promise.reject(data));
+				}
+				return res.json();
+			})
+			.then((data: { matchHistory: any[] }) => {
+
+				const matches = data.matchHistory
+					.filter(entry => entry !== null); // On garde tout l’objet du match
+
+				matches.forEach((match) => {
+					const victory = match.winner ? "✅ Victoire" : "❌ Défaite";
+					const victoryColor = match.winner ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800";
+
+					const tr = document.createElement('tr');
+					tr.className = 'hover:bg-gray-700/40';
+
+					tr.innerHTML = `
+					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${match.date}</td>
+					<td class="px-6 py-4 whitespace-nowrap">
+							<div class="flex items-center">
+									<div class="w-8 h-8 rounded-full flex items-center justify-center mr-3 border border-gray-50">
+											<img src="${match.avatar}" alt="avatar"/>
+									</div>
+									<span class="text-sm font-medium text-gray-100">${match.versus}</span>
+							</div>
+					</td>
+					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-100">${match.score}</td>
+					<td class="px-6 py-4 whitespace-nowrap">
+							<span class="px-2 py-1 text-xs font-semibold ${victoryColor} rounded-full">
+									${victory}
+							</span>
+					</td>
+					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${match.elo}</td>
+					`;
+
+					container.appendChild(tr);
+				});
+			})
+			.catch(err => {
+				const msg = err.error || 'Impossible de recevoir l\'historique des matches';
+				Layout.showNotification(msg, 'error');
+			});
+		}
 	},
 
 	mount(root) {
