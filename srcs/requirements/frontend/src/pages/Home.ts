@@ -126,11 +126,11 @@ export const Home: Page = {
 	render() {
 		return `
 <!-- Home page -->
-<section class="h-screen flex flex-col items-center justify-center">
+<section class="h-screen relative flex flex-col items-center justify-center">
   <div class="flex lg:flex-row items-start justify-center p-2">
     <div class="text-center mb-5 ">
       <div class=" inline-block
-           z-10 text-title text-transparent bg-clip-text 
+           z-10 text-title text-transparent bg-clip-text
           bg-gradient-to-r from-red-500 via-blue-500 to-green-500
           bg-[length:400%_400%] animate-gradientShift">
         ft_transcendence
@@ -146,10 +146,10 @@ export const Home: Page = {
     </button>
   </div>
 
-  <div id="scroll-indicator" class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 transition-opacity duration-500 opacity-100">
-    <img src="arrow.png" alt="scroll down" class="w-12 animate-arrowHueBlink [animation-delay:0s]" />
-    <img src="arrow.png" alt="scroll down" class="w-10 animate-arrowHueBlink [animation-delay:0.1s]" />
-    <img src="arrow.png" alt="scroll down" class="w-10 animate-arrowHueBlink [animation-delay:0.2s]" />
+  <div id="scroll-indicator" class="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 transition-opacity duration-500 opacity-100">
+    <img src="/arrow.png" alt="scroll down" class="w-10 animate-arrowHueBlink [animation-delay:0s]" />
+    <img src="/arrow.png" alt="scroll down" class="w-10 animate-arrowHueBlink [animation-delay:0.1s]" />
+    <img src="/arrow.png" alt="scroll down" class="w-10 animate-arrowHueBlink [animation-delay:0.2s]" />
   </div>
 </section>
 
@@ -163,7 +163,7 @@ export const Home: Page = {
     <canvas 
       id="preview-canvas" 
       class="border-2 border-gray-300 backdrop-blur-2xs"
-    </canvas>
+    ></canvas>
   </div>
 
   <!-- Rules, History, Facts -->
@@ -230,18 +230,17 @@ export const Home: Page = {
 
 		const scrollIndicator = root.querySelector('#scroll-indicator') as HTMLDivElement | null;
 		if (scrollIndicator) {
-		const handleScroll = () => {
-			if (window.scrollY > 300) {
-			scrollIndicator.classList.add('opacity-0');
-			} else {
-			scrollIndicator.classList.remove('opacity-0'); // fade back in
-			}
-		};
-
-		window.addEventListener('scroll', handleScroll);
-
-		const cleanup = () => window.removeEventListener('scroll', handleScroll);
-		(window as any).cleanupScrollIndicator = cleanup;
+			const handleScroll = () => {
+        if (window.scrollY > 30) {
+          scrollIndicator.classList.remove('opacity-100');
+          scrollIndicator.classList.add('opacity-0');
+        } else {
+          scrollIndicator.classList.remove('opacity-0');
+          scrollIndicator.classList.add('opacity-100');
+        }
+			};
+      window.addEventListener('scroll', handleScroll);
+      (window as any).cleanupScrollIndicator = () => window.removeEventListener('scroll', handleScroll);
 		}
 
 		// Initialiser l'aperçu du jeu
