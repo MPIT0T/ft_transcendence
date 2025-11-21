@@ -1,9 +1,8 @@
 'use strict'
 const db = require("../../db.js");
 const bcrypt = require('bcrypt');
-const privateKey = "secret123123";
 const jwt = require('jsonwebtoken');
-const {getUserbyUsername} = require("../../utils.js");
+const {getUserbyUsername, JWT_SECRET} = require("../../utils.js");
 
 async function loginRoute(fastify, options) {
 
@@ -22,8 +21,8 @@ async function loginRoute(fastify, options) {
         if (res) {
             const token = jwt.sign(
                 { username, avatar: user.avatar },
-                privateKey,
-                { expiresIn: '1h' }
+                JWT_SECRET,
+                { expiresIn: '7d' }
             );
 
             return reply.send({

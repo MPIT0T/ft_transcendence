@@ -266,33 +266,31 @@ class Room {
 				c._conection.send(JSON.stringify(payLoad));
 			}
 		});
-		
-		// const bodyPayload = {
-		// 	game: {
-		// 		winner: winner,
-		// 		gamePoint: this.gamePoint,
-		//		gameMode: this.gameMode,
-		// 		finalScore: {
-		// 			player1: this.p1Score,
-		// 			player2: this.p2Score
-		// 		}
-		// 	},
-		// 	clients: this.clients.map(client => client.id || client)
-		// };
-		// try {
-		// 	const res = await fetch('/user/api/posting-game', { //change post name
-		// 		method: 'POST',
-		// 		headers: { 'Content-Type': 'application/json' },
-		// 		body: JSON.stringify(bodyPayload),
-		// 	});
 
-		// 	if (!res.ok) {
-		// 		const bodyText = await res.text().catch(() => '');
-		// 		console.log('sendGameEnd - failed posting game result:', res.status, res.statusText, bodyText);
-		// 	}
-		// } catch (err) {
-		// 	console.log('sendGameEnd - fetch error:', err);
-		// }
+		//usernames, winner, scores, gamemode
+		const bodyPayload = {
+			winner: winner,
+			gameMode: this.gameMode,
+			scores: {
+				player1: this.p1Score,
+				player2: this.p2Score
+			},
+			usernames: this.clients.map(client => client.id || client)
+	 	};
+		 try {
+			const res = await fetch('/user/api/post-match', { //change post name
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(bodyPayload),
+			});
+
+			if (!res.ok) {
+				const bodyText = await res.text().catch(() => '');
+				console.log('sendGameEnd - failed posting game result:', res.status, res.statusText, bodyText);
+			}
+		 } catch (err) {
+			console.log('sendGameEnd - fetch error:', err);
+		 }
 	}
 
 	toJSON() {

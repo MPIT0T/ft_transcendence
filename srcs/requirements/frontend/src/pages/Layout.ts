@@ -394,6 +394,30 @@ export const Layout = {
         this.openModal(root.querySelector('#register-modal') as HTMLDivElement);
       });
     }
+
+    if (!sessionStorage.getItem('token') || !sessionStorage.getItem('isLoggedIn') || !sessionStorage.getItem('username'))
+    {
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('isLoggedIn');
+      sessionStorage.removeItem('username');
+    }
+
+    if (sessionStorage.getItem('token') && sessionStorage.getItem('isLoggedIn') && sessionStorage.getItem('username')) {
+      fetch('/user/api/check-token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({token: sessionStorage.getItem('token'), username: sessionStorage.getItem('username')})
+      })
+        .then(res => {
+          if (!res.ok) {
+            sessionStorage.removeItem('token');
+            sessionStorage.removeItem('isLoggedIn');
+            sessionStorage.removeItem('username');
+          }
+        })
+    }
   },
 
 

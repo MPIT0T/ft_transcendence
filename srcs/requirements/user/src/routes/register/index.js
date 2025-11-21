@@ -2,7 +2,7 @@
 const db = require("../../db.js");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const PRIVATE_KEY = "secret123123";
+const { JWT_SECRET } = require('../../utils.js');
 
 
 const addCorsHeaders = (reply) => {
@@ -59,8 +59,8 @@ async function registerRoute(fastify, options) {
       const result = await insertUser(username, hashedPassword);
       const token = jwt.sign(
         { username, avatar: 'alien.png' },
-        PRIVATE_KEY,
-        { expiresIn: '1h' }
+        JWT_SECRET,
+        { expiresIn: '7d' }
       );
 
       return reply.send({

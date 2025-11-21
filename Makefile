@@ -1,10 +1,14 @@
 include srcs/.env
 
 SECRETS_DIR = secrets
-SECRETS_FILES = ssl_certificate ssl_certificate_key
+SECRETS_FILES = ssl_certificate ssl_certificate_key jwt_secret_key
 SECRETS = ${addprefix ${SECRETS_DIR}/, ${SECRETS_FILES}}
 
 all: dev
+
+%jwt_secret_key:
+	@mkdir -p ${@D}
+	openssl rand -hex -out $(@D)/jwt_secret_key 64
 
 %/ssl_certificate %/ssl_certificate_key:
 	@mkdir -p ${@D}

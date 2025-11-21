@@ -2,10 +2,9 @@
 
 const jwt = require('jsonwebtoken');
 const fetch = require('node-fetch');
-const privateKey = "secret123123";
 const GITHUB_CLIENT_ID = 'Ov23libyRMWHw34E2bL0';
 const GITHUB_CLIENT_SECRET = '6bda1291461c3ecbe7a9c970481fbf7369ae7e56';
-const {getUserbyUsername} = require('../../utils.js');
+const {getUserbyUsername, JWT_SECRET} = require('../../utils.js');
 
 const db = require('../../db.js');
 
@@ -99,8 +98,8 @@ async function githubAuthRoute(fastify, options) {
       const finalUser = getUserbyUsername(find_username);
       const token = jwt.sign(
           { username: find_username , avatar: finalUser.avatar },
-          privateKey,
-          { expiresIn: '1h' }
+          JWT_SECRET,
+          { expiresIn: '7d' }
       );
 
       return reply.send({

@@ -2,13 +2,15 @@
 const db = require("../../../db.js");
 const { getUserbyUsername } = require("../../../utils.js");
 
-function create_matchHistory(is_winner, scores, second, elo, avatar)
+function create_matchHistory(is_winner, scores, second, gamemode, avatar)
 {
+    const score = scores.player1 + '-' + scores.player2;
+
     return {
         "winner": is_winner,
-        "score": scores,
+        "score": score,
         "versus": second,
-        "elo": elo,
+        "gamemode": gamemode,
         "date": new Date(Date.now()).toLocaleString('fr-FR'),
         "avatar": avatar,
     };
@@ -28,26 +30,32 @@ function calculElo(winner, looser)
 async function apiPostMatchRoute(fastify, options) {
     fastify.post('/', async (req, reply) => {
         //set all post matches info like elo and match history
-        const {usernames, winner, scores} = req.body || {};
+        const {usernames, winner, scores, gameMode} = req.body || {};
 
-        if (!usernames || !scores)
+        if (!usernames || !scores || !gameMode)
             return reply.status(400).send({error: 'Missing credentials'});
-        const userWinner = await getUserbyUsername(usernames[winner - 1]);
-        const userLooser = await getUserbyUsername(usernames[2 - winner]);
-        if (!userWinner || !userLooser)
-            return reply.status(400).send({ error: 'Account not found' });
-        userWinner.match_history = userWinner.match_history || "";
-        userLooser.match_history = userLooser.match_history || "";
-        await calculElo(userWinner, userLooser);
-        userWinner.match_history += JSON.stringify(create_matchHistory(true, scores, userLooser.username, userWinner.elo, userLooser.avatar)) + '\n';
-        userLooser.match_history += JSON.stringify(create_matchHistory(false, scores, userWinner.username, userLooser.elo, userWinner.avatar)) + '\n';
-        const updateMatchH = db.prepare('UPDATE users SET match_history = ? WHERE id = ?');
-        updateMatchH.run(userWinner.match_history, userWinner.id);
-        updateMatchH.run(userLooser.match_history, userLooser.id);
-        const updateElo = db.prepare('UPDATE users SET elo = ? WHERE id = ?');
-        updateElo.run(userWinner.elo, userWinner.id);
-        updateElo.run(userLooser.elo, userLooser.id);
-        return reply.status(200).send({ message: "demande envoyée" });
+        try {
+            const userWinner = await getUserbyUsername(usernames[winner - 1]);
+            const userLooser = await getUserbyUsername(usernames[2 - winner]);
+            if (!userWinner || !userLooser)
+                return reply.status(400).send({ error: 'Account not found' });
+            userWinner.match_history = userWinner.match_history || "";
+            userLooser.match_history = userLooser.match_history || "";
+            if (gameMode == 'ranked')
+                await calculElo(userWinner, userLooser);
+            userWinner.match_history += JSON.stringify(create_matchHistory(true, scores, userLooser.username, gameMode, userLooser.avatar)) + '\n';
+            userLooser.match_history += JSON.stringify(create_matchHistory(false, scores, userWinner.username, gameMode, userWinner.avatar)) + '\n';
+            const updateMatchH = db.prepare('UPDATE users SET match_history = ? WHERE id = ?');
+            updateMatchH.run(userWinner.match_history, userWinner.id);
+            updateMatchH.run(userLooser.match_history, userLooser.id);
+            const updateElo = db.prepare('UPDATE users SET elo = ? WHERE id = ?');
+            updateElo.run(userWinner.elo, userWinner.id);
+            updateElo.run(userLooser.elo, userLooser.id);
+            return reply.status(200).send({ message: "demande envoyée" });
+        } catch (e)
+        {
+            return reply.status(500).send({ error: e.message });
+        }
     });
 }
 

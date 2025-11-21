@@ -1,5 +1,8 @@
 'use strict'
 const db = require("./db.js");
+const jwt = require("jsonwebtoken");
+const fs = require( 'fs');
+const JWT_SECRET = fs.readFileSync('/run/secrets/jwt_key', 'utf8').trim();
 
 function getUserbyUsername(username) {
     const stmt = db.prepare(`SELECT * FROM users WHERE username = ?`);
@@ -30,8 +33,21 @@ function getUserbyId(id) {
     return user;
 }
 
+function checkToken(token, username){
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        if (decoded.username == username)
+            return true;
+        else return false;
+    } catch (err) {
+        return false;
+    }
+}
+
 module.exports = {
     getUserbyUsername,
     getUserbyId,
-    sqliteCurrentTimestamp
+    sqliteCurrentTimestamp,
+    checkToken,
+    JWT_SECRET
 }

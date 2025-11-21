@@ -1,7 +1,7 @@
 'use strict';
 const db = require("../../../db.js");
 const jwt = require('jsonwebtoken');
-const privateKey = "secret123123";
+const { JWT_SECRET } = require("../../../utils.js");
 
 async function apiChangeUsernameRoute(fastify, options) {
 
@@ -18,8 +18,8 @@ async function apiChangeUsernameRoute(fastify, options) {
             stmt.run(newUsername, username);
             const token = jwt.sign(
                 { newUsername, avatar: getUserAvatar },
-                privateKey,
-                { expiresIn: '1h' }
+                JWT_SECRET,
+                { expiresIn: '7d' }
             );
             reply.status(200).send({ message: "avatar modifie avec succes", token});
         }

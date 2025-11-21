@@ -60,6 +60,8 @@ const Stats: StatsPage = {
 
 	renderProfile() {
 		// language=HTML
+		const avatar = Layout.getUserInfoFromJwt(sessionStorage.getItem('token')).avatar;
+		const avatar_name = avatar.split('.').slice(0, -1).join('.');
 		return `
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 	<!-- Profil Section -->
@@ -67,10 +69,10 @@ const Stats: StatsPage = {
 		<!-- Avatar -->
 		<div class="text-center mb-6">
 				<div class="w-20 h-20 rounded-full mx-auto mb-3 flex items-center justify-center border border-gray-50">
-				<img src=${Layout.getUserInfoFromJwt(sessionStorage.getItem('token')).avatar} id="user-avatar" alt="avatar" class="w-12"/>
+				<img src=${avatar} id="user-avatar" alt="avatar" class="w-12"/>
 			</div>
 			<select class="text-xs text-blue-500 underline cursor-pointer" id="change-avatar">
-				<option value="">change avatar</option>
+				<option value="">${avatar_name}</option>
 				<option value="alien.png">alien</option>
 				<option value="astronaut.png">astronaut</option>
 				<option value="martian.png">martian</option>
@@ -180,6 +182,9 @@ const Stats: StatsPage = {
 	},
 
 	renderHistory() {
+		window.clearInterval((globalThis as any).showOnlineFriendsIntervalId);
+		window.clearInterval((globalThis as any).showOfflineFriendsIntervalId);
+		window.clearInterval((globalThis as any).showFriendRequestIntervalId);
 		return `
 							<div class="space-y-6">
 									<!-- Filtres -->
@@ -221,83 +226,10 @@ const Stats: StatsPage = {
 																<th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Adversaire</th>
 																<th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Score</th>
 																<th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Résultat</th>
-																<th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Évolution elo</th>
+																<th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Mode de jeu</th>
 																	</tr>
 													</thead>
-													<tbody class="bg-transparent divide-y divide-gray-800" id="history-container">
-														<tr class="hover:bg-gray-700/40">
-															<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">14/01/2024 20:15</td>
-																			<td class="px-6 py-4 whitespace-nowrap">
-																					<div class="flex items-center">
-																	<div class="w-8 h-8 rounded-full flex items-center justify-center mr-3 border border-gray-50">
-																									<span class="text-sm">👤</span>
-																							</div>
-																	<span class="text-sm font-medium text-gray-100">BOB</span>
-																					</div>
-																			</td>
-															<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-100">5 - 3</td>
-																			<td class="px-6 py-4 whitespace-nowrap">
-																					<span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-																							✅ Victoire
-																					</span>
-																			</td>
-															<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">5m 23s</td>
-														</tr>
-														<tr class="hover:bg-gray-700/40">
-															<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">14/01/2024 20:15</td>
-																			<td class="px-6 py-4 whitespace-nowrap">
-																					<div class="flex items-center">
-																	<div class="w-8 h-8 rounded-full flex items-center justify-center mr-3 border border-gray-50">
-																									<span class="text-sm">👤</span>
-																							</div>
-																	<span class="text-sm font-medium text-gray-100">Mike</span>
-																					</div>
-																			</td>
-															<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-100">2 - 5</td>
-																			<td class="px-6 py-4 whitespace-nowrap">
-																					<span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
-																							❌ Défaite
-																					</span>
-																			</td>
-															<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">3m 45s</td>
-																	</tr>
-														<tr class="hover:bg-gray-700/40">
-															<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">13/01/2024 16:42</td>
-																			<td class="px-6 py-4 whitespace-nowrap">
-																					<div class="flex items-center">
-																	<div class="w-8 h-8 rounded-full flex items-center justify-center mr-3 border border-gray-50">
-																									<span class="text-sm">👤</span>
-																							</div>
-																	<span class="text-sm font-medium text-gray-100">Mathis</span>
-																					</div>
-																			</td>
-															<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-100">5 - 1</td>
-																			<td class="px-6 py-4 whitespace-nowrap">
-																					<span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-																							✅ Victoire
-																					</span>
-																			</td>
-															<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">4m 12s</td>
-																	</tr>
-														<tr class="hover:bg-gray-700/40">
-															<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">12/01/2024 11:20</td>
-																			<td class="px-6 py-4 whitespace-nowrap">
-																					<div class="flex items-center">
-																	<div class="w-8 h-8 rounded-full flex items-center justify-center mr-3 border border-gray-50">
-																									<span class="text-sm">👤</span>
-																							</div>
-																	<span class="text-sm font-medium text-gray-100">Jean</span>
-																					</div>
-																			</td>
-															<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-100">3 - 5</td>
-																			<td class="px-6 py-4 whitespace-nowrap">
-																					<span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
-																							❌ Défaite
-																					</span>
-																			</td>
-															<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">6m 38s</td>
-																	</tr>
-															</tbody>
+													<tbody class="bg-transparent divide-y divide-gray-800" id="history-container"></tbody>
 													</table>
 											</div>
 									</div>
@@ -323,66 +255,6 @@ const Stats: StatsPage = {
 									</div>
 							</div>
 					`;
-		if (sessionStorage.getItem('token') && sessionStorage.getItem('token')) {
-			const currentUser = sessionStorage.getItem('username');
-			const container = document.querySelector('#history-container') as HTMLTableSectionElement;
-
-			fetch('/user/api/get-match-history', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'Authorization': `Bearer ${sessionStorage.getItem('token')}`
-				},
-				body: JSON.stringify({
-					username: currentUser,
-				})
-			})
-			.then(res => {
-				container.innerHTML = '';
-				if (!res.ok) {
-					return res.json().then(data => Promise.reject(data));
-				}
-				return res.json();
-			})
-			.then((data: { matchHistory: any[] }) => {
-
-				const matches = data.matchHistory
-					.filter(entry => entry !== null); // On garde tout l’objet du match
-
-				matches.forEach((match) => {
-					const victory = match.winner ? "✅ Victoire" : "❌ Défaite";
-					const victoryColor = match.winner ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800";
-
-					const tr = document.createElement('tr');
-					tr.className = 'hover:bg-gray-700/40';
-
-					tr.innerHTML = `
-					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${match.date}</td>
-					<td class="px-6 py-4 whitespace-nowrap">
-							<div class="flex items-center">
-									<div class="w-8 h-8 rounded-full flex items-center justify-center mr-3 border border-gray-50">
-											<img src="${match.avatar}" alt="avatar"/>
-									</div>
-									<span class="text-sm font-medium text-gray-100">${match.versus}</span>
-							</div>
-					</td>
-					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-100">${match.score}</td>
-					<td class="px-6 py-4 whitespace-nowrap">
-							<span class="px-2 py-1 text-xs font-semibold ${victoryColor} rounded-full">
-									${victory}
-							</span>
-					</td>
-					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${match.elo}</td>
-					`;
-
-					container.appendChild(tr);
-				});
-			})
-			.catch(err => {
-				const msg = err.error || 'Impossible de recevoir l\'historique des matches';
-				Layout.showNotification(msg, 'error');
-			});
-		}
 	},
 
 	mount(root) {
@@ -419,6 +291,7 @@ const Stats: StatsPage = {
 			activeTab = 'history';
 			updateIndicator();
 			renderContent();
+			this.updateContentHistory();
 		};
 
 		if (profileTab) {
@@ -843,6 +716,76 @@ const Stats: StatsPage = {
 		{
 			avatar.src = Layout.getUserInfoFromJwt(sessionStorage.getItem('token')).avatar;
 			Layout.updateAvatar();
+		}
+	},
+
+	updateContentHistory()
+	{
+		if (sessionStorage.getItem('token') && sessionStorage.getItem('token')) {
+			const currentUser = sessionStorage.getItem('username');
+			const container = document.querySelector('#history-container') as HTMLTableSectionElement;
+
+			fetch('/user/api/get-match-history', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+				},
+				body: JSON.stringify({
+					username: currentUser,
+				})
+			})
+				.then(res => {
+					container.innerHTML = '';
+					if (!res.ok) {
+						return res.json().then(data => Promise.reject(data));
+					}
+					return res.json();
+				})
+				.then((data: { matchHistory: any[] }) => {
+
+					if (!Array.isArray(data.matchHistory)) {
+						const tr =  document.createElement('tr');
+						tr.innerHTML = `	<td class="px-6 py-4 whitespace-nowrap font-bold text-gray-300">Jouez des parties pour avoir un historique</td>`;
+						container.appendChild(tr);
+						return;
+					}
+					const matches = data.matchHistory
+						.filter(entry => entry !== null); // On garde tout l’objet du match
+
+					matches.forEach((match) => {
+						const victory = match.winner ? "✅ Victoire" : "❌ Défaite";
+						const victoryColor = match.winner ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800";
+
+						const tr = document.createElement('tr');
+						tr.className = 'hover:bg-gray-700/40';
+
+						tr.innerHTML = `
+					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${match.date}</td>
+					<td class="px-6 py-4 whitespace-nowrap">
+							<div class="flex items-center">
+									<div class="w-8 h-8 rounded-full flex items-center justify-center mr-3 border border-gray-50">
+											<img src="${match.avatar}" alt="avatar"/>
+									</div>
+									<span class="text-sm font-medium text-gray-100">${match.versus}</span>
+							</div>
+					</td>
+					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-100">${match.score}</td>
+					<td class="px-6 py-4 whitespace-nowrap">
+							<span class="px-2 py-1 text-xs font-semibold ${victoryColor} rounded-full">
+									${victory}
+							</span>
+					</td>
+					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${match.gamemode}</td>
+					`;
+
+						container.appendChild(tr);
+					});
+				})
+				.catch(err => {
+					const msg = err.error || 'Impossible de recevoir l\'historique des matches';
+					Layout.showNotification(msg, 'error');
+				});
 		}
 	}
 }

@@ -97,6 +97,8 @@ services:
             target: app/src
       networks:
         - transcendence
+      secrets:
+        - jwt_key
       restart: always
 
 networks:
@@ -112,3 +114,5 @@ secrets:
     file: ../secrets/ssl_certificate
   ssl_key:
     file: ../secrets/ssl_certificate_key
+  jwt_key:
+    file: ../secrets/jwt_secret_key
