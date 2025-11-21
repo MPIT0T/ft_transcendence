@@ -4,19 +4,19 @@ const db = require("../../../db");
 async function acceptRequestRoute(fastify, options) {
     fastify.post('/', async (req, reply) => {
         // accept a friend request
-        const { author, invited } = req.body || {};
+        const { author, accepted } = req.body || {};
         if (!author) {
             return reply.status(400).send({ error: "nom d'utilisateur requis" });
         }
         try {
-            const stmt = db.prepare('SELECT friends_id FROM users WHERE username = ?');
-            const uaccepted = stmt.get(invited);
+            const stmt = db.prepare('SELECT * FROM users WHERE username = ?');
+            const uaccepted = stmt.get(accepted);
             const uauthor = stmt.get(author);
             if (!uaccepted || !uauthor) {
                 return reply.status(404).send({ error: "utilisateur non trouvé" });
             }
-            let invites = uauthor.invites_id.split(',');
-            if (!invites.includes(uaccepted.id))
+            const invites = (uauthor.invites_id || "").split(',').filter(x => x);
+            if (!invites.includes(String(uaccepted.id)))
                 return reply.status(404).send({error: "l'utilisateur ne vous a pas demandé en ami"})
             uauthor.friends_id += (uauthor.friends_id) ? ("," + uaccepted.id) : uaccepted.id;
             uaccepted.friends_id += (uaccepted.friends_id) ? ("," + uauthor.id) : uauthor.id;

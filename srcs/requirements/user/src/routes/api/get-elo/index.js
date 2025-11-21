@@ -3,7 +3,7 @@ const db = require("../../../db.js");
 
 async function apiGetEloRoute(fastify, options) {
 
-    fastify.post('/get-elo', async (req, reply) => {
+    fastify.post('/', async (req, reply) => {
         //send elo from a user via username search
         const { username } = req.body || {};
         if (!username) {
