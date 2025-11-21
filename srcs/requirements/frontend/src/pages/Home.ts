@@ -8,7 +8,7 @@ const initGamePreview = function () {
 	if (!ctx) return;
 
 	// Scale factor - change this to easily resize the entire preview
-	const SCALE = 2.7
+	const SCALE = 2
 	const BASE_WIDTH = 500;
 	const BASE_HEIGHT = 300;
 
@@ -157,7 +157,7 @@ export const Home: Page = {
 <section class="min-h-screen flex flex-col lg:flex-row items-center justify-center gap-10">
   <!-- Game preview -->
   <div class="w-full h-full flex flex-col justify-center items-center">
-    <h3 id="preview-text" class="text-4xl font-bold text-center mb-6 text-gray-50 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]">
+    <h3 id="preview-text" class="text-3xl font-bold text-center mb-6 text-gray-50 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]">
       Aperçu du Jeu
     </h3>
     <canvas 
@@ -170,10 +170,10 @@ export const Home: Page = {
   <div class="w-full backdrop-blur-2xs border-2 border-gray-300x h-full flex flex-col shadow-xl p-6">
     
     <!-- Rules -->
-    <h4 class="text-4xl font-semibold mb-4 w-full mx-auto mt-4 text-gray-50 drop-shadow-[0_0_6px_rgba(255,255,255,0.25)]">
+    <h4 class="text-3xl font-semibold mb-4 w-full mx-auto mt-4 text-gray-50 drop-shadow-[0_0_6px_rgba(255,255,255,0.25)]">
       Règles :
     </h4>
-    <ul class="text-lg lg:text-xl text-gray-400 space-y-2 leading-relaxed">
+    <ul class="text-lg lg:text-lg text-gray-400 space-y-2 leading-relaxed">
       <li">• Utilisez votre raquette pour renvoyer la balle.</li>
       <li>• Marquez un point quand la balle dépasse la raquette adverse.</li>
       <li>• La balle rebondit sur les murs haut et bas.</li>
@@ -181,10 +181,10 @@ export const Home: Page = {
     </ul>
 
     <!-- History -->
-    <h4 class="text-4xl font-semibold mb-4 w-full mx-auto mt-8 text-gray-50 drop-shadow-[0_0_6px_rgba(255,255,255,0.25)]">
+    <h4 class="text-3xl font-semibold mb-4 w-full mx-auto mt-8 text-gray-50 drop-shadow-[0_0_6px_rgba(255,255,255,0.25)]">
       Histoire :
     </h4>
-    <ul class="text-lg lg:text-xl text-gray-400 space-y-2 leading-relaxed">
+    <ul class="text-lg lg:text-lg text-gray-400 space-y-2 leading-relaxed">
       <li>• Créé en 1972 par Allan Alcorn chez Atari, sur une idée de Nolan Bushnell.</li>
       <li>• Inspiré du jeu de tennis de table du Magnavox Odyssey, la première console domestique.</li>
       <li>• Le prototype rencontre un immense succès dès son installation dans un bar californien.</li>
@@ -194,10 +194,10 @@ export const Home: Page = {
     </ul>
 
     <!-- Fun facts -->
-    <h4 class="text-4xl font-semibold mb-4 w-full mx-auto mt-8 text-gray-50 drop-shadow-[0_0_6px_rgba(255,255,255,0.25)]">
+    <h4 class="text-3xl font-semibold mb-4 w-full mx-auto mt-8 text-gray-50 drop-shadow-[0_0_6px_rgba(255,255,255,0.25)]">
       Le Saviez-vous ?
     </h4>
-    <ul class="text-lg lg:text-xl text-gray-400 space-y-2 leading-relaxed">
+    <ul class="text-lg lg:text-lg text-gray-400 space-y-2 leading-relaxed">
       <li>• Le premier prototype de Pong est tombé en panne car le réservoir de pièces était plein.</li>
       <li>• Des dizaines de copies non autorisées ont envahi le marché dès 1973, lançant la “Pong mania”.</li>
       <li>• Atari a vendu plus de 8 000 bornes d’arcade en un an, un record à l’époque.</li>
@@ -213,7 +213,9 @@ export const Home: Page = {
 		const gameBtn = root.querySelector('#play-btn') as HTMLButtonElement;
 		if (gameBtn) {
 			gameBtn.addEventListener('click', () => {
-				window.location.hash = '/gameLoby';
+				const p = '/gameLoby';
+				history.pushState(null, '', p);
+				window.dispatchEvent(new PopStateEvent('popstate'));
 			})
 		}
 
@@ -221,7 +223,7 @@ export const Home: Page = {
 		const statsBtn = root.querySelector('#stats-btn') as HTMLButtonElement;
 		if (statsBtn) {
 			statsBtn.addEventListener('click', () => {
-				window.history.pushState({}, "", '/stats');
+				window.history.pushState({}, "", 'stats');
 				window.dispatchEvent(new PopStateEvent('popstate'));
 			});
 		}

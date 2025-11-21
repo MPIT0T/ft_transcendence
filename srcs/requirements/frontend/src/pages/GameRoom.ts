@@ -2,6 +2,7 @@ import type { Page } from "../interface/gameInterface.js"
 
 export let ws: WebSocket | undefined;
 let clientId: string | undefined;
+let pendingChallengeFriend: string | undefined;
 
 // Additional methods
 const reloadRooms = function (root: HTMLElement) {
@@ -14,18 +15,55 @@ const reloadRooms = function (root: HTMLElement) {
 		ws.send(JSON.stringify(payLoad));
 }
 
+const reloadFriends = function (root: HTMLElement) {
+
+	const payLoad = {
+		"method": "friends",
+		"clientId": clientId
+	}
+	if (ws)
+		ws.send(JSON.stringify(payLoad));
+}
+
+function displayFriends(root: HTMLElement, friends: any[]) {
+	const container = root.querySelector('#friends-container') as HTMLDivElement;
+	container.innerHTML = ''; // Vider le container
+
+	friends.forEach(friend => {
+		const friendBtn = document.createElement('button');
+		friendBtn.className = 'friend-btn w-full text-left flex items-center justify-between text-gray-50 px-4 py-3 border-1 backdrop-blur-2xs border-gray-50 hover:bg-gray-700 transition-colors';
+		friendBtn.dataset.username = friend.username;
+		friendBtn.innerHTML = `
+			<div class="w-full flex items-center">
+				<div class="flex-1 min-w-0 font-semibold truncate mr-4">${friend.username || 'Unknown'}</div>
+				<div class="w-20 text-md text-gray-300 text-right mr-4">${(friend.elo) ? 'Elo: ' + friend.elo : ''}</div>
+			</div>
+		`;
+		friendBtn.addEventListener('click', () => {
+			inviteFriends(friend.username);
+		});
+
+		container.appendChild(friendBtn);
+	});
+}
+
+
 function displayRooms(root: HTMLElement, rooms: any[]) {
 	const container = root.querySelector('#rooms-container') as HTMLDivElement;
 	container.innerHTML = ''; // Vider le container
 
 	rooms.forEach(room => {
 		const roomBtn = document.createElement('button');
-		roomBtn.className = 'room-btn text-gray-50 px-6 py-3 border-1 backdrop-blur-2xs border-gray-50 hover:bg-gray-700 transition-colors';
+		roomBtn.className = 'room-btn w-full text-left flex items-center justify-between text-gray-50 px-4 py-3 border-1 backdrop-blur-2xs border-gray-50 hover:bg-gray-700 transition-colors';
 		roomBtn.dataset.roomId = room.roomId;
 		roomBtn.innerHTML = `
-            ${room.roomName}<br>
-            <span class="text-sm text-gray-400">${room.players}</span>
-        `;
+			<div class="w-full flex items-center">
+				<div class="flex-1 min-w-0 font-semibold truncate mr-4">${room.roomName}</div>
+				<div class="w-28 text-md text-gray-300 text-right mr-4">${room.gameMode || ''}</div>
+				<div class="w-20 text-md text-gray-400 text-right mr-4">${room.players}</div>
+				<div class="w-20 text-sm text-gray-400 text-right">${room.gamePoint ? room.gamePoint + ' pts' : ''}</div>
+			</div>
+		`;
 		roomBtn.addEventListener('click', () => {
 			joinRoom(room.roomId);
 		});
@@ -44,7 +82,7 @@ const createRoom = function (root: HTMLElement): void {
 		"clientId": clientId,
 		"roomName": roomName,
 		"gamePoint": gamePoint,
-		"gameMode": gameMode
+		"gameMode": "1V1"
 	}
 	if (ws)
 		ws.send(JSON.stringify(payLoad));
@@ -56,6 +94,17 @@ const createRoom = function (root: HTMLElement): void {
 
 	// Reset form
 	(root.querySelector('#create-room-form') as HTMLFormElement).reset();
+}
+
+const inviteFriends = function (friend: string) {
+	pendingChallengeFriend = friend;
+	const modal = document.querySelector('#challenge-points-modal') as HTMLDivElement | null;
+	const friendLabel = document.querySelector('#challenge-friend-label') as HTMLSpanElement | null;
+	if (friendLabel) friendLabel.textContent = friend;
+	if (modal) {
+		modal.classList.remove('hidden');
+		modal.classList.add('flex');
+	}
 }
 
 const joinRoom = function (roomId: string) {
@@ -71,16 +120,16 @@ const joinRoom = function (roomId: string) {
 export const GameRoom: Page = {
 	render() {
 		return `
-	<div class="max-w-6xl mx-auto p-6 space-y-6">
+	<div class="max-w-6xl mx-auto pt-20 space-y-6">
 
-		<div class="backdrop-blur-2xs border-1 border-gray-50 p-8">
+		<div class="backdrop-blur-2xs border border-gray-50 p-8">
 			<div class="flex justify-center">
-				<h1 class="text-4xl z-10 text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-blue-500 to-green-500 bg-[length:400%_400%] animate-gradientShift font-bold text-center mb-5">Ranked Game</h1>
+				<h1 class="text-4xl z-10 text-transparent bg-clip-text bg-linear-to-r from-red-500 via-blue-500 to-green-500 bg-size-[400%_400%] animate-gradientShift font-bold text-center mb-5">Ranked Game</h1>
 			</div>
 			<div class="text-center mb-8">
 				<div class="flex justify-center space-x-4">
 					
-					<button id="vs-btn" class="px-10 py-3 font-bold text-2xl border-1 border-gray-50 text-gray-50 hover:bg-gray-700 transition-colors mb-5">
+					<button id="vs-btn" class="px-10 py-3 font-bold text-2xl border border-gray-50 text-gray-50 hover:bg-gray-700 transition-colors mb-5">
 						Jouer
 					</button>
 					</div>
@@ -92,14 +141,14 @@ export const GameRoom: Page = {
 			</div>
 		</div>
 
-		<div class="backdrop-blur-2xs border-1 border-gray-50 p-8">
+		<div class="backdrop-blur-2xs border border-gray-50 p-8">
 			<div class="flex justify-center">
-				<h1 class="text-4xl z-10 text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-blue-500 to-green-500 bg-[length:400%_400%] animate-gradientShift font-bold text-center mb-5">Friendly Game</h1>
+				<h1 class="text-4xl z-10 text-transparent bg-clip-text bg-linear-to-r from-red-500 via-blue-500 to-green-500 bg-size-[400%_400%] animate-gradientShift font-bold text-center mb-5">Friendly Game</h1>
 			</div>
 			<div class="text-center mb-8">
 				<div class="flex justify-center space-x-4">
 					
-					<button id="create-room-btn" class="px-10 py-3 text-2xl text-gray-50 border-1 border-gray-50 hover:bg-gray-700 transition-colors mb-5">
+					<button id="create-room-btn" class="px-10 py-3 text-2xl text-gray-50 border border-gray-50 hover:bg-gray-700 transition-colors mb-5">
 						Créer une partie
 					</button>
 				</div>
@@ -111,15 +160,24 @@ export const GameRoom: Page = {
 			</div>
 		</div>
 
-		<!-- Available Rooms Section -->
-		<div class="backdrop-blur-2xs border-1 border-gray-50 p-6">
-			<div class="flex justify-between items-center mb-6">
-				<h2 class="text-2xl text-gray-50 font-bold">Available rooms</h2>
-				<button id="reload-btn" class="px-4 py-2 font-bold text-gray-50 border-1 border-gray-50 hover:bg-gray-700 transition-colors">
-					Rafraichir
-				</button>
+		<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+			<!-- Available Rooms Section -->
+			<div class="backdrop-blur-2xs border border-gray-50 p-6">
+				<div class="flex justify-between items-center mb-3">
+					<h2 class="text-xl text-gray-50 font-bold ">Available rooms</h2>
+				</div>
+				<!-- Fixed-height scrollable area (one row per room) -->
+				<div class="flex flex-col gap-3 overflow-y-auto max-h-56 p-2" id="rooms-container"></div>
 			</div>
-			<div class="flex flex-wrap gap-4" id="rooms-container"></div>
+
+			<!-- Available frends Section -->
+			<div class="backdrop-blur-2xs border border-gray-50 p-6">
+				<div class="flex justify-between items-center mb-3">
+					<h2 class="text-xl text-gray-50 font-bold">Available Friends</h2>
+				</div>
+				<!-- Fixed-height scrollable area -->
+				<div class="flex flex-col gap-3 overflow-y-auto max-h-56 p-2" id="friends-container"></div>
+			</div>
 		</div>
 	</div>
 
@@ -144,7 +202,7 @@ export const GameRoom: Page = {
 
 	<!-- Modal Create Room -->
 	<div id="create-room-modal" class="fixed inset-0 backdrop-blur-lg hidden items-center justify-center z-50">
-		<div class="border-1 border-gray-50 p-8 max-w-md w-full mx-4">
+		<div class="border border-gray-50 p-8 max-w-md w-full mx-4">
 			<h3 class="text-2xl text-gray-50 font-bold mb-6 text-center">Créer une partie</h3>
 			
 			<form id="create-room-form" class="space-y-4">
@@ -153,7 +211,7 @@ export const GameRoom: Page = {
 					<input 
 						type="text" 
 						id="room-name" 
-						class="w-full px-3 py-2 border-1 border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50"
+						class="w-full px-3 py-2 border border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50"
 						placeholder="Enter room name"
 						required
 					>
@@ -161,7 +219,7 @@ export const GameRoom: Page = {
 				
 				<div>
 					<label class="block text-sm font-bold mb-2 text-gray-200">Points maximum :</label>
-					<select id="game-point" class="w-full px-3 py-2 border-1 border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50">
+					<select id="game-point" class="w-full px-3 py-2 border border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50">
 						<option value="3">3</option>
 						<option value="5">5</option>
 						<option value="10">10</option>
@@ -171,26 +229,74 @@ export const GameRoom: Page = {
 				
 				<div>
 					<label class="block text-sm font-bold mb-2">Mode de Jeu :</label>
-					<select id="game-mode" class="w-full px-3 py-2 border-1 border-gray-400 focus:outline-none focus:border-gray-50">
+					<select id="game-mode" class="w-full px-3 py-2 text-gray-200 border border-gray-400 focus:outline-none focus:border-gray-50">
 						<option value="classic">Pong Classique</option>
-						<option value="power-up">Mode Power-Ups</option>
 					</select>
 				</div>
 				
 				<div class="flex space-x-4 mt-6">
 					<button 
 						type="submit" 
-						class="flex-1 text-white py-2 px-4 border-1 border-gray-50 hover:bg-gray-700 hover:border-green-500 transition-colors font-bold">
+						class="flex-1 text-white py-2 px-4 border border-gray-50 hover:bg-gray-700 hover:border-green-500 transition-colors font-bold">
 						CRÉER
 					</button>
 					<button 
 						type="button" 
 						id="cancel-create" 
-						class="flex-1 text-white py-2 px-4 border-1 border-gray-50 hover:bg-gray-700 hover:border-red-500 transition-colors font-bold">
+						class="flex-1 text-white py-2 px-4 border border-gray-50 hover:bg-gray-700 hover:border-red-500 transition-colors font-bold">
 						ANNULER
 					</button>
 				</div>
 			</form>
+		</div>
+	</div>
+
+	<!-- Modal Challenge Points -->
+	<div id="challenge-points-modal" class="fixed inset-0 backdrop-blur-lg hidden items-center justify-center z-50">
+		<div class="border border-gray-50 p-8 max-w-md w-full mx-4">
+			<h3 class="text-2xl text-gray-50 font-bold mb-6 text-center">Inviter <span id="challenge-friend-label" class="text-blue-400"></span></h3>
+			<div>
+				<label class="block text-sm font-bold mb-2 text-gray-200">Points maximum :</label>
+				<select id="challenge-game-point" class="w-full px-3 py-2 border border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50">
+					<option value="3">3</option>
+					<option value="5">5</option>
+					<option value="8" selected>8</option>
+					<option value="10">10</option>
+					<option value="15">15</option>
+				</select>
+			</div>
+			<div class="flex space-x-4 mt-6">
+				<button 
+					id="challenge-send" 
+					class="flex-1 text-white py-2 px-4 border border-gray-50 hover:bg-gray-700 hover:border-green-500 transition-colors font-bold">
+					ENVOYER L'INVITATION
+				</button>
+				<button 
+					id="challenge-cancel" 
+					class="flex-1 text-white py-2 px-4 border border-gray-50 hover:bg-gray-700 hover:border-red-500 transition-colors font-bold">
+					ANNULER
+				</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal Challenge Received -->
+	<div id="challenge-modal" class="fixed inset-0 backdrop-blur-lg hidden items-center justify-center z-50">
+		<div class="border border-gray-50 p-8 max-w-md w-full mx-4">
+			<h3 class="text-2xl text-gray-50 font-bold mb-4 text-center">Défi reçu</h3>
+			<p id="challenge-text" class="text-gray-200 text-center mb-6">Un joueur vous invite à rejoindre une partie.</p>
+			<div class="flex space-x-4 mt-2">
+				<button 
+					id="challenge-accept" 
+					class="flex-1 text-white py-2 px-4 border border-gray-50 hover:bg-gray-700 hover:border-green-500 transition-colors font-bold">
+					ACCEPTER
+				</button>
+				<button 
+					id="challenge-decline" 
+					class="flex-1 text-white py-2 px-4 border border-gray-50 hover:bg-gray-700 hover:border-red-500 transition-colors font-bold">
+					REFUSER
+				</button>
+			</div>
 		</div>
 	</div>
 		`;
@@ -208,9 +314,8 @@ export const GameRoom: Page = {
 			if (response.method === "connect") {
 				clientId = response.clientId;
 				if (clientId !== undefined) {
-					localStorage.setItem('clientId', clientId);
+					sessionStorage.setItem('clientId', clientId);
 				}
-				reloadRooms(root);
 			}
 			if (response.method === "create") {
 				roomId = response.room.roomId;
@@ -222,7 +327,7 @@ export const GameRoom: Page = {
 
 					roomId = response.room.roomId;
 					if (roomId !== undefined) {
-						localStorage.setItem('roomId', roomId);
+						sessionStorage.setItem('roomId', roomId);
 					}
 
 					// Fermer le modal de matchmaking si ouvert
@@ -232,7 +337,11 @@ export const GameRoom: Page = {
 						matchmakingModal.classList.remove('flex');
 					}
 
-					window.location.hash = response.url;
+					// navigate using History API
+					const raw = response.url || '/';
+					const p = raw.startsWith('#') ? raw.replace(/^#\/?/, '/') : (raw.startsWith('/') ? raw : '/' + raw);
+					history.pushState(null, '', p);
+					window.dispatchEvent(new PopStateEvent('popstate'));
 				} else {
 					alert(response.message);
 				}
@@ -241,12 +350,77 @@ export const GameRoom: Page = {
 			if (response.method === "rooms") {
 				displayRooms(root, response.rooms);
 			}
+
+			if (response.method === "friends") {
+				displayFriends(root, response.friends);
+			}
+
+			// Afficher un modal de challenge avec Accept/Refuse
+			if (response.method === "challenge") {
+				const challengeModal = root.querySelector('#challenge-modal') as HTMLDivElement;
+				const challengeText = root.querySelector('#challenge-text') as HTMLParagraphElement;
+				const acceptBtn = root.querySelector('#challenge-accept') as HTMLButtonElement;
+				const declineBtn = root.querySelector('#challenge-decline') as HTMLButtonElement;
+
+				// Renseigner le texte et stocker le roomId sur le modal
+				const challenger = response.from || 'Un joueur';
+				const roomIdFromServer = response.roomId;
+				if (challengeText) challengeText.textContent = `${challenger} vous défie ! Voulez-vous accepter ?`;
+				if (challengeModal && roomIdFromServer) (challengeModal as any).dataset.roomId = roomIdFromServer;
+
+				// Afficher le modal
+				if (challengeModal) {
+					challengeModal.classList.remove('hidden');
+					challengeModal.classList.add('flex');
+				}
+
+				// Handler Accept: renvoyer un payload 'invite' avec roomId
+				const onAccept = () => {
+					const rid = (challengeModal as any)?.dataset?.roomId || roomIdFromServer;
+					const payLoad = {
+						method: 'invite',
+						clientId: clientId,
+						roomId: rid,
+						to: challenger,
+						response: 'yes'
+					};
+					if (ws) ws.send(JSON.stringify(payLoad));
+
+					// Fermer le modal
+					challengeModal.classList.add('hidden');
+					challengeModal.classList.remove('flex');
+
+					// Nettoyer les handlers
+					acceptBtn?.removeEventListener('click', onAccept);
+					declineBtn?.removeEventListener('click', onDecline);
+				};
+
+				// Handler Refuse: juste fermer le modal
+				const onDecline = () => {
+					challengeModal.classList.add('hidden');
+					challengeModal.classList.remove('flex');
+					acceptBtn?.removeEventListener('click', onAccept);
+					declineBtn?.removeEventListener('click', onDecline);
+
+					const rid = (challengeModal as any)?.dataset?.roomId || roomIdFromServer;
+					const payLoad = {
+						method: 'invite',
+						clientId: clientId,
+						roomId: rid,
+						to: challenger,
+						response: 'no'
+					};
+					if (ws) ws.send(JSON.stringify(payLoad));
+				};
+
+				acceptBtn?.addEventListener('click', onAccept);
+				declineBtn?.addEventListener('click', onDecline);
+			}
 		}
 
 		// page buttons
 		const vsBtn = root.querySelector('#vs-btn') as HTMLButtonElement;
 		const createRoomBtn = root.querySelector('#create-room-btn') as HTMLButtonElement;
-		const reloadBtn = root.querySelector('#reload-btn') as HTMLButtonElement;
 		const matchmakingModal = root.querySelector('#matchmaking-modal') as HTMLDivElement;
 		const cancelMatchmakingBtn = root.querySelector('#cancel-matchmaking') as HTMLButtonElement;
 
@@ -257,7 +431,7 @@ export const GameRoom: Page = {
 					matchmakingModal.classList.remove('hidden');
 					matchmakingModal.classList.add('flex');
 				}
-				
+
 				// Lancer la recherche de match
 				joinRoom("ranked");
 			});
@@ -273,7 +447,7 @@ export const GameRoom: Page = {
 				if (ws) {
 					ws.send(JSON.stringify(payLoad));
 				}
-				
+
 				// Fermer le modal
 				if (matchmakingModal) {
 					matchmakingModal.classList.add('hidden');
@@ -290,16 +464,16 @@ export const GameRoom: Page = {
 			});
 		}
 
-		if (reloadBtn) {
-			reloadBtn.addEventListener('click', () => {
-				reloadRooms(root);
-			});
-		}
-
 		// Modal functionality
 		const modal = root.querySelector('#create-room-modal') as HTMLDivElement;
 		const cancelBtn = root.querySelector('#cancel-create') as HTMLButtonElement;
 		const createForm = root.querySelector('#create-room-form') as HTMLFormElement;
+
+		// Challenge points modal elements
+		const challengeModal = root.querySelector('#challenge-points-modal') as HTMLDivElement;
+		const challengeSendBtn = root.querySelector('#challenge-send') as HTMLButtonElement;
+		const challengeCancelBtn = root.querySelector('#challenge-cancel') as HTMLButtonElement;
+		const challengePointsSelect = root.querySelector('#challenge-game-point') as HTMLSelectElement;
 
 		if (cancelBtn) {
 			cancelBtn.addEventListener('click', () => {
@@ -322,5 +496,45 @@ export const GameRoom: Page = {
 				createRoom(root);
 			});
 		}
+
+		// Challenge actions
+		if (challengeCancelBtn) {
+			challengeCancelBtn.addEventListener('click', () => {
+				challengeModal.classList.add('hidden');
+				challengeModal.classList.remove('flex');
+				pendingChallengeFriend = undefined;
+			});
+		}
+
+		if (challengeSendBtn) {
+			challengeSendBtn.addEventListener('click', () => {
+				if (!pendingChallengeFriend) return;
+				const gp = parseInt(challengePointsSelect?.value || '8', 10);
+				const payLoad = {
+					method: 'challenge',
+					clientId: clientId,
+					friend: pendingChallengeFriend,
+					gamePoint: gp,
+				};
+				if (ws) ws.send(JSON.stringify(payLoad));
+				// close modal
+				challengeModal.classList.add('hidden');
+				challengeModal.classList.remove('flex');
+				pendingChallengeFriend = undefined;
+			});
+		}
+
+		let statusRoom: ReturnType<typeof setInterval> | undefined;
+		statusRoom = setInterval(async () => {
+			reloadRooms(root);
+			reloadFriends(root);
+		}, 1000);
+
+		const popstateHandler = (event: PopStateEvent) => {
+			window.clearInterval(statusRoom);
+			window.removeEventListener('popstate', popstateHandler);
+		};
+		window.addEventListener('popstate', popstateHandler);
+
 	},
 };

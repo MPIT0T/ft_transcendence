@@ -37,7 +37,8 @@ class Room {
 
 		this.clients.push(client);
 
-		const roomUrl = `/gameOnline?gameId=${this.roomId}`;
+		// const roomUrl = `/gameOnline?gameId=${this.roomId}`;
+		const roomUrl = `/gameOnline`;
 
 		socket.send(JSON.stringify({
 			method: 'join',

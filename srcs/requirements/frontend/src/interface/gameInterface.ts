@@ -31,6 +31,7 @@ interface StatsPage extends Page {
   renderProfile(): string;
   renderHistory(): string;
   mountProfileEvents(root: HTMLElement): void;
+  handleAddFriendClick(root: HTMLElement): void;
 }
 
 export type { Player, Ball, GameState , Page, StatsPage};
