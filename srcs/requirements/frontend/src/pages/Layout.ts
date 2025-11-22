@@ -565,7 +565,8 @@ export const Layout = {
     const payload = JSON.parse(payloadJson);
     return {
       username: payload.username,
-      avatar: payload.avatar
+      avatar: payload.avatar,
+      elo: payload.elo,
     };
   },
 

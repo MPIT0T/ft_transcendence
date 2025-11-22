@@ -1,6 +1,7 @@
 'use strict';
 const db = require("../../../db.js");
 const { getUserbyUsername } = require("../../../utils.js");
+const {checkToken} = require("../../../utils");
 
 function create_matchHistory(is_winner, scores, second, gamemode, avatar)
 {
@@ -30,9 +31,11 @@ function calculElo(winner, looser)
 async function apiPostMatchRoute(fastify, options) {
     fastify.post('/', async (req, reply) => {
         //set all post matches info like elo and match history
-        const {usernames, winner, scores, gameMode} = req.body || {};
+        const {usernames, winner, scores, gameMode, tokens} = req.body || {};
 
-        if (!usernames || !scores || !gameMode)
+        /*if (!checkToken(tokens[0], usernames[0]) || !checkToken(tokens[1], usernames[1]))
+            return reply.status(401).send({error: "invalid token"});*/
+        if (!usernames[0] || !usernames[1] || !gameMode)
             return reply.status(400).send({error: 'Missing credentials'});
         try {
             const userWinner = await getUserbyUsername(usernames[winner - 1]);

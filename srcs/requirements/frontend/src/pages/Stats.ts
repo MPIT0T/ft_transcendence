@@ -10,11 +10,11 @@ if (!Layout.isLoggedIn()) {
 }
 
 const Stats: StatsPage = {
-	render() {
-		// Position the sliding indicator
-		const indicatorTransform = activeTab === 'profile'
-			? 'translateX(0%)' : 'translateX(100%)';
-		return `
+  render() {
+    // Position the sliding indicator
+    const indicatorTransform = activeTab === 'profile'
+      ? 'translateX(0%)' : 'translateX(100%)';
+    return `
 <div class="bg-transparent flex flex-col w-[70vw] pt-20 items-start">
 	<!-- Header avec onglets -->
 		<div class="mb-6 w-[70vw] mx-auto">
@@ -56,13 +56,13 @@ const Stats: StatsPage = {
 	</div>
 </div>
 	`;
-	},
+  },
 
-	renderProfile() {
-		// language=HTML
-		const avatar = Layout.getUserInfoFromJwt(sessionStorage.getItem('token')).avatar;
-		const avatar_name = avatar.split('.').slice(0, -1).join('.');
-		return `
+  renderProfile() {
+    // language=HTML
+    const avatar = Layout.getUserInfoFromJwt(sessionStorage.getItem('token')).avatar;
+    const avatar_name = avatar.split('.').slice(0, -1).join('.');
+    return `
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 	<!-- Profil Section -->
 	<div class="backdrop-blur-2xs border border-gray-50 p-6">
@@ -104,15 +104,15 @@ const Stats: StatsPage = {
 		<!-- Main stats -->
 		<div class="grid grid-cols-3 gap-4 text-center mt-8">
 			<div>
-				<div class="text-2xl font-bold text-gray-100" id="stats-rank">2</div>
-				<div class="text-sm text-gray-400">Rank</div>
+				<div class="text-2xl font-bold text-gray-100">${Layout.getUserInfoFromJwt(sessionStorage.getItem('token')).elo}</div>
+				<div class="text-sm text-gray-400">Elo</div>
 			</div>
 			<div>
-				<div class="text-2xl font-bold text-gray-100" id="stats-win-rate">42%</div>
+				<div class="text-2xl font-bold text-gray-100" id="stats-win-rate">0%</div>
 				<div class="text-sm text-gray-400">Win Rate</div>
 			</div>
 			<div>
-				<div class="text-2xl font-bold text-gray-100" id="stats-friends">0</div>
+				<div class="text-2xl font-bold text-gray-100" id="friends-counter">0</div>
 				<div class="text-sm text-gray-400">Friends</div>
 			</div>
 		</div>
@@ -184,13 +184,13 @@ const Stats: StatsPage = {
 	</div>
 </div>
 	`;
-	},
+  },
 
-	renderHistory() {
-		window.clearInterval((globalThis as any).showOnlineFriendsIntervalId);
-		window.clearInterval((globalThis as any).showOfflineFriendsIntervalId);
-		window.clearInterval((globalThis as any).showFriendRequestIntervalId);
-		return `
+  renderHistory() {
+    window.clearInterval((globalThis as any).showOnlineFriendsIntervalId);
+    window.clearInterval((globalThis as any).showOfflineFriendsIntervalId);
+    window.clearInterval((globalThis as any).showFriendRequestIntervalId);
+    return `
 							<div class="space-y-6">
 									<!-- Filtres -->
 									<div class="backdrop-blur-2xs border border-gray-50 p-6">
@@ -260,308 +260,395 @@ const Stats: StatsPage = {
 									</div>
 							</div>
 					`;
-	},
+  },
 
-	mount(root) {
-		// Gestion des onglets
-		const profileTab = root.querySelector('#profile-tab') as HTMLButtonElement;
-		const historyTab = root.querySelector('#history-tab') as HTMLButtonElement;
-		const contentContainer = root.querySelector('#content-container') as HTMLDivElement;
-		const indicator = root.querySelector('#tab-indicator') as HTMLDivElement | null;
+  mount(root) {
+    // Gestion des onglets
+    let _friends = 0;
+    Object.defineProperty(globalThis, "friends", {
+      get() {
+        return _friends;
+      },
+      set(value) {
+        _friends = value;
+        updateFriendsUI(value);     // ← your callback
+      },
+      configurable: true,
+      enumerable: true
+    });
 
-		const renderContent = () => {
-			if (contentContainer) {
-				contentContainer.innerHTML = activeTab === 'profile' ? this.renderProfile() : this.renderHistory();
-				if (activeTab === 'profile') {
-					this.mountProfileEvents(contentContainer);
-				}
-			}
-		};
+    function updateFriendsUI(count: number) {
+      const el = document.getElementById("friends-counter");
+      if (el) el.textContent = count.toString();
+    }
 
-		const updateIndicator = () => {
-			if (!indicator) return;
-			const translate = activeTab === 'profile' ? 'translateX(0%)' : 'translateX(100%)';
-			indicator.style.transform = translate;
-		};
 
-		const switchToProfile = () => {
-			if (activeTab === 'profile') return;
-			activeTab = 'profile';
-			updateIndicator();
-			renderContent();
-		};
-
-		const switchToHistory = () => {
-			if (activeTab === 'history') return;
-			activeTab = 'history';
-			updateIndicator();
-			renderContent();
-			this.updateContentHistory();
-		};
-
-		if (profileTab) {
-			profileTab.addEventListener('click', switchToProfile);
-		}
-
-		if (historyTab) {
-			historyTab.addEventListener('click', switchToHistory);
-		}
-
-    // Initial content/events mount based on active tab
-
-		renderContent();
-	},
-
-  mountProfileEvents(root: HTMLElement) {
-
-			this.showOnlineFriends(root);
-
-      const addFriendBtn = root.querySelector('#add-friend-btn') as HTMLButtonElement;
-      if (addFriendBtn) {
-        addFriendBtn.addEventListener('click', () => {
-          this.handleAddFriendClick(root);
-        });
-      }
-
-      //change username
-      const usernameEl = document.getElementById("change-username");
-      if (usernameEl)
-      {
-        usernameEl.addEventListener("click", () => {
-          usernameEl.contentEditable = "true";
-          usernameEl.focus();
-        });
-        usernameEl.addEventListener("keydown", (e) => {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            usernameEl.blur();
-          }
-        });
-
-        usernameEl.addEventListener("blur", () => {
-          usernameEl.contentEditable = "false";
-          if (!usernameEl.textContent || usernameEl.textContent === '')
-              usernameEl.textContent = sessionStorage.getItem('username');
-          if (usernameEl.textContent && usernameEl.textContent.trim() !== sessionStorage.getItem('username'))
-          {
-            const newUsername = usernameEl.textContent.trim();
-            fetch('/user/api/change-name', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
-              },
-              body: JSON.stringify({
-                username: sessionStorage.getItem('username'),
-                newUsername: newUsername,
-              })
-            })
-              .then(async (res) => {
-                const text = await res.text();
-                let data;
-                try {
-                  data = JSON.parse(text);
-                } catch {
-                  data = text;
-                }
-                if (!res.ok) {
-                  return Promise.reject(data);
-                }
-                return data;
-              })
-              .then((data: { message: string; token?: string }) => {
-                if (data.token) {
-                  sessionStorage.setItem('token', data.token);
-                  sessionStorage.setItem('username', Layout.getUserInfoFromJwt(data.token).username);
-                  Layout.updateUsername();
-                }
-                Layout.showNotification(data.message || 'username changé avec succès', 'success');
-              })
-              .catch(err => {
-                console.error('Fetch error:', err);
-                const msg = (err && (err.error || err.message)) || 'Impossible de changer de nom d\'utilisateur';
-                Layout.showNotification(msg, 'error');
-              });
-          }
-        });
-      }
-
-      // Disconnect
-      const disconnectBtn = root.querySelector('#disconnectBtn') as HTMLButtonElement;
-      if (disconnectBtn) {
-        disconnectBtn.addEventListener('click', () => {
-          sessionStorage.removeItem('isLoggedIn');
-          sessionStorage.removeItem('token');
-          sessionStorage.removeItem('username');
-          Layout.updateLoginButton(document.body, false);
-          clearInterval((globalThis as any).loginIntervalId);
-          const p = '/';
-          history.pushState(null, '', p);
-          window.dispatchEvent(new PopStateEvent('popstate'));
-        });
-      }
-
-		// Change mail
-		const changeMail = root.querySelector('#change-mail') as HTMLElement;
-		if (changeMail) {
-			changeMail.addEventListener('click', () => {
-				const newMail = prompt('Nouveau mail :', 'LUCA@GMAIL.COM');
-				if (newMail) {
-					const mailSpan = root.querySelector('#change-mail')?.previousElementSibling;
-					if (mailSpan) {
-						mailSpan.textContent = newMail.toUpperCase();
-					}
-				}
-			});
-		}
-
-		// Change avatar
-		const changeAvatar = root.querySelector('#change-avatar') as HTMLElement;
-		if (changeAvatar) {
-			changeAvatar.addEventListener('change', (event) => {
-				const target = event.target as HTMLSelectElement;
-				const selectedValue = target.value;
-				if (target.value != '')
-					this.changeNewAvatar(root, selectedValue);
-			});
-		}
-
-		// Friends tabs (Online / Offline)
-		const onlineTab = root.querySelector('#friends-online-tab') as HTMLButtonElement | null;
-		const offlineTab = root.querySelector('#friends-offline-tab') as HTMLButtonElement | null;
-		const requestTab = root.querySelector('#friends-request-tab') as HTMLButtonElement | null;
-		const tabIndicator = root.querySelector('#friends-tab-indicator') as HTMLDivElement | null;
-		const onlineSection = root.querySelector('#online-friends') as HTMLElement | null;
-		const offlineSection = root.querySelector('#offline-friends') as HTMLElement | null;
-		const requestSection = root.querySelector('#request-friends') as HTMLElement | null;
-
-		const showOnline = () => {
-			if (tabIndicator) tabIndicator.style.transform = 'translateX(0%)';
-			if (onlineSection) onlineSection.classList.remove('hidden');
-			if (offlineSection) offlineSection.classList.add('hidden');
-			if (requestSection) requestSection.classList.add('hidden');
-			window.clearInterval((globalThis as any).showOfflineFriendsIntervalId);
-			window.clearInterval((globalThis as any).showFriendRequestIntervalId);
-			this.showOnlineFriends(root);
-			clearInterval((globalThis as any).showOnlineFriendsIntervalId);
-			(globalThis as any).showOnlineFriendsIntervalId = setInterval(async () => {
-				this.showOnlineFriends(root);
-			}, 5000);
-		};
-
-		const showOffline = () => {
-			if (tabIndicator) tabIndicator.style.transform = 'translateX(100%)';
-			if (offlineSection) offlineSection.classList.remove('hidden');
-			if (onlineSection) onlineSection.classList.add('hidden');
-			if (requestSection) requestSection.classList.add('hidden');
-			window.clearInterval((globalThis as any).showOnlineFriendsIntervalId);
-			window.clearInterval((globalThis as any).showFriendRequestIntervalId);
-			this.showOfflineFriends(root);
-			clearInterval((globalThis as any).showOfflineFriendsIntervalId);
-			(globalThis as any).showOfflineFriendsIntervalId = setInterval(async () => {
-				this.showOfflineFriends(root);
-			}, 5000);
-		};
-
-		const showRequestTab = () => {
-			if (tabIndicator) tabIndicator.style.transform = 'translateX(200%)';
-			if (requestSection) requestSection.classList.remove('hidden');
-			if (onlineSection) onlineSection.classList.add('hidden');
-			if (offlineSection) offlineSection.classList.add('hidden');
-			window.clearInterval((globalThis as any).showOnlineFriendsIntervalId);
-			window.clearInterval((globalThis as any).showOfflineFriendsIntervalId);
-			this.showFriendRequest(root);
-			clearInterval((globalThis as any).showFriendRequestIntervalId);
-			(globalThis as any).showFriendRequestIntervalId = setInterval(async () => {
-				this.showFriendRequest(root);
-			}, 5000);
-		};
-
-		if (onlineTab) onlineTab.addEventListener('click', showOnline);
-		if (offlineTab) offlineTab.addEventListener('click', showOffline);
-		if (requestTab) requestTab.addEventListener('click', showRequestTab);
-	},
-
-  handleAddFriendClick(root: HTMLElement) {
-      const input = root.querySelector('#add-friend-input') as HTMLInputElement;
-      const invitedUsername = input?.value?.trim();
-
-      if (!invitedUsername) {
-        Layout.showNotification('Veuillez entrer un nom d\'utilisateur', 'error');
-        return;
-      }
-
-      const currentUser = sessionStorage.getItem('username');
-      if (!currentUser) {
-        Layout.showNotification('Vous devez être connecté', 'error');
-        return;
-      }
-
-      if (invitedUsername === currentUser) {
-        Layout.showNotification('Vous ne pouvez pas vous ajouter vous-même !', 'error');
-        return;
-      }
-
-      fetch('/user/friends/invite-request', {
+    /*const patate = 1;
+    if (patate) {
+      const usernames = [];
+      usernames.push(sessionStorage.getItem("username"));
+      usernames.push(sessionStorage.getItem("username"));
+      const scores = {
+        player1: 12,
+        player2: 2,
+      };
+      const tokens = [];
+      tokens.push(sessionStorage.getItem("token"));
+      tokens.push(sessionStorage.getItem("token"));
+      fetch('/user/api/post-match', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${sessionStorage.getItem('token')}`
         },
         body: JSON.stringify({
-          author: currentUser,
-          invited: invitedUsername
+          usernames: usernames, winner: 1, scores, gameMode: 'challenge', tokens: tokens
         })
       })
-        .then(res => {
-          if (res.ok) {
-            Layout.showNotification(`Invitation envoyée à ${invitedUsername} !`);
-            input.value = '';
-          } else {
-            return res.json().then(data => Promise.reject(data));
-          }
-        })
-        .catch(err => {
-          const msg = err.error || 'Impossible d\'envoyer l\'invitation';
-          Layout.showNotification(msg, 'error');
-        });
+    }
+*/
+    const profileTab = root.querySelector('#profile-tab') as HTMLButtonElement;
+    const historyTab = root.querySelector('#history-tab') as HTMLButtonElement;
+    const contentContainer = root.querySelector('#content-container') as HTMLDivElement;
+    const indicator = root.querySelector('#tab-indicator') as HTMLDivElement | null;
+
+    const renderContent = () => {
+      if (contentContainer) {
+        contentContainer.innerHTML = activeTab === 'profile' ? this.renderProfile() : this.renderHistory();
+        if (activeTab === 'profile') {
+          this.mountProfileEvents(contentContainer);
+        }
+      }
+    };
+
+    const updateIndicator = () => {
+      if (!indicator) return;
+      const translate = activeTab === 'profile' ? 'translateX(0%)' : 'translateX(100%)';
+      indicator.style.transform = translate;
+    };
+
+    const switchToProfile = () => {
+      if (activeTab === 'profile') return;
+      activeTab = 'profile';
+      updateIndicator();
+      renderContent();
+    };
+
+    const switchToHistory = () => {
+      if (activeTab === 'history') return;
+      activeTab = 'history';
+      updateIndicator();
+      renderContent();
+      this.updateContentHistory();
+    };
+
+    if (profileTab) {
+      profileTab.addEventListener('click', switchToProfile);
+    }
+
+    if (historyTab) {
+      historyTab.addEventListener('click', switchToHistory);
+    }
+
+    // Initial content/events mount based on active tab
+
+    renderContent();
   },
 
-	showFriendRequest(root: HTMLElement) {
-	const currentUser = sessionStorage.getItem('username');
-	const container = root.querySelector('#request-friends-container') as HTMLDivElement;
+  mountProfileEvents(root: HTMLElement) {
 
-	if (!currentUser) {
-		Layout.showNotification('Vous devez être connecté', 'error');
-		return;
-	}
+    this.showOnlineFriends(root);
 
-	fetch('/user/friends/get-friend-request', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			'Authorization': `Bearer ${sessionStorage.getItem('token')}`
-		},
-		body: JSON.stringify({
-			username: currentUser,
-		})
-	})
-		.then(res => {
-			container.innerHTML = '';
-			if (!res.ok) {
-				return res.json().then(data => Promise.reject(data));
-			}
-			return res.json();
-		})
-		.then((data: { invites: { username: string }[] }) => {
+    const addFriendBtn = root.querySelector('#add-friend-btn') as HTMLButtonElement;
+    if (addFriendBtn) {
+      addFriendBtn.addEventListener('click', () => {
+        this.handleAddFriendClick(root);
+      });
+    }
 
-			const usernames = data.invites
-				.filter((entry) => entry && entry.username)
-				.map((entry) => entry.username);
-			usernames.forEach((username: string) => {
-				const li = document.createElement('li');
-				li.className = 'flex items-center justify-between';
-				li.innerHTML = `
+    const wrStat = document.getElementById('stats-win-rate');
+    if (wrStat && sessionStorage.getItem('token')) {
+      const currentUser = sessionStorage.getItem('username');
+      fetch('/user/api/get-match-history', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ username: currentUser })
+      })
+        .then(res => {
+          if (!res.ok) return res.json().then(data => Promise.reject(data));
+          return res.json(); // <-- ici on transforme Response en JSON
+        })
+        .then((data: { matchHistory: string }) => {
+          if (!data.matchHistory) return;
+
+          const matches = data.matchHistory
+            .split('\n') // Sépare chaque match
+            .filter(line => line.trim() !== '')
+            .map(line => {
+              try {
+                return JSON.parse(line);
+              } catch (e) {
+                console.error('Failed to parse matchHistory entry:', line, e);
+                return null;
+              }
+            })
+            .filter(entry => entry !== null);
+
+          let victory = 0;
+          matches.forEach(match => {
+            victory += match.winner ? 1 : 0;
+          });
+
+          const wr = matches.length > 0 ? (victory / matches.length) * 100 : 0;
+          wrStat.textContent = wr.toFixed(2) + '%';
+        })
+        .catch(err => {
+          const msg = err?.error || 'Impossible de recevoir l\'historique des matches';
+          Layout.showNotification(msg, 'error');
+        });
+    }
+
+
+    //change username
+    const usernameEl = document.getElementById("change-username");
+    if (usernameEl) {
+      usernameEl.addEventListener("click", () => {
+        usernameEl.contentEditable = "true";
+        usernameEl.focus();
+      });
+      usernameEl.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          usernameEl.blur();
+        }
+      });
+
+      usernameEl.addEventListener("blur", () => {
+        usernameEl.contentEditable = "false";
+        if (!usernameEl.textContent || usernameEl.textContent === '')
+          usernameEl.textContent = sessionStorage.getItem('username');
+        if (usernameEl.textContent && usernameEl.textContent.trim() !== sessionStorage.getItem('username')) {
+          const newUsername = usernameEl.textContent.trim();
+          fetch('/user/api/change-name', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
+            },
+            body: JSON.stringify({
+              username: sessionStorage.getItem('username'),
+              newUsername: newUsername,
+            })
+          })
+            .then(async (res) => {
+              const text = await res.text();
+              let data;
+              try {
+                data = JSON.parse(text);
+              } catch {
+                data = text;
+              }
+              if (!res.ok) {
+                return Promise.reject(data);
+              }
+              return data;
+            })
+            .then((data: { message: string; token?: string }) => {
+              if (data.token) {
+                sessionStorage.setItem('token', data.token);
+                sessionStorage.setItem('username', Layout.getUserInfoFromJwt(data.token).username);
+                Layout.updateUsername();
+              }
+              Layout.showNotification(data.message || 'username changé avec succès', 'success');
+            })
+            .catch(err => {
+              console.error('Fetch error:', err);
+              const msg = (err && (err.error || err.message)) || 'Impossible de changer de nom d\'utilisateur';
+              Layout.showNotification(msg, 'error');
+            });
+        }
+      });
+    }
+
+    // Disconnect
+    const disconnectBtn = root.querySelector('#disconnectBtn') as HTMLButtonElement;
+    if (disconnectBtn) {
+      disconnectBtn.addEventListener('click', () => {
+        sessionStorage.removeItem('isLoggedIn');
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('username');
+        Layout.updateLoginButton(document.body, false);
+        clearInterval((globalThis as any).loginIntervalId);
+        const p = '/';
+        history.pushState(null, '', p);
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      });
+    }
+
+    // Change mail
+    const changeMail = root.querySelector('#change-mail') as HTMLElement;
+    if (changeMail) {
+      changeMail.addEventListener('click', () => {
+        const newMail = prompt('Nouveau mail :', 'LUCA@GMAIL.COM');
+        if (newMail) {
+          const mailSpan = root.querySelector('#change-mail')?.previousElementSibling;
+          if (mailSpan) {
+            mailSpan.textContent = newMail.toUpperCase();
+          }
+        }
+      });
+    }
+
+    // Change avatar
+    const changeAvatar = root.querySelector('#change-avatar') as HTMLElement;
+    if (changeAvatar) {
+      changeAvatar.addEventListener('change', (event) => {
+        const target = event.target as HTMLSelectElement;
+        const selectedValue = target.value;
+        if (target.value != '')
+          this.changeNewAvatar(root, selectedValue);
+      });
+    }
+
+    // Friends tabs (Online / Offline)
+    const onlineTab = root.querySelector('#friends-online-tab') as HTMLButtonElement | null;
+    const offlineTab = root.querySelector('#friends-offline-tab') as HTMLButtonElement | null;
+    const requestTab = root.querySelector('#friends-request-tab') as HTMLButtonElement | null;
+    const tabIndicator = root.querySelector('#friends-tab-indicator') as HTMLDivElement | null;
+    const onlineSection = root.querySelector('#online-friends') as HTMLElement | null;
+    const offlineSection = root.querySelector('#offline-friends') as HTMLElement | null;
+    const requestSection = root.querySelector('#request-friends') as HTMLElement | null;
+
+    const showOnline = () => {
+      if (tabIndicator) tabIndicator.style.transform = 'translateX(0%)';
+      if (onlineSection) onlineSection.classList.remove('hidden');
+      if (offlineSection) offlineSection.classList.add('hidden');
+      if (requestSection) requestSection.classList.add('hidden');
+      window.clearInterval((globalThis as any).showOfflineFriendsIntervalId);
+      window.clearInterval((globalThis as any).showFriendRequestIntervalId);
+      this.showOnlineFriends(root);
+      clearInterval((globalThis as any).showOnlineFriendsIntervalId);
+      (globalThis as any).showOnlineFriendsIntervalId = setInterval(async () => {
+        this.showOnlineFriends(root);
+      }, 5000);
+    };
+
+    const showOffline = () => {
+      if (tabIndicator) tabIndicator.style.transform = 'translateX(100%)';
+      if (offlineSection) offlineSection.classList.remove('hidden');
+      if (onlineSection) onlineSection.classList.add('hidden');
+      if (requestSection) requestSection.classList.add('hidden');
+      window.clearInterval((globalThis as any).showOnlineFriendsIntervalId);
+      window.clearInterval((globalThis as any).showFriendRequestIntervalId);
+      this.showOfflineFriends(root);
+      clearInterval((globalThis as any).showOfflineFriendsIntervalId);
+      (globalThis as any).showOfflineFriendsIntervalId = setInterval(async () => {
+        this.showOfflineFriends(root);
+      }, 5000);
+    };
+
+    const showRequestTab = () => {
+      if (tabIndicator) tabIndicator.style.transform = 'translateX(200%)';
+      if (requestSection) requestSection.classList.remove('hidden');
+      if (onlineSection) onlineSection.classList.add('hidden');
+      if (offlineSection) offlineSection.classList.add('hidden');
+      window.clearInterval((globalThis as any).showOnlineFriendsIntervalId);
+      window.clearInterval((globalThis as any).showOfflineFriendsIntervalId);
+      this.showFriendRequest(root);
+      clearInterval((globalThis as any).showFriendRequestIntervalId);
+      (globalThis as any).showFriendRequestIntervalId = setInterval(async () => {
+        this.showFriendRequest(root);
+      }, 5000);
+    };
+
+    if (onlineTab) onlineTab.addEventListener('click', showOnline);
+    if (offlineTab) offlineTab.addEventListener('click', showOffline);
+    if (requestTab) requestTab.addEventListener('click', showRequestTab);
+  },
+
+  handleAddFriendClick(root: HTMLElement) {
+    const input = root.querySelector('#add-friend-input') as HTMLInputElement;
+    const invitedUsername = input?.value?.trim();
+
+    if (!invitedUsername) {
+      Layout.showNotification('Veuillez entrer un nom d\'utilisateur', 'error');
+      return;
+    }
+
+    const currentUser = sessionStorage.getItem('username');
+    if (!currentUser) {
+      Layout.showNotification('Vous devez être connecté', 'error');
+      return;
+    }
+
+    if (invitedUsername === currentUser) {
+      Layout.showNotification('Vous ne pouvez pas vous ajouter vous-même !', 'error');
+      return;
+    }
+
+    fetch('/user/friends/invite-request', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+      },
+      body: JSON.stringify({
+        author: currentUser,
+        invited: invitedUsername
+      })
+    })
+      .then(res => {
+        if (res.ok) {
+          Layout.showNotification(`Invitation envoyée à ${invitedUsername} !`);
+          input.value = '';
+        } else {
+          return res.json().then(data => Promise.reject(data));
+        }
+      })
+      .catch(err => {
+        const msg = err.error || 'Impossible d\'envoyer l\'invitation';
+        Layout.showNotification(msg, 'error');
+      });
+  },
+
+  showFriendRequest(root: HTMLElement) {
+    const currentUser = sessionStorage.getItem('username');
+    const container = root.querySelector('#request-friends-container') as HTMLDivElement;
+
+    if (!currentUser) {
+      Layout.showNotification('Vous devez être connecté', 'error');
+      return;
+    }
+
+    fetch('/user/friends/get-friend-request', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+      },
+      body: JSON.stringify({
+        username: currentUser,
+      })
+    })
+      .then(res => {
+        container.innerHTML = '';
+        if (!res.ok) {
+          return res.json().then(data => Promise.reject(data));
+        }
+        return res.json();
+      })
+      .then((data: { invites: { username: string }[] }) => {
+
+        const usernames = data.invites
+          .filter((entry) => entry && entry.username)
+          .map((entry) => entry.username);
+        usernames.forEach((username: string) => {
+          const li = document.createElement('li');
+          li.className = 'flex items-center justify-between';
+          li.innerHTML = `
 				<span class="text-gray-200 flex items-center">
 					<span class="inline-block w-2 h-2 mr-2 relative">
 					<span class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0 
@@ -573,275 +660,293 @@ const Stats: StatsPage = {
 					Accept
 				</button>
 			`;
-				const btn = li.querySelector('button') as HTMLButtonElement;
-				btn.addEventListener('click', () => {
-					this.acceptFriendRequest(username, li);
-				});
-				container.appendChild(li);
-			});
-		})
-		.catch(err => {
-			const msg = err.error || 'Impossible de recevoir les requetes d\'amis';
-			Layout.showNotification(msg, 'error');
-		});
-	},
+          const btn = li.querySelector('button') as HTMLButtonElement;
+          btn.addEventListener('click', () => {
+            this.acceptFriendRequest(username, li);
+          });
+          container.appendChild(li);
+        });
+      })
+      .catch(err => {
+        const msg = err.error || 'Impossible de recevoir les requetes d\'amis';
+        Layout.showNotification(msg, 'error');
+      });
+  },
 
-	acceptFriendRequest(username: string, element: HTMLElement) {
-		fetch('/user/friends/accept-request', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				'Authorization': `Bearer ${sessionStorage.getItem('token')}`
-			},
-			body: JSON.stringify({ author: sessionStorage.getItem('username'), accepted: username })
-		})
-			.then(res => {
-				if (!res.ok) {
-					return res.json().then(data => Promise.reject(data));
-				}
-				element.remove();
-				Layout.showNotification(`Vous avez accepté ${username}`, 'success');
-			})
-			.catch(err => {
-				const msg = err.error || `Impossible d'accepter ${username}`;
-				Layout.showNotification(msg, 'error');
-			});
-	},
+  acceptFriendRequest(username: string, element: HTMLElement) {
+    fetch('/user/friends/accept-request', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+      },
+      body: JSON.stringify({author: sessionStorage.getItem('username'), accepted: username})
+    })
+      .then(res => {
+        if (!res.ok) {
+          return res.json().then(data => Promise.reject(data));
+        }
+        element.remove();
+        Layout.showNotification(`Vous avez accepté ${username}`, 'success');
+      })
+      .catch(err => {
+        const msg = err.error || `Impossible d'accepter ${username}`;
+        Layout.showNotification(msg, 'error');
+      });
+  },
 
-	showOnlineFriends(root: HTMLElement) {
-		const currentUser = sessionStorage.getItem('username');
-		const container = root.querySelector('#online-friends-container') as HTMLDivElement;
+  showOnlineFriends(root: HTMLElement) {
+    const currentUser = sessionStorage.getItem('username');
+    const container = root.querySelector('#online-friends-container') as HTMLDivElement;
 
-		if (!currentUser) {
-			Layout.showNotification('Vous devez être connecté', 'error');
-			return;
-		}
+    if (!currentUser) {
+      Layout.showNotification('Vous devez être connecté', 'error');
+      return;
+    }
 
-		fetch('/user/friends/get-friends', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				'Authorization': `Bearer ${sessionStorage.getItem('token')}`
-			},
-			body: JSON.stringify({
-				username: currentUser,
-			})
-		})
-			.then(res => {
-				container.innerHTML = '';
-				if (!res.ok) {
-					return res.json().then(data => Promise.reject(data));
-				}
-				return res.json();
-			})
-			.then((data: { friends: { username: string }[], friendsStatus: { online: boolean }[] }) => {
-				const usersWithStatus = data.friends
-					.filter(entry => entry && entry.username)
-					.map((entry, index) => ({
-						username: entry.username,
-						online: data.friendsStatus[index]?.online ?? false
-					}));
-				usersWithStatus.forEach((user) => {
-					if (user.online) {
-						const li = document.createElement('li');
-						li.className = 'flex items-center justify-between';
-						li.innerHTML = `
+    fetch('/user/friends/get-friends', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+      },
+      body: JSON.stringify({
+        username: currentUser,
+      })
+    })
+      .then(res => {
+        container.innerHTML = '';
+        if (!res.ok) {
+          return res.json().then(data => Promise.reject(data));
+        }
+        return res.json();
+      })
+      .then((data: { friends: { username: string }[], friendsStatus: { online: boolean }[] }) => {
+        const usersWithStatus = data.friends
+          .filter(entry => entry && entry.username)
+          .map((entry, index) => ({
+            username: entry.username,
+            online: data.friendsStatus[index]?.online ?? false
+          }));
+        (globalThis as any).friends = usersWithStatus.length;
+        usersWithStatus.forEach((user) => {
+          if (user.online) {
+            const li = document.createElement('li');
+            li.className = 'flex items-center justify-between';
+            li.innerHTML = `
 					<span class="text-gray-200 flex items-center">
 					<span class="w-2 h-2 bg-green-500 mr-2"></span>
 					${user.username}
 					</span>
 					`;
-						container.appendChild(li);
-					}
-				});
-			})
-			.catch(err => {
-				const msg = err.error || 'Impossible de recevoir les requetes d\'amis';
-				Layout.showNotification(msg, 'error');
-			});
-	},
+            container.appendChild(li);
+          }
+        });
+      })
+      .catch(err => {
+        const msg = err.error || 'Impossible de recevoir les requetes d\'amis';
+        Layout.showNotification(msg, 'error');
+      });
+  },
 
-	changeNewAvatar(root: HTMLElement, newAvatar: string) {
-		const currentUser = sessionStorage.getItem('username');
-		const token = sessionStorage.getItem('token');
+  changeNewAvatar(root: HTMLElement, newAvatar: string) {
+    const currentUser = sessionStorage.getItem('username');
+    const token = sessionStorage.getItem('token');
 
-		if (!currentUser) {
-			Layout.showNotification('Vous devez être connecté', 'error');
-			return;
-		}
+    if (!currentUser) {
+      Layout.showNotification('Vous devez être connecté', 'error');
+      return;
+    }
 
-		fetch('/user/api/change-avatar', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				'Authorization': `Bearer ${token}`
-			},
-			body: JSON.stringify({
-				username: currentUser,
-				avatar: newAvatar
-			})
-		})
-			.then(async (res) => {
-				const text = await res.text();
-				let data;
-				try {
-					data = JSON.parse(text);
-				} catch {
-					data = text;
-				}
+    fetch('/user/api/change-avatar', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        username: currentUser,
+        avatar: newAvatar
+      })
+    })
+      .then(async (res) => {
+        const text = await res.text();
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch {
+          data = text;
+        }
 
-				console.log('Response status:', res.status);
-				console.log('Response data:', data);
+        console.log('Response status:', res.status);
+        console.log('Response data:', data);
 
-				if (!res.ok) {
-					return Promise.reject(data);
-				}
-				return data;
-			})
-			.then((data: { message: string; token?: string }) => {
-				if (data.token) {
-					sessionStorage.setItem('token', data.token);
-					this.updateAvatar();
-				}
-				Layout.showNotification(data.message || 'Avatar changé avec succès', 'success');
-			})
-			.catch(err => {
-				console.error('Fetch error:', err);
-				const msg = (err && (err.error || err.message)) || 'Impossible de changer d\'avatar';
-				Layout.showNotification(msg, 'error');
-			});
-	},
+        if (!res.ok) {
+          return Promise.reject(data);
+        }
+        return data;
+      })
+      .then((data: { message: string; token?: string }) => {
+        if (data.token) {
+          sessionStorage.setItem('token', data.token);
+          this.updateAvatar();
+        }
+        Layout.showNotification(data.message || 'Avatar changé avec succès', 'success');
+      })
+      .catch(err => {
+        console.error('Fetch error:', err);
+        const msg = (err && (err.error || err.message)) || 'Impossible de changer d\'avatar';
+        Layout.showNotification(msg, 'error');
+      });
+  },
 
-	showOfflineFriends(root: HTMLElement) {
-		const currentUser = sessionStorage.getItem('username');
-		const container = root.querySelector('#offline-friends-container') as HTMLDivElement;
+  showOfflineFriends(root: HTMLElement) {
+    const currentUser = sessionStorage.getItem('username');
+    const container = root.querySelector('#offline-friends-container') as HTMLDivElement;
 
-		if (!currentUser) {
-			Layout.showNotification('Vous devez être connecté', 'error');
-			return;
-		}
+    if (!currentUser) {
+      Layout.showNotification('Vous devez être connecté', 'error');
+      return;
+    }
 
-		fetch('/user/friends/get-friends', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				'Authorization': `Bearer ${sessionStorage.getItem('token')}`
-			},
-			body: JSON.stringify({
-				username: currentUser,
-			})
-		})
-			.then(res => {
-				container.innerHTML = '';
-				if (!res.ok) {
-					return res.json().then(data => Promise.reject(data));
-				}
-				return res.json();
-			})
-			.then((data: { friends: { username: string }[], friendsStatus: { online: boolean }[] }) => {
-				const usersWithStatus = data.friends
-					.filter(entry => entry && entry.username)
-					.map((entry, index) => ({
-						username: entry.username,
-						online: data.friendsStatus[index]?.online ?? false
-					}));
-				usersWithStatus.forEach((user) => {
-					if (!user.online) {
-						const li = document.createElement('li');
-						li.className = 'flex items-center';
-						li.innerHTML = `
+    fetch('/user/friends/get-friends', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+      },
+      body: JSON.stringify({
+        username: currentUser,
+      })
+    })
+      .then(res => {
+        container.innerHTML = '';
+        if (!res.ok) {
+          return res.json().then(data => Promise.reject(data));
+        }
+        return res.json();
+      })
+      .then((data: { friends: { username: string }[], friendsStatus: { online: boolean }[] }) => {
+        const usersWithStatus = data.friends
+          .filter(entry => entry && entry.username)
+          .map((entry, index) => ({
+            username: entry.username,
+            online: data.friendsStatus[index]?.online ?? false
+          }));
+        (globalThis as any).friends = usersWithStatus.length;
+        usersWithStatus.forEach((user) => {
+          if (!user.online) {
+            const li = document.createElement('li');
+            li.className = 'flex items-center';
+            li.innerHTML = `
 					<span class="w-2 h-2 bg-gray-400 rounded-full mr-2"></span>
 					<span class="text-gray-200">${user.username}</span>
 					`;
-						container.appendChild(li);
-					}
-				});
-			})
-			.catch(err => {
-				const msg = err.error || 'Impossible de recevoir les requetes d\'amis';
-				Layout.showNotification(msg, 'error');
-			});
-	},
+            container.appendChild(li);
+          }
+        });
+      })
+      .catch(err => {
+        const msg = err.error || 'Impossible de recevoir les requetes d\'amis';
+        Layout.showNotification(msg, 'error');
+      });
+  },
 
-	updateAvatar() {
-		const avatar = document.getElementById('user-avatar') as HTMLImageElement;
+  updateAvatar() {
+    const avatar = document.getElementById('user-avatar') as HTMLImageElement;
 
-		if (avatar)
-		{
-			avatar.src = Layout.getUserInfoFromJwt(sessionStorage.getItem('token')).avatar;
-			Layout.updateAvatar();
-		}
-	},
+    if (avatar) {
+      avatar.src = Layout.getUserInfoFromJwt(sessionStorage.getItem('token')).avatar;
+      Layout.updateAvatar();
+    }
+  },
 
-	updateContentHistory()
-	{
-		if (sessionStorage.getItem('token') && sessionStorage.getItem('token')) {
-			const currentUser = sessionStorage.getItem('username');
-			const container = document.querySelector('#history-container') as HTMLTableSectionElement;
+  updateContentHistory() {
+    const token = sessionStorage.getItem('token');
+    if (!token) return;
 
-			fetch('/user/api/get-match-history', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'Authorization': `Bearer ${sessionStorage.getItem('token')}`
-				},
-				body: JSON.stringify({
-					username: currentUser,
-				})
-			})
-				.then(res => {
-					container.innerHTML = '';
-					if (!res.ok) {
-						return res.json().then(data => Promise.reject(data));
-					}
-					return res.json();
-				})
-				.then((data: { matchHistory: any[] }) => {
+    const currentUser = sessionStorage.getItem('username');
+    const container = document.querySelector('#history-container') as HTMLTableSectionElement;
+    if (!container) return;
 
-					if (!Array.isArray(data.matchHistory)) {
-						const tr =  document.createElement('tr');
-						tr.innerHTML = `	<td class="px-6 py-4 whitespace-nowrap font-bold text-gray-300">Jouez des parties pour avoir un historique</td>`;
-						container.appendChild(tr);
-						return;
-					}
-					const matches = data.matchHistory
-						.filter(entry => entry !== null); // On garde tout l’objet du match
+    fetch('/user/api/get-match-history', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({username: currentUser})
+    })
+      .then(res => {
+        container.innerHTML = '';
+        if (!res.ok) return res.json().then(data => Promise.reject(data));
+        return res.json();
+      })
+      .then((data: { matchHistory: string }) => {
+        if (!data.matchHistory || data.matchHistory.trim() === '') {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td class="px-6 py-4 whitespace-nowrap font-bold text-gray-300" colspan="5">
+                          Jouez des parties pour avoir un historique
+                        </td>`;
+          container.appendChild(tr);
+          return;
+        }
 
-					matches.forEach((match) => {
-						const victory = match.winner ? "✅ Victoire" : "❌ Défaite";
-						const victoryColor = match.winner ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800";
+        // Découper chaque entrée de match sur \n et parser
+        const matches = data.matchHistory
+          .split('\n')
+          .filter(line => line.trim() !== '')
+          .map(line => {
+            try {
+              return JSON.parse(line.trim());
+            } catch (e) {
+              console.error('Erreur parsing matchHistory:', line, e);
+              return null;
+            }
+          })
+          .filter(match => match !== null);
 
-						const tr = document.createElement('tr');
-						tr.className = 'hover:bg-gray-700/40';
+        // Remplir le tableau
+        matches.forEach(match => {
+          const victory = match.winner ? "✅ Victoire" : "❌ Défaite";
+          const victoryColor = match.winner ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800";
 
-						tr.innerHTML = `
-					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${match.date}</td>
-					<td class="px-6 py-4 whitespace-nowrap">
-							<div class="flex items-center">
-									<div class="w-8 h-8 rounded-full flex items-center justify-center mr-3 border border-gray-50">
-											<img src="${match.avatar}" alt="avatar"/>
-									</div>
-									<span class="text-sm font-medium text-gray-100">${match.versus}</span>
-							</div>
-					</td>
-					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-100">${match.score}</td>
-					<td class="px-6 py-4 whitespace-nowrap">
-							<span class="px-2 py-1 text-xs font-semibold ${victoryColor} rounded-full">
-									${victory}
-							</span>
-					</td>
-					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${match.gamemode}</td>
-					`;
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-gray-700/40';
+          tr.innerHTML = `
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${match.date}</td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center">
+              <div class="w-8 h-8 rounded-full flex items-center justify-center mr-3 border border-gray-50">
+                <img src="${match.avatar}" alt="avatar"/>
+              </div>
+              <span class="text-sm font-medium text-gray-100">${match.versus}</span>
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-100">${match.score}</td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="px-2 py-1 text-xs font-semibold ${victoryColor} rounded-full">
+              ${victory}
+            </span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${match.gamemode}</td>
+        `;
+          container.appendChild(tr);
+        });
 
-						container.appendChild(tr);
-					});
-				})
-				.catch(err => {
-					const msg = err.error || 'Impossible de recevoir l\'historique des matches';
-					Layout.showNotification(msg, 'error');
-				});
-		}
-	}
+        // Mettre à jour le win rate si besoin
+        const wrStat = document.getElementById('stats-win-rate');
+        if (wrStat) {
+          let victories = matches.reduce((acc, m) => acc + (m.winner ? 1 : 0), 0);
+          const wr = matches.length > 0 ? (victories / matches.length) * 100 : 0;
+          wrStat.textContent = wr.toFixed(2) + '%';
+        }
+      })
+      .catch(err => {
+        const msg = err?.error || 'Impossible de recevoir l\'historique des matches';
+        Layout.showNotification(msg, 'error');
+      });
+  }
 }
 
 const popstateHandler = (event: PopStateEvent) => {
