@@ -340,7 +340,9 @@ const Stats: StatsPage = {
 
         usernameEl.addEventListener("blur", () => {
           usernameEl.contentEditable = "false";
-          if (usernameEl.textContent)
+          if (!usernameEl.textContent || usernameEl.textContent === '')
+              usernameEl.textContent = sessionStorage.getItem('username');
+          if (usernameEl.textContent && usernameEl.textContent.trim() !== sessionStorage.getItem('username'))
           {
             const newUsername = usernameEl.textContent.trim();
             fetch('/user/api/change-name', {
