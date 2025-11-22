@@ -316,6 +316,14 @@ export const GameRoom: Page = {
 				if (clientId !== undefined) {
 					sessionStorage.setItem('clientId', clientId);
 				}
+				const payLoad = {
+					"method": "user",
+					"clientId": clientId,
+					"token": sessionStorage.getItem('token'),
+					"username": sessionStorage.getItem('username'),
+				}
+				if (ws)
+					ws.send(JSON.stringify(payLoad));
 			}
 			if (response.method === "create") {
 				roomId = response.room.roomId;

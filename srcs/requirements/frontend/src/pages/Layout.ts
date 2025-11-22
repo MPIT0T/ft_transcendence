@@ -594,7 +594,7 @@ export const Layout = {
         });
         if (res.ok) {
           const data = await res.json();
-          sessionStorage.setItem('token', data.token);
+          sessionStorage.setItem('token', data.token); 
           sessionStorage.setItem('isLoggedIn', 'true');
           sessionStorage.setItem('username', username);
           this.showNotification(`Compte créé avec succès ! Bienvenue ${username} !`);
