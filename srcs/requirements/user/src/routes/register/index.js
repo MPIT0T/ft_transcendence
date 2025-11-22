@@ -58,7 +58,7 @@ async function registerRoute(fastify, options) {
 
       const result = await insertUser(username, hashedPassword);
       const token = jwt.sign(
-        { username, avatar: 'alien.png' },
+        { username, avatar: 'alien.png', elo: 1000},
         JWT_SECRET,
         { expiresIn: '7d' }
       );

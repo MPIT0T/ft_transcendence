@@ -694,7 +694,7 @@ export const Layout = {
         <img src="${avatarSrc}" alt="avatar" id="user-avatar-layout" class="w-8 h-8 mr-2" />
         <span class="text-3xl font-bold text-transparent bg-clip-text
         bg-gradient-to-r from-red-500 via-blue-500 to-green-500
-        bg-[length:400%_400%] animate-gradientShift">${username}</span>
+        bg-[length:400%_400%] animate-gradientShift" id="username-layout">${username}</span>
       `;
         loginBtn.className = `
         flex items-center px-3 py-2
@@ -750,5 +750,12 @@ export const Layout = {
 
     if (avatar)
       avatar.src = Layout.getUserInfoFromJwt(sessionStorage.getItem('token')).avatar;
+  },
+
+  updateUsername() {
+    const username = document.getElementById('username-layout') as HTMLSpanElement;
+
+    if (username)
+      username.textContent = sessionStorage.getItem('username');
   }
 };

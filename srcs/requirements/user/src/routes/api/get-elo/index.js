@@ -1,5 +1,6 @@
 'use strict';
 const db = require("../../../db.js");
+const {errorToken} = require("../../../utils");
 
 async function apiGetEloRoute(fastify, options) {
 
@@ -8,6 +9,10 @@ async function apiGetEloRoute(fastify, options) {
         const { username } = req.body || {};
         if (!username) {
             return reply.status(400).send({ error: "nom d'utilisateur requis" });
+        }
+        if (errorToken(req.headers['authorization'], username))
+        {
+            return reply.status(401).send({error: "Token manquant ou invalide"});
         }
         try {
             const stmt = db.prepare('SELECT elo FROM users WHERE username = ?');

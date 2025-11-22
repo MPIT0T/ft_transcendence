@@ -17,16 +17,16 @@ async function apiChangeUsernameRoute(fastify, options) {
             return reply.status(401).send({error: "Token manquant ou invalide"});
         }
         try {
-            const prepUserAvatar = db.prepare('SELECT avatar from users where username = ?');
-            const getUserAvatar = prepUserAvatar.get(username);
+            const prepUserInfo = db.prepare('SELECT * from users where username = ?');
+            const allUserInfo = prepUserInfo.get(username);
             const stmt = db.prepare('UPDATE users SET username = ? WHERE username = ?');
             stmt.run(newUsername, username);
             const token = jwt.sign(
-                { newUsername, avatar: getUserAvatar },
+                { username: newUsername, avatar: allUserInfo.avatar, elo: allUserInfo.elo},
                 JWT_SECRET,
                 { expiresIn: '7d' }
             );
-            reply.status(200).send({ message: "avatar modifie avec succes", token});
+            reply.status(200).send({ message: "nom d'utilisateur modifie avec succes", token});
         }
         catch (err) {
             return reply.status(400).send({ error: err.message });

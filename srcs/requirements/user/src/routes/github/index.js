@@ -97,7 +97,7 @@ async function githubAuthRoute(fastify, options) {
       }
       const finalUser = getUserbyUsername(find_username);
       const token = jwt.sign(
-          { username: find_username , avatar: finalUser.avatar },
+          { username: find_username , avatar: finalUser.avatar, elo: finalUser.elo},
           JWT_SECRET,
           { expiresIn: '7d' }
       );

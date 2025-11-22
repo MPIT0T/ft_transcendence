@@ -20,7 +20,7 @@ async function loginRoute(fastify, options) {
         const res = await bcrypt.compare(password, user.password);
         if (res) {
             const token = jwt.sign(
-                { username, avatar: user.avatar },
+                { username, avatar: user.avatar, elo: user.elo },
                 JWT_SECRET,
                 { expiresIn: '7d' }
             );

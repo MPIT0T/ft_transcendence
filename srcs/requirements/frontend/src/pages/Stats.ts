@@ -81,10 +81,15 @@ const Stats: StatsPage = {
 		</div>
 
 		<!-- Username -->
-		<div class="text-center mb-6">
-				<p class="text-sm text-gray-200 font-semibold mb-1 px-3 py-2 backdrop-blur-2xs border border-gray-400">LUCAS</p>
-			<p class="text-xs text-blue-500 underline cursor-pointer" id="change-username">CHANGE USERNAME</p>
-		</div>
+		
+    <div class="text-center mb-6 flex flex-col items-center">
+      <p class="text-xs text-blue-500 underline">CHANGE USERNAME</p>
+      <span id="change-username"
+            class="text-sm text-gray-200 font-semibold px-3 py-2 backdrop-blur-2xs border border-gray-400 cursor-pointer hover:border-gray-300 transition"
+            contenteditable="false">
+        ${sessionStorage.getItem('username')}
+      </span>
+    </div>
 
 		<!-- Mail -->
 		<div class="text-center mb-6">
@@ -311,7 +316,6 @@ const Stats: StatsPage = {
 
 			this.showOnlineFriends(root);
 
-      // Change username
       const addFriendBtn = root.querySelector('#add-friend-btn') as HTMLButtonElement;
       if (addFriendBtn) {
         addFriendBtn.addEventListener('click', () => {
@@ -319,16 +323,64 @@ const Stats: StatsPage = {
         });
       }
 
-      const changeUsername = root.querySelector('#change-username') as HTMLElement;
-      if (changeUsername) {
-        changeUsername.addEventListener('click', () => {
-          const newUsername = prompt('Nouveau nom d\'utilisateur:', 'LUCAS');
-            if (newUsername) {
-              const usernameSpan = root.querySelector('#change-username')?.previousElementSibling;
-                if (usernameSpan) {
-                  usernameSpan.textContent = newUsername.toUpperCase();
+      //change username
+      const usernameEl = document.getElementById("change-username");
+      if (usernameEl)
+      {
+        usernameEl.addEventListener("click", () => {
+          usernameEl.contentEditable = "true";
+          usernameEl.focus();
+        });
+        usernameEl.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            usernameEl.blur();
+          }
+        });
+
+        usernameEl.addEventListener("blur", () => {
+          usernameEl.contentEditable = "false";
+          if (usernameEl.textContent)
+          {
+            const newUsername = usernameEl.textContent.trim();
+            fetch('/user/api/change-name', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
+              },
+              body: JSON.stringify({
+                username: sessionStorage.getItem('username'),
+                newUsername: newUsername,
+              })
+            })
+              .then(async (res) => {
+                const text = await res.text();
+                let data;
+                try {
+                  data = JSON.parse(text);
+                } catch {
+                  data = text;
                 }
-            }
+                if (!res.ok) {
+                  return Promise.reject(data);
+                }
+                return data;
+              })
+              .then((data: { message: string; token?: string }) => {
+                if (data.token) {
+                  sessionStorage.setItem('token', data.token);
+                  sessionStorage.setItem('username', Layout.getUserInfoFromJwt(data.token).username);
+                  Layout.updateUsername();
+                }
+                Layout.showNotification(data.message || 'username changé avec succès', 'success');
+              })
+              .catch(err => {
+                console.error('Fetch error:', err);
+                const msg = (err && (err.error || err.message)) || 'Impossible de changer de nom d\'utilisateur';
+                Layout.showNotification(msg, 'error');
+              });
+          }
         });
       }
 
