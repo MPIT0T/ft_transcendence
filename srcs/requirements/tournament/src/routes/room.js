@@ -228,7 +228,7 @@ class Room {
 		}
 	}
 
-	sendGameEnd() {
+	async sendGameEnd() {
 		const winner = this.p1Score > this.p2Score ? 1 : 2;
 		// const winner = this.p1Score >= this.gamePoint ? 1 : 2;
 
@@ -247,6 +247,41 @@ class Room {
 				c._conection.send(JSON.stringify(payLoad));
 			}
 		});
+
+		// 	const clients = this.clients.map(client => client.id || client)
+
+		// const tokens = [];
+		// const usernames = [];
+
+		// usernames.push(clients[0]._name);
+		// usernames.push(clients[1]._name);
+		// tokens.push(clients[0]._token);
+		// tokens.push(clients[1]._token);
+
+		// const bodyPayload = {
+		// 	winner: winner,
+		// 	gameMode: this.gameMode,
+		// 	scores: {
+		// 		player1: this.p1Score,
+		// 		player2: this.p2Score,
+		// 	},
+		// 	tokens: tokens,
+		// 	usernames: usernames,
+		// };
+		// try {
+		// 	const res = await fetch('/user/api/post-match', {
+		// 		method: 'POST',
+		// 		headers: { 'Content-Type': 'application/json' },
+		// 		body: JSON.stringify(bodyPayload),
+		// 	});
+
+		// 	if (!res.ok) {
+		// 		const bodyText = await res.text().catch(() => '');
+		// 		console.log('sendGameEnd - failed posting game result:', res.status, res.statusText, bodyText);
+		// 	}
+		// } catch (err) {
+		// 	console.log('sendGameEnd - fetch error:', err);
+		// }
 	}
 
 	toJSON() {
