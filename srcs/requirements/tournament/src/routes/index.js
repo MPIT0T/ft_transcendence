@@ -18,6 +18,9 @@ module.exports = async function (fastify, opts) {
 				try {
 					const data = JSON.parse(message.toString());
 					switch (data.method) {
+						case 'user':
+							await handleUser(socket, data);
+							break;
 						case 'tournaments':
 							await handleGetTournaments(socket, data);
 							break;
@@ -75,7 +78,7 @@ function removeClient(clientId) {
 
 	g_Games._tournaments.removeClientsTournament(clientId);
 	g_Games.removeClient(clientId);
-	
+
 }
 
 function leave(clientId) {
@@ -88,6 +91,27 @@ function leave(clientId) {
 	g_Games._tournaments.removeClientsTournament(clientId);
 
 }
+
+function getEloFromJwt(token) {
+
+	if (!token) {
+		return 0;
+	}
+	const payloadBase64 = token.split('.')[1];
+	const payloadJson = atob(payloadBase64);
+	const payload = JSON.parse(payloadJson);
+	return payload.elo;
+}
+
+function handleUser(socket, data) {
+	const client = g_Games.findClient(data.clientId);
+	if (client === undefined)
+		throw "Client id not good";
+	client._token = data.token;
+	client._elo = getEloFromJwt(data.token);
+	client._name = data.username;
+}
+
 
 
 function handleGetTournaments(socket, data) {
