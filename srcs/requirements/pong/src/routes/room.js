@@ -292,12 +292,12 @@ class Room {
         console.log(bodyPayload);
         console.log('\n\n\n');
 		try {
-            const res = await fetch('https://user_handling:3003/user/api/post-match', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(bodyPayload),
-            });
-
+			// Internal call should omit external nginx prefix '/user/'
+			const res = await fetch('https://user_handling:3003/api/post-match', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(bodyPayload),
+			});
 			if (!res.ok) {
 				const bodyText = await res.text().catch(() => '');
 				console.log('sendGameEnd - failed posting game result:', res.status, res.statusText, bodyText);

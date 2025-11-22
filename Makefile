@@ -15,9 +15,13 @@ all: dev
 	openssl req -x509 -newkey rsa:2048 -keyout $(@D)/ssl_certificate_key -out $(@D)/ssl_certificate -days 365 -nodes -subj "/CN=localhost" 2> /dev/null
 
 dev: ${SECRETS}
+	@echo "Generating internal service TLS certificates (if missing)..."
+	@bash scripts/gen-internal-certs.sh
 	TARGET=dev docker compose -f srcs/compose.yml up --watch
 
 prod: ${SECRETS}
+	@echo "Generating internal service TLS certificates (if missing)..."
+	@bash scripts/gen-internal-certs.sh
 	TARGET=prod docker compose -f srcs/compose.yml up -d
 
 build_dev: secrets
