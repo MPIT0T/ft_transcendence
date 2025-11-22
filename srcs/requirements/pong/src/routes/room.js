@@ -278,13 +278,6 @@ class Room {
 		tokens.push(clients[0]._token);
 		tokens.push(clients[1]._token);
 
-        const fetch = require('node-fetch');
-        const https = require('https');
-
-        const agent = new https.Agent({
-            rejectUnauthorized: false
-        });
-
 		const bodyPayload = {
 			winner: winner,
 			gameMode: this.gameMode,
@@ -303,7 +296,6 @@ class Room {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(bodyPayload),
-                agent
             });
 
 			if (!res.ok) {
