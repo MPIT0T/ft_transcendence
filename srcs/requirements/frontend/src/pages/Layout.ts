@@ -552,7 +552,7 @@ export const Layout = {
     }
   },
 
-    getUserInfoFromJwt(token: string | null) {
+  getUserInfoFromJwt(token: string | null) {
 
     if (!token) {
       return {
