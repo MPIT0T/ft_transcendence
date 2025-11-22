@@ -162,9 +162,10 @@ export const TournamentRoom: Page = {
 
 	mount(root: HTMLElement): void {
 		let tournamentId;
-		if (ws === undefined) {
+		if (ws === undefined || ws.readyState === WebSocket.CLOSED) {
 			const host = window.location.host;
 			ws = new WebSocket(`wss://${host}/tournament/ws`);
+			ws.onclose = () => { ws = undefined; };
 		}
 
 		ws.onmessage = message => {
