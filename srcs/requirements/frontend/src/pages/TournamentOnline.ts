@@ -458,8 +458,6 @@ export const TournamentOnline: Page = {
 				if (ws)
 					ws.send(JSON.stringify(payLoad));
 
-        sessionStorage.removeItem('tournamentId');
-
 				window.removeEventListener('popstate', popstateHandler);
 				const p = '/tournamentRoom';
 				history.pushState(null, '', p);
@@ -483,6 +481,7 @@ export const TournamentOnline: Page = {
 				ws.send(JSON.stringify(payLoad));
 
       sessionStorage.removeItem('tournamentId');
+      sessionStorage.removeItem('roomId');
 
 			window.removeEventListener('popstate', popstateHandler);
 		};

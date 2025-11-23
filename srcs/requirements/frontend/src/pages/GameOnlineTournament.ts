@@ -1,8 +1,11 @@
 import type { Page } from "../interface/gameInterface.js"
 import { GameComponentOnline } from "../components/GameComponentOnline.js";
 import { ws } from "./TournamentRoom.js";
+import {sleep} from "../utils/sleep";
 
 let currentGame: GameComponentOnline | null = null;
+let timerInterval: number | null = null;
+let elapsedSeconds: number = 0;
 
 export const GameOnlineTournament: Page = {
   render() {
@@ -42,6 +45,38 @@ export const GameOnlineTournament: Page = {
     const player1NameEl = root.querySelector('#player-1-name') as HTMLElement;
     const player2NameEl = root.querySelector('#player-2-name') as HTMLElement;
     const score = root.querySelector('#score') as HTMLElement;
+    const timerEl = root.querySelector('#timer') as HTMLElement;
+
+    const formatTime = (s: number) => {
+      const hours = Math.floor(s / 3600);
+      const minutes = Math.floor((s % 3600) / 60);
+      const seconds = s % 60;
+      if (hours > 0) {
+        return `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      }
+      return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+    }
+
+    const updateTimerDisplay = () => {
+      if (timerEl) {
+        timerEl.textContent = formatTime(elapsedSeconds);
+      }
+    }
+
+    const startTimer = () => {
+      if (timerInterval !== null) return;
+      timerInterval = window.setInterval(() => {
+        elapsedSeconds += 1;
+        updateTimerDisplay();
+      }, 1000);
+    };
+
+    const stopTimer = () => {
+      if (timerInterval !== null) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+    };
 
     player1NameEl.textContent = sessionStorage.getItem('player1Name');
     player2NameEl.textContent = sessionStorage.getItem('player2Name');
@@ -65,7 +100,7 @@ export const GameOnlineTournament: Page = {
     // Pas besoin d'envoyer "ready", on attend juste les messages du serveur
 
     if (ws) {
-      ws.onmessage = message => {
+      ws.onmessage = async message => {
         const response = JSON.parse(message.data);
 
         // Début du match
@@ -82,6 +117,11 @@ export const GameOnlineTournament: Page = {
           const game = response.room;
           if (currentGame && game) {
             currentGame.updateGameState(game);
+            if (response.isGoal) {
+              stopTimer();
+              await sleep(3000);
+              startTimer();
+            }
           }
         }
 
