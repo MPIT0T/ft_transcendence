@@ -165,6 +165,7 @@ export const TournamentRoom: Page = {
 
 	mount(root: HTMLElement): void {
 		let tournamentId;
+    let tournamentName: string;
 		if (ws === undefined) {
 			const host = window.location.host;
 			ws = new WebSocket(`wss://${host}/tournament/ws`);
@@ -193,6 +194,11 @@ export const TournamentRoom: Page = {
 					if (tournamentId !== undefined) {
 						sessionStorage.setItem('tournamentId', tournamentId);
 					}
+
+          tournamentName = response.tournamentName;
+          if (tournamentName !== undefined) {
+            sessionStorage.setItem('tournamentName', tournamentName);
+          }
 
 					// navigate using History API
 					const raw = response.url || '/';
