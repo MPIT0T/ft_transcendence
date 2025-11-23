@@ -95,6 +95,19 @@ const Stats: StatsPage = {
           </div>
         </div>
 
+         <!-- Password change trigger -->
+        <div class="mb-6">
+          <button
+            id="open-password-modal"
+            class="w-full px-4 py-2 text-sm border border-gray-50 text-gray-100 hover:bg-gray-700 transition-colors">
+            Changer le mot de passe
+          </button>
+        </div>
+
+        <!-- disconnect Btn -->
+        <div class="text-center mb-6">
+          <button class="px-3 py-3 font-bold border border-gray-50 backdrop-blur-2xs text-2xl hover:border-red-500 hover:bg-gray-700 text-gray-50 transition-transform" id="disconnectBtn">Se déconnecter</button>
+        </div>
         
 
         <!-- Main stats -->
@@ -110,9 +123,11 @@ const Stats: StatsPage = {
           <div>
           <div class="text-2xl font-bold text-gray-100" id="friends-counter">0</div>
           <div class="text-sm text-gray-400">Friends</div>
+          
           </div>
         </div>
         </div>
+
 
         <!-- Friends Lists with tabs -->
         <div class="backdrop-blur-2xs border border-gray-50 p-6">
@@ -138,15 +153,15 @@ const Stats: StatsPage = {
         </div>
 
         <div id="friends-container">
-          <div id="online-friends" class="space-y-3 p-6 overflow-y-auto max-h-[23vh]">
+          <div id="online-friends" class="space-y-3 p-6 overflow-y-auto max-h-[38vh]">
           <ul id="online-friends-container">
           </ul>
           </div>
 
-          <div id="offline-friends" class="space-y-3 p-6 overflow-y-auto max-h-[23vh]">
+          <div id="offline-friends" class="space-y-3 p-6 overflow-y-auto max-h-[38vh]">
           <ul id="offline-friends-container"></ul>
           </div>
-          <div id="request-friends" class="space-y-3 p-6 overflow-y-auto max-h-[23vh]">
+          <div id="request-friends" class="space-y-3 p-6 overflow-y-auto max-h-[38vh]">
           <ul id="request-friends-container"></ul>
           </div>
         </div>
@@ -175,6 +190,40 @@ const Stats: StatsPage = {
           </div>
         </div>
       </div>
+
+      <!-- Password Modal -->
+      <div id="password-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+        <div class="bg-gray-900 border border-gray-700 rounded-lg w-full max-w-md p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h4 class="text-lg font-semibold text-gray-100">Changer le mot de passe</h4>
+            <button type="button" class="text-gray-300 hover:text-white" data-close-password-modal>✕</button>
+          </div>
+          <form id="password-form" class="space-y-4">
+            <div>
+              <label for="old-password" class="block text-xs text-gray-400 mb-1">Mot de passe actuel</label>
+              <input id="old-password" type="password" required
+                     class="w-full px-3 py-2 bg-white/5 border border-gray-700 text-sm text-gray-100 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+            </div>
+            <div>
+              <label for="new-password" class="block text-xs text-gray-400 mb-1">Nouveau mot de passe</label>
+              <input id="new-password" type="password" minlength="6" required
+                     class="w-full px-3 py-2 bg-white/5 border border-gray-700 text-sm text-gray-100 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+            </div>
+            <div>
+              <label for="confirm-password" class="block text-xs text-gray-400 mb-1">Confirmer</label>
+              <input id="confirm-password" type="password" required
+                     class="w-full px-3 py-2 bg-white/5 border border-gray-700 text-sm text-gray-100 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+            </div>
+            <div class="flex justify-end gap-3 pt-2">
+              <button type="button" class="px-3 py-2 bg-gray-700 text-gray-200 rounded hover:bg-gray-600" data-close-password-modal>Annuler</button>
+              <button type="submit" id="submit-password-btn"
+                      class="px-4 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-500 transition-colors">
+                Enregistrer
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
         `;
   },
 
@@ -184,38 +233,14 @@ const Stats: StatsPage = {
     window.clearInterval((globalThis as any).showFriendRequestIntervalId);
     return `
 							<div class="space-y-6">
-									<!-- Filtres -->
-									<div class="backdrop-blur-2xs border border-gray-50 p-6">
-											<div class="flex flex-wrap gap-4 items-center">
-													<div>
-															<label class="block text-sm font-medium text-gray-200 mb-1">Période :</label>
-															<select class="px-3 py-2 bg-white/5 border border-gray-700 text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
-																	<option>Dernière semaine</option>
-																	<option>Dernier mois</option>
-																	<option>Tout</option>
-															</select>
-													</div>
-													<div>
-															<label class="block text-sm font-medium text-gray-200 mb-1">Résultat :</label>
-															<select class="px-3 py-2 bg-white/5 border border-gray-700 text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
-																	<option>Tous</option>
-																	<option>Victoires</option>
-																	<option>Défaites</option>
-															</select>
-													</div>
-													<button class="mt-6 px-4 py-2 text-white border border-gray-50 hover:bg-gray-700/50 transition-colors">
-															Filtrer
-													</button>
-											</div>
-									</div>
-	
+									
 									<!-- Historique des matches -->
 									<div class="backdrop-blur-2xs border border-gray-50 ">
 											<div class="px-6 py-4 border-b border-gray-700">
 													<h3 class="text-lg font-semibold text-gray-100">📈 Historique des matches</h3>
 											</div>
 											
-										<div class="p-6 overflow-y-auto max-h-[33vh]">
+										<div class="p-6 overflow-y-auto min-h-[30vh] max-h-[30vh]">
 													<table class="w-full">
 													<thead class="bg-transparent">
 																	<tr>
@@ -490,18 +515,53 @@ const Stats: StatsPage = {
       });
     }
 
-    // Change mail
-    const changeMail = root.querySelector('#change-mail') as HTMLElement;
-    if (changeMail) {
-      changeMail.addEventListener('click', () => {
-        const newMail = prompt('Nouveau mail :', 'LUCA@GMAIL.COM');
-        if (newMail) {
-          const mailSpan = root.querySelector('#change-mail')?.previousElementSibling;
-          if (mailSpan) {
-            mailSpan.textContent = newMail.toUpperCase();
+    // Password modal handlers
+    const openPwdBtn = root.querySelector('#open-password-modal') as HTMLButtonElement | null;
+    const pwdModal = root.querySelector('#password-modal') as HTMLDivElement | null;
+    if (openPwdBtn && pwdModal) {
+      const closeEls = pwdModal.querySelectorAll('[data-close-password-modal]');
+      openPwdBtn.addEventListener('click', () => pwdModal.classList.remove('hidden'));
+      closeEls.forEach(el => el.addEventListener('click', () => pwdModal.classList.add('hidden')));
+      const form = pwdModal.querySelector('#password-form') as HTMLFormElement | null;
+      if (form) {
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const oldPass = (form.querySelector('#old-password') as HTMLInputElement).value.trim();
+          const newPass = (form.querySelector('#new-password') as HTMLInputElement).value.trim();
+          const confirmPass = (form.querySelector('#confirm-password') as HTMLInputElement).value.trim();
+          if (newPass !== confirmPass) {
+            Layout.showNotification('Les mots de passe ne correspondent pas', 'error');
+            return;
           }
-        }
-      });
+          fetch('/user/api/change-password', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+            },
+            body: JSON.stringify({
+              username: sessionStorage.getItem('username'),
+              password: oldPass,
+              newPassword: newPass
+            })
+          })
+            .then(res => res.text().then(t => {
+              let data: any;
+              try { data = JSON.parse(t); } catch { data = { message: t }; }
+              if (!res.ok) return Promise.reject(data);
+              return data;
+            }))
+            .then(data => {
+              Layout.showNotification(data.message || 'Mot de passe changé', 'success');
+              form.reset();
+              pwdModal.classList.add('hidden');
+            })
+            .catch(err => {
+              const msg = (err && (err.error || err.message)) || 'Impossible de changer le mot de passe';
+              Layout.showNotification(msg, 'error');
+            });
+        });
+      }
     }
 
     //change avatar
@@ -649,7 +709,6 @@ const Stats: StatsPage = {
         return res.json();
       })
       .then((data: { invites: { username: string }[] }) => {
-
 
         const usernames = data.invites
           .filter((entry) => entry && entry.username)
