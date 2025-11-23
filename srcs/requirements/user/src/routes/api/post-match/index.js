@@ -33,8 +33,8 @@ async function apiPostMatchRoute(fastify, options) {
         //set all post matches info like elo and match history
         const {usernames, winner, scores, gameMode, tokens} = req.body || {};
 
-        /*if (!checkToken(tokens[0], usernames[0]) || !checkToken(tokens[1], usernames[1]))
-            return reply.status(401).send({error: "invalid token"});*/
+        if (!checkToken(tokens[0], usernames[0]) || !checkToken(tokens[1], usernames[1]))
+            return reply.status(401).send({error: "invalid token"});
         if (!usernames[0] || !usernames[1] || !gameMode)
             return reply.status(400).send({error: 'Missing credentials'});
         try {
