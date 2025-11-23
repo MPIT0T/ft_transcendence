@@ -17,7 +17,7 @@ function create_matchHistory(is_winner, scores, second, gamemode, avatar)
     };
 }
 
-function calculElo(winner, looser)
+async function calculElo(winner, looser)
 {
     let k = 40;
 
@@ -44,7 +44,7 @@ async function apiPostMatchRoute(fastify, options) {
                 return reply.status(400).send({ error: 'Account not found' });
             userWinner.match_history = userWinner.match_history || "";
             userLooser.match_history = userLooser.match_history || "";
-            if (gameMode == 'ranked')
+            if (gameMode === 'ranked')
                 await calculElo(userWinner, userLooser);
             userWinner.match_history += JSON.stringify(create_matchHistory(true, scores, userLooser.username, gameMode, userLooser.avatar)) + '\n';
             userLooser.match_history += JSON.stringify(create_matchHistory(false, scores, userWinner.username, gameMode, userWinner.avatar)) + '\n';

@@ -104,7 +104,7 @@ const Stats: StatsPage = {
 		<!-- Main stats -->
 		<div class="grid grid-cols-3 gap-4 text-center mt-8">
 			<div>
-				<div class="text-2xl font-bold text-gray-100">${Layout.getUserInfoFromJwt(sessionStorage.getItem('token')).elo}</div>
+				<div class="text-2xl font-bold text-gray-100" id="change-elo">?</div>
 				<div class="text-sm text-gray-400">Elo</div>
 			</div>
 			<div>
@@ -169,15 +169,15 @@ const Stats: StatsPage = {
 	</div>
 
 		<div id="friends-container">
-			<div id="online-friends" class="space-y-3">
+			<div id="online-friends" class="space-y-3 p-6 overflow-y-auto max-h-[23vh]">
 				<ul id="online-friends-container">
 				</ul>
 			</div>
 
-			<div id="offline-friends" class="space-y-3 hidden">
+			<div id="offline-friends" class="space-y-3 p-6 overflow-y-auto max-h-[23vh]">
 				<ul id="offline-friends-container"></ul>
 			</div>
-			<div id="request-friends" class="space-y-3">
+			<div id="request-friends" class="space-y-3 p-6 overflow-y-auto max-h-[23vh]">
 				<ul id="request-friends-container"></ul>
 			</div>
 		</div>
@@ -218,12 +218,12 @@ const Stats: StatsPage = {
 									</div>
 	
 									<!-- Historique des matches -->
-									<div class="backdrop-blur-2xs border border-gray-50 overflow-hidden">
+									<div class="backdrop-blur-2xs border border-gray-50 ">
 											<div class="px-6 py-4 border-b border-gray-700">
 													<h3 class="text-lg font-semibold text-gray-100">📈 Historique des matches</h3>
 											</div>
 											
-										<div class="overflow-x-auto">
+										<div class="p-6 overflow-y-auto max-h-[33vh]">
 													<table class="w-full">
 													<thead class="bg-transparent">
 																	<tr>
@@ -271,53 +271,77 @@ const Stats: StatsPage = {
       },
       set(value) {
         _friends = value;
-        updateFriendsUI(value);     // ← your callback
+        updateFriendsUI(value);
       },
       configurable: true,
       enumerable: true
     });
 
-    function updateFriendsUI(count: number) {
-      const el = document.getElementById("friends-counter");
-      if (el) el.textContent = count.toString();
-    }
-
-
-    /*const patate = 1;
-    if (patate) {
-      const usernames = [];
-      usernames.push(sessionStorage.getItem("username"));
-      usernames.push(sessionStorage.getItem("username"));
-      const scores = {
-        player1: 12,
-        player2: 2,
-      };
-      const tokens = [];
-      tokens.push(sessionStorage.getItem("token"));
-      tokens.push(sessionStorage.getItem("token"));
-      fetch('/user/api/post-match', {
+    // ELO fetched after profile content is rendered so element exists
+    const fetchElo = () => {
+      const indicatorEl = document.getElementById('change-elo');
+      if (!indicatorEl) return;
+      fetch('/user/api/get-elo', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${sessionStorage.getItem('token')}`
         },
-        body: JSON.stringify({
-          usernames: usernames, winner: 1, scores, gameMode: 'challenge', tokens: tokens
-        })
+        body: JSON.stringify({ username: sessionStorage.getItem('username') })
       })
+        .then(res => {
+          if (!res.ok) return res.json().then(data => Promise.reject(data));
+          return res.json();
+        })
+        .then((data: { elo: number }) => {
+          indicatorEl.textContent = data.elo?.toString() ?? '?';
+        })
+        .catch(err => {
+          const msg = err?.error || 'Impossible de recevoir l\'elo du joueur';
+          Layout.showNotification(msg, 'error');
+        });
+    };
+    
+    function updateFriendsUI(count: number) {
+      const el = document.getElementById("friends-counter");
+      if (el) el.textContent = count.toString();
     }
-*/
+
+    // for (let index = 0; index < 15; index++) {
+
+    //   const usernames = [];
+    //   usernames.push(sessionStorage.getItem("username"));
+    //   usernames.push(sessionStorage.getItem("username"));
+    //   const scores = {
+    //     player1: 12,
+    //     player2: 2,
+    //   };
+    //   const tokens = [];
+    //   tokens.push(sessionStorage.getItem("token"));
+    //   tokens.push(sessionStorage.getItem("token"));
+    //   fetch('/user/api/post-match', {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //       'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+    //     },
+    //     body: JSON.stringify({
+    //       usernames: usernames, winner: 1, scores, gameMode: 'challenge', tokens: tokens
+    //     })
+    //   })
+    // }
+    
     const profileTab = root.querySelector('#profile-tab') as HTMLButtonElement;
     const historyTab = root.querySelector('#history-tab') as HTMLButtonElement;
     const contentContainer = root.querySelector('#content-container') as HTMLDivElement;
     const indicator = root.querySelector('#tab-indicator') as HTMLDivElement | null;
 
     const renderContent = () => {
-      if (contentContainer) {
-        contentContainer.innerHTML = activeTab === 'profile' ? this.renderProfile() : this.renderHistory();
-        if (activeTab === 'profile') {
-          this.mountProfileEvents(contentContainer);
-        }
+      if (!contentContainer) return;
+      contentContainer.innerHTML = activeTab === 'profile' ? this.renderProfile() : this.renderHistory();
+      if (activeTab === 'profile') {
+        this.mountProfileEvents(contentContainer);
+        fetchElo(); // ensure ELO loads after element is present
       }
     };
 
@@ -353,6 +377,8 @@ const Stats: StatsPage = {
     // Initial content/events mount based on active tab
 
     renderContent();
+    // In case initial tab is profile and ELO element already in DOM
+    if (activeTab === 'profile') fetchElo();
   },
 
   mountProfileEvents(root: HTMLElement) {
@@ -642,31 +668,33 @@ const Stats: StatsPage = {
       })
       .then((data: { invites: { username: string }[] }) => {
 
-        const usernames = data.invites
+          
+          const usernames = data.invites
           .filter((entry) => entry && entry.username)
           .map((entry) => entry.username);
-        usernames.forEach((username: string) => {
+          usernames.forEach((username: string) => {
           const li = document.createElement('li');
           li.className = 'flex items-center justify-between';
           li.innerHTML = `
+        }
 				<span class="text-gray-200 flex items-center">
 					<span class="inline-block w-2 h-2 mr-2 relative">
 					<span class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0 
 						 border-l-[4px] border-r-[4px] border-b-[6px] border-l-transparent border-r-transparent border-b-purple-500"></span>
 					</span>
-					${username}
+          ${username}
 				</span>
 				<button class="invite-btn px-3 py-1 text-xs bg-blue-500 text-white hover:bg-blue-600 transition-colors" id="Btn-${username}">
-					Accept
+        Accept
 				</button>
-			`;
-          const btn = li.querySelector('button') as HTMLButtonElement;
-          btn.addEventListener('click', () => {
-            this.acceptFriendRequest(username, li);
-          });
-          container.appendChild(li);
+        `;
+        const btn = li.querySelector('button') as HTMLButtonElement;
+        btn.addEventListener('click', () => {
+          this.acceptFriendRequest(username, li);
         });
-      })
+        container.appendChild(li);
+      });
+    })
       .catch(err => {
         const msg = err.error || 'Impossible de recevoir les requetes d\'amis';
         Layout.showNotification(msg, 'error');

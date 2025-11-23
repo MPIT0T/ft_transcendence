@@ -26,6 +26,10 @@ const reloadFriends = function (root: HTMLElement) {
 }
 
 function displayFriends(root: HTMLElement, friends: any[]) {
+
+	
+
+
 	const container = root.querySelector('#friends-container') as HTMLDivElement;
 	container.innerHTML = ''; // Vider le container
 
