@@ -403,13 +403,14 @@ export const TournamentOnline: Page = {
 				if (response.method === "startMatch") {
 					// Sauvegarder les infos du match dans sessionStorage
 					sessionStorage.setItem('matchRound', response.matchRound);
-					sessionStorage.setItem('matchOpponent', response.opponent);
+          sessionStorage.setItem('player1Name', response.player1Name);
+          sessionStorage.setItem('player2Name', response.player2Name);
+          sessionStorage.setItem('roomId', response.roomId);
 
 					// Rediriger vers la page de jeu après 1 seconde
 					setTimeout(() => {
 						// navigate using History API instead of hash
-						const raw = response.roomUrl || '/';
-						const p = raw.startsWith('#') ? raw.replace(/^#\/?/, '/') : (raw.startsWith('/') ? raw : '/' + raw);
+						const p = response.roomUrl;
 						history.pushState(null, '', p);
 						window.dispatchEvent(new PopStateEvent('popstate'));
 					}, 1000);
@@ -426,7 +427,7 @@ export const TournamentOnline: Page = {
 				// Annonce du gagnant du tournoi
 				if (response.method === "tournamentWinner") {
 					if (tournamentNameEl) {
-						tournamentNameEl.textContent = '🏆 TOURNAMENT FINISHED 🏆';
+						tournamentNameEl.textContent = 'Tournoi terminé !';
 					}
 
 					// Afficher le gagnant dans la zone Winner
@@ -457,6 +458,8 @@ export const TournamentOnline: Page = {
 				if (ws)
 					ws.send(JSON.stringify(payLoad));
 
+        sessionStorage.removeItem('tournamentId');
+
 				window.removeEventListener('popstate', popstateHandler);
 				const p = '/tournamentRoom';
 				history.pushState(null, '', p);
@@ -478,6 +481,8 @@ export const TournamentOnline: Page = {
 
 			if (ws)
 				ws.send(JSON.stringify(payLoad));
+
+      sessionStorage.removeItem('tournamentId');
 
 			window.removeEventListener('popstate', popstateHandler);
 		};

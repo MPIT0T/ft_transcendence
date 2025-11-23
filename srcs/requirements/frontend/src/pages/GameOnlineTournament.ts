@@ -32,18 +32,6 @@ export const GameOnlineTournament: Page = {
   },
 
   mount(root) {
-  // Extraire le roomId depuis l'URL (?gameId=...)
-  const urlParams = new URLSearchParams(window.location.search);
-  let roomId = urlParams.get('gameId');
-    
-    // Sauvegarder le roomId dans sessionStorage
-    if (roomId) {
-      sessionStorage.setItem('roomId', roomId);
-    } else {
-      // Fallback vers sessionStorage si pas dans l'URL
-      roomId = sessionStorage.getItem('roomId');
-    }
-    
     const clientId = sessionStorage.getItem('clientId');
     const tournamentId = sessionStorage.getItem('tournamentId');
     let canStart = false;
@@ -51,10 +39,12 @@ export const GameOnlineTournament: Page = {
 
     const gameContainer = root.querySelector('#game-container') as HTMLElement;
     const matchTitleEl = root.querySelector('#tournament-match-title') as HTMLElement;
-    const matchInfoEl = root.querySelector('#match-info') as HTMLElement;
     const player1NameEl = root.querySelector('#player-1-name') as HTMLElement;
     const player2NameEl = root.querySelector('#player-2-name') as HTMLElement;
-    const score = root.querySelector('#elo') as HTMLElement;
+    const score = root.querySelector('#score') as HTMLElement;
+
+    player1NameEl.textContent = sessionStorage.getItem('player1Name');
+    player2NameEl.textContent = sessionStorage.getItem('player2Name');
 
     currentGame = new GameComponentOnline(
       gameContainer,
@@ -66,14 +56,9 @@ export const GameOnlineTournament: Page = {
 
     // Afficher les infos du match si disponibles
     const matchRound = sessionStorage.getItem('matchRound');
-    const matchOpponent = sessionStorage.getItem('matchOpponent');
-    const playerName = sessionStorage.getItem('username') || 'Player';
-    
+
     if (matchRound) {
       matchTitleEl.textContent = matchRound;
-    }
-    if (matchOpponent) {
-      matchInfoEl.textContent = `${playerName} VS ${matchOpponent}`;
     }
 
     // Le match de tournoi est géré directement par le serveur
@@ -89,11 +74,6 @@ export const GameOnlineTournament: Page = {
           canStart = true;
           if (currentGame) {
             currentGame.setCanStart(canStart);
-
-          }
-          
-          if (matchInfoEl) {
-            matchInfoEl.textContent = `VS ${matchOpponent || 'Opponent'} - Match in progress!`;
           }
         }
 
@@ -107,14 +87,6 @@ export const GameOnlineTournament: Page = {
 
         // Fin du match
         if (response.method === "gameEnd") {
-          const winner = response.winner;
-          const score1 = response.score1;
-          const score2 = response.score2;
-          
-          if (matchInfoEl) {
-            matchInfoEl.textContent = `Match finished! ${score1} - ${score2}`;
-          }
-          
           if (currentGame) {
             currentGame.destroy();
           }
@@ -130,8 +102,7 @@ export const GameOnlineTournament: Page = {
           
           // Nettoyer les infos du match
           sessionStorage.removeItem('matchRound');
-          sessionStorage.removeItem('matchOpponent');
-          
+
           // Sauvegarder le tournamentId pour revenir au bon tournoi
           if (response.tournamentId) {
             sessionStorage.setItem('tournamentId', response.tournamentId);
@@ -164,7 +135,6 @@ export const GameOnlineTournament: Page = {
 
       // Nettoyer les infos du match
       sessionStorage.removeItem('matchRound');
-      sessionStorage.removeItem('matchOpponent');
 
       window.removeEventListener('popstate', popstateHandler);
     };

@@ -181,8 +181,8 @@ export const GameOnline: Page = {
 
           if (currentGame) {
             currentGame.setCanStart(canStart);
-            player1NameEl.textContent = response.room.clients[0].name; // TODO Get player names from server
-            player2NameEl.textContent = response.room.clients[1].name; // TODO Get player names from server
+            player1NameEl.textContent = response.room.clients[0].name;
+            player2NameEl.textContent = response.room.clients[1].name;
             player1EloEl.textContent = response.room.clients[0].elo;
             player2EloEl.textContent = response.room.clients[1].elo;
             await sleep(3000);

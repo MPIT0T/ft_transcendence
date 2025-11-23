@@ -347,7 +347,8 @@ class Tournament {
 					method: "startMatch",
 					roomId: roomData.roomId,
 					roomUrl: roomUrl,
-					opponent: roomData.player2._name,
+                    player1Name: roomData.player1._name,
+					player2Name: roomData.player2._name,
 					matchRound: roomData.roomName
 				}));
 			}
@@ -358,7 +359,8 @@ class Tournament {
 					method: "startMatch",
 					roomId: roomData.roomId,
 					roomUrl: roomUrl,
-					opponent: roomData.player1._name,
+					player1Name: roomData.player1._name,
+                    player2Name: roomData.player2._name,
 					matchRound: roomData.roomName
 				}));
 			}
@@ -366,6 +368,7 @@ class Tournament {
 			await sleep(1000);
 
 			room.state = "playing-game";
+            await sleep(3000);
 			await room.gameLoop();
 
 			winner = room.p1Score > room.p2Score ? roomData.player1 : roomData.player2;
@@ -474,7 +477,8 @@ class Tournament {
 					method: "startMatch",
 					roomId: roomData.roomId,
 					roomUrl: roomUrl,
-					opponent: roomData.player2._name,
+                    player1Name: roomData.player1._name,
+					player2Name: roomData.player2._name,
 					matchRound: roomData.roomName
 				}));
 			}
@@ -485,7 +489,8 @@ class Tournament {
 					method: "startMatch",
 					roomId: roomData.roomId,
 					roomUrl: roomUrl,
-					opponent: roomData.player1._name,
+                    player1Name: roomData.player1._name,
+                    player2Name: roomData.player2._name,
 					matchRound: roomData.roomName
 				}));
 			}
@@ -587,7 +592,8 @@ class Tournament {
 						method: "startMatch",
 						roomId: finalRoomData.roomId,
 						roomUrl: roomUrl,
-						opponent: finalRoomData.player2._name,
+                        player1Name: finalRoomData.player1._name,
+                        player2Name: finalRoomData.player2._name,
 						matchRound: finalRoomData.roomName
 					}));
 				}
@@ -598,7 +604,8 @@ class Tournament {
 						method: "startMatch",
 						roomId: finalRoomData.roomId,
 						roomUrl: roomUrl,
-						opponent: finalRoomData.player1._name,
+                        player1Name: finalRoomData.player1._name,
+                        player2Name: finalRoomData.player2._name,
 						matchRound: finalRoomData.roomName
 					}));
 				}
