@@ -3,17 +3,16 @@ const db = require("../../../db.js");
 const { getUserbyUsername } = require("../../../utils.js");
 const {checkToken} = require("../../../utils");
 
-function create_matchHistory(is_winner, scores, second, gamemode, avatar)
+function create_matchHistory(is_winner, scores, second_id, gamemode)
 {
     const score = scores.player1 + '-' + scores.player2;
 
     return {
         "winner": is_winner,
         "score": score,
-        "versus": second,
+        "versus": second_id,
         "gamemode": gamemode,
         "date": new Date(Date.now()).toLocaleString('fr-FR'),
-        "avatar": avatar,
     };
 }
 
@@ -46,8 +45,8 @@ async function apiPostMatchRoute(fastify, options) {
             userLooser.match_history = userLooser.match_history || "";
             if (gameMode === 'ranked')
                 await calculElo(userWinner, userLooser);
-            userWinner.match_history += JSON.stringify(create_matchHistory(true, scores, userLooser.username, gameMode, userLooser.avatar)) + '\n';
-            userLooser.match_history += JSON.stringify(create_matchHistory(false, scores, userWinner.username, gameMode, userWinner.avatar)) + '\n';
+            userWinner.match_history += JSON.stringify(create_matchHistory(true, scores, userLooser.id, gameMode)) + '\n';
+            userLooser.match_history += JSON.stringify(create_matchHistory(false, scores, userWinner.id, gameMode)) + '\n';
             const updateMatchH = db.prepare('UPDATE users SET match_history = ? WHERE id = ?');
             updateMatchH.run(userWinner.match_history, userWinner.id);
             updateMatchH.run(userLooser.match_history, userLooser.id);
