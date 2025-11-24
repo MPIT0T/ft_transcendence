@@ -62,6 +62,11 @@ export const GameOnline: Page = {
     </div>
   </div>
 </div>
+<div id="start-modal" class="fixed inset-0 flex justify-center items-center z-75 hidden">
+  <div id="start-modal-text" class="text-8xl font-bold text-gray-50 mb-4 ml-4 text-center px-16 py-16">
+    - 3 -
+  </div>
+</div>
 `;
   },
 
@@ -81,6 +86,8 @@ export const GameOnline: Page = {
     const player2EloEl = root.querySelector('#player-2-elo') as HTMLElement;
     const waitingModal = root.querySelector('#waiting-modal') as HTMLElement;
     const cancelMatchmakingBtn = root.querySelector('#cancel-matchmaking') as HTMLButtonElement;
+    const startModal = root.querySelector('#start-modal') as HTMLElement;
+    const startModalText = root.querySelector('#start-modal-text') as HTMLElement;
 
     const popstateHandler = (event: PopStateEvent) => {
       const payLoad = {
@@ -143,6 +150,26 @@ export const GameOnline: Page = {
       }
     };
 
+    const startAnimation = async () => {
+      startModal.classList.remove("hidden");
+      await sleep(850);
+      startModalText.classList.add('opacity-0');
+      await sleep(150);
+      startModalText.classList.remove("opacity-0");
+      startModalText.textContent = "- 2 -";
+      await sleep(850);
+      startModalText.classList.add('opacity-0');
+      await sleep(150);
+      startModalText.classList.remove("opacity-0");
+      startModalText.textContent = "- 1 -";
+      await sleep(850);
+      startModalText.classList.add('opacity-0');
+      await sleep(150);
+      startModalText.classList.remove("opacity-0");
+      startModal.classList.add('hidden');
+      startModalText.textContent = "- 3 -";
+    }
+
     currentGame = new GameComponentOnline(
       gameContainer,
       canStart,
@@ -185,7 +212,7 @@ export const GameOnline: Page = {
             player2NameEl.textContent = response.room.clients[1].name;
             player1EloEl.textContent = response.room.clients[0].elo;
             player2EloEl.textContent = response.room.clients[1].elo;
-            await sleep(3000);
+            await startAnimation();
             startTimer();
           }
         }
@@ -196,8 +223,10 @@ export const GameOnline: Page = {
             currentGame.updateGameState(game);
             if (response.isGoal) {
               stopTimer();
-              await sleep(3000);
-              startTimer();
+              if (response.isLastGoal === undefined) {
+                await startAnimation();
+                startTimer();
+              }
             }
           }
         }

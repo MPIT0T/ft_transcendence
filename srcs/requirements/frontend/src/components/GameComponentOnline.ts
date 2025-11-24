@@ -228,7 +228,7 @@ export class GameComponentOnline {
 			cancelAnimationFrame(this.animationId);
 			this.animationId = null;
 		}
- }
+  }
 
 	public destroy() {
 		this.pauseGame();

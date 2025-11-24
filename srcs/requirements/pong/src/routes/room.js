@@ -189,11 +189,21 @@ class Room {
 		}
 
 		if (scorer === 1 || scorer === 2) {
-			const payLoad = {
-				"method": "update",
-				"room": this.toJsonGoal(),
-                "isGoal": true,
-			};
+            let payLoad;
+            if (this.p1Score >= this.gamePoint || this.p2Score >= this.gamePoint) {
+                payLoad = {
+                    "method": "update",
+                    "room": this.toJsonGoal(),
+                    "isGoal": true,
+                    "isLastGoal": true,
+                };
+            } else {
+                payLoad = {
+                    "method": "update",
+                    "room": this.toJsonGoal(),
+                    "isGoal": true,
+                };
+            }
 
 			this.clients.forEach(c => {
 				if (c._conection && typeof c._conection.send === 'function') {

@@ -1,5 +1,6 @@
 import type { Page } from "../interface/gameInterface.js"
 import { GameComponent } from "../components/GameComponent.js";
+import { sleep } from "../utils/sleep.js"
 
 let currentGame: GameComponent | null = null;
 let timerInterval: number | null = null;
@@ -25,9 +26,9 @@ export const Game: Page = {
 </div>
 <div class="flex-1 p-5 flex flex-col items-center justify-center bg-transparent">
   <div id="game-container" class="mb-8">
-    <!-- Game component will be mounted here -->
+  <!-- Game component will be mounted here -->
   </div>
-  <div class="flex gap-4 items-center mb-8">
+  <div class="flex gap-4 items-center mb-8 z-100">
     <button
         id="start-btn"
         class="px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-gray-700/50 hover:border-green-500">
@@ -38,6 +39,11 @@ export const Game: Page = {
         class="px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:border-blue-500 hover:bg-gray-700/50">
       Recommencer
     </button>
+  </div>
+</div>
+<div id="start-modal" class="fixed inset-0 flex justify-center items-center z-75 hidden">
+  <div id="start-modal-text" class="text-8xl font-bold text-gray-50 mb-4 ml-4 text-center px-16 py-16">
+    - 3 -
   </div>
 </div>
     `;
@@ -61,6 +67,8 @@ export const Game: Page = {
     const gameContainer = root.querySelector('#game-container') as HTMLElement;
     const score = root.querySelector('#score') as HTMLElement;
     const timerEl = root.querySelector('#timer') as HTMLElement;
+    const startModal = root.querySelector('#start-modal') as HTMLElement;
+    const startModalText = root.querySelector('#start-modal-text') as HTMLElement;
 
     const formatTime = (s: number) => {
       const hours = Math.floor(s / 3600);
@@ -93,23 +101,51 @@ export const Game: Page = {
       }
     };
 
+    const startAnimation = async () => {
+      startModal.classList.remove("hidden");
+      await sleep(850);
+      startModalText.classList.add('opacity-0');
+      await sleep(150);
+      startModalText.classList.remove("opacity-0");
+      startModalText.textContent = "- 2 -";
+      await sleep(850);
+      startModalText.classList.add('opacity-0');
+      await sleep(150);
+      startModalText.classList.remove("opacity-0");
+      startModalText.textContent = "- 1 -";
+      await sleep(850);
+      startModalText.classList.add('opacity-0');
+      await sleep(150);
+      startModalText.classList.remove("opacity-0");
+      startModal.classList.add('hidden');
+      startModalText.textContent = "- 3 -";
+    }
+
     if (startBtn && restartBtn && gameContainer && score && timerEl) {
       // Initialize game component
       currentGame = new GameComponent(
         gameContainer,
         canStart,
-        (p1, p2) => { score.textContent = `${p1} : ${p2}`}
+        (p1, p2) => { score.textContent = `${p1} : ${p2}`},
+        async (state: boolean) => {
+          if (state) {
+            stopTimer();
+            await startAnimation()
+            startTimer();
+          }
+        }
       );
 
       updateTimerDisplay();
 
       // Start/Pause button
-      startBtn.addEventListener('click', () => {
+      startBtn.addEventListener('click', async () => {
         canStart = !canStart;
         // Update button appearance
         if (canStart) {
           startBtn.className = "px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-gray-700/50 hover:border-red-500";
           startBtn.textContent = "Pause";
+          await startAnimation();
           startTimer();
         } else {
           startBtn.className = "px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-gray-700/50 hover:border-blue-500";
