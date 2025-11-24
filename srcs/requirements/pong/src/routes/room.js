@@ -212,10 +212,21 @@ class Room {
 		}
 
 		if (scorer === 1 || scorer === 2) {
-			const payLoad = {
-				"method": "update",
-				"room": this.toJsonGoal(),
-			};
+            let payLoad;
+            if (this.p1Score >= this.gamePoint || this.p2Score >= this.gamePoint) {
+                payLoad = {
+                    "method": "update",
+                    "room": this.toJsonGoal(),
+                    "isGoal": true,
+                    "isLastGoal": true,
+                };
+            } else {
+                payLoad = {
+                    "method": "update",
+                    "room": this.toJsonGoal(),
+                    "isGoal": true,
+                };
+            }
 
 			this.clients.forEach(c => {
 				if (c._conection && typeof c._conection.send === 'function') {
@@ -253,12 +264,13 @@ class Room {
 	async sendGameEnd() {
 
 		this.endTime = Date.now();
-		const winner = this.p1Score > this.p2Score ? 1 : 2;
-		// const winner = this.p1Score >= this.gamePoint ? 1 : 2;
+        const winner = this.p1Score > this.p2Score ? 1 : this.p1Score < this.p2Score ? 2 : 0;
+        const winnerName = winner === 1 ? this.clients[0].name : winner === 2 ? this.clients[1].name : "No one";
 
-		const payLoad = {
+        const payLoad = {
 			"method": "gameEnd",
 			"winner": winner,
+			"winnerName": winnerName,
 			"finalScore": {
 				"player1": this.p1Score,
 				"player2": this.p2Score
