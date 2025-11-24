@@ -366,7 +366,7 @@ class Tournament {
 				}));
 			}
 
-			await sleep(1000);
+			await sleep(3000);
 
 			room.state = "playing-game";
 
@@ -513,7 +513,7 @@ class Tournament {
 				}));
 			}
 
-			await sleep(1000);
+			await sleep(3000);
 
 			room.state = "playing-game";
 
@@ -646,7 +646,7 @@ class Tournament {
 					}));
 				}
 
-				await sleep(1000);
+				await sleep(3000);
 
 				room.state = "playing-game";
 

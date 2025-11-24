@@ -19,16 +19,15 @@ const reloadFriends = function (root: HTMLElement) {
 
 	const payLoad = {
 		"method": "friends",
-		"clientId": clientId
+		"clientId": clientId,
+		"username": sessionStorage.getItem('username'),
+        'token':  sessionStorage.getItem('token'),
 	}
 	if (ws)
 		ws.send(JSON.stringify(payLoad));
 }
 
 function displayFriends(root: HTMLElement, friends: any[]) {
-
-	
-
 
 	const container = root.querySelector('#friends-container') as HTMLDivElement;
 	container.innerHTML = ''; // Vider le container
@@ -59,7 +58,7 @@ function displayRooms(root: HTMLElement, rooms: any[]) {
 	rooms.forEach(room => {
 		const roomBtn = document.createElement('button');
 		roomBtn.className = 'room-btn w-full text-left flex items-center justify-between text-gray-50 px-6 py-3 border backdrop-blur-2xs border-gray-50 hover:bg-gray-700/50 transition-colors'
-    roomBtn.dataset.roomId = room.roomId;
+		roomBtn.dataset.roomId = room.roomId;
 		roomBtn.innerHTML = `
 			<div class="w-full flex items-center">
 				<div class="flex-1 min-w-0 font-semibold truncate mr-4">${room.roomName}</div>
@@ -310,9 +309,10 @@ export const GameRoom: Page = {
 
 	mount(root: HTMLElement): void {
 		let roomId;
-		if (ws === undefined) {
+		if (ws === undefined || ws.readyState === WebSocket.CLOSED) {
 			const host = window.location.host;
 			ws = new WebSocket(`wss://${host}/pong/ws`);
+			ws.onclose = () => { ws = undefined; };
 		}
 		ws.onmessage = message => {
 			const response = JSON.parse(message.data);
