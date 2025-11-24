@@ -31,6 +31,11 @@ export const GameOnlineTournament: Page = {
 <div class="flex-1 p-5 flex flex-col items-center justify-center bg-transparent">
   <div id="game-container" class="mb-8"></div>
 </div>
+<div id="start-modal" class="fixed inset-0 flex justify-center items-center z-75 hidden">
+  <div id="start-modal-text" class="text-8xl font-bold text-gray-50 mb-4 ml-4 text-center px-16 py-16">
+    - 3 -
+  </div>
+</div>
     `;
   },
 
@@ -46,6 +51,8 @@ export const GameOnlineTournament: Page = {
     const player2NameEl = root.querySelector('#player-2-name') as HTMLElement;
     const score = root.querySelector('#score') as HTMLElement;
     const timerEl = root.querySelector('#timer') as HTMLElement;
+    const startModal = root.querySelector('#start-modal') as HTMLElement;
+    const startModalText = root.querySelector('#start-modal-text') as HTMLElement;
 
     const formatTime = (s: number) => {
       const hours = Math.floor(s / 3600);
@@ -78,6 +85,26 @@ export const GameOnlineTournament: Page = {
       }
     };
 
+    const startAnimation = async () => {
+      startModal.classList.remove("hidden");
+      await sleep(850);
+      startModalText.classList.add('opacity-0');
+      await sleep(150);
+      startModalText.classList.remove("opacity-0");
+      startModalText.textContent = "- 2 -";
+      await sleep(850);
+      startModalText.classList.add('opacity-0');
+      await sleep(150);
+      startModalText.classList.remove("opacity-0");
+      startModalText.textContent = "- 1 -";
+      await sleep(850);
+      startModalText.classList.add('opacity-0');
+      await sleep(150);
+      startModalText.classList.remove("opacity-0");
+      startModal.classList.add('hidden');
+      startModalText.textContent = "- 3 -";
+    }
+
     player1NameEl.textContent = sessionStorage.getItem('player1Name');
     player2NameEl.textContent = sessionStorage.getItem('player2Name');
 
@@ -109,6 +136,8 @@ export const GameOnlineTournament: Page = {
           canStart = true;
           if (currentGame) {
             currentGame.setCanStart(canStart);
+            await startAnimation();
+            startTimer();
           }
         }
 
@@ -119,8 +148,10 @@ export const GameOnlineTournament: Page = {
             currentGame.updateGameState(game);
             if (response.isGoal) {
               stopTimer();
-              await sleep(3000);
-              startTimer();
+              if (response.isLastGoal === undefined) {
+                await startAnimation();
+                startTimer();
+              }
             }
           }
         }
