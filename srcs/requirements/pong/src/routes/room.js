@@ -20,6 +20,8 @@ class Room {
 		this.player1 = new Player(1);
 		this.player2 = new Player(2);
 		this.clients = [];
+		this.startTime = 0;
+		this.endTime = 0;
 
 		// Constantes du jeu
 		this.CANVAS_WIDTH = 900;
@@ -150,6 +152,7 @@ class Room {
 
 	async gameLoop() {
 		let lastTime = Date.now();
+		this.startTime = Date.now();
 
 		while (this.state === "playing-game") {
 			const currentTime = Date.now();
@@ -248,6 +251,8 @@ class Room {
 	}
 
 	async sendGameEnd() {
+
+		this.endTime = Date.now();
 		const winner = this.p1Score > this.p2Score ? 1 : 2;
 		// const winner = this.p1Score >= this.gamePoint ? 1 : 2;
 
@@ -287,10 +292,9 @@ class Room {
 			},
 			tokens: tokens,
 			usernames: usernames,
+			duration: Math.floor((this.endTime - this.startTime) / 1000), // Duration in seconds
 		};
-        console.log('\n\n\n');
-        console.log(bodyPayload);
-        console.log('\n\n\n');
+       
 		try {
 			// Internal call should omit external nginx prefix '/user/'
 			const res = await fetch('https://user_handling:3003/api/post-match', {
