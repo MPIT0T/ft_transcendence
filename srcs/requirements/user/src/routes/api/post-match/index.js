@@ -3,7 +3,7 @@ const db = require("../../../db.js");
 const { getUserbyUsername } = require("../../../utils.js");
 const {checkToken} = require("../../../utils");
 
-function create_matchHistory(is_winner, scores, second_id, gamemode)
+function create_matchHistory(is_winner, scores, second_id, gamemode, duration)
 {
     const score = scores.player1 + '-' + scores.player2;
 
@@ -13,6 +13,7 @@ function create_matchHistory(is_winner, scores, second_id, gamemode)
         "versus": second_id,
         "gamemode": gamemode,
         "date": new Date(Date.now()).toLocaleString('fr-FR'),
+        "duration": duration,
     };
 }
 
@@ -30,7 +31,7 @@ async function calculElo(winner, looser)
 async function apiPostMatchRoute(fastify, options) {
     fastify.post('/', async (req, reply) => {
         //set all post matches info like elo and match history
-        const {usernames, winner, scores, gameMode, tokens} = req.body || {};
+        const {usernames, winner, scores, gameMode, tokens, duration} = req.body || {};
 
         if (!checkToken(tokens[0], usernames[0]) || !checkToken(tokens[1], usernames[1]))
             return reply.status(401).send({error: "invalid token"});
@@ -45,8 +46,8 @@ async function apiPostMatchRoute(fastify, options) {
             userLooser.match_history = userLooser.match_history || "";
             if (gameMode === 'ranked')
                 await calculElo(userWinner, userLooser);
-            userWinner.match_history += JSON.stringify(create_matchHistory(true, scores, userLooser.id, gameMode)) + '\n';
-            userLooser.match_history += JSON.stringify(create_matchHistory(false, scores, userWinner.id, gameMode)) + '\n';
+            userWinner.match_history += JSON.stringify(create_matchHistory(true, scores, userLooser.id, gameMode, duration)) + '\n';
+            userLooser.match_history += JSON.stringify(create_matchHistory(false, scores, userWinner.id, gameMode, duration)) + '\n';
             const updateMatchH = db.prepare('UPDATE users SET match_history = ? WHERE id = ?');
             updateMatchH.run(userWinner.match_history, userWinner.id);
             updateMatchH.run(userLooser.match_history, userLooser.id);

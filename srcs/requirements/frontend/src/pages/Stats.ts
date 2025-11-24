@@ -1,6 +1,30 @@
 import type { StatsPage } from "../interface/gameInterface.js"
 import { Layout } from "./Layout";
 
+function drawPieChart(slices: { value: number; color: string }[]) {
+  const svg = document.getElementById('pieChart') as SVGElement | null;
+  if (!svg) return;
+  while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+  const getCoordinates = (percent: number) => {
+    const x = 16 + Math.cos(2 * Math.PI * percent) * 16;
+    const y = 16 + Math.sin(2 * Math.PI * percent) * 16;
+    return [x, y];
+  };
+
+  let cumulative = 0;
+  slices.forEach((slice) => {
+    const [startX, startY] = getCoordinates(cumulative);
+    cumulative += slice.value / 100;
+    const [endX, endY] = getCoordinates(cumulative);
+    const largeArc = slice.value > 50 ? 1 : 0;
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', `M16 16 L ${startX} ${startY} A 16 16 0 ${largeArc} 1 ${endX} ${endY} Z`);
+    path.setAttribute('fill', slice.color);
+    svg.appendChild(path);
+  });
+}
+
 let activeTab: 'profile' | 'history' = 'profile';
 
 if (!Layout.isLoggedIn()) {
@@ -59,7 +83,6 @@ const Stats: StatsPage = {
   },
 
   renderProfile() {
-    // language=HTML
     const avatar = Layout.getUserInfoFromJwt(sessionStorage.getItem('token')).avatar;
     const avatar_name = avatar.split('.').slice(0, -1).join('.');
     return `
@@ -239,7 +262,17 @@ const Stats: StatsPage = {
 											<div class="px-6 py-4 border-b border-gray-700">
 													<h3 class="text-lg font-semibold text-gray-100">📈 Historique des matches</h3>
 											</div>
-											
+                    <div class="p-6 rounded-xl shadow-md w-80 text-center">
+                      <svg id="pieChart" width="200" height="200" viewBox="0 0 32 32"></svg>
+                      <div class="mt-4">
+                        <div class="flex items-center gap-2 text-gray-400" id="victory-class">
+                        <span class="w-3 h-3 bg-blue-500 rounded-full"></span>
+                        Victory: 100%</div>
+                        <div class="flex items-center gap-2 text-gray-400" id="defeat-class">
+                        <span class="w-3 h-3 bg-red-500 rounded-full"></span>
+                        Defeat: 0%</div>
+                      </div>
+                    </div>
 										<div class="p-6 overflow-y-auto min-h-[30vh] max-h-[30vh]">
 													<table class="w-full">
 													<thead class="bg-transparent">
@@ -311,7 +344,7 @@ const Stats: StatsPage = {
           return res.json();
         })
         .then((data: { elo: number }) => {
-          indicatorEl.textContent = data.elo?.toString() ?? '?';
+          indicatorEl.textContent = data.elo?.toFixed(0).toString() ?? '?';
         })
         .catch(err => {
           const msg = err?.error || 'Impossible de recevoir l\'elo du joueur';
@@ -396,6 +429,7 @@ const Stats: StatsPage = {
     renderContent();
     // In case initial tab is profile and ELO element already in DOM
     if (activeTab === 'profile') fetchElo();
+
   },
 
   mountProfileEvents(root: HTMLElement) {
@@ -930,6 +964,37 @@ const Stats: StatsPage = {
     }
   },
 
+  /*playedTimesinHours(matches, timesInHours)
+  {
+    const HOUR = 3600000;
+    let matchInPoT = 0;
+    let timePlayedInPot = 0;
+
+    matches.forEach(match => {
+      const timeStamp = Date.now() -
+      (() => {
+        const [d, t] = match.date.split(', ');
+        const [day, month, year] = d.split('/').map(Number);
+        const [h, m, s] = t.split(':').map(Number);
+        return new Date(year, month - 1, day, h, m, s).getTime();
+      })();
+      if (timeStamp < HOUR * timesInHours)
+      {
+        matchInPoT++;
+        timePlayedInPot += match.;
+      }
+    });
+    return {
+      matchesPlayed: matchInPoT,
+      timePlayed: timePlayedInPot
+    };
+  },
+
+  updateTimeplayed(matches){
+    const matchDay = this.playedTimesinHours(matches, 24);
+    const matchWeek = this.playedTimesinHours(matches, 24  * 7);
+  },*/
+
   updateContentHistory() {
     const token = sessionStorage.getItem('token');
     if (!token) return;
@@ -959,7 +1024,12 @@ const Stats: StatsPage = {
                     Jouez des parties pour avoir un historique
                 </td>`;
           container.appendChild(tr);
-          return;
+            const fallbackSlices = [
+              { value: 99.99, color: '#3B82F6' },
+              { value: 0.01, color: '#EF4444' },
+            ];
+            drawPieChart(fallbackSlices);
+            return;
         }
         data.matchHistory.forEach(match => {
           const victory = match.winner ? "✅ Victoire" : "❌ Défaite";
@@ -993,6 +1063,27 @@ const Stats: StatsPage = {
           const wr = data.matchHistory.length > 0 ? (victories / data.matchHistory.length) * 100 : 0;
           wrStat.textContent = wr.toFixed(2) + '%';
         }
+        const total = data.matchHistory.length;
+        const victories = data.matchHistory.reduce((acc, m) => acc + (m.winner ? 1 : 0), 0);
+        const defeats = total - victories;
+        //this.updateTimeplayed(data.matchHistory);
+        const slices = [
+          { value: total > 0 ? (victories / total) * 100 : 0, color: '#3B82F6' },
+          { value: total > 0 ? (defeats / total) * 100 : 0, color: '#EF4444' },
+        ];
+        if (slices[0].value === 100) {
+          slices[0].value = 99.99;
+          slices[1].value = 0.01;
+        }
+        if (slices[1].value === 100) {
+          slices[1].value = 99.99;
+          slices[0].value = 0.01;
+        }
+        drawPieChart(slices);
+        const victorySpan = document.getElementById('victory-class') as HTMLDivElement;
+        const defeatSpan = document.getElementById('defeat-class') as HTMLDivElement;
+        victorySpan.textContent = "Victory: "  + (total > 0 ? (victories / total) * 100 : 0).toFixed(2) + "%";
+        defeatSpan.textContent = "Defeat: " + (total > 0 ? (defeats / total) * 100 : 0).toFixed(2) + "%";
       })
       .catch(err => {
         const msg = err?.error || 'Impossible de recevoir l\'historique des matches';
