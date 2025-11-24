@@ -91,8 +91,8 @@ const Stats: StatsPage = {
         <div class="backdrop-blur-2xs border border-gray-50 p-6">
         <!-- Avatar -->
         <div class="text-center mb-6">
-          <div class="w-64 h-64 mx-auto mb-4 flex items-center justify-center border-2 border-gray-50 overflow-hidden">
-            <img src="${avatar}" id="user-avatar" alt="avatar" class="w-64 h-64 object-cover rounded-full"/>
+          <div class="w-64 h-64 mx-auto mb-4 flex items-center justify-center overflow-hidden">
+            <img src="${avatar}" id="user-avatar" alt="avatar" class="w-64 h-64 object-cover"/>
           </div>
           <button
             id="open-avatar-modal"
@@ -308,7 +308,6 @@ const Stats: StatsPage = {
 													<div class="text-sm text-gray-400">Winrate</div>
 											</div>
 									</div>
-									<span class="text-sm font-medium text-gray-100">${match.versus}</span>
 							</div>
 					`;
   },
@@ -401,18 +400,7 @@ const Stats: StatsPage = {
       const translate = activeTab === 'profile' ? 'translateX(0%)' : 'translateX(100%)';
       indicator.style.transform = translate;
     };
-    const updateIndicator = () => {
-      if (!indicator) return;
-      const translate = activeTab === 'profile' ? 'translateX(0%)' : 'translateX(100%)';
-      indicator.style.transform = translate;
-    };
 
-    const switchToProfile = () => {
-      if (activeTab === 'profile') return;
-      activeTab = 'profile';
-      updateIndicator();
-      renderContent();
-    };
     const switchToProfile = () => {
       if (activeTab === 'profile') return;
       activeTab = 'profile';
@@ -428,9 +416,6 @@ const Stats: StatsPage = {
       this.updateContentHistory();
     };
 
-    if (profileTab) {
-      profileTab.addEventListener('click', switchToProfile);
-    }
     if (profileTab) {
       profileTab.addEventListener('click', switchToProfile);
     }

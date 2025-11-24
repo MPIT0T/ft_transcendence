@@ -202,7 +202,7 @@ export const TournamentRoom: Page = {
 						sessionStorage.setItem('tournamentId', tournamentId);
 					}
 
-          tournamentName = response.tournamentName;
+          const tournamentName = response.tournamentName;
           if (tournamentName !== undefined) {
             sessionStorage.setItem('tournamentName', tournamentName);
           }
