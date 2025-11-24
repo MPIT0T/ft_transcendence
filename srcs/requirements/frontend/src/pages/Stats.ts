@@ -197,24 +197,20 @@ const Stats: StatsPage = {
       </div>
 
       <!-- Avatar Modal -->
-      <div id="avatar-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-        <div class="bg-gray-900 border border-gray-700 rounded-lg w-full max-w-2xl p-6">
+      <div id="avatar-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center backdrop-blur-lg">
+        <div class="bg-transparent border border-gray-50 w-full max-w-2xl p-6">
           <div class="flex items-center justify-between mb-4">
             <h4 class="text-lg font-semibold text-gray-100">Choisir un avatar</h4>
-            <button type="button" class="text-gray-300 hover:text-white" data-close-avatar-modal>✕</button>
+            <button type="button" class="text-gray-300 hover:text-white hover:bg-gray-700/50 py-2 px-3" data-close-avatar-modal>✕</button>
           </div>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6">
             ${['alien.png', 'astronaut.png', 'martian.png', 'robot.png'].map(a => `
               <button type="button" data-avatar="${a}" class="group flex flex-col items-center gap-3 focus:outline-none">
-                <div class="w-24 h-24 rounded-full overflow-hidden border border-gray-700 group-hover:border-blue-500 transition-colors">
+                <div class="w-24 h-24 overflow-hidden group-hover:bg-gray-700/50 transition-transform">
                   <img src="${a}" alt="${a.split('.')[0]}" class="w-24 h-24 object-cover"/>
                 </div>
-                <span class="text-xs text-gray-300 group-hover:text-blue-400 transition">${a.split('.')[0]}</span>
               </button>
             `).join('')}
-          </div>
-          <div class="flex justify-end">
-            <button type="button" class="px-3 py-2 bg-gray-700 text-gray-200 rounded hover:bg-gray-600" data-close-avatar-modal>Annuler</button>
           </div>
         </div>
       </div>
