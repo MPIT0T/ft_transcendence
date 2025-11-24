@@ -16,15 +16,15 @@ export const GameOnlineTournament: Page = {
 <div class="relative overflow-hidden text-gray-50 text-lg border border-gray-50 backdrop-blur-2xs">
   <div class="absolute inset-0 bg-gradient-to-r from-red-500 to-blue-500 opacity-30"></div>
   <div class="relative z-10">
-    <div class="flex items-center justify-between px-6 pt-2">
-      <span id="player-1-name" class="font-semibold text-5xl">???</span>
+    <div class="flex items-center px-6 pt-2">
+      <span id="player-1-name" class="font-semibold text-5xl flex-1 text-left">???</span>
       <span id="score" class="text-5xl font-extrabold tracking-wide"></span>
-      <span id="player-2-name" class="font-semibold text-5xl">???</span>
+      <span id="player-2-name" class="font-semibold text-5xl flex-1 text-right">???</span>
     </div>
     <div class="flex items-center justify-between px-6 pb-2 text-md opacity-90">
-      <span id="player-1-elo"></span>
+      <span id="player-1-elo" class="flex-1 text-left"></span>
       <span id="timer">00:00</span>
-      <span id="player-2-elo"></span>
+      <span id="player-2-elo" class="flex-1 text-right"></span>
     </div>
   </div>
 </div>
