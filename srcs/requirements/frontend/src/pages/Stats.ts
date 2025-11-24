@@ -92,8 +92,9 @@ const Stats: StatsPage = {
         <!-- Avatar -->
         <div class="text-center mb-6">
           <button
-              id="open-avatar-modal"
-              class="px-4 py-2 text-sm text-gray-100 hover:bg-gray-700/50 transition-colors">
+            id="open-avatar-modal"
+            class="px-4 py-2 text-sm text-gray-100 hover:bg-gray-700/50 transition-colors"
+          >
             <div class="w-64 h-64 mx-auto mb-4 flex items-center justify-center overflow-hidden">
               <img src="${avatar}" id="user-avatar" alt="avatar" class="w-64 h-64 object-cover"/>
             </div>
@@ -106,7 +107,7 @@ const Stats: StatsPage = {
           <div class="relative">
             <span
               id="change-username"
-              class="flex items-center justify-center w-full h-10 px-3 text-center text-sm text-gray-100 bg-white/5 border border-gray-700 rounded cursor-text hover:border-gray-500 transition"
+              class="flex items-center justify-center w-full h-10 px-3 text-center text-3xl text-gray-100 bg-white/5 border border-gray-700 cursor-text hover:border-gray-500 transition focus:outline-none focus:border-gray-500"
               contenteditable="false"
             >
               ${sessionStorage.getItem('username')}
@@ -117,18 +118,23 @@ const Stats: StatsPage = {
           </div>
         </div>
 
-         <!-- Password change trigger -->
-        <div class="mb-6">
-          <button
-            id="open-password-modal"
-            class="w-full px-4 py-2 text-sm border border-gray-50 text-gray-100 hover:bg-gray-700 transition-colors">
-            Changer le mot de passe
-          </button>
-        </div>
-
-        <!-- disconnect Btn -->
-        <div class="text-center mb-6">
-          <button class="px-3 py-3 font-bold border border-gray-50 backdrop-blur-2xs text-2xl hover:border-red-500 hover:bg-gray-700 text-gray-50 transition-transform" id="disconnectBtn">Se déconnecter</button>
+        <div class="grid grid-cols-1 lg:grid-cols-2 justify-between gap-6">
+          <div class="mb-6">
+            <button
+              id="open-password-modal"
+              class="w-full py-7 font-bold border bg-gray-50/5 border-gray-50 text-2xl text-gray-100 text-center hover:border-blue-500 hover:bg-gray-700/50 transition-transform"
+            >
+              Changer le mot de passe
+            </button>
+          </div>
+          <div class="mb-6">
+            <button
+              class="w-full py-7 font-bold border bg-gray-50/5 border-gray-50 text-2xl text-gray-50 text-center hover:border-red-500 hover:bg-gray-700/50 transition-transform"
+              id="disconnectBtn"
+             >
+               Se déconnecter
+             </button>
+          </div>
         </div>
         
 
