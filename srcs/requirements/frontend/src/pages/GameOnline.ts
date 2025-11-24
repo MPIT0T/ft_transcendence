@@ -10,7 +10,7 @@ let elapsedSeconds: number = 0;
 export const GameOnline: Page = {
   render() {
     return `
-<div class="relative overflow-hidden text-gray-50 text-lg border-1 border-gray-50 backdrop-blur-2xs">
+<div class="relative overflow-hidden text-gray-50 text-lg border border-gray-50 backdrop-blur-2xs">
   <div class="absolute inset-0 bg-gradient-to-r from-red-500 to-blue-500 opacity-30"></div>
   <div class="relative z-10">
     <div class="flex items-center justify-between px-6 pt-2">
@@ -29,7 +29,7 @@ export const GameOnline: Page = {
   <div id="game-container" class="mb-8"></div>
 </div>
 <div id="waiting-modal" class="fixed inset-0 backdrop-blur-lg flex items-center justify-center z-50">
-  <div class="bg-transparent border-gray-50 border-1 p-8 max-w-md w-full mx-4">
+  <div class="bg-transparent border-gray-50 border p-8 max-w-md w-full mx-4">
     <div class="text-center">
       <h2 class="text-3xl text-gray-50 font-bold mb-4">Attente...</h2>
       <p class="text-xl text-gray-300 mb-6">En attente d'autres joueurs</p>
@@ -41,12 +41,30 @@ export const GameOnline: Page = {
         </div>
       </div>
       <p class="text-gray-400">Le jeu démarrera automatiquement quand tous les joueurs seront prêts</p>
-      <button 
-					id="cancel-matchmaking" 
-					class="w-full bg-red-500 text-white py-3 px-6 border-2 border-black hover:bg-red-600 transition-colors font-bold">
-					QUITTER LE MATCHMAKING
+      <button
+					id="cancel-matchmaking"
+					class="w-full text-gray-50 py-3 px-6 border border-gray-50 hover:border-red-500 hover:bg-gray-700/50 transition-colors font-bold">
+        Quitter le matchmaking
 			</button>
     </div>
+  </div>
+</div>
+<div id="winner-modal" class="fixed inset-0 backdrop-blur-lg flex items-center justify-center z-50 hidden">
+  <div class="bg-transparent border-gray-50 border p-8 max-w-md w-full mx-4">
+    <div class="text-center">
+      <h2 id="winner-text" class="text-3xl text-gray-50 font-bold mb-4">Félicitations !</h2>
+      <p id="winner-subtext" class="text-xl text-gray-300 mb-6">Vous avez gagné la partie.</p>
+      <button 
+          id="close-winner-modal"
+          class="w-full text-gray-50 py-3 px-6 border border-gray-50 hover:border-green-500 hover:bg-gray-700/50 transition-colors font-bold">
+        Retourner au salon
+      </button>
+    </div>
+  </div>
+</div>
+<div id="start-modal" class="fixed inset-0 flex justify-center items-center z-75 hidden">
+  <div id="start-modal-text" class="text-8xl font-bold text-gray-50 mb-4 ml-4 text-center px-16 py-16">
+    - 3 -
   </div>
 </div>
 `;
@@ -68,7 +86,20 @@ export const GameOnline: Page = {
     const player2EloEl = root.querySelector('#player-2-elo') as HTMLElement;
     const waitingModal = root.querySelector('#waiting-modal') as HTMLElement;
     const cancelMatchmakingBtn = root.querySelector('#cancel-matchmaking') as HTMLButtonElement;
+    const startModal = root.querySelector('#start-modal') as HTMLElement;
+    const startModalText = root.querySelector('#start-modal-text') as HTMLElement;
 
+    const popstateHandler = (event: PopStateEvent) => {
+      const payLoad = {
+        "method": "leave",
+        "clientId": clientId
+      }
+
+      if (ws)
+        ws.send(JSON.stringify(payLoad));
+
+      window.removeEventListener('popstate', popstateHandler);
+    };
 
     const formatTime = (s: number) => {
       const hours = Math.floor(s / 3600);
@@ -119,6 +150,26 @@ export const GameOnline: Page = {
       }
     };
 
+    const startAnimation = async () => {
+      startModal.classList.remove("hidden");
+      await sleep(850);
+      startModalText.classList.add('opacity-0');
+      await sleep(150);
+      startModalText.classList.remove("opacity-0");
+      startModalText.textContent = "- 2 -";
+      await sleep(850);
+      startModalText.classList.add('opacity-0');
+      await sleep(150);
+      startModalText.classList.remove("opacity-0");
+      startModalText.textContent = "- 1 -";
+      await sleep(850);
+      startModalText.classList.add('opacity-0');
+      await sleep(150);
+      startModalText.classList.remove("opacity-0");
+      startModal.classList.add('hidden');
+      startModalText.textContent = "- 3 -";
+    }
+
     currentGame = new GameComponentOnline(
       gameContainer,
       canStart,
@@ -161,7 +212,7 @@ export const GameOnline: Page = {
             player2NameEl.textContent = response.room.clients[1].name;
             player1EloEl.textContent = response.room.clients[0].elo;
             player2EloEl.textContent = response.room.clients[1].elo;
-            await sleep(3000);
+            await startAnimation();
             startTimer();
           }
         }
@@ -172,8 +223,10 @@ export const GameOnline: Page = {
             currentGame.updateGameState(game);
             if (response.isGoal) {
               stopTimer();
-              await sleep(3000);
-              startTimer();
+              if (response.isLastGoal === undefined) {
+                await startAnimation();
+                startTimer();
+              }
             }
           }
         }
@@ -203,33 +256,42 @@ export const GameOnline: Page = {
 
         if (response.method === "gameEnd") {
           if (currentGame) {
+            const winner = currentGame.getScores().p1Score > currentGame.getScores().p2Score ? player1NameEl.textContent :  currentGame.getScores().p1Score < currentGame.getScores().p2Score ? player2NameEl.textContent : "Personne";
             currentGame.destroy();
             stopTimer();
-            await sleep(5000);
-            const p = '/gameRoom';
-            history.pushState(null, '', p);
-            window.dispatchEvent(new PopStateEvent('popstate'));
+            const winnerModal = root.querySelector('#winner-modal') as HTMLElement;
+            const winnerText = root.querySelector('#winner-text') as HTMLElement;
+            const winnerSubtext = root.querySelector('#winner-subtext') as HTMLElement;
+            const closeWinnerModalBtn = root.querySelector('#close-winner-modal') as HTMLButtonElement;
+
+            if (winnerText) winnerText.textContent = "Partie terminée !";
+            if (winnerSubtext) winnerSubtext.textContent = `${winner} a gagné la partie.`;
+
+            if (winnerModal) {
+              winnerModal.classList.remove('hidden');
+            }
+
+            if (closeWinnerModalBtn) {
+              closeWinnerModalBtn.addEventListener('click', () => {
+                window.removeEventListener('popstate', popstateHandler);
+                const p = '/gameRoom';
+                history.pushState(null, '', p);
+                window.dispatchEvent(new PopStateEvent('popstate'));
+              });
+            }
           }
         }
       }
-
+    } else {
+      window.removeEventListener('popstate', popstateHandler);
+      const p = '/gameRoom';
+      history.pushState(null, '', p);
+      window.dispatchEvent(new PopStateEvent('popstate'));
     }
     // Cleanup previous game if exists
     if (currentGame) {
       currentGame.destroy();
     }
-
-    const popstateHandler = (event: PopStateEvent) => {
-      const payLoad = {
-        "method": "leave",
-        "clientId": clientId
-      }
-
-      if (ws)
-        ws.send(JSON.stringify(payLoad));
-
-      window.removeEventListener('popstate', popstateHandler);
-    };
     window.addEventListener('popstate', popstateHandler);
   }
 }

@@ -6,157 +6,158 @@ export const TournamentOnline: Page = {
 		return `
 		<div class="flex gap-16 p-6 pt-24 items-start justify-center">
 			<!-- Contenu principal (center) -->
-			<div class="flex-1  text-white max-w-5xl">
+			<div class="flex-1">
 				<!-- Header avec style arcade -->
-				<div class="mx-auto mb-8">
-					<div class="flex items-center justify-center mb-4 border-4 border-white p-4 backdrop-blur-xs">
-						<h1 class="text-5xl font-bold text-white tracking-wider" style="font-family: 'Courier New', monospace; text-shadow: 0 0 10px #fff, 0 0 20px #fff;">
-							◈ TOURNAMENT ◈
-						</h1>
-					</div>
-					
-				</div>
+        <div class="w-full mb-12 flex items-center justify-center mb-4 border border-gray-50 p-4 backdrop-blur-2xs">
+          <h1 id="tournament-name" class="text-5xl font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-blue-500 to-green-500 bg-[length:400%_400%] animate-gradientShift">
+            ft_tournoi
+          </h1>
+        </div>
 
-				<!-- Tournament Bracket avec style rétro Pong -->
+				<!-- Tournament Bracket -->
 				<div class="mx-auto">
-					<div class="flex justify-center items-start gap-8">
+					<div class="flex justify-center h-full items-start gap-8">
 						<!-- Round 1: Quarter Finals -->
-						<div class="flex flex-col gap-8">
-							<div class="text-center mb-4 border-2 border-white p-2 backdrop-blur-xs">
-								<h3 class="text-2xl font-bold text-white" style="font-family: 'Courier New', monospace;">ROUND 1</h3>
+						<div class="flex flex-col h-full min-w-xs gap-8">
+							<div class="text-center border border-gray-50 p-2 backdrop-blur-2xs">
+								<h3 class="text-2xl font-bold text-white">Quart de Finale</h3>
 							</div>
-							<div class="flex flex-col gap-6">
+							<div class="flex flex-col gap-8">
 								<!-- Match 1 -->
-								<div class="border-4 border-white p-3 w-64 backdrop-blur-xs" data-match="quarter-1">
-									<div class="player-slot p-2 mb-1 border-2 border-white backdrop-blur-xs" data-slot="0">
-										<span class="player-name text-gray-400" style="font-family: 'Courier New', monospace;">█ WAITING...</span>
+								<div class="border border-gray-50 p-3 w-64 w-full backdrop-blur-2xs" data-match="quarter-1">
+									<div class="player-slot p-2 mb-1 border border-gray-50 backdrop-blur-2xs" data-slot="0">
+										<span class="player-name text-gray-400">En attente...</span>
 									</div>
-									<div class="text-center text-white text-lg my-1 flex items-center justify-center gap-3" style="font-family: 'Courier New', monospace;">
+									<div class="text-center text-white text-lg my-1 flex items-center justify-center gap-3">
 										<span class="score-1 text-yellow-400 font-bold"></span>
 										<span>- VS -</span>
 										<span class="score-2 text-yellow-400 font-bold"></span>
 									</div>
-									<div class="player-slot p-2 border-2 border-white backdrop-blur-xs" data-slot="1">
-										<span class="player-name text-gray-400" style="font-family: 'Courier New', monospace;">█ WAITING...</span>
+									<div class="player-slot p-2 border border-gray-50 backdrop-blur-2xs" data-slot="1">
+										<span class="player-name text-gray-400">En attente...</span>
 									</div>
 								</div>
 
 								<!-- Match 2 -->
-								<div class="border-4 border-white p-3 w-64 backdrop-blur-xs" data-match="quarter-2">
-									<div class="player-slot p-2 mb-1 border-2 border-white backdrop-blur-xs" data-slot="2">
-										<span class="player-name text-gray-400" style="font-family: 'Courier New', monospace;">█ WAITING...</span>
+								<div class="border border-gray-50 p-3 w-64 w-full backdrop-blur-2xs" data-match="quarter-2">
+									<div class="player-slot p-2 mb-1 border border-gray-50 backdrop-blur-2xs" data-slot="2">
+										<span class="player-name text-gray-400">En attente...</span>
 									</div>
-									<div class="text-center text-white text-lg my-1 flex items-center justify-center gap-3" style="font-family: 'Courier New', monospace;">
+									<div class="text-center text-white text-lg my-1 flex items-center justify-center gap-3">
 										<span class="score-1 text-yellow-400 font-bold"></span>
 										<span>- VS -</span>
 										<span class="score-2 text-yellow-400 font-bold"></span>
 									</div>
-									<div class="player-slot p-2 border-2 border-white backdrop-blur-xs" data-slot="3">
-										<span class="player-name text-gray-400" style="font-family: 'Courier New', monospace;">█ WAITING...</span>
+									<div class="player-slot p-2 border border-gray-50 backdrop-blur-2xs" data-slot="3">
+										<span class="player-name text-gray-400">En attente...</span>
 									</div>
 								</div>
 
 								<!-- Match 3 -->
-								<div class="border-4 border-white p-3 w-64 backdrop-blur-xs" data-match="quarter-3">
-									<div class="player-slot p-2 mb-1 border-2 border-white backdrop-blur-xs" data-slot="4">
-										<span class="player-name text-gray-400" style="font-family: 'Courier New', monospace;">█ WAITING...</span>
+								<div class="border border-gray-50 p-3 w-full w-64 backdrop-blur-2xs" data-match="quarter-3">
+									<div class="player-slot p-2 mb-1 border border-gray-50 backdrop-blur-2xs" data-slot="4">
+										<span class="player-name text-gray-400">En attente...</span>
 									</div>
-									<div class="text-center text-white text-lg my-1 flex items-center justify-center gap-3" style="font-family: 'Courier New', monospace;">
+									<div class="text-center text-white text-lg my-1 flex items-center justify-center gap-3">
 										<span class="score-1 text-yellow-400 font-bold"></span>
 										<span>- VS -</span>
 										<span class="score-2 text-yellow-400 font-bold"></span>
 									</div>
-									<div class="player-slot p-2 border-2 border-white backdrop-blur-xs" data-slot="5">
-										<span class="player-name text-gray-400" style="font-family: 'Courier New', monospace;">█ WAITING...</span>
+									<div class="player-slot p-2 border border-gray-50 backdrop-blur-2xs" data-slot="5">
+										<span class="player-name text-gray-400">En attente...</span>
 									</div>
 								</div>
 
 								<!-- Match 4 -->
-								<div class="border-4 border-white p-3 w-64 backdrop-blur-xs" data-match="quarter-4">
-									<div class="player-slot p-2 mb-1 border-2 border-white backdrop-blur-xs" data-slot="6">
-										<span class="player-name text-gray-400" style="font-family: 'Courier New', monospace;">█ WAITING...</span>
+								<div class="border border-gray-50 p-3 w-full w-64 backdrop-blur-2xs" data-match="quarter-4">
+									<div class="player-slot p-2 mb-1 border border-gray-50 backdrop-blur-2xs" data-slot="6">
+										<span class="player-name text-gray-400">En attente...</span>
 									</div>
-									<div class="text-center text-white text-lg my-1 flex items-center justify-center gap-3" style="font-family: 'Courier New', monospace;">
+									<div class="text-center text-white text-lg my-1 flex items-center justify-center gap-3">
 										<span class="score-1 text-yellow-400 font-bold"></span>
 										<span>- VS -</span>
 										<span class="score-2 text-yellow-400 font-bold"></span>
 									</div>
-									<div class="player-slot p-2 border-2 border-white backdrop-blur-xs" data-slot="7">
-										<span class="player-name text-gray-400" style="font-family: 'Courier New', monospace;">█ WAITING...</span>
+									<div class="player-slot p-2 border border-gray-50 backdrop-blur-2xs" data-slot="7">
+										<span class="player-name text-gray-400">En attente...</span>
 									</div>
 								</div>
 							</div>
 						</div>
 
 						<!-- Round 2: Semi Finals -->
-						<div class="flex flex-col gap-8">
-							<div class="text-center mb-4 border-2 border-white p-2 backdrop-blur-xs">
-								<h3 class="text-2xl font-bold text-white" style="font-family: 'Courier New', monospace;">ROUND 2</h3>
+						<div class="flex flex-col min-w-xs gap-8">
+							<div class="text-center w-full border border-gray-50 p-2 backdrop-blur-2xs">
+								<h3 class="text-2xl font-bold text-white">Demi-Finale</h3>
 							</div>
-							<div class="flex flex-col gap-32 mt-24">
+							<div class="flex flex-col gap-32 mt-32">
 								<!-- Semi 1 -->
-								<div class="border-4 border-white p-3 w-64 backdrop-blur-xs" data-match="semi-1">
-									<div class="p-2 mb-1 border-2 border-white backdrop-blur-xs" data-player="1">
-										<span class="player-name text-gray-400" style="font-family: 'Courier New', monospace;">TBD</span>
+								<div class="border border-gray-50 w-full p-3 w-64 backdrop-blur-2xs" data-match="semi-1">
+									<div class="p-2 mb-1 border border-gray-50 backdrop-blur-2xs" data-player="1">
+										<span class="player-name text-gray-400">AC...</span>
 									</div>
-									<div class="text-center text-white text-lg my-1 flex items-center justify-center gap-3" style="font-family: 'Courier New', monospace;">
+									<div class="text-center text-white text-lg my-1 flex items-center justify-center gap-3">
 										<span class="score-1 text-yellow-400 font-bold"></span>
 										<span>- VS -</span>
 										<span class="score-2 text-yellow-400 font-bold"></span>
 									</div>
-									<div class="p-2 border-2 border-white backdrop-blur-xs" data-player="2">
-										<span class="player-name text-gray-400" style="font-family: 'Courier New', monospace;">TBD</span>
+									<div class="p-2 border border-gray-50 backdrop-blur-2xs" data-player="2">
+										<span class="player-name text-gray-400">AC...</span>
 									</div>
 								</div>
 
 								<!-- Semi 2 -->
-								<div class="border-4 border-white p-3 w-64 backdrop-blur-xs" data-match="semi-2">
-									<div class="p-2 mb-1 border-2 border-white backdrop-blur-xs" data-player="1">
-										<span class="player-name text-gray-400" style="font-family: 'Courier New', monospace;">TBD</span>
+								<div class="border border-gray-50 p-3 w-full w-64 backdrop-blur-2xs" data-match="semi-2">
+									<div class="p-2 mb-1 border border-gray-50 backdrop-blur-2xs" data-player="1">
+										<span class="player-name text-gray-400">AC...</span>
 									</div>
-									<div class="text-center text-white text-lg my-1 flex items-center justify-center gap-3" style="font-family: 'Courier New', monospace;">
+									<div class="text-center text-white text-lg my-1 flex items-center justify-center gap-3">
 										<span class="score-1 text-yellow-400 font-bold"></span>
 										<span>- VS -</span>
 										<span class="score-2 text-yellow-400 font-bold"></span>
 									</div>
-									<div class="p-2 border-2 border-white backdrop-blur-xs" data-player="2">
-										<span class="player-name text-gray-400" style="font-family: 'Courier New', monospace;">TBD</span>
+									<div class="p-2 border border-gray-50 backdrop-blur-2xs" data-player="2">
+										<span class="player-name text-gray-400">AC...</span>
 									</div>
 								</div>
 							</div>
 						</div>
 
 						<!-- Round 3: Final -->
-						<div class="flex flex-col gap-8">
-							<div class="text-center mb-4 border-2 border-white p-2 backdrop-blur-xs">
-								<h3 class="text-2xl font-bold text-white" style="font-family: 'Courier New', monospace;">FINAL</h3>
+						<div class="flex flex-col min-w-xs gap-8">
+							<div class="text-center mb-4 w-full border border-gray-50 p-2 backdrop-blur-2xs">
+								<h3 class="text-2xl font-bold text-white">Finale</h3>
 							</div>
-							<div class="flex flex-col justify-center min-h-[600px]">
-								<div class="border-4 border-white p-3 w-64 backdrop-blur-xs" data-match="final">
-									<div class="p-2 mb-1 border-2 border-white backdrop-blur-xs" data-player="1">
-										<span class="player-name text-gray-400" style="font-family: 'Courier New', monospace;">TBD</span>
+							<div class="flex flex-col justify-center mt-64">
+								<div class="border border-gray-50 w-full p-3 w-64 backdrop-blur-2xs" data-match="final">
+									<div class="p-2 mb-1 border border-gray-50 backdrop-blur-2xs" data-player="1">
+										<span class="player-name text-gray-400">AC...</span>
 									</div>
-									<div class="text-center text-white text-lg my-1 flex items-center justify-center gap-3" style="font-family: 'Courier New', monospace;">
+									<div class="text-center text-white text-lg my-1 flex items-center justify-center gap-3">
 										<span class="score-1 text-yellow-400 font-bold"></span>
 										<span>- VS -</span>
 										<span class="score-2 text-yellow-400 font-bold"></span>
 									</div>
-									<div class="p-2 border-2 border-white backdrop-blur-xs" data-player="2">
-										<span class="player-name text-gray-400" style="font-family: 'Courier New', monospace;">TBD</span>
+									<div class="p-2 border border-gray-50 backdrop-blur-2xs" data-player="2">
+										<span class="player-name text-gray-400">AC...</span>
 									</div>
 								</div>
 							</div>
 						</div>
 
 						<!-- Winner -->
-						<div class="flex flex-col gap-8" style="min-width: 200px; max-width: 250px;">
-							<div class="text-center mb-4 border-2 border-white p-2 backdrop-blur-xs">
-								<h3 class="text-2xl font-bold text-white" style="font-family: 'Courier New', monospace;">★ WINNER ★</h3>
+						<div class="flex flex-col min-w-xs gap-8">
+							<div class="text-center mb-4 w-full border border-gray-50 p-2 backdrop-blur-2xs">
+								<h3 class="text-2xl font-bold text-white">Vainqueur</h3>
 							</div>
-							<div class="flex flex-col justify-center min-h-[600px]">
-								<div class="border-4 border-white p-4 text-center backdrop-blur-xs w-full">
-									<div class="text-5xl mb-3 text-white">🏆</div>
-									<div class="text-gray-400 text-sm wrap-break-word overflow-hidden" style="font-family: 'Courier New', monospace; max-height: 80px;">TBD</div>
+							<div class="flex flex-col justify-center mt-64">
+								<div class="border border-gray-50 p-4 text-center backdrop-blur-2xs w-full">
+								  <div class="flex flex-col items-center gap-3">
+								    <div class="w-16 h-16">
+								      <img id="winner-profile-pic" class="w-16 h-16 object-cover mx-auto block" src="anonymous.png" alt="profile picture"/>
+								    </div>
+								    <div class="text-gray-400 text-lg wrap-break-word overflow-hidden">AC...</div>
+								  </div>
 								</div>
 							</div>
 						</div>
@@ -167,7 +168,7 @@ export const TournamentOnline: Page = {
 				<div class="text-center mt-8">
 					<button 
 						id="leave-tournament-btn"
-						class="px-8 py-3 bg-red-600 hover:bg-red-700 rounded-lg font-semibold transition-all transform hover:scale-105 active:scale-95"
+						class="px-8 py-3 text-gray-50 backdrop-blur-xs border border-gray-50 hover:bg-gray-700/50 hover:border-red-500 font-semibold transition-all transform"
 					>
 						Leave Tournament
 					</button>
@@ -178,13 +179,17 @@ export const TournamentOnline: Page = {
 	},
 
 	mount(root: HTMLElement): void {
-		const tournamentId = sessionStorage.getItem('tournamentId');
+    const tournamentId = sessionStorage.getItem('tournamentId');
+    const tournamentName = sessionStorage.getItem('tournamentName');
 		const clientId = sessionStorage.getItem('clientId');
 
 		const tournamentNameEl = root.querySelector('#tournament-name') as HTMLElement;
 		const playerCountEl = root.querySelector('#player-count') as HTMLElement;
 		const currentPlayerNameEl = root.querySelector('#current-player-name') as HTMLElement;
 		const leaveTournamentBtn = root.querySelector('#leave-tournament-btn') as HTMLButtonElement;
+
+    if (tournamentNameEl)
+      tournamentNameEl.textContent = tournamentName || 'ft_tournoi';
 
 		const payLoad = {
 			"method": "readyT",
@@ -216,7 +221,7 @@ export const TournamentOnline: Page = {
 							nameEl.classList.remove('text-gray-400');
 							nameEl.classList.add('text-white');
 						} else {
-							nameEl.textContent = '█ WAITING...';
+							nameEl.textContent = 'En attente...';
 							nameEl.classList.remove('text-white');
 							nameEl.classList.add('text-gray-400');
 							// retirer les éventuels styles de gagnant
@@ -398,13 +403,14 @@ export const TournamentOnline: Page = {
 				if (response.method === "startMatch") {
 					// Sauvegarder les infos du match dans sessionStorage
 					sessionStorage.setItem('matchRound', response.matchRound);
-					sessionStorage.setItem('matchOpponent', response.opponent);
+          sessionStorage.setItem('player1Name', response.player1Name);
+          sessionStorage.setItem('player2Name', response.player2Name);
+          sessionStorage.setItem('roomId', response.roomId);
 
 					// Rediriger vers la page de jeu après 1 seconde
 					setTimeout(() => {
 						// navigate using History API instead of hash
-						const raw = response.roomUrl || '/';
-						const p = raw.startsWith('#') ? raw.replace(/^#\/?/, '/') : (raw.startsWith('/') ? raw : '/' + raw);
+						const p = response.roomUrl;
 						history.pushState(null, '', p);
 						window.dispatchEvent(new PopStateEvent('popstate'));
 					}, 1000);
@@ -421,7 +427,7 @@ export const TournamentOnline: Page = {
 				// Annonce du gagnant du tournoi
 				if (response.method === "tournamentWinner") {
 					if (tournamentNameEl) {
-						tournamentNameEl.textContent = '🏆 TOURNAMENT FINISHED 🏆';
+						tournamentNameEl.textContent = 'Tournoi terminé !';
 					}
 
 					// Afficher le gagnant dans la zone Winner
@@ -473,6 +479,9 @@ export const TournamentOnline: Page = {
 
 			if (ws)
 				ws.send(JSON.stringify(payLoad));
+
+      sessionStorage.removeItem('tournamentId');
+      sessionStorage.removeItem('roomId');
 
 			window.removeEventListener('popstate', popstateHandler);
 		};

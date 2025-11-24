@@ -54,8 +54,8 @@ function displayRooms(root: HTMLElement, rooms: any[]) {
 
 	rooms.forEach(room => {
 		const roomBtn = document.createElement('button');
-		roomBtn.className = 'room-btn w-full text-left flex items-center justify-between text-gray-50 px-4 py-3 border-1 backdrop-blur-2xs border-gray-50 hover:bg-gray-700 transition-colors';
-		roomBtn.dataset.roomId = room.roomId;
+		roomBtn.className = 'room-btn w-full text-left flex items-center justify-between text-gray-50 px-6 py-3 border backdrop-blur-2xs border-gray-50 hover:bg-gray-700/50 transition-colors'
+    roomBtn.dataset.roomId = room.roomId;
 		roomBtn.innerHTML = `
 			<div class="w-full flex items-center">
 				<div class="flex-1 min-w-0 font-semibold truncate mr-4">${room.roomName}</div>
@@ -129,7 +129,7 @@ export const GameRoom: Page = {
 			<div class="text-center mb-8">
 				<div class="flex justify-center space-x-4">
 					
-					<button id="vs-btn" class="px-10 py-3 font-bold text-2xl border border-gray-50 text-gray-50 hover:bg-gray-700 transition-colors mb-5">
+					<button id="vs-btn" class="px-10 py-3 font-bold text-2xl border border-gray-50 text-gray-50 hover:bg-gray-700/50 transition-colors mb-5">
 						Jouer
 					</button>
 					</div>
@@ -148,7 +148,7 @@ export const GameRoom: Page = {
 			<div class="text-center mb-8">
 				<div class="flex justify-center space-x-4">
 					
-					<button id="create-room-btn" class="px-10 py-3 text-2xl text-gray-50 border border-gray-50 hover:bg-gray-700 transition-colors mb-5">
+					<button id="create-room-btn" class="px-10 py-3 text-2xl text-gray-50 border border-gray-50 hover:bg-gray-700/50 transition-colors mb-5">
 						Créer une partie
 					</button>
 				</div>
@@ -169,7 +169,6 @@ export const GameRoom: Page = {
 				<!-- Fixed-height scrollable area (one row per room) -->
 				<div class="flex flex-col gap-3 overflow-y-auto max-h-56 p-2" id="rooms-container"></div>
 			</div>
-
 			<!-- Available frends Section -->
 			<div class="backdrop-blur-2xs border border-gray-50 p-6">
 				<div class="flex justify-between items-center mb-3">
@@ -182,18 +181,21 @@ export const GameRoom: Page = {
 	</div>
 
 	<!-- Modal Matchmaking -->
-	<div id="matchmaking-modal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center z-50">
-		<div class="bg-white border-4 border-black p-8 max-w-md w-full mx-4">
+	<div id="matchmaking-modal" class="fixed inset-0 backdrop-blur-lg hidden items-center justify-center z-50">
+		<div class="border border-gray-50 p-8 max-w-md w-full mx-4">
 			<div class="text-center">
-				<h2 class="text-3xl font-bold mb-4">🎮 Matchmaking</h2>
-				<p class="text-xl mb-6">Recherche d'un adversaire...</p>
-				<div class="flex justify-center mb-6">
-					<div class="animate-spin rounded-full h-16 w-16 border-b-4 border-black"></div>
-				</div>
-				<p class="text-gray-600 mb-6">Veuillez patienter pendant que nous trouvons un joueur de votre niveau</p>
+				<h2 class="text-3xl text-gray-50 font-bold mb-4">Matchmaking en cours</h2>
+				<div class="flex justify-center mb-4">
+          <div class="h-16 flex items-center justify-center gap-3">
+            <span class="h-2 w-2 bg-white animate-bounceHigh [animation-delay:0ms]"></span>
+            <span class="h-2 w-2 bg-white animate-bounceHigh [animation-delay:150ms]"></span>
+            <span class="h-2 w-2 bg-white animate-bounceHigh [animation-delay:300ms]"></span>
+          </div>
+        </div>
+				<p class="text-gray-400 mb-6">Veuillez patienter pendant que nous cherchons un adversaire</p>
 				<button 
 					id="cancel-matchmaking" 
-					class="w-full bg-red-500 text-white py-3 px-6 border-2 border-black hover:bg-red-600 transition-colors font-bold">
+					class="w-full text-gray-50 py-3 px-6 border border-gray-50 hover:border-red-500 hover:bg-gray-700/50 transition-colors font-bold">
 					QUITTER LE MATCHMAKING
 				</button>
 			</div>
@@ -237,13 +239,13 @@ export const GameRoom: Page = {
 				<div class="flex space-x-4 mt-6">
 					<button 
 						type="submit" 
-						class="flex-1 text-white py-2 px-4 border border-gray-50 hover:bg-gray-700 hover:border-green-500 transition-colors font-bold">
+						class="flex-1 text-white py-2 px-4 border border-gray-50 hover:bg-gray-700/50 hover:border-green-500 transition-colors font-bold">
 						CRÉER
 					</button>
 					<button 
 						type="button" 
 						id="cancel-create" 
-						class="flex-1 text-white py-2 px-4 border border-gray-50 hover:bg-gray-700 hover:border-red-500 transition-colors font-bold">
+						class="flex-1 text-white py-2 px-4 border border-gray-50 hover:bg-gray-700/50 hover:border-red-500 transition-colors font-bold">
 						ANNULER
 					</button>
 				</div>
