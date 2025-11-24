@@ -63,6 +63,12 @@ class Games {
 		const client = this._clients.findClient(id);
 		return client;
 	}
+
+	findClientName(name){
+		return Object.values(this._clients.getAllClients()).find(c => c && c._name === name);
+	}
+	
+
 	findRoom(id) {
 		const room = this._rooms.findRoom(id);
 		return room;

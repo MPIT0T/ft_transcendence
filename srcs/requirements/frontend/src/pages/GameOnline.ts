@@ -231,6 +231,29 @@ export const GameOnline: Page = {
           }
         }
 
+        if (response.method === "leave") {
+          if (waitingModal) {
+            // Afficher un message indiquant que l'autre joueur a refusé
+            if (waitingModal) {
+              const title = waitingModal.querySelector('h2');
+              const paragraphs = waitingModal.querySelectorAll('p');
+                const dots = waitingModal.querySelector('.h-16') as HTMLElement | null;
+                if (dots) {
+                dots.classList.add('hidden');
+                dots.style.display = 'none';
+                }
+              if (title) title.textContent = 'Match annulé';
+              if (paragraphs.length > 0) {
+              paragraphs[0].textContent = "L'autre joueur a refusé le match";
+              if (paragraphs[1]) paragraphs[1].textContent = '';
+              }
+              const cancelBtn = waitingModal.querySelector('#cancel-matchmaking') as HTMLButtonElement | null;
+              if (cancelBtn) cancelBtn.textContent = 'RETOUR';
+              waitingModal.classList.remove('hidden');
+            }
+          }
+        }
+
         if (response.method === "gameEnd") {
           if (currentGame) {
             const winner = currentGame.getScores().p1Score > currentGame.getScores().p2Score ? player1NameEl.textContent :  currentGame.getScores().p1Score < currentGame.getScores().p2Score ? player2NameEl.textContent : "Personne";

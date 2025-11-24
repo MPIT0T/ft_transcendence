@@ -1,7 +1,13 @@
-  import type { StatsPage } from "../interface/gameInterface.js"
-  import { Layout } from "./Layout";
+import type { StatsPage } from "../interface/gameInterface.js"
+import { Layout } from "./Layout";
 
-  let activeTab: 'profile' | 'history' = 'profile';
+let activeTab: 'profile' | 'history' = 'profile';
+
+if (!Layout.isLoggedIn()) {
+  const p = '/';
+  history.pushState(null, '', p);
+  window.dispatchEvent(new PopStateEvent('popstate'));
+}
 
 const Stats: StatsPage = {
 	render() {
@@ -59,11 +65,18 @@ const Stats: StatsPage = {
 	<!-- Profil Section -->
 	<div class="backdrop-blur-2xs border border-gray-50 p-6 h-full flex flex-col">
 		<!-- Avatar -->
-      <div class="text-center mb-6">
-          <div class="w-20 h-20 bg-transparent mx-auto mb-3 flex items-center justify-center">
-              <img id="change-profile-picture" src="anonymous.png" alt="profile picture"/>
-          </div>
-      </div>
+		<div class="text-center mb-6">
+				<div class="w-20 h-20 bg-transparent mx-auto mb-3 flex items-center justify-center border border-gray-50">
+				<img src=${Layout.getUserInfoFromJwt(sessionStorage.getItem('token')).avatar} id="user-avatar" alt="avatar" class="w-12"/>
+			</div>
+			<select class="text-xs text-blue-500 underline cursor-pointer" id="change-avatar">
+				<option value="">change avatar</option>
+				<option value="alien.png">alien</option>
+				<option value="astronaut.png">astronaut</option>
+				<option value="martian.png">martian</option>
+				<option value="robot.png">robot</option>
+			</select>
+		</div>
 
 		<!-- Username -->
       <div class="flex justify-between items-center border-b border-gray-700 mb-6">
@@ -72,13 +85,13 @@ const Stats: StatsPage = {
       </div>
 
 		<!-- Mail -->
-      <div class="flex justify-between items-center border-b border-gray-700 mb-6">
-          <span class="text-3xl text-gray-50 font-semibold">1365</span>
-          <span class="text-xl text-gray-400">elo</span>
-      </div>
+		<div class="text-center mb-6">
+				<p class="text-sm text-gray-200 font-semibold mb-1 px-3 py-2 backdrop-blur-2xs border border-gray-400">LUCA@GMAIL.COM</p>
+			<p class="text-xs text-blue-500 underline cursor-pointer" id="change-mail">CHANGE MAIL</p>
+		</div>
 
-		<div class="text-center mt-auto w-full">
-        <button class="px-3 py-3 w-full font-bold border border-gray-50 backdrop-blur-2xs text-2xl hover:border-red-500 hover:bg-gray-700 text-gray-50 transition-transform">Se déconnecter</button>
+		<div class="text-center mb-6">
+	<button class="px-3 py-3 font-bold border border-gray-50 backdrop-blur-2xs text-2xl hover:border-red-500 hover:bg-gray-700 text-gray-50 transition-transform" id="disconnectBtn">Se déconnecter</button>
 		</div>
 	</div>
 
@@ -137,63 +150,27 @@ const Stats: StatsPage = {
 		</div>
 		
 		<div class="mb-4 flex items-center justify-between">
-			<div class="relative w-56">
-				<div id="friends-tab-indicator" class="absolute top-0 left-0 h-full w-1/2 bg-gray-700 transition-transform duration-200" style="transform: translateX(0%);"></div>
+			<div class="relative w-60">
+				<div id="friends-tab-indicator" class="absolute top-0 left-0 h-full w-1/3 bg-gray-700 transition-transform duration-200" style="transform: translateX(0%);"></div>
 				<div class="relative z-10 flex">
 					<button id="friends-online-tab" class="flex-1 px-3 py-2 text-sm hover:bg-gray-700/50 text-white text-center">En Ligne</button>
 					<button id="friends-offline-tab" class="flex-1 px-3 py-2 text-sm hover:bg-gray-700/50 text-white text-center">Hors Ligne</button>
+					<button id="friends-request-tab" class="flex-1 px-3 py-2 text-sm text-white text-center">Request</button>
 				</div>
 			</div>
 	</div>
 
 		<div id="friends-container">
 			<div id="online-friends" class="space-y-3">
-				<ul>
-					<li class="flex items-center justify-between">
-						<span class="text-gray-200 flex items-center">
-							<span class="w-2 h-2 bg-green-500 mr-2"></span>
-							BOB
-						</span>
-						<button class="invite-btn px-3 py-1 text-xs bg-blue-500 text-white hover:bg-blue-600 transition-colors">
-							Invite
-						</button>
-					</li>
-					<li class="flex items-center justify-between">
-						<span class="text-gray-200 flex items-center">
-							<span class="w-2 h-2 bg-green-500 mr-2"></span>
-							Mike
-						</span>
-						<button class="invite-btn px-3 py-1 text-xs bg-blue-500 text-white hover:bg-blue-600 transition-colors">
-							Invite
-						</button>
-					</li>
-					<li class="flex items-center justify-between">
-						<span class="text-gray-200 flex items-center">
-							<span class="w-2 h-2 bg-green-500 mr-2"></span>
-							Mathis
-						</span>
-						<button class="invite-btn px-3 py-1 text-xs bg-blue-500 text-white hover:bg-blue-600 transition-colors">
-							Invite
-						</button>
-					</li>
+				<ul id="online-friends-container">
 				</ul>
 			</div>
 
 			<div id="offline-friends" class="space-y-3 hidden">
-				<ul>
-					<li class="flex items-center">
-						<span class="w-2 h-2 bg-gray-400 rounded-full mr-2"></span>
-						<span class="text-gray-200">Lucas</span>
-					</li>
-					<li class="flex items-center">
-						<span class="w-2 h-2 bg-gray-400 rounded-full mr-2"></span>
-						<span class="text-gray-200">Marie</span>
-					</li>
-					<li class="flex items-center">
-						<span class="w-2 h-2 bg-gray-400 rounded-full mr-2"></span>
-						<span class="text-gray-200">Jean</span>
-					</li>
-				</ul>
+				<ul id="offline-friends-container"></ul>
+			</div>
+			<div id="request-friends" class="space-y-3">
+				<ul id="request-friends-container"></ul>
 			</div>
 		</div>
 	</div>
@@ -243,12 +220,12 @@ const Stats: StatsPage = {
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Adversaire</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Score</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Résultat</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durée</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Évolution elo</th>
           </tr>
         </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
+        <tbody class="bg-white divide-y divide-gray-200" id="history-container">
           <tr class="hover:bg-gray-50">
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">15/01/2024 14:30</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">14/01/2024 20:15</td>
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="flex items-center">
                 <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center mr-3">
@@ -345,7 +322,67 @@ const Stats: StatsPage = {
   </div>
 </div>
 `;
-  },
+  if (sessionStorage.getItem('token') && sessionStorage.getItem('token')) {
+			const currentUser = sessionStorage.getItem('username');
+			const container = document.querySelector('#history-container') as HTMLTableSectionElement;
+
+			fetch('/user/api/get-match-history', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+				},
+				body: JSON.stringify({
+					username: currentUser,
+				})
+			})
+			.then(res => {
+				container.innerHTML = '';
+				if (!res.ok) {
+					return res.json().then(data => Promise.reject(data));
+				}
+				return res.json();
+			})
+			.then((data: { matchHistory: any[] }) => {
+
+				const matches = data.matchHistory
+					.filter(entry => entry !== null); // On garde tout l’objet du match
+
+				matches.forEach((match) => {
+					const victory = match.winner ? "✅ Victoire" : "❌ Défaite";
+					const victoryColor = match.winner ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800";
+
+					const tr = document.createElement('tr');
+					tr.className = 'hover:bg-gray-700/40';
+
+					tr.innerHTML = `
+					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${match.date}</td>
+					<td class="px-6 py-4 whitespace-nowrap">
+							<div class="flex items-center">
+									<div class="w-8 h-8 rounded-full flex items-center justify-center mr-3 border border-gray-50">
+											<img src="${match.avatar}" alt="avatar"/>
+									</div>
+									<span class="text-sm font-medium text-gray-100">${match.versus}</span>
+							</div>
+					</td>
+					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-100">${match.score}</td>
+					<td class="px-6 py-4 whitespace-nowrap">
+							<span class="px-2 py-1 text-xs font-semibold ${victoryColor} rounded-full">
+									${victory}
+							</span>
+					</td>
+					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${match.elo}</td>
+					`;
+
+					container.appendChild(tr);
+				});
+			})
+			.catch(err => {
+				const msg = err.error || 'Impossible de recevoir l\'historique des matches';
+				Layout.showNotification(msg, 'error');
+			});
+		}
+	},
 
   mount(root) {
     // Gestion des onglets
@@ -396,7 +433,15 @@ const Stats: StatsPage = {
   },
 
   mountProfileEvents(root: HTMLElement) {
-    // Change username
+    this.showOnlineFriends(root);
+
+      // Change username
+      const addFriendBtn = root.querySelector('#add-friend-btn') as HTMLButtonElement;
+      if (addFriendBtn) {
+        addFriendBtn.addEventListener('click', () => {
+          this.handleAddFriendClick(root);
+        });
+      }
     const changeUsername = root.querySelector('#change-username') as HTMLElement;
     if (changeUsername) {
       changeUsername.addEventListener('click', () => {
@@ -410,7 +455,22 @@ const Stats: StatsPage = {
       });
     }
 
-    // Change mail
+    // Disconnect
+      const disconnectBtn = root.querySelector('#disconnectBtn') as HTMLButtonElement;
+      if (disconnectBtn) {
+        disconnectBtn.addEventListener('click', () => {
+          sessionStorage.removeItem('isLoggedIn');
+          sessionStorage.removeItem('token');
+          sessionStorage.removeItem('username');
+          Layout.updateLoginButton(document.body, false);
+          clearInterval((globalThis as any).loginIntervalId);
+          const p = '/';
+          history.pushState(null, '', p);
+          window.dispatchEvent(new PopStateEvent('popstate'));
+        });
+      }
+
+		//Change mail
     const changeMail = root.querySelector('#change-mail') as HTMLElement;
     if (changeMail) {
       changeMail.addEventListener('click', () => {
@@ -427,43 +487,368 @@ const Stats: StatsPage = {
     // Change avatar
     const changeAvatar = root.querySelector('#change-avatar') as HTMLElement;
     if (changeAvatar) {
-      changeAvatar.addEventListener('click', () => {
-        alert('🎨 Fonctionnalité de changement d\'avatar à venir !');
+      changeAvatar.addEventListener('change', (event) => {
+				const target = event.target as HTMLSelectElement;
+        const selectedValue = target.value;
+				if (target.value != '')
+					this.changeNewAvatar(root, selectedValue);
       });
     }
 
     // Friends tabs (Online / Offline)
     const onlineTab = root.querySelector('#friends-online-tab') as HTMLButtonElement | null;
     const offlineTab = root.querySelector('#friends-offline-tab') as HTMLButtonElement | null;
-    const tabIndicator = root.querySelector('#friends-tab-indicator') as HTMLDivElement | null;
+    const requestTab = root.querySelector('#friends-request-tab') as HTMLButtonElement | null;
+		const tabIndicator = root.querySelector('#friends-tab-indicator') as HTMLDivElement | null;
     const onlineSection = root.querySelector('#online-friends') as HTMLElement | null;
     const offlineSection = root.querySelector('#offline-friends') as HTMLElement | null;
+		const requestSection = root.querySelector('#request-friends') as HTMLElement | null;
 
     const showOnline = () => {
       if (tabIndicator) tabIndicator.style.transform = 'translateX(0%)';
       if (onlineSection) onlineSection.classList.remove('hidden');
       if (offlineSection) offlineSection.classList.add('hidden');
-    };
+    if (requestSection) requestSection.classList.add('hidden');
+			window.clearInterval((globalThis as any).showOfflineFriendsIntervalId);
+			window.clearInterval((globalThis as any).showFriendRequestIntervalId);
+			this.showOnlineFriends(root);
+			clearInterval((globalThis as any).showOnlineFriendsIntervalId);
+			(globalThis as any).showOnlineFriendsIntervalId = setInterval(async () => {
+				this.showOnlineFriends(root);
+			}, 5000);
+		};
 
     const showOffline = () => {
       if (tabIndicator) tabIndicator.style.transform = 'translateX(100%)';
       if (offlineSection) offlineSection.classList.remove('hidden');
       if (onlineSection) onlineSection.classList.add('hidden');
-    };
+    if (requestSection) requestSection.classList.add('hidden');
+			window.clearInterval((globalThis as any).showOnlineFriendsIntervalId);
+			window.clearInterval((globalThis as any).showFriendRequestIntervalId);
+			this.showOfflineFriends(root);
+			clearInterval((globalThis as any).showOfflineFriendsIntervalId);
+			(globalThis as any).showOfflineFriendsIntervalId = setInterval(async () => {
+				this.showOfflineFriends(root);
+			}, 5000);
+		};
+
+		const showRequestTab = () => {
+			if (tabIndicator) tabIndicator.style.transform = 'translateX(200%)';
+			if (requestSection) requestSection.classList.remove('hidden');
+			if (onlineSection) onlineSection.classList.add('hidden');
+			if (offlineSection) offlineSection.classList.add('hidden');
+			window.clearInterval((globalThis as any).showOnlineFriendsIntervalId);
+			window.clearInterval((globalThis as any).showOfflineFriendsIntervalId);
+			this.showFriendRequest(root);
+			clearInterval((globalThis as any).showFriendRequestIntervalId);
+			(globalThis as any).showFriendRequestIntervalId = setInterval(async () => {
+				this.showFriendRequest(root);
+			}, 5000);
+		};
 
     if (onlineTab) onlineTab.addEventListener('click', showOnline);
     if (offlineTab) offlineTab.addEventListener('click', showOffline);
+		if (requestTab) requestTab.addEventListener('click', showRequestTab);
+	},
 
-    // Invite buttons
-    const inviteButtons = root.querySelectorAll('button') as NodeListOf<HTMLButtonElement>;
-    inviteButtons.forEach(btn => {
-      if (btn.textContent?.includes('Invite')) {
-        btn.addEventListener('click', (e) => {
-          const friendName = btn.closest('li')?.querySelector('span')?.textContent?.trim();
-          alert(`🎮 Invitation envoyée à ${friendName} !`);
-        });
+  handleAddFriendClick(root: HTMLElement) {
+      const input = root.querySelector('#add-friend-input') as HTMLInputElement;
+      const invitedUsername = input?.value?.trim();
+
+      if (!invitedUsername) {
+        Layout.showNotification('Veuillez entrer un nom d\'utilisateur', 'error');
+        return;
       }
-    });
-  }
+
+      const currentUser = sessionStorage.getItem('username');
+      if (!currentUser) {
+        Layout.showNotification('Vous devez être connecté', 'error');
+        return;
+      }
+
+      if (invitedUsername === currentUser) {
+        Layout.showNotification('Vous ne pouvez pas vous ajouter vous-même !', 'error');
+        return;
+      }
+
+      fetch('/user/friends/invite-request', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          author: currentUser,
+          invited: invitedUsername
+        })
+      })
+        .then(res => {
+          if (res.ok) {
+            Layout.showNotification(`Invitation envoyée à ${invitedUsername} !`);
+            input.value = '';
+          } else {
+            return res.json().then(data => Promise.reject(data));
+          }
+        })
+        .catch(err => {
+          const msg = err.error || 'Impossible d\'envoyer l\'invitation';
+          Layout.showNotification(msg, 'error');
+        });
+  },
+
+	showFriendRequest(root: HTMLElement) {
+	const currentUser = sessionStorage.getItem('username');
+	const container = root.querySelector('#request-friends-container') as HTMLDivElement;
+
+	if (!currentUser) {
+		Layout.showNotification('Vous devez être connecté', 'error');
+		return;
+	}
+
+	fetch('/user/friends/get-friend-request', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+		},
+		body: JSON.stringify({
+			username: currentUser,
+		})
+	})
+		.then(res => {
+			container.innerHTML = '';
+			if (!res.ok) {
+				return res.json().then(data => Promise.reject(data));
+			}
+			return res.json();
+		})
+		.then((data: { invites: { username: string }[] }) => {
+
+			const usernames = data.invites
+				.filter((entry) => entry && entry.username)
+				.map((entry) => entry.username);
+			usernames.forEach((username: string) => {
+				const li = document.createElement('li');
+				li.className = 'flex items-center justify-between';
+				li.innerHTML = `
+				<span class="text-gray-200 flex items-center">
+					<span class="inline-block w-2 h-2 mr-2 relative">
+					<span class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0 
+						 border-l-[4px] border-r-[4px] border-b-[6px] border-l-transparent border-r-transparent border-b-purple-500"></span>
+					</span>
+					${username}
+				</span>
+				<button class="invite-btn px-3 py-1 text-xs bg-blue-500 text-white hover:bg-blue-600 transition-colors" id="Btn-${username}">
+					Accept
+				</button>
+			`;
+				const btn = li.querySelector('button') as HTMLButtonElement;
+				btn.addEventListener('click', () => {
+					this.acceptFriendRequest(username, li);
+				});
+				container.appendChild(li);
+			});
+		})
+		.catch(err => {
+			const msg = err.error || 'Impossible de recevoir les requetes d\'amis';
+			Layout.showNotification(msg, 'error');
+		});
+	},
+
+	acceptFriendRequest(username: string, element: HTMLElement) {
+		fetch('/user/friends/accept-request', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+			},
+			body: JSON.stringify({ author: sessionStorage.getItem('username'), accepted: username })
+		})
+			.then(res => {
+				if (!res.ok) {
+					return res.json().then(data => Promise.reject(data));
+				}
+				element.remove();
+				Layout.showNotification(`Vous avez accepté ${username}`, 'success');
+			})
+			.catch(err => {
+				const msg = err.error || `Impossible d'accepter ${username}`;
+				Layout.showNotification(msg, 'error');
+			});
+	},
+
+	showOnlineFriends(root: HTMLElement) {
+		const currentUser = sessionStorage.getItem('username');
+		const container = root.querySelector('#online-friends-container') as HTMLDivElement;
+
+		if (!currentUser) {
+			Layout.showNotification('Vous devez être connecté', 'error');
+			return;
+		}
+
+		fetch('/user/friends/get-friends', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+			},
+			body: JSON.stringify({
+				username: currentUser,
+			})
+		})
+			.then(res => {
+				container.innerHTML = '';
+				if (!res.ok) {
+					return res.json().then(data => Promise.reject(data));
+				}
+				return res.json();
+			})
+			.then((data: { friends: { username: string }[], friendsStatus: { online: boolean }[] }) => {
+				const usersWithStatus = data.friends
+					.filter(entry => entry && entry.username)
+					.map((entry, index) => ({
+						username: entry.username,
+						online: data.friendsStatus[index]?.online ?? false
+					}));
+				usersWithStatus.forEach((user) => {
+					if (user.online) {
+						const li = document.createElement('li');
+						li.className = 'flex items-center justify-between';
+						li.innerHTML = `
+					<span class="text-gray-200 flex items-center">
+					<span class="w-2 h-2 bg-green-500 mr-2"></span>
+					${user.username}
+					</span>
+					`;
+						container.appendChild(li);
+					}
+				});
+			})
+			.catch(err => {
+				const msg = err.error || 'Impossible de recevoir les requetes d\'amis';
+				Layout.showNotification(msg, 'error');
+			});
+	},
+
+	changeNewAvatar(root: HTMLElement, newAvatar: string) {
+		const currentUser = sessionStorage.getItem('username');
+		const token = sessionStorage.getItem('token');
+
+		if (!currentUser) {
+			Layout.showNotification('Vous devez être connecté', 'error');
+			return;
+		}
+
+		fetch('/user/api/change-avatar', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${token}`
+			},
+			body: JSON.stringify({
+				username: currentUser,
+				avatar: newAvatar
+			})
+		})
+			.then(async (res) => {
+				const text = await res.text();
+				let data;
+				try {
+					data = JSON.parse(text);
+				} catch {
+					data = text;
+				}
+
+				console.log('Response status:', res.status);
+				console.log('Response data:', data);
+
+				if (!res.ok) {
+					return Promise.reject(data);
+				}
+				return data;
+			})
+			.then((data: { message: string; token?: string }) => {
+				if (data.token) {
+					sessionStorage.setItem('token', data.token);
+					this.updateAvatar();
+				}
+				Layout.showNotification(data.message || 'Avatar changé avec succès', 'success');
+			})
+			.catch(err => {
+				console.error('Fetch error:', err);
+				const msg = (err && (err.error || err.message)) || 'Impossible de changer d\'avatar';
+				Layout.showNotification(msg, 'error');
+			});
+	},
+
+	showOfflineFriends(root: HTMLElement) {
+		const currentUser = sessionStorage.getItem('username');
+		const container = root.querySelector('#offline-friends-container') as HTMLDivElement;
+
+		if (!currentUser) {
+			Layout.showNotification('Vous devez être connecté', 'error');
+			return;
+		}
+
+		fetch('/user/friends/get-friends', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+			},
+			body: JSON.stringify({
+				username: currentUser,
+			})
+		})
+			.then(res => {
+				container.innerHTML = '';
+				if (!res.ok) {
+					return res.json().then(data => Promise.reject(data));
+				}
+				return res.json();
+			})
+			.then((data: { friends: { username: string }[], friendsStatus: { online: boolean }[] }) => {
+				const usersWithStatus = data.friends
+					.filter(entry => entry && entry.username)
+					.map((entry, index) => ({
+						username: entry.username,
+						online: data.friendsStatus[index]?.online ?? false
+					}));
+				usersWithStatus.forEach((user) => {
+					if (!user.online) {
+						const li = document.createElement('li');
+						li.className = 'flex items-center';
+						li.innerHTML = `
+					<span class="w-2 h-2 bg-gray-400 rounded-full mr-2"></span>
+					<span class="text-gray-200">${user.username}</span>
+					`;
+						container.appendChild(li);
+					}
+				});
+			})
+			.catch(err => {
+				const msg = err.error || 'Impossible de recevoir les requetes d\'amis';
+				Layout.showNotification(msg, 'error');
+			});
+	},
+
+	updateAvatar() {
+		const avatar = document.getElementById('user-avatar') as HTMLImageElement;
+
+		if (avatar)
+		{
+			avatar.src = Layout.getUserInfoFromJwt(sessionStorage.getItem('token')).avatar;
+			Layout.updateAvatar();
+		}
+	}
 }
+
+const popstateHandler = (event: PopStateEvent) => {
+	window.clearInterval((globalThis as any).showOnlineFriendsIntervalId);
+	window.clearInterval((globalThis as any).showOfflineFriendsIntervalId);
+	window.clearInterval((globalThis as any).showFriendRequestIntervalId);
+	window.removeEventListener('popstate', popstateHandler);
+};
+window.addEventListener('popstate', popstateHandler);
+
 export default Stats

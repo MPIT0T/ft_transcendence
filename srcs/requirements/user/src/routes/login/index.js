@@ -3,20 +3,12 @@ const db = require("../../db.js");
 const bcrypt = require('bcrypt');
 const privateKey = "secret123123";
 const jwt = require('jsonwebtoken');
-
-
-function getUserbyUsername(username)
-{
-    const stmt = db.prepare(`SELECT * FROM users WHERE username = ?`);
-    let user = null;
-
-    user = stmt.get(username);
-    return user;
-}
+const {getUserbyUsername} = require("../../utils.js");
 
 async function loginRoute(fastify, options) {
-    fastify.post('/', async (request, reply) => {
-        const {username, password} = request.body;
+
+    fastify.post('/', async (req, reply) => {
+        const {username, password} = req.body;
 
         if (!username || !password)
             return reply.status(400).send({ error: 'Missing credentials' });
@@ -24,7 +16,7 @@ async function loginRoute(fastify, options) {
             return reply.status(401).send({ error: 'Invalid username or password' });
         const user =  await getUserbyUsername(username);
         if (!user) {
-            return reply.status(401).send({error: 'Invalid username or password'});
+            return reply.status(401).send({ error: 'Invalid username or password'});
         }
         const res = await bcrypt.compare(password, user.password);
         if (res) {
@@ -42,10 +34,7 @@ async function loginRoute(fastify, options) {
         } else {
             return reply.status(401).send({ error: 'Invalid username or password' });
         }
-        });
+    });
 }
 
-module.exports = {
-    loginRoute,
-    getUserbyUsername
-};
+module.exports = loginRoute;

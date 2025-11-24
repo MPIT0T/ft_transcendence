@@ -161,6 +161,7 @@ class Tournament {
 			status: 'success',
 			message: 'Successfully joined the tournament.',
 			tournamentId: this.tournamentId,
+			tournamentName: this.tournamentName,
 			url: tournamentUrl,
 		}));
 

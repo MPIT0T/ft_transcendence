@@ -22,6 +22,15 @@ module.exports = async function (fastify, opts) {
 						case 'rooms':
 							await handleGetRooms(socket, data);
 							break;
+						case 'friends':
+							await handleGetFriends(socket, data);
+							break;
+						case 'challenge':
+							await handleChallenge(socket, data);
+							break;
+						case 'invite':
+							await handleInvite(socket, data);
+							break;
 						case 'ready':
 							await handleReady(socket, data);
 							break;
@@ -127,6 +136,23 @@ function leave(clientId) {
 	}
 }
 
+function handleGetFriends(socket, data) {
+	if (g_Games.findClient(data.clientId) === undefined)
+		throw "Client id not good";
+
+	const availableFriends = Object.values(g_Games._clients._clients)
+		.filter(c => c._clientId !== data.clientId)
+		.map(c => ({
+			username: c._name,
+			elo: c._elo
+		}));
+
+	socket.send(JSON.stringify({
+		method: 'friends',
+		friends: availableFriends
+	}));
+}
+
 
 function handleGetRooms(socket, data) {
 	if (g_Games.findClient(data.clientId) === undefined)
@@ -147,6 +173,74 @@ function handleGetRooms(socket, data) {
 		method: 'rooms',
 		rooms: availableRooms
 	}));
+}
+
+function handleChallenge(socket, data) {
+	if (g_Games.findClient(data.clientId) === undefined)
+		throw "Client id not good";
+
+	const points = (typeof data.gamePoint === 'number') ? data.gamePoint : parseInt(data.gamePoint, 10) || 8;
+	const roomId = g_Games.createRoom(null, "challenge", points, "challenge");
+	const room = g_Games.findRoom(roomId);
+
+	const challenger = g_Games.findClient(data.clientId);
+	room.join(challenger, challenger._conection);
+
+	// Friend by name
+	const friendClient = g_Games.findClientName(data.friend);
+	if (!friendClient) {
+		if (challenger._conection && typeof challenger._conection.send === 'function') {
+			challenger._conection.send(JSON.stringify({
+				method: 'challenge',
+				status: 'error',
+				message: 'Friend not found'
+			}));
+		}
+		return;
+	}
+
+	const payLoad = {
+		method: 'challenge',
+		roomId: roomId,
+		from: challenger._name
+	};
+
+	if (friendClient._conection && typeof friendClient._conection.send === 'function') {
+		friendClient._conection.send(JSON.stringify(payLoad));
+	}
+}
+
+
+function handleInvite(socket, data) {
+	if (g_Games.findClient(data.clientId) === undefined)
+		throw "Client id not good";
+	const roomId = data.roomId;
+
+	if (g_Games.findRoom(data.roomId) === undefined)
+		throw "Room id not good";
+	
+	const room = g_Games.findRoom(data.roomId);
+
+	if (data.response === 'yes') {
+		const joiningClient = g_Games.findClient(data.clientId);
+		if (!joiningClient) {
+			throw 'Joining client not found';
+		}
+		const alreadyInRoom = room.clients.some(c => c._clientId === joiningClient._clientId);
+		if (alreadyInRoom) {
+			if (joiningClient._conection && typeof joiningClient._conection.send === 'function') {
+				joiningClient._conection.send(JSON.stringify({
+					method: 'invite',
+					status: 'error',
+					message: 'Already in room'
+				}));
+			}
+			return;
+		}
+		room.join(joiningClient, joiningClient._conection);
+	} else if (data.response === 'no') {
+		room.leave('Invitation refusée');
+	}
 }
 
 async function handleJoinGame(socket, data) {
