@@ -132,6 +132,7 @@ export const GameOnlineTournament: Page = {
 
         // Début du match
         if (response.method === "Start") {
+          console.log("BOBO");
           waiting = false;
           canStart = true;
           if (currentGame) {

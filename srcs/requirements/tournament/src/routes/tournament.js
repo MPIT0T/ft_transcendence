@@ -165,7 +165,7 @@ class Tournament {
 			url: tournamentUrl,
 		}));
 
-		sleep(500);
+		await sleep(500);
 
 		const payLoad = {
 			method: 'playerJoinTournament',
@@ -198,7 +198,7 @@ class Tournament {
 	}
 
 	async updatePlayerR(int) {
-		
+
 		this.playerR = this.getPlayerR();
 
 		if (this.state === "playing-tournament" && this.allTournamentRooms.length > 0) {
@@ -348,7 +348,7 @@ class Tournament {
 					method: "startMatch",
 					roomId: roomData.roomId,
 					roomUrl: roomUrl,
-                    player1Name: roomData.player1._name,
+					player1Name: roomData.player1._name,
 					player2Name: roomData.player2._name,
 					matchRound: roomData.roomName
 				}));
@@ -361,7 +361,7 @@ class Tournament {
 					roomId: roomData.roomId,
 					roomUrl: roomUrl,
 					player1Name: roomData.player1._name,
-                    player2Name: roomData.player2._name,
+					player2Name: roomData.player2._name,
 					matchRound: roomData.roomName
 				}));
 			}
@@ -369,7 +369,24 @@ class Tournament {
 			await sleep(1000);
 
 			room.state = "playing-game";
-            await sleep(3000);
+
+			if (p1Connected) {
+				roomData.player1._conection.send(JSON.stringify({
+					method: "Start",
+					round: "1",
+					roomId: roomData.roomId,
+				}));
+			}
+			if (p2Connected) {
+				roomData.player2._conection.send(JSON.stringify({
+					method: "Start",
+					round: "1",
+					roomId: roomData.roomId,
+				}));
+			}
+
+			await sleep(3000);
+
 			await room.gameLoop();
 
 			winner = room.p1Score > room.p2Score ? roomData.player1 : roomData.player2;
@@ -478,7 +495,7 @@ class Tournament {
 					method: "startMatch",
 					roomId: roomData.roomId,
 					roomUrl: roomUrl,
-                    player1Name: roomData.player1._name,
+					player1Name: roomData.player1._name,
 					player2Name: roomData.player2._name,
 					matchRound: roomData.roomName
 				}));
@@ -490,8 +507,8 @@ class Tournament {
 					method: "startMatch",
 					roomId: roomData.roomId,
 					roomUrl: roomUrl,
-                    player1Name: roomData.player1._name,
-                    player2Name: roomData.player2._name,
+					player1Name: roomData.player1._name,
+					player2Name: roomData.player2._name,
 					matchRound: roomData.roomName
 				}));
 			}
@@ -499,6 +516,24 @@ class Tournament {
 			await sleep(1000);
 
 			room.state = "playing-game";
+
+			if (p1Connected) {
+				roomData.player1._conection.send(JSON.stringify({
+					method: "Start",
+					round: "2",
+					roomId: roomData.roomId,
+				}));
+			}
+			if (p2Connected) {
+				roomData.player2._conection.send(JSON.stringify({
+					method: "Start",
+					round: "2",
+					roomId: roomData.roomId,
+				}));
+			}
+
+			await sleep(3000);
+
 			await room.gameLoop();
 
 			winner = room.p1Score > room.p2Score ? roomData.player1 : roomData.player2;
@@ -593,8 +628,8 @@ class Tournament {
 						method: "startMatch",
 						roomId: finalRoomData.roomId,
 						roomUrl: roomUrl,
-                        player1Name: finalRoomData.player1._name,
-                        player2Name: finalRoomData.player2._name,
+						player1Name: finalRoomData.player1._name,
+						player2Name: finalRoomData.player2._name,
 						matchRound: finalRoomData.roomName
 					}));
 				}
@@ -605,8 +640,8 @@ class Tournament {
 						method: "startMatch",
 						roomId: finalRoomData.roomId,
 						roomUrl: roomUrl,
-                        player1Name: finalRoomData.player1._name,
-                        player2Name: finalRoomData.player2._name,
+						player1Name: finalRoomData.player1._name,
+						player2Name: finalRoomData.player2._name,
 						matchRound: finalRoomData.roomName
 					}));
 				}
@@ -614,6 +649,25 @@ class Tournament {
 				await sleep(1000);
 
 				room.state = "playing-game";
+
+				if (p1Connected) {
+					finalRoomData.player1._conection.send(JSON.stringify({
+						method: "Start",
+						round: "3",
+						roomId: finalRoomData.roomId,
+					}));
+				}
+				if (p2Connected) {
+					finalRoomData.player2._conection.send(JSON.stringify({
+						method: "Start",
+						round: "3",
+						roomId: finalRoomData.roomId,
+					}));
+				}
+
+
+				await sleep(3000);
+
 				await room.gameLoop();
 
 				champion = room.p1Score > room.p2Score ? finalRoomData.player1 : finalRoomData.player2;
