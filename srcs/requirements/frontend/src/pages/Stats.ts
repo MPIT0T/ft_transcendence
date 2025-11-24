@@ -296,15 +296,15 @@ const Stats: StatsPage = {
 													<div class="text-sm text-gray-400">Parties cette semaine</div>
 											</div>
 											<div class="backdrop-blur-2xs border border-gray-50 p-6 text-center">
-													<div class="text-3xl font-bold text-green-400">2</div>
+													<div class="text-3xl font-bold text-green-400" id="histo-victory">0</div>
 													<div class="text-sm text-gray-400">Victoires</div>
 											</div>
 											<div class="backdrop-blur-2xs border border-gray-50 p-6 text-center">
-													<div class="text-3xl font-bold text-red-400">2</div>
+													<div class="text-3xl font-bold text-red-400" id="histo-loose">0</div>
 													<div class="text-sm text-gray-400">Défaites</div>
 											</div>
 											<div class="backdrop-blur-2xs border border-gray-50 p-6 text-center">
-													<div class="text-3xl font-bold text-purple-400">50%</div>
+													<div class="text-3xl font-bold text-purple-400" id="histo-wr">0%</div>
 													<div class="text-sm text-gray-400">Winrate</div>
 											</div>
 									</div>
@@ -1063,9 +1063,21 @@ const Stats: StatsPage = {
           const wr = data.matchHistory.length > 0 ? (victories / data.matchHistory.length) * 100 : 0;
           wrStat.textContent = wr.toFixed(2) + '%';
         }
+        const wrStat2 = document.getElementById('histo-wr');
+        if (wrStat2)
+        {
+          let victories = data.matchHistory.reduce((acc, m) => acc + (m.winner ? 1 : 0), 0);
+          const wr = data.matchHistory.length > 0 ? (victories / data.matchHistory.length) * 100 : 0;
+          wrStat2.textContent = wr.toFixed(2) + '%';
+        }
         const total = data.matchHistory.length;
         const victories = data.matchHistory.reduce((acc, m) => acc + (m.winner ? 1 : 0), 0);
         const defeats = total - victories;
+        const victoryStat = document.getElementById('histo-victory');
+        const defeatStat = document.getElementById('histo-loose');
+
+        if (victoryStat) victoryStat.textContent = victories.toString();
+        if (defeatStat) defeatStat.textContent = defeats.toString();
         //this.updateTimeplayed(data.matchHistory);
         const slices = [
           { value: total > 0 ? (victories / total) * 100 : 0, color: '#3B82F6' },
