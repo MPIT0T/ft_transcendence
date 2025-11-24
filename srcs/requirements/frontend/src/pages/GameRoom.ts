@@ -26,6 +26,10 @@ const reloadFriends = function (root: HTMLElement) {
 }
 
 function displayFriends(root: HTMLElement, friends: any[]) {
+
+	
+
+
 	const container = root.querySelector('#friends-container') as HTMLDivElement;
 	container.innerHTML = ''; // Vider le container
 
@@ -318,6 +322,14 @@ export const GameRoom: Page = {
 				if (clientId !== undefined) {
 					sessionStorage.setItem('clientId', clientId);
 				}
+				const payLoad = {
+					"method": "user",
+					"clientId": clientId,
+					"token": sessionStorage.getItem('token'),
+					"username": sessionStorage.getItem('username'),
+				}
+				if (ws)
+					ws.send(JSON.stringify(payLoad));
 			}
 			if (response.method === "create") {
 				roomId = response.room.roomId;

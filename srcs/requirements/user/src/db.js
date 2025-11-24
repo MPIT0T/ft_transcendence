@@ -15,7 +15,7 @@ db.exec(`
      git_acc       TEXT,
      last_ping     DATETIME DEFAULT (datetime('now')),
      match_history TEXT,
-     online        INTEGER DEFAULT 0
+     online        INTEGER DEFAULT 1
     );
 `);
 

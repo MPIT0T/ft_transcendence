@@ -1,19 +1,27 @@
 include srcs/.env
 
 SECRETS_DIR = secrets
-SECRETS_FILES = ssl_certificate ssl_certificate_key
+SECRETS_FILES = ssl_certificate ssl_certificate_key jwt_secret_key
 SECRETS = ${addprefix ${SECRETS_DIR}/, ${SECRETS_FILES}}
 
 all: dev
+
+%jwt_secret_key:
+	@mkdir -p ${@D}
+	openssl rand -hex -out $(@D)/jwt_secret_key 64
 
 %/ssl_certificate %/ssl_certificate_key:
 	@mkdir -p ${@D}
 	openssl req -x509 -newkey rsa:2048 -keyout $(@D)/ssl_certificate_key -out $(@D)/ssl_certificate -days 365 -nodes -subj "/CN=localhost" 2> /dev/null
 
 dev: ${SECRETS}
+	@echo "Generating internal service TLS certificates (if missing)..."
+	@bash scripts/gen-internal-certs.sh
 	TARGET=dev docker compose -f srcs/compose.yml up --watch
 
 prod: ${SECRETS}
+	@echo "Generating internal service TLS certificates (if missing)..."
+	@bash scripts/gen-internal-certs.sh
 	TARGET=prod docker compose -f srcs/compose.yml up -d
 
 build_dev: secrets

@@ -1,6 +1,30 @@
 import type { StatsPage } from "../interface/gameInterface.js"
 import { Layout } from "./Layout";
 
+function drawPieChart(slices: { value: number; color: string }[]) {
+  const svg = document.getElementById('pieChart') as SVGElement | null;
+  if (!svg) return;
+  while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+  const getCoordinates = (percent: number) => {
+    const x = 16 + Math.cos(2 * Math.PI * percent) * 16;
+    const y = 16 + Math.sin(2 * Math.PI * percent) * 16;
+    return [x, y];
+  };
+
+  let cumulative = 0;
+  slices.forEach((slice) => {
+    const [startX, startY] = getCoordinates(cumulative);
+    cumulative += slice.value / 100;
+    const [endX, endY] = getCoordinates(cumulative);
+    const largeArc = slice.value > 50 ? 1 : 0;
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', `M16 16 L ${startX} ${startY} A 16 16 0 ${largeArc} 1 ${endX} ${endY} Z`);
+    path.setAttribute('fill', slice.color);
+    svg.appendChild(path);
+  });
+}
+
 let activeTab: 'profile' | 'history' = 'profile';
 
 if (!Layout.isLoggedIn()) {
@@ -10,11 +34,11 @@ if (!Layout.isLoggedIn()) {
 }
 
 const Stats: StatsPage = {
-	render() {
-		// Position the sliding indicator
-		const indicatorTransform = activeTab === 'profile'
-			? 'translateX(0%)' : 'translateX(100%)';
-		return `
+  render() {
+    // Position the sliding indicator
+    const indicatorTransform = activeTab === 'profile'
+      ? 'translateX(0%)' : 'translateX(100%)';
+    return `
 <div class="bg-transparent flex flex-col w-[60vw] pt-20 items-start">
 	<!-- Header avec onglets -->
   <div class="mb-6 w-[60vw] mx-auto">
@@ -56,347 +80,318 @@ const Stats: StatsPage = {
 	</div>
 </div>
 	`;
-	},
+  },
 
-	renderProfile() {
-		// language=HTML
-		return `
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-	<!-- Profil Section -->
-	<div class="backdrop-blur-2xs border border-gray-50 p-6 h-full flex flex-col">
-		<!-- Avatar -->
-		<div class="text-center mb-6">
-				<div class="w-20 h-20 bg-transparent mx-auto mb-3 flex items-center justify-center border border-gray-50">
-				<img src=${Layout.getUserInfoFromJwt(sessionStorage.getItem('token')).avatar} id="user-avatar" alt="avatar" class="w-12"/>
-			</div>
-			<select class="text-xs text-blue-500 underline cursor-pointer" id="change-avatar">
-				<option value="">change avatar</option>
-				<option value="alien.png">alien</option>
-				<option value="astronaut.png">astronaut</option>
-				<option value="martian.png">martian</option>
-				<option value="robot.png">robot</option>
-			</select>
-		</div>
+  renderProfile() {
+    const avatar = Layout.getUserInfoFromJwt(sessionStorage.getItem('token')).avatar;
+    const avatar_name = avatar.split('.').slice(0, -1).join('.');
+    return `
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Profil Section -->
+        <div class="backdrop-blur-2xs border border-gray-50 p-6">
+        <!-- Avatar -->
+        <div class="text-center mb-6">
+          <div class="w-64 h-64 mx-auto mb-4 flex items-center justify-center overflow-hidden">
+            <img src="${avatar}" id="user-avatar" alt="avatar" class="w-64 h-64 object-cover"/>
+          </div>
+          <button
+            id="open-avatar-modal"
+            class="px-4 py-2 text-sm border border-gray-50 text-gray-100 hover:bg-gray-700 transition-colors">
+            Changer d'avatar
+          </button>
+        </div>
 
-		<!-- Username -->
-      <div class="flex justify-between items-center border-b border-gray-700 mb-6">
-          <span class="text-3xl text-gray-50 font-semibold">${sessionStorage.getItem('username')}</span>
-          <span class="text-xl text-gray-400">pseudo</span>
+        <!-- Username -->
+        <div class="mb-6">
+          <label class="block text-xs text-gray-300 mb-2">Username</label>
+          <div class="relative">
+            <span
+              id="change-username"
+              class="flex items-center justify-center w-full h-10 px-3 text-center text-sm text-gray-100 bg-white/5 border border-gray-700 rounded cursor-text hover:border-gray-500 transition"
+              contenteditable="false"
+            >
+              ${sessionStorage.getItem('username')}
+            </span>
+            <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-gray-400">
+              Cliquez pour modifier
+            </span>
+          </div>
+        </div>
+
+         <!-- Password change trigger -->
+        <div class="mb-6">
+          <button
+            id="open-password-modal"
+            class="w-full px-4 py-2 text-sm border border-gray-50 text-gray-100 hover:bg-gray-700 transition-colors">
+            Changer le mot de passe
+          </button>
+        </div>
+
+        <!-- disconnect Btn -->
+        <div class="text-center mb-6">
+          <button class="px-3 py-3 font-bold border border-gray-50 backdrop-blur-2xs text-2xl hover:border-red-500 hover:bg-gray-700 text-gray-50 transition-transform" id="disconnectBtn">Se déconnecter</button>
+        </div>
+        
+
+        <!-- Main stats -->
+        <div class="grid grid-cols-3 gap-4 text-center mt-8">
+          <div>
+          <div class="text-2xl font-bold text-gray-100" id="change-elo">?</div>
+          <div class="text-sm text-gray-400">Elo</div>
+          </div>
+          <div>
+          <div class="text-2xl font-bold text-gray-100" id="stats-win-rate">0%</div>
+          <div class="text-sm text-gray-400">Win Rate</div>
+          </div>
+          <div>
+          <div class="text-2xl font-bold text-gray-100" id="friends-counter">0</div>
+          <div class="text-sm text-gray-400">Friends</div>
+          
+          </div>
+        </div>
+        </div>
+
+
+        <!-- Friends Lists with tabs -->
+        <div class="backdrop-blur-2xs border border-gray-50 p-6">
+        <h3 class="text-lg font-semibold text-gray-100">Friends</h3>
+        
+        <div class="mb-4">
+          <label for="add-friend-input" class="block text-sm text-gray-300 mb-2">Ajouter un ami</label>
+          <div class="flex gap-2">
+          <input id="add-friend-input" type="text" placeholder="Nom de l'ami" class="flex-1 px-3 py-2 bg-white/5 border border-gray-700 text-sm text-gray-100 rounded" />
+          <button id="add-friend-btn" class="px-3 py-2 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition-colors">Ajouter</button>
+          </div>
+        </div>
+        
+        <div class="mb-4 flex items-center justify-between">
+          <div class="relative w-60">
+          <div id="friends-tab-indicator" class="absolute top-0 left-0 h-full w-1/3 bg-gray-700 rounded-md transition-transform duration-200" style="transform: translateX(0%);"></div>
+          <div class="relative z-10 flex">
+            <button id="friends-online-tab" class="flex-1 px-3 py-2 text-sm text-white text-center">Online</button>
+            <button id="friends-offline-tab" class="flex-1 px-3 py-2 text-sm text-white text-center">Offline</button>
+            <button id="friends-request-tab" class="flex-1 px-3 py-2 text-sm text-white text-center">Request</button>
+          </div>
+          </div>
+        </div>
+
+        <div id="friends-container">
+          <div id="online-friends" class="space-y-3 p-6 overflow-y-auto max-h-[38vh]">
+          <ul id="online-friends-container">
+          </ul>
+          </div>
+
+          <div id="offline-friends" class="space-y-3 p-6 overflow-y-auto max-h-[38vh]">
+          <ul id="offline-friends-container"></ul>
+          </div>
+          <div id="request-friends" class="space-y-3 p-6 overflow-y-auto max-h-[38vh]">
+          <ul id="request-friends-container"></ul>
+          </div>
+        </div>
+        </div>
       </div>
 
-		<!-- Mail -->
-		<div class="text-center mb-6">
-				<p class="text-sm text-gray-200 font-semibold mb-1 px-3 py-2 backdrop-blur-2xs border border-gray-400">LUCA@GMAIL.COM</p>
-			<p class="text-xs text-blue-500 underline cursor-pointer" id="change-mail">CHANGE MAIL</p>
-		</div>
-
-		<div class="text-center mb-6">
-	<button class="px-3 py-3 font-bold border border-gray-50 backdrop-blur-2xs text-2xl hover:border-red-500 hover:bg-gray-700 text-gray-50 transition-transform" id="disconnectBtn">Se déconnecter</button>
-		</div>
-	</div>
-
-	<!-- Detailed stats -->
-	<div class="backdrop-blur-2xs border border-gray-50 p-6">
-		<h3 class="text-lg font-semibold mb-4 text-gray-100">Statistiques</h3>
-		<div class="space-y-4">
-			<div class="flex justify-between items-center py-2 border-b border-gray-700">
-				<span class="text-sm font-medium text-gray-300">Parties jouées :</span>
-				<span class="text-sm font-bold text-gray-400" id="stats-games-played">42</span>
-			</div>
-			<div class="flex justify-between items-center py-2 border-b border-gray-700">
-				<span class="text-sm font-medium text-gray-300">Victoires :</span>
-				<span class="text-sm font-bold text-green-600" id="stats-wins">18</span>
-			</div>
-			<div class="flex justify-between items-center py-2 border-b border-gray-700">
-				<span class="text-sm font-medium text-gray-300">Défaites :</span>
-				<span class="text-sm font-bold text-red-600" id="stats-losses">24</span>
-			</div>
-			<div class="flex justify-between items-center py-2 border-b border-gray-700">
-				<span class="text-sm font-medium text-gray-300">Meilleur score :</span>
-				<span class="text-sm font-bold text-purple-600" id="stats-best-score">1200</span>
-			</div>
-			<div class="flex justify-between items-center py-2">
-				<span class="text-sm font-medium text-gray-300">Temps de jeu :</span>
-				<span class="text-sm font-bold text-blue-600" id="stats-playtime">12h 34m</span>
-			</div>
-		</div>
-    <!-- Main stats -->
-    <div class="grid grid-cols-3 gap-4 text-center mt-8">
-      <div>
-        <div class="text-2xl font-bold text-gray-800" id="stats-rank">2</div>
-        <div class="text-sm text-gray-600">Rang</div>
+      <!-- Avatar Modal -->
+      <div id="avatar-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+        <div class="bg-gray-900 border border-gray-700 rounded-lg w-full max-w-2xl p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h4 class="text-lg font-semibold text-gray-100">Choisir un avatar</h4>
+            <button type="button" class="text-gray-300 hover:text-white" data-close-avatar-modal>✕</button>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6">
+            ${['alien.png', 'astronaut.png', 'martian.png', 'robot.png'].map(a => `
+              <button type="button" data-avatar="${a}" class="group flex flex-col items-center gap-3 focus:outline-none">
+                <div class="w-24 h-24 rounded-full overflow-hidden border border-gray-700 group-hover:border-blue-500 transition-colors">
+                  <img src="${a}" alt="${a.split('.')[0]}" class="w-24 h-24 object-cover"/>
+                </div>
+                <span class="text-xs text-gray-300 group-hover:text-blue-400 transition">${a.split('.')[0]}</span>
+              </button>
+            `).join('')}
+          </div>
+          <div class="flex justify-end">
+            <button type="button" class="px-3 py-2 bg-gray-700 text-gray-200 rounded hover:bg-gray-600" data-close-avatar-modal>Annuler</button>
+          </div>
+        </div>
       </div>
-      <div>
-        <div class="text-2xl font-bold text-gray-800" id="stats-win-rate">42%</div>
-        <div class="text-sm text-gray-600">Win Rate</div>
+
+      <!-- Password Modal -->
+      <div id="password-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+        <div class="bg-gray-900 border border-gray-700 rounded-lg w-full max-w-md p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h4 class="text-lg font-semibold text-gray-100">Changer le mot de passe</h4>
+            <button type="button" class="text-gray-300 hover:text-white" data-close-password-modal>✕</button>
+          </div>
+          <form id="password-form" class="space-y-4">
+            <div>
+              <label for="old-password" class="block text-xs text-gray-400 mb-1">Mot de passe actuel</label>
+              <input id="old-password" type="password" required
+                     class="w-full px-3 py-2 bg-white/5 border border-gray-700 text-sm text-gray-100 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+            </div>
+            <div>
+              <label for="new-password" class="block text-xs text-gray-400 mb-1">Nouveau mot de passe</label>
+              <input id="new-password" type="password" minlength="6" required
+                     class="w-full px-3 py-2 bg-white/5 border border-gray-700 text-sm text-gray-100 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+            </div>
+            <div>
+              <label for="confirm-password" class="block text-xs text-gray-400 mb-1">Confirmer</label>
+              <input id="confirm-password" type="password" required
+                     class="w-full px-3 py-2 bg-white/5 border border-gray-700 text-sm text-gray-100 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+            </div>
+            <div class="flex justify-end gap-3 pt-2">
+              <button type="button" class="px-3 py-2 bg-gray-700 text-gray-200 rounded hover:bg-gray-600" data-close-password-modal>Annuler</button>
+              <button type="submit" id="submit-password-btn"
+                      class="px-4 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-500 transition-colors">
+                Enregistrer
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-      <div>
-        <div class="text-2xl font-bold text-gray-800" id="stats-friends">0</div>
-        <div class="text-sm text-gray-600">Amis</div>
-      </div>
-    </div>
-	</div>
-
-	<!-- Friends Lists with tabs -->
-	<div class="backdrop-blur-2xs border border-gray-50 p-6">
-		<h3 class="text-lg font-semibold text-gray-100">Amis</h3>
-		
-		<div class="mb-4">
-			<label for="add-friend-input" class="block text-sm text-gray-300 mb-2">Ajouter un ami</label>
-			<div class="flex gap-2">
-				<input id="add-friend-input" type="text" placeholder="Nom de l'ami" class="flex-1 px-3 py-2 bg-white/5 border border-gray-700 text-sm text-gray-100 focus:outline-none focus:border-gray-400" />
-				<button id="add-friend-btn" class="px-3 py-2 border border-gray-400 text-white text-sm hover:bg-gray-700/50 hover:border-blue-500 transition-colors">Ajouter</button>
-			</div>
-		</div>
-		
-		<div class="mb-4 flex items-center justify-between">
-			<div class="relative w-60">
-				<div id="friends-tab-indicator" class="absolute top-0 left-0 h-full w-1/3 bg-gray-700 transition-transform duration-200" style="transform: translateX(0%);"></div>
-				<div class="relative z-10 flex">
-					<button id="friends-online-tab" class="flex-1 px-3 py-2 text-sm hover:bg-gray-700/50 text-white text-center">En Ligne</button>
-					<button id="friends-offline-tab" class="flex-1 px-3 py-2 text-sm hover:bg-gray-700/50 text-white text-center">Hors Ligne</button>
-					<button id="friends-request-tab" class="flex-1 px-3 py-2 text-sm text-white text-center">Request</button>
-				</div>
-			</div>
-	</div>
-
-		<div id="friends-container">
-			<div id="online-friends" class="space-y-3">
-				<ul id="online-friends-container">
-				</ul>
-			</div>
-
-			<div id="offline-friends" class="space-y-3 hidden">
-				<ul id="offline-friends-container"></ul>
-			</div>
-			<div id="request-friends" class="space-y-3">
-				<ul id="request-friends-container"></ul>
-			</div>
-		</div>
-	</div>
-</div>
-	`;
-	},
+        `;
+  },
 
   renderHistory() {
-          return `
-<div class="space-y-6">
-  <!-- Filtres -->
-  <div class="bg-white p-6">
-    <div class="flex flex-wrap gap-4 items-center">
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Période :</label>
-        <select class="px-3 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          <option>Dernière semaine</option>
-          <option>Dernier mois</option>
-          <option>Tout</option>
-        </select>
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Résultat :</label>
-        <select class="px-3 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          <option>Tous</option>
-          <option>Victoires</option>
-          <option>Défaites</option>
-        </select>
-      </div>
-      <button class="mt-6 px-4 py-2 bg-blue-500 text-white hover:bg-blue-600 transition-colors">
-        Filtrer
-      </button>
-    </div>
-  </div>
-
-    <!-- Historique des matches -->
-  <div class="bg-white overflow-hidden">
-    <div class="px-6 py-4 border-b border-gray-200">
-      <h3 class="text-lg font-semibold text-gray-800">📈 Historique des matches</h3>
-    </div>
-      
-    <div class="overflow-x-auto">
-      <table class="w-full">
-        <thead class="bg-gray-50">
-          <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Adversaire</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Score</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Résultat</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Évolution elo</th>
-          </tr>
-        </thead>
-        <tbody class="bg-white divide-y divide-gray-200" id="history-container">
-          <tr class="hover:bg-gray-50">
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">14/01/2024 20:15</td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="flex items-center">
-                <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center mr-3">
-                  <span class="text-sm">👤</span>
-                </div>
-                <span class="text-sm font-medium text-gray-900">BOB</span>
-              </div>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">5 - 3</td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                ✅ Victoire
-              </span>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">5m 23s</td>
-          </tr>
-          <tr class="hover:bg-gray-50">
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">14/01/2024 20:15</td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="flex items-center">
-                <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center mr-3">
-                  <span class="text-sm">👤</span>
-                </div>
-                <span class="text-sm font-medium text-gray-900">Mike</span>
-              </div>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2 - 5</td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
-                ❌ Défaite
-              </span>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">3m 45s</td>
-          </tr>
-          <tr class="hover:bg-gray-50">
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">13/01/2024 16:42</td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="flex items-center">
-                <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center mr-3">
-                  <span class="text-sm">👤</span>
-                </div>
-                <span class="text-sm font-medium text-gray-900">Mathis</span>
-              </div>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">5 - 1</td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                ✅ Victoire
-              </span>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">4m 12s</td>
-          </tr>
-          <tr class="hover:bg-gray-50">
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">12/01/2024 11:20</td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="flex items-center">
-                <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center mr-3">
-                  <span class="text-sm">👤</span>
-                </div>
-                <span class="text-sm font-medium text-gray-900">Jean</span>
-              </div>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">3 - 5</td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
-                ❌ Défaite
-              </span>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">6m 38s</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-<!-- Statistiques de la période -->
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-    <div class="bg-white p-6 text-center">
-      <div class="text-3xl font-bold text-blue-600">4</div>
-      <div class="text-sm text-gray-600">Parties cette semaine</div>
-    </div>
-    <div class="bg-white p-6 text-center">
-      <div class="text-3xl font-bold text-green-600">2</div>
-      <div class="text-sm text-gray-600">Victoires</div>
-    </div>
-    <div class="bg-white p-6 text-center">
-      <div class="text-3xl font-bold text-red-600">2</div>
-      <div class="text-sm text-gray-600">Défaites</div>
-    </div>
-    <div class="bg-white p-6 text-center">
-      <div class="text-3xl font-bold text-purple-600">50%</div>
-      <div class="text-sm text-gray-600">Winrate</div>
-    </div>
-  </div>
-</div>
-`;
-  if (sessionStorage.getItem('token') && sessionStorage.getItem('token')) {
-			const currentUser = sessionStorage.getItem('username');
-			const container = document.querySelector('#history-container') as HTMLTableSectionElement;
-
-			fetch('/user/api/get-match-history', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'Authorization': `Bearer ${sessionStorage.getItem('token')}`
-				},
-				body: JSON.stringify({
-					username: currentUser,
-				})
-			})
-			.then(res => {
-				container.innerHTML = '';
-				if (!res.ok) {
-					return res.json().then(data => Promise.reject(data));
-				}
-				return res.json();
-			})
-			.then((data: { matchHistory: any[] }) => {
-
-				const matches = data.matchHistory
-					.filter(entry => entry !== null); // On garde tout l’objet du match
-
-				matches.forEach((match) => {
-					const victory = match.winner ? "✅ Victoire" : "❌ Défaite";
-					const victoryColor = match.winner ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800";
-
-					const tr = document.createElement('tr');
-					tr.className = 'hover:bg-gray-700/40';
-
-					tr.innerHTML = `
-					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${match.date}</td>
-					<td class="px-6 py-4 whitespace-nowrap">
-							<div class="flex items-center">
-									<div class="w-8 h-8 rounded-full flex items-center justify-center mr-3 border border-gray-50">
-											<img src="${match.avatar}" alt="avatar"/>
+    window.clearInterval((globalThis as any).showOnlineFriendsIntervalId);
+    window.clearInterval((globalThis as any).showOfflineFriendsIntervalId);
+    window.clearInterval((globalThis as any).showFriendRequestIntervalId);
+    return `
+							<div class="space-y-6">
+									
+									<!-- Historique des matches -->
+									<div class="backdrop-blur-2xs border border-gray-50 ">
+											<div class="px-6 py-4 border-b border-gray-700">
+													<h3 class="text-lg font-semibold text-gray-100">📈 Historique des matches</h3>
+											</div>
+                    <div class="p-6 rounded-xl shadow-md w-80 text-center">
+                      <svg id="pieChart" width="200" height="200" viewBox="0 0 32 32"></svg>
+                      <div class="mt-4">
+                        <div class="flex items-center gap-2 text-gray-400" id="victory-class">
+                        <span class="w-3 h-3 bg-blue-500 rounded-full"></span>
+                        Victory: 100%</div>
+                        <div class="flex items-center gap-2 text-gray-400" id="defeat-class">
+                        <span class="w-3 h-3 bg-red-500 rounded-full"></span>
+                        Defeat: 0%</div>
+                      </div>
+                    </div>
+										<div class="p-6 overflow-y-auto min-h-[30vh] max-h-[30vh]">
+													<table class="w-full">
+													<thead class="bg-transparent">
+																	<tr>
+																<th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Date</th>
+																<th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Adversaire</th>
+																<th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Score</th>
+																<th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Résultat</th>
+																<th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Mode de jeu</th>
+																	</tr>
+													</thead>
+													<tbody class="bg-transparent divide-y divide-gray-800" id="history-container"></tbody>
+													</table>
+											</div>
 									</div>
-									<span class="text-sm font-medium text-gray-100">${match.versus}</span>
+	
+									<!-- Statistiques de la période -->
+									<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+											<div class="backdrop-blur-2xs border border-gray-50 p-6 text-center">
+													<div class="text-3xl font-bold text-blue-400">4</div>
+													<div class="text-sm text-gray-400">Parties cette semaine</div>
+											</div>
+											<div class="backdrop-blur-2xs border border-gray-50 p-6 text-center">
+													<div class="text-3xl font-bold text-green-400">2</div>
+													<div class="text-sm text-gray-400">Victoires</div>
+											</div>
+											<div class="backdrop-blur-2xs border border-gray-50 p-6 text-center">
+													<div class="text-3xl font-bold text-red-400">2</div>
+													<div class="text-sm text-gray-400">Défaites</div>
+											</div>
+											<div class="backdrop-blur-2xs border border-gray-50 p-6 text-center">
+													<div class="text-3xl font-bold text-purple-400">50%</div>
+													<div class="text-sm text-gray-400">Winrate</div>
+											</div>
+									</div>
 							</div>
-					</td>
-					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-100">${match.score}</td>
-					<td class="px-6 py-4 whitespace-nowrap">
-							<span class="px-2 py-1 text-xs font-semibold ${victoryColor} rounded-full">
-									${victory}
-							</span>
-					</td>
-					<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${match.elo}</td>
 					`;
-
-					container.appendChild(tr);
-				});
-			})
-			.catch(err => {
-				const msg = err.error || 'Impossible de recevoir l\'historique des matches';
-				Layout.showNotification(msg, 'error');
-			});
-		}
-	},
+  },
 
   mount(root) {
     // Gestion des onglets
+    let _friends = 0;
+    Object.defineProperty(globalThis, "friends", {
+      get() {
+        return _friends;
+      },
+      set(value) {
+        _friends = value;
+        updateFriendsUI(value);
+      },
+      configurable: true,
+      enumerable: true
+    });
+
+    // ELO fetched after profile content is rendered so element exists
+    const fetchElo = () => {
+      const indicatorEl = document.getElementById('change-elo');
+      if (!indicatorEl) return;
+      fetch('/user/api/get-elo', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ username: sessionStorage.getItem('username') })
+      })
+        .then(res => {
+          if (!res.ok) return res.json().then(data => Promise.reject(data));
+          return res.json();
+        })
+        .then((data: { elo: number }) => {
+          indicatorEl.textContent = data.elo?.toFixed(0).toString() ?? '?';
+        })
+        .catch(err => {
+          const msg = err?.error || 'Impossible de recevoir l\'elo du joueur';
+          Layout.showNotification(msg, 'error');
+        });
+    };
+
+    function updateFriendsUI(count: number) {
+      const el = document.getElementById("friends-counter");
+      if (el) el.textContent = count.toString();
+    }
+
+    // for (let index = 0; index < 15; index++) {
+
+    //   const usernames = [];
+    //   usernames.push(sessionStorage.getItem("username"));
+    //   usernames.push(sessionStorage.getItem("username"));
+    //   const scores = {
+    //     player1: 12,
+    //     player2: 2,
+    //   };
+    //   const tokens = [];
+    //   tokens.push(sessionStorage.getItem("token"));
+    //   tokens.push(sessionStorage.getItem("token"));
+    //   fetch('/user/api/post-match', {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //       'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+    //     },
+    //     body: JSON.stringify({
+    //       usernames: usernames, winner: 1, scores, gameMode: 'challenge', tokens: tokens
+    //     })
+    //   })
+    // }
+
     const profileTab = root.querySelector('#profile-tab') as HTMLButtonElement;
     const historyTab = root.querySelector('#history-tab') as HTMLButtonElement;
     const contentContainer = root.querySelector('#content-container') as HTMLDivElement;
     const indicator = root.querySelector('#tab-indicator') as HTMLDivElement | null;
 
     const renderContent = () => {
-      if (contentContainer) {
-        contentContainer.innerHTML = activeTab === 'profile' ? this.renderProfile() : this.renderHistory();
-        if (activeTab === 'profile') {
-          this.mountProfileEvents(contentContainer);
-        }
+      if (!contentContainer) return;
+      contentContainer.innerHTML = activeTab === 'profile' ? this.renderProfile() : this.renderHistory();
+      if (activeTab === 'profile') {
+        this.mountProfileEvents(contentContainer);
+        fetchElo(); // ensure ELO loads after element is present
       }
     };
 
@@ -418,6 +413,7 @@ const Stats: StatsPage = {
       activeTab = 'history';
       updateIndicator();
       renderContent();
+      this.updateContentHistory();
     };
 
     if (profileTab) {
@@ -425,73 +421,197 @@ const Stats: StatsPage = {
     }
 
     if (historyTab) {
-        historyTab.addEventListener('click', switchToHistory);
-      }
+      historyTab.addEventListener('click', switchToHistory);
+    }
 
-      // Initial content/events mount based on active tab
-      renderContent();
+    // Initial content/events mount based on active tab
+
+    renderContent();
+    // In case initial tab is profile and ELO element already in DOM
+    if (activeTab === 'profile') fetchElo();
+
   },
 
   mountProfileEvents(root: HTMLElement) {
+
     this.showOnlineFriends(root);
 
-      // Change username
-      const addFriendBtn = root.querySelector('#add-friend-btn') as HTMLButtonElement;
-      if (addFriendBtn) {
-        addFriendBtn.addEventListener('click', () => {
-          this.handleAddFriendClick(root);
+    const addFriendBtn = root.querySelector('#add-friend-btn') as HTMLButtonElement;
+    if (addFriendBtn) {
+      addFriendBtn.addEventListener('click', () => {
+        this.handleAddFriendClick(root);
+      });
+    }
+
+    const wrStat = document.getElementById('stats-win-rate');
+    if (wrStat && sessionStorage.getItem('token')) {
+      const currentUser = sessionStorage.getItem('username');
+      fetch('/user/api/get-match-history', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ username: currentUser })
+      })
+        .then(res => {
+          if (!res.ok) return res.json().then(data => Promise.reject(data));
+          return res.json(); // réponse déjà en JSON
+        })
+        .then((data: { matchHistory: Array<any> }) => {
+          if (!data.matchHistory || data.matchHistory.length === 0) return;
+
+          // Calculer les victoires directement sur le tableau
+          const victories = data.matchHistory.reduce((acc, match) => acc + (match.winner ? 1 : 0), 0);
+          const wr = (victories / data.matchHistory.length) * 100;
+
+          wrStat.textContent = wr.toFixed(2) + '%';
+        })
+        .catch(err => {
+          const msg = err?.error || 'Impossible de recevoir l\'historique des matches';
+          Layout.showNotification(msg, 'error');
         });
-      }
-    const changeUsername = root.querySelector('#change-username') as HTMLElement;
-    if (changeUsername) {
-      changeUsername.addEventListener('click', () => {
-        const newUsername = prompt('Nouveau nom d\'utilisateur:', 'LUCAS');
-          if (newUsername) {
-            const usernameSpan = root.querySelector('#change-username')?.previousElementSibling;
-              if (usernameSpan) {
-                usernameSpan.textContent = newUsername.toUpperCase();
+    }
+
+    //change username
+    const usernameEl = document.getElementById("change-username");
+    if (usernameEl) {
+      usernameEl.addEventListener("click", () => {
+        usernameEl.contentEditable = "true";
+        usernameEl.focus();
+      });
+      usernameEl.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          usernameEl.blur();
+        }
+      });
+
+      usernameEl.addEventListener("blur", () => {
+        usernameEl.contentEditable = "false";
+        if (!usernameEl.textContent || usernameEl.textContent === '')
+          usernameEl.textContent = sessionStorage.getItem('username');
+        if (usernameEl.textContent && usernameEl.textContent.trim() !== sessionStorage.getItem('username')) {
+          const newUsername = usernameEl.textContent.trim();
+          fetch('/user/api/change-name', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
+            },
+            body: JSON.stringify({
+              username: sessionStorage.getItem('username'),
+              newUsername: newUsername,
+            })
+          })
+            .then(async (res) => {
+              const text = await res.text();
+              let data;
+              try {
+                data = JSON.parse(text);
+              } catch {
+                data = text;
               }
-          }
+              if (!res.ok) {
+                return Promise.reject(data);
+              }
+              return data;
+            })
+            .then((data: { message: string; token?: string }) => {
+              if (data.token) {
+                sessionStorage.setItem('token', data.token);
+                sessionStorage.setItem('username', Layout.getUserInfoFromJwt(data.token).username);
+                Layout.updateUsername();
+              }
+              Layout.showNotification(data.message || 'username changé avec succès', 'success');
+            })
+            .catch(err => {
+              console.error('Fetch error:', err);
+              const msg = (err && (err.error || err.message)) || 'Impossible de changer de nom d\'utilisateur';
+              Layout.showNotification(msg, 'error');
+            });
+        }
       });
     }
 
     // Disconnect
-      const disconnectBtn = root.querySelector('#disconnectBtn') as HTMLButtonElement;
-      if (disconnectBtn) {
-        disconnectBtn.addEventListener('click', () => {
-          sessionStorage.removeItem('isLoggedIn');
-          sessionStorage.removeItem('token');
-          sessionStorage.removeItem('username');
-          Layout.updateLoginButton(document.body, false);
-          clearInterval((globalThis as any).loginIntervalId);
-          const p = '/';
-          history.pushState(null, '', p);
-          window.dispatchEvent(new PopStateEvent('popstate'));
-        });
-      }
-
-		//Change mail
-    const changeMail = root.querySelector('#change-mail') as HTMLElement;
-    if (changeMail) {
-      changeMail.addEventListener('click', () => {
-        const newMail = prompt('Nouveau mail :', 'LUCA@GMAIL.COM');
-          if (newMail) {
-            const mailSpan = root.querySelector('#change-mail')?.previousElementSibling;
-              if (mailSpan) {
-                mailSpan.textContent = newMail.toUpperCase();
-              }
-          }
+    const disconnectBtn = root.querySelector('#disconnectBtn') as HTMLButtonElement;
+    if (disconnectBtn) {
+      disconnectBtn.addEventListener('click', () => {
+        sessionStorage.removeItem('isLoggedIn');
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('username');
+        Layout.updateLoginButton(document.body, false);
+        clearInterval((globalThis as any).loginIntervalId);
+        const p = '/';
+        history.pushState(null, '', p);
+        window.dispatchEvent(new PopStateEvent('popstate'));
       });
     }
 
-    // Change avatar
-    const changeAvatar = root.querySelector('#change-avatar') as HTMLElement;
-    if (changeAvatar) {
-      changeAvatar.addEventListener('change', (event) => {
-				const target = event.target as HTMLSelectElement;
-        const selectedValue = target.value;
-				if (target.value != '')
-					this.changeNewAvatar(root, selectedValue);
+    // Password modal handlers
+    const openPwdBtn = root.querySelector('#open-password-modal') as HTMLButtonElement | null;
+    const pwdModal = root.querySelector('#password-modal') as HTMLDivElement | null;
+    if (openPwdBtn && pwdModal) {
+      const closeEls = pwdModal.querySelectorAll('[data-close-password-modal]');
+      openPwdBtn.addEventListener('click', () => pwdModal.classList.remove('hidden'));
+      closeEls.forEach(el => el.addEventListener('click', () => pwdModal.classList.add('hidden')));
+      const form = pwdModal.querySelector('#password-form') as HTMLFormElement | null;
+      if (form) {
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const oldPass = (form.querySelector('#old-password') as HTMLInputElement).value.trim();
+          const newPass = (form.querySelector('#new-password') as HTMLInputElement).value.trim();
+          const confirmPass = (form.querySelector('#confirm-password') as HTMLInputElement).value.trim();
+          if (newPass !== confirmPass) {
+            Layout.showNotification('Les mots de passe ne correspondent pas', 'error');
+            return;
+          }
+          fetch('/user/api/change-password', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+            },
+            body: JSON.stringify({
+              username: sessionStorage.getItem('username'),
+              password: oldPass,
+              newPassword: newPass
+            })
+          })
+            .then(res => res.text().then(t => {
+              let data: any;
+              try { data = JSON.parse(t); } catch { data = { message: t }; }
+              if (!res.ok) return Promise.reject(data);
+              return data;
+            }))
+            .then(data => {
+              Layout.showNotification(data.message || 'Mot de passe changé', 'success');
+              form.reset();
+              pwdModal.classList.add('hidden');
+            })
+            .catch(err => {
+              const msg = (err && (err.error || err.message)) || 'Impossible de changer le mot de passe';
+              Layout.showNotification(msg, 'error');
+            });
+        });
+      }
+    }
+
+    //change avatar
+    const openAvatarBtn = root.querySelector('#open-avatar-modal') as HTMLButtonElement | null;
+    const avatarModal = root.querySelector('#avatar-modal') as HTMLDivElement | null;
+    const closeAvatarEls = avatarModal ? avatarModal.querySelectorAll('[data-close-avatar-modal]') : [];
+    if (openAvatarBtn && avatarModal) {
+      openAvatarBtn.addEventListener('click', () => avatarModal.classList.remove('hidden'));
+      closeAvatarEls.forEach(el => el.addEventListener('click', () => avatarModal.classList.add('hidden')));
+      avatarModal.querySelectorAll('[data-avatar]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const file = (btn as HTMLElement).getAttribute('data-avatar');
+          if (!file) return;
+          this.changeNewAvatar(root, file);
+          avatarModal.classList.add('hidden');
+        });
       });
     }
 
@@ -499,355 +619,484 @@ const Stats: StatsPage = {
     const onlineTab = root.querySelector('#friends-online-tab') as HTMLButtonElement | null;
     const offlineTab = root.querySelector('#friends-offline-tab') as HTMLButtonElement | null;
     const requestTab = root.querySelector('#friends-request-tab') as HTMLButtonElement | null;
-		const tabIndicator = root.querySelector('#friends-tab-indicator') as HTMLDivElement | null;
+    const tabIndicator = root.querySelector('#friends-tab-indicator') as HTMLDivElement | null;
     const onlineSection = root.querySelector('#online-friends') as HTMLElement | null;
     const offlineSection = root.querySelector('#offline-friends') as HTMLElement | null;
-		const requestSection = root.querySelector('#request-friends') as HTMLElement | null;
+    const requestSection = root.querySelector('#request-friends') as HTMLElement | null;
 
     const showOnline = () => {
       if (tabIndicator) tabIndicator.style.transform = 'translateX(0%)';
       if (onlineSection) onlineSection.classList.remove('hidden');
       if (offlineSection) offlineSection.classList.add('hidden');
-    if (requestSection) requestSection.classList.add('hidden');
-			window.clearInterval((globalThis as any).showOfflineFriendsIntervalId);
-			window.clearInterval((globalThis as any).showFriendRequestIntervalId);
-			this.showOnlineFriends(root);
-			clearInterval((globalThis as any).showOnlineFriendsIntervalId);
-			(globalThis as any).showOnlineFriendsIntervalId = setInterval(async () => {
-				this.showOnlineFriends(root);
-			}, 5000);
-		};
+      if (requestSection) requestSection.classList.add('hidden');
+      window.clearInterval((globalThis as any).showOfflineFriendsIntervalId);
+      window.clearInterval((globalThis as any).showFriendRequestIntervalId);
+      this.showOnlineFriends(root);
+      clearInterval((globalThis as any).showOnlineFriendsIntervalId);
+      (globalThis as any).showOnlineFriendsIntervalId = setInterval(async () => {
+        this.showOnlineFriends(root);
+      }, 5000);
+    };
 
     const showOffline = () => {
       if (tabIndicator) tabIndicator.style.transform = 'translateX(100%)';
       if (offlineSection) offlineSection.classList.remove('hidden');
       if (onlineSection) onlineSection.classList.add('hidden');
-    if (requestSection) requestSection.classList.add('hidden');
-			window.clearInterval((globalThis as any).showOnlineFriendsIntervalId);
-			window.clearInterval((globalThis as any).showFriendRequestIntervalId);
-			this.showOfflineFriends(root);
-			clearInterval((globalThis as any).showOfflineFriendsIntervalId);
-			(globalThis as any).showOfflineFriendsIntervalId = setInterval(async () => {
-				this.showOfflineFriends(root);
-			}, 5000);
-		};
+      if (requestSection) requestSection.classList.add('hidden');
+      window.clearInterval((globalThis as any).showOnlineFriendsIntervalId);
+      window.clearInterval((globalThis as any).showFriendRequestIntervalId);
+      this.showOfflineFriends(root);
+      clearInterval((globalThis as any).showOfflineFriendsIntervalId);
+      (globalThis as any).showOfflineFriendsIntervalId = setInterval(async () => {
+        this.showOfflineFriends(root);
+      }, 5000);
+    };
 
-		const showRequestTab = () => {
-			if (tabIndicator) tabIndicator.style.transform = 'translateX(200%)';
-			if (requestSection) requestSection.classList.remove('hidden');
-			if (onlineSection) onlineSection.classList.add('hidden');
-			if (offlineSection) offlineSection.classList.add('hidden');
-			window.clearInterval((globalThis as any).showOnlineFriendsIntervalId);
-			window.clearInterval((globalThis as any).showOfflineFriendsIntervalId);
-			this.showFriendRequest(root);
-			clearInterval((globalThis as any).showFriendRequestIntervalId);
-			(globalThis as any).showFriendRequestIntervalId = setInterval(async () => {
-				this.showFriendRequest(root);
-			}, 5000);
-		};
+    const showRequestTab = () => {
+      if (tabIndicator) tabIndicator.style.transform = 'translateX(200%)';
+      if (requestSection) requestSection.classList.remove('hidden');
+      if (onlineSection) onlineSection.classList.add('hidden');
+      if (offlineSection) offlineSection.classList.add('hidden');
+      window.clearInterval((globalThis as any).showOnlineFriendsIntervalId);
+      window.clearInterval((globalThis as any).showOfflineFriendsIntervalId);
+      this.showFriendRequest(root);
+      clearInterval((globalThis as any).showFriendRequestIntervalId);
+      (globalThis as any).showFriendRequestIntervalId = setInterval(async () => {
+        this.showFriendRequest(root);
+      }, 5000);
+    };
 
     if (onlineTab) onlineTab.addEventListener('click', showOnline);
     if (offlineTab) offlineTab.addEventListener('click', showOffline);
-		if (requestTab) requestTab.addEventListener('click', showRequestTab);
-	},
-
-  handleAddFriendClick(root: HTMLElement) {
-      const input = root.querySelector('#add-friend-input') as HTMLInputElement;
-      const invitedUsername = input?.value?.trim();
-
-      if (!invitedUsername) {
-        Layout.showNotification('Veuillez entrer un nom d\'utilisateur', 'error');
-        return;
-      }
-
-      const currentUser = sessionStorage.getItem('username');
-      if (!currentUser) {
-        Layout.showNotification('Vous devez être connecté', 'error');
-        return;
-      }
-
-      if (invitedUsername === currentUser) {
-        Layout.showNotification('Vous ne pouvez pas vous ajouter vous-même !', 'error');
-        return;
-      }
-
-      fetch('/user/friends/invite-request', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${sessionStorage.getItem('token')}`
-        },
-        body: JSON.stringify({
-          author: currentUser,
-          invited: invitedUsername
-        })
-      })
-        .then(res => {
-          if (res.ok) {
-            Layout.showNotification(`Invitation envoyée à ${invitedUsername} !`);
-            input.value = '';
-          } else {
-            return res.json().then(data => Promise.reject(data));
-          }
-        })
-        .catch(err => {
-          const msg = err.error || 'Impossible d\'envoyer l\'invitation';
-          Layout.showNotification(msg, 'error');
-        });
+    if (requestTab) requestTab.addEventListener('click', showRequestTab);
   },
 
-	showFriendRequest(root: HTMLElement) {
-	const currentUser = sessionStorage.getItem('username');
-	const container = root.querySelector('#request-friends-container') as HTMLDivElement;
+  handleAddFriendClick(root: HTMLElement) {
+    const input = root.querySelector('#add-friend-input') as HTMLInputElement;
+    const invitedUsername = input?.value?.trim();
 
-	if (!currentUser) {
-		Layout.showNotification('Vous devez être connecté', 'error');
-		return;
-	}
+    if (!invitedUsername) {
+      Layout.showNotification('Veuillez entrer un nom d\'utilisateur', 'error');
+      return;
+    }
 
-	fetch('/user/friends/get-friend-request', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			'Authorization': `Bearer ${sessionStorage.getItem('token')}`
-		},
-		body: JSON.stringify({
-			username: currentUser,
-		})
-	})
-		.then(res => {
-			container.innerHTML = '';
-			if (!res.ok) {
-				return res.json().then(data => Promise.reject(data));
-			}
-			return res.json();
-		})
-		.then((data: { invites: { username: string }[] }) => {
+    const currentUser = sessionStorage.getItem('username');
+    if (!currentUser) {
+      Layout.showNotification('Vous devez être connecté', 'error');
+      return;
+    }
 
-			const usernames = data.invites
-				.filter((entry) => entry && entry.username)
-				.map((entry) => entry.username);
-			usernames.forEach((username: string) => {
-				const li = document.createElement('li');
-				li.className = 'flex items-center justify-between';
-				li.innerHTML = `
+    if (invitedUsername === currentUser) {
+      Layout.showNotification('Vous ne pouvez pas vous ajouter vous-même !', 'error');
+      return;
+    }
+
+    fetch('/user/friends/invite-request', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+      },
+      body: JSON.stringify({
+        author: currentUser,
+        invited: invitedUsername
+      })
+    })
+      .then(res => {
+        if (res.ok) {
+          Layout.showNotification(`Invitation envoyée à ${invitedUsername} !`);
+          input.value = '';
+        } else {
+          return res.json().then(data => Promise.reject(data));
+        }
+      })
+      .catch(err => {
+        const msg = err.error || 'Impossible d\'envoyer l\'invitation';
+        Layout.showNotification(msg, 'error');
+      });
+  },
+
+  showFriendRequest(root: HTMLElement) {
+    const currentUser = sessionStorage.getItem('username');
+    const container = root.querySelector('#request-friends-container') as HTMLDivElement;
+
+    if (!currentUser) {
+      Layout.showNotification('Vous devez être connecté', 'error');
+      return;
+    }
+
+    fetch('/user/friends/get-friend-request', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+      },
+      body: JSON.stringify({
+        username: currentUser,
+      })
+    })
+      .then(res => {
+        container.innerHTML = '';
+        if (!res.ok) {
+          return res.json().then(data => Promise.reject(data));
+        }
+        return res.json();
+      })
+      .then((data: { invites: { username: string }[] }) => {
+
+        const usernames = data.invites
+          .filter((entry) => entry && entry.username)
+          .map((entry) => entry.username);
+        usernames.forEach((username: string) => {
+          const li = document.createElement('li');
+          li.className = 'flex items-center justify-between';
+          li.innerHTML = `
+        }
 				<span class="text-gray-200 flex items-center">
 					<span class="inline-block w-2 h-2 mr-2 relative">
 					<span class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0 
 						 border-l-[4px] border-r-[4px] border-b-[6px] border-l-transparent border-r-transparent border-b-purple-500"></span>
 					</span>
-					${username}
+          ${username}
 				</span>
 				<button class="invite-btn px-3 py-1 text-xs bg-blue-500 text-white hover:bg-blue-600 transition-colors" id="Btn-${username}">
-					Accept
+        Accept
 				</button>
-			`;
-				const btn = li.querySelector('button') as HTMLButtonElement;
-				btn.addEventListener('click', () => {
-					this.acceptFriendRequest(username, li);
-				});
-				container.appendChild(li);
-			});
-		})
-		.catch(err => {
-			const msg = err.error || 'Impossible de recevoir les requetes d\'amis';
-			Layout.showNotification(msg, 'error');
-		});
-	},
+        `;
+          const btn = li.querySelector('button') as HTMLButtonElement;
+          btn.addEventListener('click', () => {
+            this.acceptFriendRequest(username, li);
+          });
+          container.appendChild(li);
+        });
+      })
+      .catch(err => {
+        const msg = err.error || 'Impossible de recevoir les requetes d\'amis';
+        Layout.showNotification(msg, 'error');
+      });
+  },
 
-	acceptFriendRequest(username: string, element: HTMLElement) {
-		fetch('/user/friends/accept-request', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				'Authorization': `Bearer ${sessionStorage.getItem('token')}`
-			},
-			body: JSON.stringify({ author: sessionStorage.getItem('username'), accepted: username })
-		})
-			.then(res => {
-				if (!res.ok) {
-					return res.json().then(data => Promise.reject(data));
-				}
-				element.remove();
-				Layout.showNotification(`Vous avez accepté ${username}`, 'success');
-			})
-			.catch(err => {
-				const msg = err.error || `Impossible d'accepter ${username}`;
-				Layout.showNotification(msg, 'error');
-			});
-	},
+  acceptFriendRequest(username: string, element: HTMLElement) {
+    fetch('/user/friends/accept-request', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+      },
+      body: JSON.stringify({ author: sessionStorage.getItem('username'), accepted: username })
+    })
+      .then(res => {
+        if (!res.ok) {
+          return res.json().then(data => Promise.reject(data));
+        }
+        element.remove();
+        Layout.showNotification(`Vous avez accepté ${username}`, 'success');
+      })
+      .catch(err => {
+        const msg = err.error || `Impossible d'accepter ${username}`;
+        Layout.showNotification(msg, 'error');
+      });
+  },
 
-	showOnlineFriends(root: HTMLElement) {
-		const currentUser = sessionStorage.getItem('username');
-		const container = root.querySelector('#online-friends-container') as HTMLDivElement;
+  showOnlineFriends(root: HTMLElement) {
+    const currentUser = sessionStorage.getItem('username');
+    const container = root.querySelector('#online-friends-container') as HTMLDivElement;
 
-		if (!currentUser) {
-			Layout.showNotification('Vous devez être connecté', 'error');
-			return;
-		}
+    if (!currentUser) {
+      Layout.showNotification('Vous devez être connecté', 'error');
+      return;
+    }
 
-		fetch('/user/friends/get-friends', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				'Authorization': `Bearer ${sessionStorage.getItem('token')}`
-			},
-			body: JSON.stringify({
-				username: currentUser,
-			})
-		})
-			.then(res => {
-				container.innerHTML = '';
-				if (!res.ok) {
-					return res.json().then(data => Promise.reject(data));
-				}
-				return res.json();
-			})
-			.then((data: { friends: { username: string }[], friendsStatus: { online: boolean }[] }) => {
-				const usersWithStatus = data.friends
-					.filter(entry => entry && entry.username)
-					.map((entry, index) => ({
-						username: entry.username,
-						online: data.friendsStatus[index]?.online ?? false
-					}));
-				usersWithStatus.forEach((user) => {
-					if (user.online) {
-						const li = document.createElement('li');
-						li.className = 'flex items-center justify-between';
-						li.innerHTML = `
+    fetch('/user/friends/get-friends', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+      },
+      body: JSON.stringify({
+        username: currentUser,
+      })
+    })
+      .then(res => {
+        container.innerHTML = '';
+        if (!res.ok) {
+          return res.json().then(data => Promise.reject(data));
+        }
+        return res.json();
+      })
+      .then((data: { friends: { username: string }[], friendsStatus: { online: boolean }[] }) => {
+        const usersWithStatus = data.friends
+          .filter(entry => entry && entry.username)
+          .map((entry, index) => ({
+            username: entry.username,
+            online: data.friendsStatus[index]?.online ?? false
+          }));
+        (globalThis as any).friends = usersWithStatus.length;
+        usersWithStatus.forEach((user) => {
+          if (user.online) {
+            const li = document.createElement('li');
+            li.className = 'flex items-center justify-between';
+            li.innerHTML = `
 					<span class="text-gray-200 flex items-center">
 					<span class="w-2 h-2 bg-green-500 mr-2"></span>
 					${user.username}
 					</span>
 					`;
-						container.appendChild(li);
-					}
-				});
-			})
-			.catch(err => {
-				const msg = err.error || 'Impossible de recevoir les requetes d\'amis';
-				Layout.showNotification(msg, 'error');
-			});
-	},
+            container.appendChild(li);
+          }
+        });
+      })
+      .catch(err => {
+        const msg = err.error || 'Impossible de recevoir les requetes d\'amis';
+        Layout.showNotification(msg, 'error');
+      });
+  },
 
-	changeNewAvatar(root: HTMLElement, newAvatar: string) {
-		const currentUser = sessionStorage.getItem('username');
-		const token = sessionStorage.getItem('token');
+  changeNewAvatar(root: HTMLElement, newAvatar: string) {
+    const currentUser = sessionStorage.getItem('username');
+    const token = sessionStorage.getItem('token');
 
-		if (!currentUser) {
-			Layout.showNotification('Vous devez être connecté', 'error');
-			return;
-		}
+    if (!currentUser) {
+      Layout.showNotification('Vous devez être connecté', 'error');
+      return;
+    }
 
-		fetch('/user/api/change-avatar', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				'Authorization': `Bearer ${token}`
-			},
-			body: JSON.stringify({
-				username: currentUser,
-				avatar: newAvatar
-			})
-		})
-			.then(async (res) => {
-				const text = await res.text();
-				let data;
-				try {
-					data = JSON.parse(text);
-				} catch {
-					data = text;
-				}
+    fetch('/user/api/change-avatar', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        username: currentUser,
+        avatar: newAvatar
+      })
+    })
+      .then(async (res) => {
+        const text = await res.text();
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch {
+          data = text;
+        }
 
-				console.log('Response status:', res.status);
-				console.log('Response data:', data);
+        console.log('Response status:', res.status);
+        console.log('Response data:', data);
 
-				if (!res.ok) {
-					return Promise.reject(data);
-				}
-				return data;
-			})
-			.then((data: { message: string; token?: string }) => {
-				if (data.token) {
-					sessionStorage.setItem('token', data.token);
-					this.updateAvatar();
-				}
-				Layout.showNotification(data.message || 'Avatar changé avec succès', 'success');
-			})
-			.catch(err => {
-				console.error('Fetch error:', err);
-				const msg = (err && (err.error || err.message)) || 'Impossible de changer d\'avatar';
-				Layout.showNotification(msg, 'error');
-			});
-	},
+        if (!res.ok) {
+          return Promise.reject(data);
+        }
+        return data;
+      })
+      .then((data: { message: string; token?: string }) => {
+        if (data.token) {
+          sessionStorage.setItem('token', data.token);
+          this.updateAvatar();
+        }
+        Layout.showNotification(data.message || 'Avatar changé avec succès', 'success');
+      })
+      .catch(err => {
+        console.error('Fetch error:', err);
+        const msg = (err && (err.error || err.message)) || 'Impossible de changer d\'avatar';
+        Layout.showNotification(msg, 'error');
+      });
+  },
 
-	showOfflineFriends(root: HTMLElement) {
-		const currentUser = sessionStorage.getItem('username');
-		const container = root.querySelector('#offline-friends-container') as HTMLDivElement;
+  showOfflineFriends(root: HTMLElement) {
+    const currentUser = sessionStorage.getItem('username');
+    const container = root.querySelector('#offline-friends-container') as HTMLDivElement;
 
-		if (!currentUser) {
-			Layout.showNotification('Vous devez être connecté', 'error');
-			return;
-		}
+    if (!currentUser) {
+      Layout.showNotification('Vous devez être connecté', 'error');
+      return;
+    }
 
-		fetch('/user/friends/get-friends', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				'Authorization': `Bearer ${sessionStorage.getItem('token')}`
-			},
-			body: JSON.stringify({
-				username: currentUser,
-			})
-		})
-			.then(res => {
-				container.innerHTML = '';
-				if (!res.ok) {
-					return res.json().then(data => Promise.reject(data));
-				}
-				return res.json();
-			})
-			.then((data: { friends: { username: string }[], friendsStatus: { online: boolean }[] }) => {
-				const usersWithStatus = data.friends
-					.filter(entry => entry && entry.username)
-					.map((entry, index) => ({
-						username: entry.username,
-						online: data.friendsStatus[index]?.online ?? false
-					}));
-				usersWithStatus.forEach((user) => {
-					if (!user.online) {
-						const li = document.createElement('li');
-						li.className = 'flex items-center';
-						li.innerHTML = `
+    fetch('/user/friends/get-friends', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+      },
+      body: JSON.stringify({
+        username: currentUser,
+      })
+    })
+      .then(res => {
+        container.innerHTML = '';
+        if (!res.ok) {
+          return res.json().then(data => Promise.reject(data));
+        }
+        return res.json();
+      })
+      .then((data: { friends: { username: string }[], friendsStatus: { online: boolean }[] }) => {
+        const usersWithStatus = data.friends
+          .filter(entry => entry && entry.username)
+          .map((entry, index) => ({
+            username: entry.username,
+            online: data.friendsStatus[index]?.online ?? false
+          }));
+        (globalThis as any).friends = usersWithStatus.length;
+        usersWithStatus.forEach((user) => {
+          if (!user.online) {
+            const li = document.createElement('li');
+            li.className = 'flex items-center';
+            li.innerHTML = `
 					<span class="w-2 h-2 bg-gray-400 rounded-full mr-2"></span>
 					<span class="text-gray-200">${user.username}</span>
 					`;
-						container.appendChild(li);
-					}
-				});
-			})
-			.catch(err => {
-				const msg = err.error || 'Impossible de recevoir les requetes d\'amis';
-				Layout.showNotification(msg, 'error');
-			});
-	},
+            container.appendChild(li);
+          }
+        });
+      })
+      .catch(err => {
+        const msg = err.error || 'Impossible de recevoir les requetes d\'amis';
+        Layout.showNotification(msg, 'error');
+      });
+  },
 
-	updateAvatar() {
-		const avatar = document.getElementById('user-avatar') as HTMLImageElement;
+  updateAvatar() {
+    const avatar = document.getElementById('user-avatar') as HTMLImageElement;
 
-		if (avatar)
-		{
-			avatar.src = Layout.getUserInfoFromJwt(sessionStorage.getItem('token')).avatar;
-			Layout.updateAvatar();
-		}
-	}
+    if (avatar) {
+      avatar.src = Layout.getUserInfoFromJwt(sessionStorage.getItem('token')).avatar;
+      Layout.updateAvatar();
+    }
+  },
+
+  /*playedTimesinHours(matches, timesInHours)
+  {
+    const HOUR = 3600000;
+    let matchInPoT = 0;
+    let timePlayedInPot = 0;
+
+    matches.forEach(match => {
+      const timeStamp = Date.now() -
+      (() => {
+        const [d, t] = match.date.split(', ');
+        const [day, month, year] = d.split('/').map(Number);
+        const [h, m, s] = t.split(':').map(Number);
+        return new Date(year, month - 1, day, h, m, s).getTime();
+      })();
+      if (timeStamp < HOUR * timesInHours)
+      {
+        matchInPoT++;
+        timePlayedInPot += match.;
+      }
+    });
+    return {
+      matchesPlayed: matchInPoT,
+      timePlayed: timePlayedInPot
+    };
+  },
+
+  updateTimeplayed(matches){
+    const matchDay = this.playedTimesinHours(matches, 24);
+    const matchWeek = this.playedTimesinHours(matches, 24  * 7);
+  },*/
+
+  updateContentHistory() {
+    const token = sessionStorage.getItem('token');
+    if (!token) return;
+
+    const currentUser = sessionStorage.getItem('username');
+    const container = document.querySelector('#history-container') as HTMLTableSectionElement;
+    if (!container) return;
+
+    fetch('/user/api/get-match-history', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ username: currentUser })
+    })
+      .then(res => {
+        container.innerHTML = '';
+        if (!res.ok) return res.json().then(data => Promise.reject(data));
+        return res.json();
+      })
+      .then((data: { matchHistory: Array<any> }) => {
+        if (!data.matchHistory || data.matchHistory.length === 0) {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+                <td class="px-6 py-4 whitespace-nowrap font-bold text-gray-300" colspan="5">
+                    Jouez des parties pour avoir un historique
+                </td>`;
+          container.appendChild(tr);
+            const fallbackSlices = [
+              { value: 99.99, color: '#3B82F6' },
+              { value: 0.01, color: '#EF4444' },
+            ];
+            drawPieChart(fallbackSlices);
+            return;
+        }
+        data.matchHistory.forEach(match => {
+          const victory = match.winner ? "✅ Victoire" : "❌ Défaite";
+          const victoryColor = match.winner ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800";
+
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-gray-700/40';
+          tr.innerHTML = `
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${match.date}</td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center mr-3 border border-gray-50">
+                            <img src="${match.avatar || '/default-avatar.png'}" alt="avatar"/>
+                        </div>
+                        <span class="text-sm font-medium text-gray-100">${match.versus || 'Inconnu'}</span>
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-100">${match.score}</td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 py-1 text-xs font-semibold ${victoryColor} rounded-full">
+                        ${victory}
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${match.gamemode}</td>
+            `;
+          container.appendChild(tr);
+        });
+        const wrStat = document.getElementById('stats-win-rate');
+        if (wrStat) {
+          let victories = data.matchHistory.reduce((acc, m) => acc + (m.winner ? 1 : 0), 0);
+          const wr = data.matchHistory.length > 0 ? (victories / data.matchHistory.length) * 100 : 0;
+          wrStat.textContent = wr.toFixed(2) + '%';
+        }
+        const total = data.matchHistory.length;
+        const victories = data.matchHistory.reduce((acc, m) => acc + (m.winner ? 1 : 0), 0);
+        const defeats = total - victories;
+        //this.updateTimeplayed(data.matchHistory);
+        const slices = [
+          { value: total > 0 ? (victories / total) * 100 : 0, color: '#3B82F6' },
+          { value: total > 0 ? (defeats / total) * 100 : 0, color: '#EF4444' },
+        ];
+        if (slices[0].value === 100) {
+          slices[0].value = 99.99;
+          slices[1].value = 0.01;
+        }
+        if (slices[1].value === 100) {
+          slices[1].value = 99.99;
+          slices[0].value = 0.01;
+        }
+        drawPieChart(slices);
+        const victorySpan = document.getElementById('victory-class') as HTMLDivElement;
+        const defeatSpan = document.getElementById('defeat-class') as HTMLDivElement;
+        victorySpan.textContent = "Victory: "  + (total > 0 ? (victories / total) * 100 : 0).toFixed(2) + "%";
+        defeatSpan.textContent = "Defeat: " + (total > 0 ? (defeats / total) * 100 : 0).toFixed(2) + "%";
+      })
+      .catch(err => {
+        const msg = err?.error || 'Impossible de recevoir l\'historique des matches';
+        Layout.showNotification(msg, 'error');
+      });
+  }
 }
 
 const popstateHandler = (event: PopStateEvent) => {
-	window.clearInterval((globalThis as any).showOnlineFriendsIntervalId);
-	window.clearInterval((globalThis as any).showOfflineFriendsIntervalId);
-	window.clearInterval((globalThis as any).showFriendRequestIntervalId);
-	window.removeEventListener('popstate', popstateHandler);
+  window.clearInterval((globalThis as any).showOnlineFriendsIntervalId);
+  window.clearInterval((globalThis as any).showOfflineFriendsIntervalId);
+  window.clearInterval((globalThis as any).showFriendRequestIntervalId);
+  window.removeEventListener('popstate', popstateHandler);
 };
 window.addEventListener('popstate', popstateHandler);
 

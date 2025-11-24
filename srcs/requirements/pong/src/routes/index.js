@@ -19,6 +19,9 @@ module.exports = async function (fastify, opts) {
 				try {
 					const data = JSON.parse(message.toString());
 					switch (data.method) {
+						case 'user':
+							await handleUser(socket, data);
+							break;
 						case 'rooms':
 							await handleGetRooms(socket, data);
 							break;
@@ -136,6 +139,26 @@ function leave(clientId) {
 	}
 }
 
+function getEloFromJwt(token) {
+
+	if (!token) {
+		return 0;
+	}
+	const payloadBase64 = token.split('.')[1];
+	const payloadJson = atob(payloadBase64);
+	const payload = JSON.parse(payloadJson);
+	return payload.elo;
+}
+
+function handleUser(socket, data) {
+	const client = g_Games.findClient(data.clientId);
+	if (client === undefined)
+		throw "Client id not good";
+	client._token = data.token;
+	client._elo = getEloFromJwt(data.token);
+	client._name = data.username;
+}
+
 function handleGetFriends(socket, data) {
 	if (g_Games.findClient(data.clientId) === undefined)
 		throw "Client id not good";
@@ -218,7 +241,7 @@ function handleInvite(socket, data) {
 
 	if (g_Games.findRoom(data.roomId) === undefined)
 		throw "Room id not good";
-	
+
 	const room = g_Games.findRoom(data.roomId);
 
 	if (data.response === 'yes') {

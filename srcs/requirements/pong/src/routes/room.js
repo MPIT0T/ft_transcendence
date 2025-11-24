@@ -20,6 +20,8 @@ class Room {
 		this.player1 = new Player(1);
 		this.player2 = new Player(2);
 		this.clients = [];
+		this.startTime = 0;
+		this.endTime = 0;
 
 		// Constantes du jeu
 		this.CANVAS_WIDTH = 900;
@@ -150,6 +152,7 @@ class Room {
 
 	async gameLoop() {
 		let lastTime = Date.now();
+		this.startTime = Date.now();
 
 		while (this.state === "playing-game") {
 			const currentTime = Date.now();
@@ -259,6 +262,8 @@ class Room {
 	}
 
 	async sendGameEnd() {
+
+		this.endTime = Date.now();
         const winner = this.p1Score > this.p2Score ? 1 : this.p1Score < this.p2Score ? 2 : 0;
         const winnerName = winner === 1 ? this.clients[0].name : winner === 2 ? this.clients[1].name : "No one";
 
@@ -277,6 +282,44 @@ class Room {
 				c._conection.send(JSON.stringify(payLoad));
 			}
 		});
+
+
+		const clients = this.clients.map(client => client.id || client)
+
+		const tokens = [];
+		const usernames = [];
+
+		usernames.push(clients[0]._name);
+		usernames.push(clients[1]._name);
+		tokens.push(clients[0]._token);
+		tokens.push(clients[1]._token);
+
+		const bodyPayload = {
+			winner: winner,
+			gameMode: this.gameMode,
+			scores: {
+				player1: this.p1Score,
+				player2: this.p2Score,
+			},
+			tokens: tokens,
+			usernames: usernames,
+			duration: Math.floor((this.endTime - this.startTime) / 1000), // Duration in seconds
+		};
+       
+		try {
+			// Internal call should omit external nginx prefix '/user/'
+			const res = await fetch('https://user_handling:3003/api/post-match', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(bodyPayload),
+			});
+			if (!res.ok) {
+				const bodyText = await res.text().catch(() => '');
+				console.log('sendGameEnd - failed posting game result:', res.status, res.statusText, bodyText);
+			}
+		} catch (err) {
+			console.log('sendGameEnd - fetch error:', err);
+		}
 	}
 
 	toJSON() {

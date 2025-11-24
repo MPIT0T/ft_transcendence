@@ -165,10 +165,10 @@ export const TournamentRoom: Page = {
 
 	mount(root: HTMLElement): void {
 		let tournamentId;
-    let tournamentName: string;
-		if (ws === undefined) {
+		if (ws === undefined || ws.readyState === WebSocket.CLOSED) {
 			const host = window.location.host;
 			ws = new WebSocket(`wss://${host}/tournament/ws`);
+			ws.onclose = () => { ws = undefined; };
 		}
 
 		ws.onmessage = message => {
@@ -179,7 +179,14 @@ export const TournamentRoom: Page = {
 				if (clientId !== undefined) {
 					sessionStorage.setItem('clientId', clientId);
 				}
-				reloadTournaments(root);
+				const payLoad = {
+					"method": "user",
+					"clientId": clientId,
+					"token": sessionStorage.getItem('token'),
+					"username": sessionStorage.getItem('username'),
+				}
+				if (ws)
+					ws.send(JSON.stringify(payLoad));
 			}
 
 			if (response.method === "create") {
@@ -195,7 +202,7 @@ export const TournamentRoom: Page = {
 						sessionStorage.setItem('tournamentId', tournamentId);
 					}
 
-          tournamentName = response.tournamentName;
+          const tournamentName = response.tournamentName;
           if (tournamentName !== undefined) {
             sessionStorage.setItem('tournamentName', tournamentName);
           }

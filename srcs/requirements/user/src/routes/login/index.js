@@ -1,9 +1,8 @@
 'use strict'
 const db = require("../../db.js");
 const bcrypt = require('bcrypt');
-const privateKey = "secret123123";
 const jwt = require('jsonwebtoken');
-const {getUserbyUsername} = require("../../utils.js");
+const {getUserbyUsername, JWT_SECRET} = require("../../utils.js");
 
 async function loginRoute(fastify, options) {
 
@@ -21,11 +20,12 @@ async function loginRoute(fastify, options) {
         const res = await bcrypt.compare(password, user.password);
         if (res) {
             const token = jwt.sign(
-                { username, avatar: user.avatar },
-                privateKey,
-                { expiresIn: '1h' }
+                { username, avatar: user.avatar, elo: user.elo },
+                JWT_SECRET,
+                { expiresIn: '7d' }
             );
-
+            const stmt = db.prepare("UPDATE users SET online = ? WHERE id = ?");
+            stmt.run(1, user.id);
             return reply.send({
                 success: true,
                 message: 'Connection effectué avec succès !',

@@ -1,5 +1,6 @@
 'use strict';
 const db = require("../../../db");
+const {checkToken, errorToken} = require("../../../utils");
 
 async function acceptRequestRoute(fastify, options) {
     fastify.post('/', async (req, reply) => {
@@ -7,6 +8,10 @@ async function acceptRequestRoute(fastify, options) {
         const { author, accepted } = req.body || {};
         if (!author) {
             return reply.status(400).send({ error: "nom d'utilisateur requis" });
+        }
+        if (errorToken(req.headers['authorization'], author))
+        {
+            return reply.status(401).send({error: "Token manquant ou invalide"});
         }
         try {
             const stmt = db.prepare('SELECT * FROM users WHERE username = ?');

@@ -2,32 +2,33 @@
 'use strict';
 
 const path = require('node:path');
+const fs = require('node:fs');
+const fastifyFactory = require('fastify');
+const AutoLoad = require('@fastify/autoload');
 
-// Load environment variables from the parent directory
 const envPath = path.join(__dirname, '../.env');
 require('dotenv').config({ path: envPath });
 
-const { spawn } = require('child_process');
-
-// Get the server address from environment variable, default to 0.0.0.0
 const serverAddr = process.env.SERVER_ADDR || '0.0.0.0';
-const port = process.env.SERVER_PORT || '3001';
+const port = parseInt(process.env.SERVER_PORT || '3001', 10);
 
-// Start the fastify server with the specified address
-const args = ['start', '-l', 'info', '-a', serverAddr, '-p', port, 'app.js'];
-
-const child = spawn('npx', ['fastify', ...args], {
-  stdio: 'inherit',
-  cwd: __dirname,
-  env: { ...process.env }
-});
-
-child.on('error', (err) => {
-  console.error('❌ Failed to start server:', err);
+let cert, key;
+try {
+  cert = fs.readFileSync('/run/secrets/pong_cert');
+  key = fs.readFileSync('/run/secrets/pong_key');
+} catch (e) {
+  console.error('❌ Unable to read TLS cert/key for pong service.', e);
   process.exit(1);
+}
+
+const fastify = fastifyFactory({
+  https: { cert, key, allowHTTP1: true },
+  logger: { level: 'info' }
 });
 
-child.on('close', (code) => {
-  console.log(`📴 Server stopped with code: ${code}`);
-  process.exit(code);
-});
+fastify.register(AutoLoad, { dir: path.join(__dirname, 'plugins') });
+fastify.register(AutoLoad, { dir: path.join(__dirname, 'routes') });
+
+fastify.listen({ host: serverAddr, port }).then(addr => {
+  console.log(`🚀 Pong service listening (HTTPS) on ${addr}`);
+}).catch(err => { fastify.log.error(err); process.exit(1); });

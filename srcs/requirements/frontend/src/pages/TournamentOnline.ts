@@ -250,6 +250,7 @@ export const TournamentOnline: Page = {
 
 				// Quand le tournoi commence
 				if (response.method === "Start") {
+					sessionStorage.setItem('gamestate', 'playing-game');
 					if (tournamentNameEl) tournamentNameEl.textContent = 'QUARTER FINALS';
 				}
 
@@ -426,6 +427,8 @@ export const TournamentOnline: Page = {
 
 				// Annonce du gagnant du tournoi
 				if (response.method === "tournamentWinner") {
+					sessionStorage.setItem('gamestate', 'finished');
+
 					if (tournamentNameEl) {
 						tournamentNameEl.textContent = 'Tournoi terminé !';
 					}
@@ -457,6 +460,16 @@ export const TournamentOnline: Page = {
 				}
 				if (ws)
 					ws.send(JSON.stringify(payLoad));
+				if (sessionStorage.getItem('gamestate') === 'playing-game') {
+					if (ws)
+						ws.close();
+
+					window.removeEventListener('popstate', popstateHandler);
+					const p = '/';
+					history.pushState(null, '', p);
+					window.dispatchEvent(new PopStateEvent('popstate'));
+					return ;
+				}
 
 				window.removeEventListener('popstate', popstateHandler);
 				const p = '/tournamentRoom';

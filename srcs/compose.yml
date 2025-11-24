@@ -12,6 +12,12 @@ services:
           path: requirements/api/Dockerfile
     networks:
       - transcendence
+    secrets:
+      - internal_ca_cert
+      - api_cert
+      - api_key
+    environment:
+      NODE_EXTRA_CA_CERTS: /run/secrets/internal_ca_cert
     restart: always
 
   nginx:
@@ -36,6 +42,7 @@ services:
     secrets:
       - ssl_crt
       - ssl_key
+      - internal_ca_cert
     restart: always
 
   frontend:
@@ -71,6 +78,12 @@ services:
           target: app/src
     networks:
       - transcendence
+    secrets:
+      - internal_ca_cert
+      - pong_cert
+      - pong_key
+    environment:
+      NODE_EXTRA_CA_CERTS: /run/secrets/internal_ca_cert
     restart: always
 
   tournament:
@@ -84,6 +97,12 @@ services:
           target: app/src
     networks:
       - transcendence
+    secrets:
+      - internal_ca_cert
+      - tournament_cert
+      - tournament_key
+    environment:
+      NODE_EXTRA_CA_CERTS: /run/secrets/internal_ca_cert
     restart: always
 
   user_handling:
@@ -97,6 +116,13 @@ services:
             target: app/src
       networks:
         - transcendence
+      secrets:
+        - jwt_key
+        - internal_ca_cert
+        - user_cert
+        - user_key
+      environment:
+        NODE_EXTRA_CA_CERTS: /run/secrets/internal_ca_cert
       restart: always
 
 networks:
@@ -112,3 +138,23 @@ secrets:
     file: ../secrets/ssl_certificate
   ssl_key:
     file: ../secrets/ssl_certificate_key
+  jwt_key:
+    file: ../secrets/jwt_secret_key
+  internal_ca_cert:
+    file: ../secrets/internal_ca_cert
+  api_cert:
+    file: ../secrets/api_cert
+  api_key:
+    file: ../secrets/api_key
+  pong_cert:
+    file: ../secrets/pong_cert
+  pong_key:
+    file: ../secrets/pong_key
+  tournament_cert:
+    file: ../secrets/tournament_cert
+  tournament_key:
+    file: ../secrets/tournament_key
+  user_cert:
+    file: ../secrets/user_cert
+  user_key:
+    file: ../secrets/user_key

@@ -656,11 +656,13 @@ class Tournament {
 			});
 
 			this.state = "finished";
+
+
 		}
 
 	}
 
-	remove(clientId) {
+	leave(clientId) {
 		const idx = this.clients.findIndex(c => c._clientId === clientId);
 		if (idx !== -1) {
 			const removed = this.clients.splice(idx, 1)[0];
@@ -685,6 +687,16 @@ class Tournament {
 					c._conection.send(JSON.stringify(payLoad));
 				}
 			});
+
+			return true;
+		}
+		return false;
+	}
+
+	remove(clientId) {
+		const idx = this.clients.findIndex(c => c._clientId === clientId);
+		if (idx !== -1) {
+			this.clients.splice(idx, 1)[0];
 
 			return true;
 		}
