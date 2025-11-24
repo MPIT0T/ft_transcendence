@@ -21,7 +21,7 @@ const reloadFriends = function (root: HTMLElement) {
 		"method": "friends",
 		"clientId": clientId,
 		"username": sessionStorage.getItem('username'),
-        'token':  sessionStorage.getItem('token'),
+		'token': sessionStorage.getItem('token'),
 	}
 	if (ws)
 		ws.send(JSON.stringify(payLoad));
@@ -309,11 +309,13 @@ export const GameRoom: Page = {
 
 	mount(root: HTMLElement): void {
 		let roomId;
+		let currentPage = true;
 		if (ws === undefined || ws.readyState === WebSocket.CLOSED) {
 			const host = window.location.host;
 			ws = new WebSocket(`wss://${host}/pong/ws`);
 			ws.onclose = () => { ws = undefined; };
 		}
+
 		ws.onmessage = message => {
 			const response = JSON.parse(message.data);
 
@@ -327,6 +329,7 @@ export const GameRoom: Page = {
 					"clientId": clientId,
 					"token": sessionStorage.getItem('token'),
 					"username": sessionStorage.getItem('username'),
+					"currentPage": "gameRoom"
 				}
 				if (ws)
 					ws.send(JSON.stringify(payLoad));
@@ -446,6 +449,18 @@ export const GameRoom: Page = {
 					matchmakingModal.classList.add('flex');
 				}
 
+				const payLoad = {
+					"method": "user",
+					"clientId": clientId,
+					"token": sessionStorage.getItem('token'),
+					"username": sessionStorage.getItem('username'),
+					"currentPage": "null"
+				}
+				if (ws)
+					ws.send(JSON.stringify(payLoad));
+
+				currentPage = false;
+
 				// Lancer la recherche de match
 				joinRoom("ranked");
 			});
@@ -461,6 +476,8 @@ export const GameRoom: Page = {
 				if (ws) {
 					ws.send(JSON.stringify(payLoad));
 				}
+
+				currentPage = true;
 
 				// Fermer le modal
 				if (matchmakingModal) {
@@ -542,10 +559,30 @@ export const GameRoom: Page = {
 		statusRoom = setInterval(async () => {
 			reloadRooms(root);
 			reloadFriends(root);
+			if (currentPage === true) {
+				const payLoad = {
+					"method": "user",
+					"clientId": clientId,
+					"token": sessionStorage.getItem('token'),
+					"username": sessionStorage.getItem('username'),
+					"currentPage": "gameRoom"
+				}
+				if (ws)
+					ws.send(JSON.stringify(payLoad));
+			}
 		}, 1000);
 
 		const popstateHandler = (event: PopStateEvent) => {
 			window.clearInterval(statusRoom);
+			const payLoad = {
+				"method": "user",
+				"clientId": clientId,
+				"token": sessionStorage.getItem('token'),
+				"username": sessionStorage.getItem('username'),
+				"currentPage": "null"
+			}
+			if (ws)
+				ws.send(JSON.stringify(payLoad));
 			window.removeEventListener('popstate', popstateHandler);
 		};
 		window.addEventListener('popstate', popstateHandler);

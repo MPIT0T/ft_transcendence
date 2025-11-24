@@ -154,73 +154,85 @@ function handleUser(socket, data) {
 	const client = g_Games.findClient(data.clientId);
 	if (client === undefined)
 		throw "Client id not good";
-	client._token = data.token;
+	client._token = data.token || null;
 	client._elo = getEloFromJwt(data.token);
-	client._name = data.username;
+	client._name = data.username || null;
+	client._currentPage = data.currentPage || null; // <-- Ajouter
+}
+
+// Helper: vérifier si un client est dans une room
+function isClientInAnyRoom(clientId) {
+	const rooms = Object.values(g_Games._rooms._rooms);
+	for (const room of rooms) {
+		if (room.clients.some(c => c._clientId === clientId)) {
+			return true;
+		}
+	}
+	return false;
 }
 
 async function handleGetFriends(socket, data) {
-    if (g_Games.findClient(data.clientId) === undefined)
-        throw "Client id not good";
+	if (g_Games.findClient(data.clientId) === undefined)
+		throw "Client id not good";
 
-    const client = g_Games.findClient(data.clientId);
-    const token = client?._token;
-    const username = client?._name;
+	const client = g_Games.findClient(data.clientId);
+	const token = client?._token;
+	const username = client?._name;
 
-    const bodyPayload = { username };
+	const bodyPayload = { username };
 
-    let friendsList = [];
+	let friendsList = [];
 
-    try {
-        const res = await fetch('https://user_handling:3003/friends/get-friends', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(bodyPayload),
-        });
+	try {
+		const res = await fetch('https://user_handling:3003/friends/get-friends', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${token}`
+			},
+			body: JSON.stringify(bodyPayload),
+		});
 
-        const bodyText = await res.text().catch(() => '');
+		const bodyText = await res.text().catch(() => '');
 
-        if (!res.ok) {
-            console.log('handleGetFriends - error response:', {
-                status: res.status,
-                statusText: res.statusText,
-                body: bodyText,
-                clientId: data.clientId
-            });
-        } else {
-            try {
-                const parsed = JSON.parse(bodyText);
-                // parsed.friends = [{ username: "Max" }, ...]
-                if (Array.isArray(parsed.friends)) {
-                    friendsList = parsed.friends.map(f => f.username);
-                }
-            } catch (parseErr) {
-                console.log('handleGetFriends - JSON parse error:', parseErr);
-            }
-        }
-    } catch (err) {
-        console.log('handleGetFriends - fetch error:', err);
-    }
+		if (!res.ok) {
+			console.log('handleGetFriends - error response:', {
+				status: res.status,
+				statusText: res.statusText,
+				body: bodyText,
+				clientId: data.clientId
+			});
+		} else {
+			try {
+				const parsed = JSON.parse(bodyText);
+				// parsed.friends = [{ username: "Max" }, ...]
+				if (Array.isArray(parsed.friends)) {
+					friendsList = parsed.friends.map(f => f.username);
+				}
+			} catch (parseErr) {
+				console.log('handleGetFriends - JSON parse error:', parseErr);
+			}
+		}
+	} catch (err) {
+		console.log('handleGetFriends - fetch error:', err);
+	}
 
-    // Filtrer les clients connectés pour ne garder que ceux qui sont dans la liste d'amis
-    const onlineFriends = Object.values(g_Games._clients._clients)
-        .filter(c => c._clientId !== data.clientId) // Exclure soi-même
-        .filter(c => friendsList.includes(c._name)) // Garder seulement les amis
-        .map(c => ({
-            username: c._name,
-            elo: c._elo,
-            odbnline: true
-        }));
+	const onlineFriends = Object.values(g_Games._clients._clients)
+		.filter(c => c._clientId !== data.clientId)
+		.filter(c => friendsList.includes(c._name))
+		.filter(c => !isClientInAnyRoom(c._clientId))
+		.filter(c => c._currentPage === 'gameRoom')
+		.map(c => ({
+			username: c._name,
+			elo: c._elo,
+			online: true
+		}));
 
-    socket.send(JSON.stringify({
-        method: 'friends',
-        friends: onlineFriends
-    }));
+	socket.send(JSON.stringify({
+		method: 'friends',
+		friends: onlineFriends
+	}));
 }
-
 
 function handleGetRooms(socket, data) {
 	if (g_Games.findClient(data.clientId) === undefined)
