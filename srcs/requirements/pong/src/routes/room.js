@@ -269,8 +269,7 @@ class Room {
 
         const payLoad = {
 			"method": "gameEnd",
-			"winner": winner,
-			"winnerName": winnerName,
+			"winner": winnerName,
 			"finalScore": {
 				"player1": this.p1Score,
 				"player2": this.p2Score
