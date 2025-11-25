@@ -286,6 +286,14 @@ export const GameOnline: Page = {
               closeWinnerModalBtn.addEventListener('click', () => {
                 window.removeEventListener('popstate', popstateHandler);
 
+                const payLoad = {
+                  "method": "leave",
+                  "clientId": clientId
+                };
+                if (ws) {
+                  ws.send(JSON.stringify(payLoad));
+                }
+
                 sessionStorage.removeItem('roomId');
                 const p = '/gameRoom';
                 history.pushState(null, '', p);
