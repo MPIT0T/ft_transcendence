@@ -2,6 +2,7 @@ import type { Page } from "../interface/gameInterface.js"
 import { GameComponentOnline } from "../components/GameComponentOnline.js";
 import { ws } from "./GameRoom.js";
 import { sleep } from "../utils/sleep.js"
+import {Layout} from "./Layout";
 
 let currentGame: GameComponentOnline | null = null;
 let timerInterval: number | null = null;
@@ -72,6 +73,9 @@ export const GameOnline: Page = {
 
 
   mount(root) {
+
+    Layout.redirectIfNotLoggedIn();
+
     let roomId = sessionStorage.getItem('roomId');
     let clientId = sessionStorage.getItem('clientId');
     let canStart = false;

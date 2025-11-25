@@ -1,4 +1,5 @@
 import type { Page } from "../interface/gameInterface.js"
+import {Layout} from "./Layout";
 
 export let ws: WebSocket | undefined;
 let clientId: string | undefined;
@@ -150,6 +151,8 @@ export const TournamentRoom: Page = {
 	},
 
 	mount(root: HTMLElement): void {
+    Layout.redirectIfNotLoggedIn();
+
 		let tournamentId;
 		if (ws === undefined || ws.readyState === WebSocket.CLOSED) {
 			const host = window.location.host;

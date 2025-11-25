@@ -1107,98 +1107,97 @@ const Stats: StatsPage = {
       },
       body: JSON.stringify({ username: currentUser })
     })
-      .then(res => {
-        container.innerHTML = '';
-        if (!res.ok) return res.json().then(data => Promise.reject(data));
-        return res.json();
-      })
-      .then((data: { matchHistory: Array<any> }) => {
-        if (!data.matchHistory || data.matchHistory.length === 0) {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-                <td class="px-6 py-4 whitespace-nowrap font-bold text-gray-300" colspan="5">
-                    Jouez des parties pour avoir un historique
-                </td>`;
-          container.appendChild(tr);
-            const fallbackSlices = [
-              { value: 0.01, color: '#4ade80' },
-              { value: 99.99, color: '#18181b' },
-            ];
-            drawPieChart(fallbackSlices, 'wr-pieChart');
-            this.updateTimeplayed(data.matchHistory);
-            return;
-        }
-        data.matchHistory.forEach(match => {
-          const victory = match.winner ? "✅ Victoire" : "❌ Défaite";
-          const victoryColor = match.winner ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800";
+    .then(res => {
+      container.innerHTML = '';
+      if (!res.ok) return res.json().then(data => Promise.reject(data));
+      return res.json();
+    })
+    .then((data: { matchHistory: Array<any> }) => {
+      if (!data.matchHistory || data.matchHistory.length === 0) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+              <td class="px-6 py-4 whitespace-nowrap font-bold text-gray-300" colspan="5">
+                  Jouez des parties pour avoir un historique
+              </td>`;
+        container.appendChild(tr);
+          const fallbackSlices = [
+            { value: 0.01, color: '#4ade80' },
+            { value: 99.99, color: '#18181b' },
+          ];
+          drawPieChart(fallbackSlices, 'wr-pieChart');
+          this.updateTimeplayed(data.matchHistory);
+          return;
+      }
+      data.matchHistory.forEach(match => {
+        const victory = match.winner ? "✅ Victoire" : "❌ Défaite";
+        const victoryColor = match.winner ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800";
 
-          const tr = document.createElement('tr');
-          tr.className = 'hover:bg-gray-700/40';
-          tr.innerHTML = `
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${match.date}</td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="flex items-center">
-                        <div class="w-8 h-8 rounded-full flex items-center justify-center mr-3 border border-gray-50">
-                            <img src="${match.avatar || '/default-avatar.png'}" alt="avatar"/>
-                        </div>
-                        <span class="text-sm font-medium text-gray-100">${match.versus || 'Inconnu'}</span>
-                    </div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-100">${match.score}</td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                    <span class="px-2 py-1 text-xs font-semibold ${victoryColor} rounded-full">
-                        ${victory}
-                    </span>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${match.gamemode}</td>
-            `;
-          container.appendChild(tr);
-        });
-
-        const wrStat = document.getElementById('stats-win-rate');
-        if (wrStat) {
-          let victories = data.matchHistory.reduce((acc, m) => acc + (m.winner ? 1 : 0), 0);
-          const wr = data.matchHistory.length > 0 ? (victories / data.matchHistory.length) * 100 : 0;
-          wrStat.textContent = wr.toFixed(2) + '%';
-        }
-        const wrStat2 = document.getElementById('histo-wr');
-        if (wrStat2)
-        {
-          let victories = data.matchHistory.reduce((acc, m) => acc + (m.winner ? 1 : 0), 0);
-          const wr = data.matchHistory.length > 0 ? (victories / data.matchHistory.length) * 100 : 0;
-          wrStat2.textContent = wr.toFixed(2) + '%';
-        }
-        const total = data.matchHistory.length;
-        const victories = data.matchHistory.reduce((acc, m) => acc + (m.winner ? 1 : 0), 0);
-        const defeats = total - victories;
-        const victoryStat = document.getElementById('histo-victory');
-        const defeatStat = document.getElementById('histo-loose');
-
-        if (victoryStat) victoryStat.textContent = victories.toString();
-        if (defeatStat) defeatStat.textContent = defeats.toString();
-        this.updateTimeplayed(data.matchHistory);
-        const slices = [
-          { value: total > 0 ? (victories / total) * 100 : 0, color: '#4ade80' },
-          { value: total > 0 ? (defeats / total) * 100 : 0, color: '#18181b' },
-        ];
-        if (slices[0].value === 100) {
-          slices[0].value = 99.99;
-          slices[1].value = 0.01;
-        }
-        if (slices[1].value === 100) {
-          slices[1].value = 99.99;
-          slices[0].value = 0.01;
-        }
-        drawPieChart(slices, 'wr-pieChart');
-        const victorySpan = document.getElementById('victory-class') as HTMLDivElement;
-        const defeatSpan = document.getElementById('defeat-class') as HTMLDivElement;
-        victorySpan.textContent = "Victory: "  + (total > 0 ? (victories / total) * 100 : 0).toFixed(2) + "%";
-        defeatSpan.textContent = "Defeat: " + (total > 0 ? (defeats / total) * 100 : 0).toFixed(2) + "%";
-      })
-      .catch(err => {
-        const msg = err?.error || 'Impossible de recevoir l\'historique des matches';
-        Layout.showNotification(msg, 'error');
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-gray-700/40';
+        tr.innerHTML = `
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${match.date}</td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                      <div class="w-8 h-8 rounded-full flex items-center justify-center mr-3 border border-gray-50">
+                          <img src="${match.avatar || '/default-avatar.png'}" alt="avatar"/>
+                      </div>
+                      <span class="text-sm font-medium text-gray-100">${match.versus || 'Inconnu'}</span>
+                  </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-100">${match.score}</td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="px-2 py-1 text-xs font-semibold ${victoryColor} rounded-full">
+                      ${victory}
+                  </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${match.gamemode}</td>
+          `;
+        container.appendChild(tr);
       });
+
+      const wrStat = document.getElementById('stats-win-rate');
+      if (wrStat) {
+        let victories = data.matchHistory.reduce((acc, m) => acc + (m.winner ? 1 : 0), 0);
+        const wr = data.matchHistory.length > 0 ? (victories / data.matchHistory.length) * 100 : 0;
+        wrStat.textContent = wr.toFixed(2) + '%';
+      }
+      const wrStat2 = document.getElementById('histo-wr');
+      if (wrStat2)
+      {
+        let victories = data.matchHistory.reduce((acc, m) => acc + (m.winner ? 1 : 0), 0);
+        const wr = data.matchHistory.length > 0 ? (victories / data.matchHistory.length) * 100 : 0;
+        wrStat2.textContent = wr.toFixed(2) + '%';
+      }
+      const total = data.matchHistory.length;
+      const victories = data.matchHistory.reduce((acc, m) => acc + (m.winner ? 1 : 0), 0);
+      const defeats = total - victories;
+      const victoryStat = document.getElementById('histo-victory');
+      const defeatStat = document.getElementById('histo-loose');
+
+      if (victoryStat) victoryStat.textContent = victories.toString();
+      if (defeatStat) defeatStat.textContent = defeats.toString();
+      this.updateTimeplayed(data.matchHistory);
+      const slices = [
+        { value: total > 0 ? (victories / total) * 100 : 0, color: '#4ade80' },
+        { value: total > 0 ? (defeats / total) * 100 : 0, color: '#18181b' },
+      ];
+      if (slices[0].value === 100) {
+        slices[0].value = 99.99;
+        slices[1].value = 0.01;
+      }
+      if (slices[1].value === 100) {
+        slices[1].value = 99.99;
+        slices[0].value = 0.01;
+      }
+      drawPieChart(slices, 'wr-pieChart');
+      const victorySpan = document.getElementById('victory-class') as HTMLDivElement;
+      const defeatSpan = document.getElementById('defeat-class') as HTMLDivElement;
+      victorySpan.textContent = "Victory: "  + (total > 0 ? (victories / total) * 100 : 0).toFixed(2) + "%";
+    })
+    .catch(err => {
+      const msg = err?.error || 'Impossible de recevoir l\'historique des matches';
+      Layout.showNotification(msg, 'error');
+    });
   }
 }
 
