@@ -19,16 +19,15 @@ const reloadFriends = function (root: HTMLElement) {
 
 	const payLoad = {
 		"method": "friends",
-		"clientId": clientId
+		"clientId": clientId,
+		"username": sessionStorage.getItem('username'),
+		'token': sessionStorage.getItem('token'),
 	}
 	if (ws)
 		ws.send(JSON.stringify(payLoad));
 }
 
 function displayFriends(root: HTMLElement, friends: any[]) {
-
-	
-
 
 	const container = root.querySelector('#friends-container') as HTMLDivElement;
 	container.innerHTML = ''; // Vider le container
@@ -59,7 +58,7 @@ function displayRooms(root: HTMLElement, rooms: any[]) {
 	rooms.forEach(room => {
 		const roomBtn = document.createElement('button');
 		roomBtn.className = 'room-btn w-full text-left flex items-center justify-between text-gray-50 px-6 py-3 border backdrop-blur-2xs border-gray-50 hover:bg-gray-700/50 transition-colors'
-    roomBtn.dataset.roomId = room.roomId;
+		roomBtn.dataset.roomId = room.roomId;
 		roomBtn.innerHTML = `
 			<div class="w-full flex items-center">
 				<div class="flex-1 min-w-0 font-semibold truncate mr-4">${room.roomName}</div>
@@ -310,10 +309,13 @@ export const GameRoom: Page = {
 
 	mount(root: HTMLElement): void {
 		let roomId;
-		if (ws === undefined) {
+		let currentPage = true;
+		if (ws === undefined || ws.readyState === WebSocket.CLOSED) {
 			const host = window.location.host;
 			ws = new WebSocket(`wss://${host}/pong/ws`);
+			ws.onclose = () => { ws = undefined; };
 		}
+
 		ws.onmessage = message => {
 			const response = JSON.parse(message.data);
 
@@ -327,6 +329,7 @@ export const GameRoom: Page = {
 					"clientId": clientId,
 					"token": sessionStorage.getItem('token'),
 					"username": sessionStorage.getItem('username'),
+					"currentPage": "gameRoom"
 				}
 				if (ws)
 					ws.send(JSON.stringify(payLoad));
@@ -446,6 +449,18 @@ export const GameRoom: Page = {
 					matchmakingModal.classList.add('flex');
 				}
 
+				const payLoad = {
+					"method": "user",
+					"clientId": clientId,
+					"token": sessionStorage.getItem('token'),
+					"username": sessionStorage.getItem('username'),
+					"currentPage": "null"
+				}
+				if (ws)
+					ws.send(JSON.stringify(payLoad));
+
+				currentPage = false;
+
 				// Lancer la recherche de match
 				joinRoom("ranked");
 			});
@@ -461,6 +476,8 @@ export const GameRoom: Page = {
 				if (ws) {
 					ws.send(JSON.stringify(payLoad));
 				}
+
+				currentPage = true;
 
 				// Fermer le modal
 				if (matchmakingModal) {
@@ -542,10 +559,30 @@ export const GameRoom: Page = {
 		statusRoom = setInterval(async () => {
 			reloadRooms(root);
 			reloadFriends(root);
+			if (currentPage === true) {
+				const payLoad = {
+					"method": "user",
+					"clientId": clientId,
+					"token": sessionStorage.getItem('token'),
+					"username": sessionStorage.getItem('username'),
+					"currentPage": "gameRoom"
+				}
+				if (ws)
+					ws.send(JSON.stringify(payLoad));
+			}
 		}, 1000);
 
 		const popstateHandler = (event: PopStateEvent) => {
 			window.clearInterval(statusRoom);
+			const payLoad = {
+				"method": "user",
+				"clientId": clientId,
+				"token": sessionStorage.getItem('token'),
+				"username": sessionStorage.getItem('username'),
+				"currentPage": "null"
+			}
+			if (ws)
+				ws.send(JSON.stringify(payLoad));
 			window.removeEventListener('popstate', popstateHandler);
 		};
 		window.addEventListener('popstate', popstateHandler);

@@ -39,6 +39,11 @@ interface StatsPage extends Page {
   changeNewAvatar(root: HTMLElement, newAvatar: string): void;
   updateAvatar(): void;
   updateContentHistory() : void;
+  playedTimesinHours(matches: any[], timesInHours: number): {
+    matchesPlayed: number;
+    timePlayed: number;
+  };
+  updateTimeplayed(matches: any[]): void;
 }
 
 export type { Player, Ball, GameState , Page, StatsPage};

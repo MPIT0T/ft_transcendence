@@ -37,7 +37,7 @@ function displayTournament(root: HTMLElement, tournaments: any[]) {
 const createTournament = function (root: HTMLElement): void {
 	const tournamentName = (root.querySelector('#tournament-name') as HTMLInputElement).value;
 	const gamePoint = (root.querySelector('#game-point') as HTMLSelectElement).value;
-	const gameMode = (root.querySelector('#game-mode') as HTMLSelectElement).value;
+	const gameMode = "tournament";
 
 	const payLoad = {
 		"method": "createT",
@@ -95,9 +95,7 @@ export const TournamentRoom: Page = {
 		<div class="border border-gray-50 backdrop-blur-2xs p-6">
 			<div class="flex justify-between items-center mb-6">
 				<h2 class="text-2xl text-gray-50 font-bold">Available Tournament</h2>
-				<button id="reload-btn" class="px-4 py-2 font-bold text-gray-50 border border-gray-50 hover:bg-gray-700/50 transition-colors">
-					Rafraichir
-				</button>
+				
 			</div>
 			<div class="flex flex-wrap gap-4" id="tournaments-container"></div>
 		</div>
@@ -121,26 +119,12 @@ export const TournamentRoom: Page = {
 				</div>
 
 				<div>
-					<label class="block text-sm font-bold mb-2 text-gray-200">Number of Players:</label>
-					<select id="player-count" class="w-full px-3 py-2 border border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50">
-						<option value="8">8</option>
-					</select>
-				</div>
-				
-				<div>
 					<label class="block text-sm font-bold mb-2 text-gray-200">Party Point(s):</label>
 					<select id="game-point" class="w-full px-3 py-2 border border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50">
 						<option value="3">3</option>
 						<option value="5">5</option>
 						<option value="10">10</option>
 						<option value="15">15</option>
-					</select>
-				</div>
-				
-				<div>
-					<label class="block text-sm font-bold mb-2 text-gray-200">Game Mode:</label>
-					<select id="game-mode" class="w-full px-3 py-2 border border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50">
-						<option value="classic">Classic Pong</option>
 					</select>
 				</div>
 				
