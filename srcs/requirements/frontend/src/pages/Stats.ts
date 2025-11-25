@@ -216,33 +216,42 @@ const Stats: StatsPage = {
       </div>
 
       <!-- Password Modal -->
-      <div id="password-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-        <div class="bg-gray-900 border border-gray-700 rounded-lg w-full max-w-md p-6">
+      <div id="password-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center backdrop-blur-lg">
+        <div class="bg-transparent border border-gray-50 w-full max-w-md p-6">
           <div class="flex items-center justify-between mb-4">
             <h4 class="text-lg font-semibold text-gray-100">Changer le mot de passe</h4>
-            <button type="button" class="text-gray-300 hover:text-white" data-close-password-modal>✕</button>
+            <button type="button" class="text-gray-300 hover:text-white hover:bg-gray-700/50 py-2 px-3" data-close-password-modal>✕</button>
           </div>
           <form id="password-form" class="space-y-4">
             <div>
               <label for="old-password" class="block text-xs text-gray-400 mb-1">Mot de passe actuel</label>
               <input id="old-password" type="password" required
-                     class="w-full px-3 py-2 bg-white/5 border border-gray-700 text-sm text-gray-100 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+                     class="w-full px-3 py-2 bg-white/5 border border-gray-400 text-sm text-gray-200 focus:outline-none focus:border-gray-50"/>
             </div>
             <div>
               <label for="new-password" class="block text-xs text-gray-400 mb-1">Nouveau mot de passe</label>
               <input id="new-password" type="password" minlength="6" required
-                     class="w-full px-3 py-2 bg-white/5 border border-gray-700 text-sm text-gray-100 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+                     class="w-full px-3 py-2 bg-white/5 border border-gray-400 text-sm text-gray-200 focus:outline-none focus:border-gray-50"/>
             </div>
             <div>
               <label for="confirm-password" class="block text-xs text-gray-400 mb-1">Confirmer</label>
               <input id="confirm-password" type="password" required
-                     class="w-full px-3 py-2 bg-white/5 border border-gray-700 text-sm text-gray-100 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+                     class="w-full px-3 py-2 bg-white/5 border border-gray-400 text-sm text-gray-200 focus:outline-none focus:border-gray-50"/>
             </div>
-            <div class="flex justify-end gap-3 pt-2">
-              <button type="button" class="px-3 py-2 bg-gray-700 text-gray-200 rounded hover:bg-gray-600" data-close-password-modal>Annuler</button>
-              <button type="submit" id="submit-password-btn"
-                      class="px-4 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-500 transition-colors">
+            <div class="flex space-x-4 mt-6">
+              <button
+                type="submit"
+                id="submit-password-btn"
+                class="flex-1 text-white py-2 px-4 border border-gray-50 hover:border-blue-500 hover:bg-gray-700/50 transition-colors font-bold"
+              >
                 Enregistrer
+              </button>
+              <button
+                type="button" 
+                class="flex-1 text-white py-2 px-4 border border-gray-50 hover:border-red-500 hover:bg-gray-700/50 transition-colors font-bold"
+                data-close-password-modal
+              >
+                Annuler
               </button>
             </div>
           </form>
