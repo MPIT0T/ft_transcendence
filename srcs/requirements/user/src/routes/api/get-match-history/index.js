@@ -13,7 +13,8 @@ function getUserInfoMatch(match) {
             versus: "undifined",
             gamemode: match.gamemode,
             date: match.date,
-            avatar: "anonymous.png"
+            avatar: "anonymous.png",
+            duration: match.duration,
         };
     }
 
@@ -23,7 +24,8 @@ function getUserInfoMatch(match) {
         versus: getInfoSecondPlayer.username,
         gamemode: match.gamemode,
         date: match.date,
-        avatar: getInfoSecondPlayer.avatar
+        avatar: getInfoSecondPlayer.avatar,
+        duration: match.duration
     };
 }
 

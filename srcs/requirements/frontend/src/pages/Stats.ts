@@ -1,11 +1,25 @@
 import type { StatsPage } from "../interface/gameInterface.js"
 import { Layout } from "./Layout";
 
-function drawPieChart(slices: { value: number; color: string }[]) {
-  const svg = document.getElementById('pieChart') as SVGElement | null;
+function drawPieChart(slices: { value: number; color: string }[], elementId: string, maxValue: number = 100) {
+  const svg = document.getElementById(elementId) as SVGElement | null;
   if (!svg) return;
+
+  // Nettoyer l'ancien contenu
   while (svg.firstChild) svg.removeChild(svg.firstChild);
 
+  // Si une seule part = 100% ou valeur maxValue, on dessine un cercle complet
+  if (slices.length === 1 || slices[0].value >= maxValue) {
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', '16');
+    circle.setAttribute('cy', '16');
+    circle.setAttribute('r', '16');
+    circle.setAttribute('fill', slices[0].color);
+    svg.appendChild(circle);
+    return;
+  }
+
+  // Fonction pour calculer coordonnées
   const getCoordinates = (percent: number) => {
     const x = 16 + Math.cos(2 * Math.PI * percent) * 16;
     const y = 16 + Math.sin(2 * Math.PI * percent) * 16;
@@ -13,17 +27,26 @@ function drawPieChart(slices: { value: number; color: string }[]) {
   };
 
   let cumulative = 0;
-  slices.forEach((slice) => {
+
+  slices.forEach(slice => {
+    // Ne jamais mettre 0 exactement pour SVG
+    const value = slice.value === 0 ? 0.01 : slice.value;
+    const percent = value / maxValue;
+
     const [startX, startY] = getCoordinates(cumulative);
-    cumulative += slice.value / 100;
+    cumulative += percent;
     const [endX, endY] = getCoordinates(cumulative);
-    const largeArc = slice.value > 50 ? 1 : 0;
+
+    // Déterminer si l'arc est supérieur à 50%
+    const largeArc = percent > 0.5 ? 1 : 0;
+
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     path.setAttribute('d', `M16 16 L ${startX} ${startY} A 16 16 0 ${largeArc} 1 ${endX} ${endY} Z`);
     path.setAttribute('fill', slice.color);
     svg.appendChild(path);
   });
 }
+
 
 let activeTab: 'profile' | 'history' = 'profile';
 
@@ -260,19 +283,43 @@ const Stats: StatsPage = {
 									<!-- Historique des matches -->
 									<div class="backdrop-blur-2xs border border-gray-50 ">
 											<div class="px-6 py-4 border-b border-gray-700">
-													<h3 class="text-lg font-semibold text-gray-100">📈 Historique des matches</h3>
-											</div>
-                    <div class="p-6 rounded-xl shadow-md w-80 text-center">
-                      <svg id="pieChart" width="200" height="200" viewBox="0 0 32 32"></svg>
-                      <div class="mt-4">
-                        <div class="flex items-center gap-2 text-gray-400" id="victory-class">
-                        <span class="w-3 h-3 bg-blue-500 rounded-full"></span>
-                        Victory: 100%</div>
-                        <div class="flex items-center gap-2 text-gray-400" id="defeat-class">
-                        <span class="w-3 h-3 bg-red-500 rounded-full"></span>
-                        Defeat: 0%</div>
+													<h3 class="text-lg font-semibold text-gray-100">📈 Stats des matches</h3>
+									</div>
+									<div class="flex gap-10 flex-wrap justify-center">
+                  <div class="p-6 rounded-xl shadow-md w-80 text-center">
+                    <svg id="wr-pieChart" width="204" height="204" viewBox="0 0 32 32"></svg>
+                    <div class="mt-4">
+                      <div class="flex items-center gap-2 text-gray-400">
+                        <span class="w-3 h-3 bg-green-400 rounded-full"></span>
+                        <span id="victory-class">You need atleast one game</span>
                       </div>
                     </div>
+                  </div>
+                
+                  <div class="p-6 rounded-xl shadow-md w-80 text-center">
+                    <svg id="play-daily-pieChart" width="200" height="200" viewBox="0 0 32 32"></svg>
+                    <div class="mt-4">
+                      <div class="flex items-center gap-2 text-gray-400">
+                        <span class="w-3 h-3 bg-fuchsia-400 rounded-full"></span>
+                        <span id="day-time-played">You didnt played today</span>
+                      </div>
+                    </div>
+                  </div>
+                
+                  <div class="p-6 rounded-xl shadow-md w-80 text-center">
+                    <svg id="play-weekly-pieChart" width="200" height="200" viewBox="0 0 32 32"></svg>
+                    <div class="mt-4">
+                      <div class="flex items-center gap-2 text-gray-400">
+                        <span class="w-3 h-3 bg-blue-400 rounded-full"></span>
+                        <span id="week-time-played">You didnt played this week</span>
+                      </div>
+                    </div>
+                  </div>
+                 </div>
+									<div class="backdrop-blur-2xs border border-gray-50 ">
+											<div class="px-6 py-4 border-b border-gray-700">
+													<h3 class="text-lg font-semibold text-gray-100">📈 Historique des matches</h3>
+									</div>
 										<div class="p-6 overflow-y-auto min-h-[30vh] max-h-[30vh]">
 													<table class="w-full">
 													<thead class="bg-transparent">
@@ -292,19 +339,19 @@ const Stats: StatsPage = {
 									<!-- Statistiques de la période -->
 									<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
 											<div class="backdrop-blur-2xs border border-gray-50 p-6 text-center">
-													<div class="text-3xl font-bold text-blue-400">4</div>
+													<div class="text-3xl font-bold text-blue-400" id="histo-weekly-played">0</div>
 													<div class="text-sm text-gray-400">Parties cette semaine</div>
 											</div>
 											<div class="backdrop-blur-2xs border border-gray-50 p-6 text-center">
-													<div class="text-3xl font-bold text-green-400">2</div>
+													<div class="text-3xl font-bold text-green-400" id="histo-victory">0</div>
 													<div class="text-sm text-gray-400">Victoires</div>
 											</div>
 											<div class="backdrop-blur-2xs border border-gray-50 p-6 text-center">
-													<div class="text-3xl font-bold text-red-400">2</div>
+													<div class="text-3xl font-bold text-red-400" id="histo-loose">0</div>
 													<div class="text-sm text-gray-400">Défaites</div>
 											</div>
 											<div class="backdrop-blur-2xs border border-gray-50 p-6 text-center">
-													<div class="text-3xl font-bold text-purple-400">50%</div>
+													<div class="text-3xl font-bold text-purple-400" id="histo-wr">0%</div>
 													<div class="text-sm text-gray-400">Winrate</div>
 											</div>
 									</div>
@@ -964,24 +1011,33 @@ const Stats: StatsPage = {
     }
   },
 
-  /*playedTimesinHours(matches, timesInHours)
-  {
+  playedTimesinHours(matches, timesInHours): {
+    matchesPlayed: number;
+    timePlayed: number;
+  } {
     const HOUR = 3600000;
     let matchInPoT = 0;
     let timePlayedInPot = 0;
 
+    if (!matches || !matches.length)
+    {
+      return {
+        matchesPlayed: matchInPoT,
+        timePlayed: timePlayedInPot
+      };
+    }
     matches.forEach(match => {
-      const timeStamp = Date.now() -
-      (() => {
-        const [d, t] = match.date.split(', ');
+      const matchTime = (() => {
+        const [d, t] = match.date.split(' ');
         const [day, month, year] = d.split('/').map(Number);
         const [h, m, s] = t.split(':').map(Number);
         return new Date(year, month - 1, day, h, m, s).getTime();
       })();
+      const timeStamp = Date.now() - matchTime;
       if (timeStamp < HOUR * timesInHours)
       {
         matchInPoT++;
-        timePlayedInPot += match.;
+        timePlayedInPot += match.duration;
       }
     });
     return {
@@ -990,10 +1046,50 @@ const Stats: StatsPage = {
     };
   },
 
-  updateTimeplayed(matches){
+  updateTimeplayed(matches) {
     const matchDay = this.playedTimesinHours(matches, 24);
-    const matchWeek = this.playedTimesinHours(matches, 24  * 7);
-  },*/
+    const matchWeek = this.playedTimesinHours(matches, 24 * 7);
+    const matchWeeklyPlayed = document.getElementById('histo-weekly-played') as HTMLElement;
+    const timePlayDaily = document.getElementById('day-time-played') as HTMLElement;
+    const timePlayWeekly = document.getElementById('week-time-played') as HTMLElement;
+
+    if (!matchDay.matchesPlayed || !matchWeek.matchesPlayed) {
+      const dailySlices = [
+        {value: 0.01, color: '#e879f9'},
+        {value: 23.99, color: '#18181b'}
+      ];
+      drawPieChart(dailySlices, 'play-daily-pieChart', 24);
+      const weeklySlices = [
+        {value: 0.01, color: '#60a5fa'},
+        {value: 167.99, color: '#18181b'}
+      ];
+      drawPieChart(weeklySlices, 'play-weekly-pieChart', 168);
+      return;
+    }
+    if (matchWeeklyPlayed) matchWeeklyPlayed.textContent = matchWeek.matchesPlayed.toString();
+    const dailySlices = [
+      {value: Math.max(0.01, Math.min(matchDay.timePlayed / 3600, 24)), color: '#e879f9'},
+      {value: Math.max(0.01, 24 - Math.min(matchDay.timePlayed / 3600, 24)), color: '#18181b'}
+    ];
+    drawPieChart(dailySlices, 'play-daily-pieChart', 24);
+    if (timePlayDaily) {
+      timePlayDaily.textContent = (matchDay.timePlayed.toString() !== 'NaN') ? "You played: " +
+        Math.floor(matchDay.timePlayed / 3600) + "h " +
+        Math.floor((matchDay.timePlayed % 3600) / 60) + "min " +
+        (matchDay.timePlayed % 60) + "sec today" : 'You didnt played today';
+    }
+    const weeklySlices = [
+      {value: Math.max(0.01, Math.min(matchWeek.timePlayed / 3600, 168)), color: '#60a5fa'},
+      {value: Math.max(0.01, 168 - Math.min(matchWeek.timePlayed / 3600, 168)), color: '#18181b'}
+    ];
+    drawPieChart(weeklySlices, 'play-weekly-pieChart', 168);
+    if (timePlayWeekly) {
+      timePlayWeekly.textContent = (matchWeek.timePlayed.toString() !== 'NaN') ? 'You played: ' + Math.floor(matchWeek.timePlayed / 3600) + "h " +
+        Math.floor((matchWeek.timePlayed % 3600) / 60) + "min " +
+        (matchWeek.timePlayed % 60) + "sec this week" : 'You didnt played this week';
+
+    }
+  },
 
   updateContentHistory() {
     const token = sessionStorage.getItem('token');
@@ -1025,10 +1121,11 @@ const Stats: StatsPage = {
                 </td>`;
           container.appendChild(tr);
             const fallbackSlices = [
-              { value: 99.99, color: '#3B82F6' },
-              { value: 0.01, color: '#EF4444' },
+              { value: 0.01, color: '#4ade80' },
+              { value: 99.99, color: '#18181b' },
             ];
-            drawPieChart(fallbackSlices);
+            drawPieChart(fallbackSlices, 'wr-pieChart');
+            this.updateTimeplayed(data.matchHistory);
             return;
         }
         data.matchHistory.forEach(match => {
@@ -1057,19 +1154,32 @@ const Stats: StatsPage = {
             `;
           container.appendChild(tr);
         });
+
         const wrStat = document.getElementById('stats-win-rate');
         if (wrStat) {
           let victories = data.matchHistory.reduce((acc, m) => acc + (m.winner ? 1 : 0), 0);
           const wr = data.matchHistory.length > 0 ? (victories / data.matchHistory.length) * 100 : 0;
           wrStat.textContent = wr.toFixed(2) + '%';
         }
+        const wrStat2 = document.getElementById('histo-wr');
+        if (wrStat2)
+        {
+          let victories = data.matchHistory.reduce((acc, m) => acc + (m.winner ? 1 : 0), 0);
+          const wr = data.matchHistory.length > 0 ? (victories / data.matchHistory.length) * 100 : 0;
+          wrStat2.textContent = wr.toFixed(2) + '%';
+        }
         const total = data.matchHistory.length;
         const victories = data.matchHistory.reduce((acc, m) => acc + (m.winner ? 1 : 0), 0);
         const defeats = total - victories;
-        //this.updateTimeplayed(data.matchHistory);
+        const victoryStat = document.getElementById('histo-victory');
+        const defeatStat = document.getElementById('histo-loose');
+
+        if (victoryStat) victoryStat.textContent = victories.toString();
+        if (defeatStat) defeatStat.textContent = defeats.toString();
+        this.updateTimeplayed(data.matchHistory);
         const slices = [
-          { value: total > 0 ? (victories / total) * 100 : 0, color: '#3B82F6' },
-          { value: total > 0 ? (defeats / total) * 100 : 0, color: '#EF4444' },
+          { value: total > 0 ? (victories / total) * 100 : 0, color: '#4ade80' },
+          { value: total > 0 ? (defeats / total) * 100 : 0, color: '#18181b' },
         ];
         if (slices[0].value === 100) {
           slices[0].value = 99.99;
@@ -1079,7 +1189,7 @@ const Stats: StatsPage = {
           slices[1].value = 99.99;
           slices[0].value = 0.01;
         }
-        drawPieChart(slices);
+        drawPieChart(slices, 'wr-pieChart');
         const victorySpan = document.getElementById('victory-class') as HTMLDivElement;
         const defeatSpan = document.getElementById('defeat-class') as HTMLDivElement;
         victorySpan.textContent = "Victory: "  + (total > 0 ? (victories / total) * 100 : 0).toFixed(2) + "%";
