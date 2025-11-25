@@ -90,6 +90,9 @@ export const GameOnline: Page = {
     const startModalText = root.querySelector('#start-modal-text') as HTMLElement;
 
     const popstateHandler = (event: PopStateEvent) => {
+
+      const path = window.location.pathname.toLowerCase();
+
       const payLoad = {
         "method": "leave",
         "clientId": clientId
@@ -97,6 +100,14 @@ export const GameOnline: Page = {
 
       if (ws)
         ws.send(JSON.stringify(payLoad));
+
+      sessionStorage.removeItem('roomId');
+
+      if (!path.includes('gameroom')) {
+        if (ws)
+          ws.close();
+      }
+
 
       window.removeEventListener('popstate', popstateHandler);
     };
@@ -237,15 +248,15 @@ export const GameOnline: Page = {
             if (waitingModal) {
               const title = waitingModal.querySelector('h2');
               const paragraphs = waitingModal.querySelectorAll('p');
-                const dots = waitingModal.querySelector('.h-16') as HTMLElement | null;
-                if (dots) {
+              const dots = waitingModal.querySelector('.h-16') as HTMLElement | null;
+              if (dots) {
                 dots.classList.add('hidden');
                 dots.style.display = 'none';
-                }
+              }
               if (title) title.textContent = 'Match annulé';
               if (paragraphs.length > 0) {
-              paragraphs[0].textContent = "L'autre joueur a refusé le match";
-              if (paragraphs[1]) paragraphs[1].textContent = '';
+                paragraphs[0].textContent = "L'autre joueur a refusé le match";
+                if (paragraphs[1]) paragraphs[1].textContent = '';
               }
               const cancelBtn = waitingModal.querySelector('#cancel-matchmaking') as HTMLButtonElement | null;
               if (cancelBtn) cancelBtn.textContent = 'RETOUR';
@@ -256,7 +267,7 @@ export const GameOnline: Page = {
 
         if (response.method === "gameEnd") {
           if (currentGame) {
-            const winner = currentGame.getScores().p1Score > currentGame.getScores().p2Score ? player1NameEl.textContent :  currentGame.getScores().p1Score < currentGame.getScores().p2Score ? player2NameEl.textContent : "Personne";
+            const winner = currentGame.getScores().p1Score > currentGame.getScores().p2Score ? player1NameEl.textContent : currentGame.getScores().p1Score < currentGame.getScores().p2Score ? player2NameEl.textContent : "Personne";
             currentGame.destroy();
             stopTimer();
             const winnerModal = root.querySelector('#winner-modal') as HTMLElement;
@@ -274,6 +285,8 @@ export const GameOnline: Page = {
             if (closeWinnerModalBtn) {
               closeWinnerModalBtn.addEventListener('click', () => {
                 window.removeEventListener('popstate', popstateHandler);
+
+                sessionStorage.removeItem('roomId');
                 const p = '/gameRoom';
                 history.pushState(null, '', p);
                 window.dispatchEvent(new PopStateEvent('popstate'));
@@ -287,6 +300,7 @@ export const GameOnline: Page = {
       const p = '/gameRoom';
       history.pushState(null, '', p);
       window.dispatchEvent(new PopStateEvent('popstate'));
+      sessionStorage.removeItem('roomId');
     }
     // Cleanup previous game if exists
     if (currentGame) {

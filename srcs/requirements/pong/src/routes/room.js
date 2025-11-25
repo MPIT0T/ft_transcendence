@@ -121,7 +121,7 @@ class Room {
 					console.error("Client socket non défini pour", c);
 				}
 			});
-
+			
 			await sleep(3000); // Délai de 3 secondes avant de commencer
 			await this.gameLoop();
 		}
