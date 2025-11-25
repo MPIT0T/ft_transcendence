@@ -50,6 +50,32 @@ export const Game: Page = {
   },
 
   mount(root) {
+    // Disable the global layout login button while on the game page
+    const layoutLoginBtn = document.querySelector('#login-btn') as HTMLButtonElement | null;
+    let _prevLoginBtnClass: string | null = null;
+    let _prevLoginBtnDisabled: boolean | null = null;
+    if (layoutLoginBtn) {
+      _prevLoginBtnClass = layoutLoginBtn.className;
+      _prevLoginBtnDisabled = layoutLoginBtn.disabled;
+      layoutLoginBtn.disabled = true;
+      // visually indicate disabled state
+      layoutLoginBtn.className = `${layoutLoginBtn.className} opacity-50 pointer-events-none`;
+    }
+
+    // When leaving the page (popstate), restore the login button
+    const _restoreLoginBtn = () => {
+      if (layoutLoginBtn) {
+        if (_prevLoginBtnClass !== null) layoutLoginBtn.className = _prevLoginBtnClass;
+        if (_prevLoginBtnDisabled !== null) layoutLoginBtn.disabled = _prevLoginBtnDisabled;
+      }
+    };
+
+    const popstateHandler = (event: PopStateEvent) => {
+      _restoreLoginBtn();
+      window.removeEventListener('popstate', popstateHandler);
+    };
+    window.addEventListener('popstate', popstateHandler);
+
     // Cleanup previous game if exists
     if (currentGame) {
       currentGame.destroy();
