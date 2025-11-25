@@ -114,6 +114,8 @@ export const TournamentRoom: Page = {
 						id="tournament-name" 
 						class="w-full px-3 py-2 border border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50"
 						placeholder="Enter Tournament name"
+						pattern="^[a-zA-Z0-9]{3,12}$"
+                 		title="Le nom doit contenir uniquement des lettres et chiffres (3-12 caractères)"
 						required
 					>
 				</div>

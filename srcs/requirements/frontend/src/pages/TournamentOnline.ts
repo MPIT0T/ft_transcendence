@@ -179,8 +179,8 @@ export const TournamentOnline: Page = {
 	},
 
 	mount(root: HTMLElement): void {
-    const tournamentId = sessionStorage.getItem('tournamentId');
-    const tournamentName = sessionStorage.getItem('tournamentName');
+		const tournamentId = sessionStorage.getItem('tournamentId');
+		const tournamentName = sessionStorage.getItem('tournamentName');
 		const clientId = sessionStorage.getItem('clientId');
 
 		const tournamentNameEl = root.querySelector('#tournament-name') as HTMLElement;
@@ -188,8 +188,8 @@ export const TournamentOnline: Page = {
 		const currentPlayerNameEl = root.querySelector('#current-player-name') as HTMLElement;
 		const leaveTournamentBtn = root.querySelector('#leave-tournament-btn') as HTMLButtonElement;
 
-    if (tournamentNameEl)
-      tournamentNameEl.textContent = tournamentName || 'ft_tournoi';
+		if (tournamentNameEl)
+			tournamentNameEl.textContent = tournamentName || 'ft_tournoi';
 
 		const payLoad = {
 			"method": "readyT",
@@ -404,9 +404,9 @@ export const TournamentOnline: Page = {
 				if (response.method === "startMatch") {
 					// Sauvegarder les infos du match dans sessionStorage
 					sessionStorage.setItem('matchRound', response.matchRound);
-          sessionStorage.setItem('player1Name', response.player1Name);
-          sessionStorage.setItem('player2Name', response.player2Name);
-          sessionStorage.setItem('roomId', response.roomId);
+					sessionStorage.setItem('player1Name', response.player1Name);
+					sessionStorage.setItem('player2Name', response.player2Name);
+					sessionStorage.setItem('roomId', response.roomId);
 
 					// Rediriger vers la page de jeu après 1 seconde
 					setTimeout(() => {
@@ -468,8 +468,15 @@ export const TournamentOnline: Page = {
 					const p = '/';
 					history.pushState(null, '', p);
 					window.dispatchEvent(new PopStateEvent('popstate'));
-					return ;
+					return;
 				}
+
+				sessionStorage.removeItem('tournamentName');
+				sessionStorage.removeItem('tournamentId');
+				sessionStorage.removeItem('gamestate');
+				sessionStorage.removeItem('player1Name');
+				sessionStorage.removeItem('player2Name');
+				sessionStorage.removeItem('roomId');
 
 				window.removeEventListener('popstate', popstateHandler);
 				const p = '/tournamentRoom';
@@ -482,7 +489,6 @@ export const TournamentOnline: Page = {
 			const path = window.location.pathname.toLowerCase();
 			// If we're still on a tournament-related page (Tournament Online or Game Online), don't notify server about leaving
 			if (path.includes('tournamentonline') || path.includes('gameonlinetournament')) {
-				window.removeEventListener('popstate', popstateHandler);
 				return;
 			}
 			const payLoad = {
@@ -493,8 +499,17 @@ export const TournamentOnline: Page = {
 			if (ws)
 				ws.send(JSON.stringify(payLoad));
 
-      sessionStorage.removeItem('tournamentId');
-      sessionStorage.removeItem('roomId');
+			if (sessionStorage.getItem('gamestate') === 'playing-game') {
+				if (ws)
+					ws.close();
+			}
+
+			sessionStorage.removeItem('tournamentName');
+			sessionStorage.removeItem('tournamentId');
+			sessionStorage.removeItem('gamestate');
+			sessionStorage.removeItem('player1Name');
+			sessionStorage.removeItem('player2Name');
+			sessionStorage.removeItem('roomId');
 
 			window.removeEventListener('popstate', popstateHandler);
 		};

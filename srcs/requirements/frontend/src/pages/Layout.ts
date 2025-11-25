@@ -1,60 +1,60 @@
 const initPastelBackground = () => {
-    const canvas = document.getElementById('background-canvas') as HTMLCanvasElement;
-    if (!canvas) return;
+  const canvas = document.getElementById('background-canvas') as HTMLCanvasElement;
+  if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
 
-    // Resize canvas to full screen
-    const resize = () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    };
-    resize();
-    window.addEventListener('resize', resize);
+  // Resize canvas to full screen
+  const resize = () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  };
+  resize();
+  window.addEventListener('resize', resize);
 
-    // Generate random pastel colors
-    const pastelColor = () => {
-        const r = Math.floor(Math.random() * 128 + 127);
-        const g = Math.floor(Math.random() * 128 + 127);
-        const b = Math.floor(Math.random() * 128 + 127);
-        return `rgba(${r},${g},${b},0.8)`;
-    };
+  // Generate random pastel colors
+  const pastelColor = () => {
+    const r = Math.floor(Math.random() * 128 + 127);
+    const g = Math.floor(Math.random() * 128 + 127);
+    const b = Math.floor(Math.random() * 128 + 127);
+    return `rgba(${r},${g},${b},0.8)`;
+  };
 
-    // Create floating particles
-    const particles = Array.from({ length: 150 }, () => ({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        size: Math.random() * 3 + 2,
-        color: pastelColor(),
-        velX: (Math.random() - 0.5) * 0.3,
-        velY: (Math.random() - 0.5) * 0.3,
-    }));
+  // Create floating particles
+  const particles = Array.from({ length: 150 }, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    size: Math.random() * 3 + 2,
+    color: pastelColor(),
+    velX: (Math.random() - 0.5) * 0.3,
+    velY: (Math.random() - 0.5) * 0.3,
+  }));
 
-    const loop = () => {
-        // Black background
-        ctx.fillStyle = '#000000';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+  const loop = () => {
+    // Black background
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Draw particles
-        for (const p of particles) {
-            ctx.fillStyle = p.color;
-            ctx.fillRect(p.x, p.y, p.size, p.size);
+    // Draw particles
+    for (const p of particles) {
+      ctx.fillStyle = p.color;
+      ctx.fillRect(p.x, p.y, p.size, p.size);
 
-            p.x += p.velX;
-            p.y += p.velY;
+      p.x += p.velX;
+      p.y += p.velY;
 
-            // Wrap around
-            if (p.x < 0) p.x = canvas.width;
-            if (p.x > canvas.width) p.x = 0;
-            if (p.y < 0) p.y = canvas.height;
-            if (p.y > canvas.height) p.y = 0;
-        }
+      // Wrap around
+      if (p.x < 0) p.x = canvas.width;
+      if (p.x > canvas.width) p.x = 0;
+      if (p.y < 0) p.y = canvas.height;
+      if (p.y > canvas.height) p.y = 0;
+    }
 
-        requestAnimationFrame(loop);
-    };
+    requestAnimationFrame(loop);
+  };
 
-    loop();
+  loop();
 };
 
 declare global {
@@ -146,6 +146,8 @@ export const Layout = {
                   id="username" 
                   class="w-full px-3 py-2 border border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50"
                   placeholder="Enter your username"
+                  pattern="^[a-zA-Z0-9]{3,12}$"
+                  title="Le nom doit contenir uniquement des lettres et chiffres (3-12 caractères)"
                   required
                 >
               </div>
@@ -157,6 +159,8 @@ export const Layout = {
                   id="password" 
                   class="w-full px-3 py-2 border border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50"
                   placeholder="Enter your password"
+                  pattern="^(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d]{6,18}$"
+                  title="Le mot de passe doit contenir 6-18 caractères, au moins 1 majuscule et 1 chiffre"
                   required
                 >
               </div>
@@ -174,13 +178,13 @@ export const Layout = {
               <div class="flex space-x-4 mt-6">
                 <button 
                   type="submit" 
-                  class="flex-1 text-white py-2 px-4 border border-gray-50 hover:border-blue-500 hover:bg-gray-700/50 transition-all font-bold">
+                  class="flex-1 text-white py-2 px-4 border border-gray-50 hover:border-blue-500 hover:bg-gray-700 transition-all font-bold">
                   LOGIN
                 </button>
                 <button 
                   type="button" 
                   id="cancel-login" 
-                  class="flex-1 text-white py-2 px-4 border border-gray-50 hover:border-red-500 hover:bg-gray-700/50 transition-all font-bold">
+                  class="flex-1 text-white py-2 px-4 border border-gray-50 hover:border-red-500 hover:bg-gray-700 transition-all font-bold">
                   CANCEL
                 </button>
               </div>
@@ -209,6 +213,8 @@ export const Layout = {
                   id="reg-username" 
                   class="w-full px-3 py-2 border border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50"
                   placeholder="Choose a username"
+                  pattern="^[a-zA-Z0-9]{3,12}$"
+                  title="Le nom doit contenir uniquement des lettres et chiffres (3-12 caractères)"
                   required
                 >
               </div>
@@ -220,6 +226,8 @@ export const Layout = {
                   id="reg-password" 
                   class="w-full px-3 py-2 border border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50"
                   placeholder="Create a password"
+                  pattern="^(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d]{6,18}$"
+                  title="Le mot de passe doit contenir 6-18 caractères, au moins 1 majuscule et 1 chiffre"
                   required
                 >
               </div>
@@ -231,6 +239,8 @@ export const Layout = {
                   id="reg-confirm-password" 
                   class="w-full px-3 py-2 border border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50"
                   placeholder="Confirm your password"
+                  pattern="^(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d]{6,18}$"
+                  title="Le mot de passe doit contenir 6-18 caractères, au moins 1 majuscule et 1 chiffre"
                   required
                 >
               </div>
@@ -262,12 +272,12 @@ export const Layout = {
     `;
   },
 
-  async handleGithubLogin(root: HTMLElement, code: string): Promise<void>  {
+  async handleGithubLogin(root: HTMLElement, code: string): Promise<void> {
 
     const res = await fetch("/user/github", {
       method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({code})
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code })
     })
     if (res.ok) {
       const data = await res.json();
@@ -287,8 +297,7 @@ export const Layout = {
   mount(root: HTMLElement): void {
     // Navigation buttons
 
-    if (!(globalThis as any).loginIntervalId)
-    {
+    if (!(globalThis as any).loginIntervalId) {
       (globalThis as any).loginIntervalId = setInterval(async () => {
         if (sessionStorage.getItem('token') && sessionStorage.getItem('username') && sessionStorage.getItem('isLoggedIn')) {
           try {
@@ -298,10 +307,9 @@ export const Layout = {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${sessionStorage.getItem('token')}`
               },
-              body: JSON.stringify({username: sessionStorage.getItem('username')}),
+              body: JSON.stringify({ username: sessionStorage.getItem('username') }),
             });
-            if (!res.ok)
-            {
+            if (!res.ok) {
               sessionStorage.removeItem('token');
               sessionStorage.removeItem('isLoggedIn');
               sessionStorage.removeItem('username');
@@ -349,9 +357,9 @@ export const Layout = {
     // Language management
     const langButtons = root.querySelectorAll('[data-lang]') as NodeListOf<HTMLButtonElement>;
     const currentLang = sessionStorage.getItem('language') || 'fr';
-    
+
     this.setActiveLanguage(root, currentLang);
-    
+
     langButtons.forEach(btn => {
       btn.addEventListener('click', () => {
         const selectedLang = btn.dataset.lang;
@@ -363,7 +371,7 @@ export const Layout = {
 
     // Login button and modal management
     const loginBtn = root.querySelector('#login-btn') as HTMLButtonElement;
-    
+
     if (loginBtn) {
       loginBtn.addEventListener('click', () => {
         this.handleLoginClick(root);
@@ -414,8 +422,7 @@ export const Layout = {
       });
     }
 
-    if (!sessionStorage.getItem('token') || !sessionStorage.getItem('isLoggedIn') || !sessionStorage.getItem('username'))
-    {
+    if (!sessionStorage.getItem('token') || !sessionStorage.getItem('isLoggedIn') || !sessionStorage.getItem('username')) {
       sessionStorage.removeItem('token');
       sessionStorage.removeItem('isLoggedIn');
       sessionStorage.removeItem('username');
@@ -428,7 +435,7 @@ export const Layout = {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${sessionStorage.getItem('token')}`
         },
-        body: JSON.stringify({token: sessionStorage.getItem('token'), username: sessionStorage.getItem('username')})
+        body: JSON.stringify({ token: sessionStorage.getItem('token'), username: sessionStorage.getItem('username') })
       })
         .then(res => {
           if (!res.ok) {
@@ -518,7 +525,7 @@ export const Layout = {
 
   handleLoginClick(root: HTMLElement): void {
     const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true';
-    
+
     if (isLoggedIn) {
       const p = '/stats';
       history.pushState(null, '', p);
@@ -543,7 +550,7 @@ export const Layout = {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({username, password})
+        body: JSON.stringify({ username, password })
       });
       if (res.ok) {
         const data = await res.json();
@@ -594,36 +601,34 @@ export const Layout = {
     // Simulate register API call
     let stayInModale = false;
     if (username && password) {
-        try {
+      try {
         const res = await fetch('/user/register', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({username, password})
+          body: JSON.stringify({ username, password })
         });
         if (res.ok) {
           const data = await res.json();
-          sessionStorage.setItem('token', data.token); 
+          sessionStorage.setItem('token', data.token);
           sessionStorage.setItem('isLoggedIn', 'true');
           sessionStorage.setItem('username', username);
           this.showNotification(`Compte créé avec succès ! Bienvenue ${username} !`);
 
           this.updateLoginButton(root, true);
         }
-        else if (res.status === 400)
-        {
+        else if (res.status === 400) {
           const data = await res.json();
 
           this.showNotification(data.error, 'error');
           stayInModale = true;
         }
-        else if (res.status === 401)
-        {
+        else if (res.status === 401) {
           this.showNotification("Nom d'utilisateur deja utilise", 'error');
           stayInModale = true;
         }
-      } catch(err) {
+      } catch (err) {
         this.showNotification("Erreur de serveur, veuillez reessayer ulterieurement", 'error');
       }
       if (!stayInModale) {
@@ -654,7 +659,7 @@ export const Layout = {
     const translations = await res.json();
 
     const t = translations[lang];
-    if (!t) return ;
+    if (!t) return;
 
     root.querySelectorAll<HTMLElement>("[data-i18n]").forEach(el => {
       const key = el.dataset.i18n as keyof typeof t;
@@ -667,7 +672,7 @@ export const Layout = {
 
   setActiveLanguage(root: HTMLElement, lang: string): void {
     const langButtons = root.querySelectorAll('[data-lang]') as NodeListOf<HTMLButtonElement>;
-    
+
     langButtons.forEach(btn => {
       if (btn.dataset.lang === lang) {
         btn.className = 'w-8 h-6 transition bg-gray-800 hover:bg-gray-800 transform ';
@@ -720,13 +725,13 @@ export const Layout = {
     const bgColor = type === 'error' ? 'bg-red-500' : 'bg-blue-500';
     notification.className = `fixed bottom-4 right-4 ${bgColor} text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300 transform translate-x-full`;
     notification.textContent = message;
-    
+
     document.body.appendChild(notification);
-    
+
     setTimeout(() => {
       notification.classList.remove('translate-x-full');
     }, 100);
-    
+
     setTimeout(() => {
       notification.classList.add('translate-x-full');
       setTimeout(() => {
