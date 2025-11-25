@@ -10,6 +10,7 @@ export class GameComponent {
   private isPaused: boolean = false; // Pour gérer les pauses entre les buts
 
   private onScoreChange?: (p1: number, p2: number) => void;
+  private onGoal?: (state: boolean) => void;
 
   // Constantes du jeu (identiques au serveur)
   private readonly CANVAS_WIDTH = 900;
@@ -29,26 +30,24 @@ export class GameComponent {
   constructor(
     container: HTMLElement,
     initialCanStart: boolean = false,
-    onScoreChange?: (p1: number, p2: number) => void
+    onScoreChange?: (p1: number, p2: number) => void,
+    onGoal?: (state: boolean) => void,
   ) {
     this.container = container;
     this.canStart = initialCanStart;
     this.onScoreChange = onScoreChange;
+    this.onGoal = onGoal;
     this.render();              // Crée le HTML
     this.setupCanvas();         // Configure le canvas
     this.setupEventListeners(); // Ajoute les contrôles clavier
     this.onScoreChange?.(this.p1Score, this.p2Score);
+    this.onGoal?.(false);
   }
 
   setCanStart(canStart: boolean) {
     this.canStart = canStart;
     if (this.canStart) {
-      // Pause de 3 secondes avant de commencer le match
-      this.isPaused = true;
-      setTimeout(() => {
-        this.isPaused = false;
-        this.startGame();
-      }, 3000);
+      this.startGame()
     } else {
       this.pauseGame();
     }
@@ -59,7 +58,7 @@ export class GameComponent {
       <div class="w-full flex justify-center">
         <canvas 
           id="game-canvas" 
-          class="backdrop-blur-2xs border-1 border-gray-50"
+          class="backdrop-blur-2xs border border-gray-50"
           width="900" 
           height="600">
         </canvas>
@@ -161,6 +160,7 @@ export class GameComponent {
       this.p1.reset();
       this.p2.reset();
       this.onScoreChange?.(this.p1Score, this.p2Score);
+      this.onGoal?.(true);
       
       // Pause de 3 secondes après un but
       this.isPaused = true;
@@ -173,6 +173,7 @@ export class GameComponent {
       this.p1.reset();
       this.p2.reset();
       this.onScoreChange?.(this.p1Score, this.p2Score);
+      this.onGoal?.(true);
       
       // Pause de 3 secondes après un but
       this.isPaused = true;

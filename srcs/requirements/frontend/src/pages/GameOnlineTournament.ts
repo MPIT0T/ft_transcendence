@@ -1,8 +1,11 @@
 import type { Page } from "../interface/gameInterface.js"
 import { GameComponentOnline } from "../components/GameComponentOnline.js";
 import { ws } from "./TournamentRoom.js";
+import {sleep} from "../utils/sleep";
 
 let currentGame: GameComponentOnline | null = null;
+let timerInterval: number | null = null;
+let elapsedSeconds: number = 0;
 
 export const GameOnlineTournament: Page = {
   render() {
@@ -10,7 +13,7 @@ export const GameOnlineTournament: Page = {
 <div id="tournament-match-title" class="text-7xl text-center mb-5 text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-blue-500 to-green-500 bg-[length:400%_400%] animate-gradientShift">
   tournament name
 </div>
-<div class="relative overflow-hidden text-gray-50 text-lg border-1 border-gray-50 backdrop-blur-2xs">
+<div class="relative overflow-hidden text-gray-50 text-lg border border-gray-50 backdrop-blur-2xs">
   <div class="absolute inset-0 bg-gradient-to-r from-red-500 to-blue-500 opacity-30"></div>
   <div class="relative z-10">
     <div class="flex items-center justify-between px-6 pt-2">
@@ -28,22 +31,15 @@ export const GameOnlineTournament: Page = {
 <div class="flex-1 p-5 flex flex-col items-center justify-center bg-transparent">
   <div id="game-container" class="mb-8"></div>
 </div>
+<div id="start-modal" class="fixed inset-0 flex justify-center items-center z-75 hidden">
+  <div id="start-modal-text" class="text-8xl font-bold text-gray-50 mb-4 ml-4 text-center px-16 py-16">
+    - 3 -
+  </div>
+</div>
     `;
   },
 
   mount(root) {
-  // Extraire le roomId depuis l'URL (?gameId=...)
-  const urlParams = new URLSearchParams(window.location.search);
-  let roomId = urlParams.get('gameId');
-    
-    // Sauvegarder le roomId dans sessionStorage
-    if (roomId) {
-      sessionStorage.setItem('roomId', roomId);
-    } else {
-      // Fallback vers sessionStorage si pas dans l'URL
-      roomId = sessionStorage.getItem('roomId');
-    }
-    
     const clientId = sessionStorage.getItem('clientId');
     const tournamentId = sessionStorage.getItem('tournamentId');
     let canStart = false;
@@ -51,10 +47,66 @@ export const GameOnlineTournament: Page = {
 
     const gameContainer = root.querySelector('#game-container') as HTMLElement;
     const matchTitleEl = root.querySelector('#tournament-match-title') as HTMLElement;
-    const matchInfoEl = root.querySelector('#match-info') as HTMLElement;
     const player1NameEl = root.querySelector('#player-1-name') as HTMLElement;
     const player2NameEl = root.querySelector('#player-2-name') as HTMLElement;
-    const score = root.querySelector('#elo') as HTMLElement;
+    const score = root.querySelector('#score') as HTMLElement;
+    const timerEl = root.querySelector('#timer') as HTMLElement;
+    const startModal = root.querySelector('#start-modal') as HTMLElement;
+    const startModalText = root.querySelector('#start-modal-text') as HTMLElement;
+
+    const formatTime = (s: number) => {
+      const hours = Math.floor(s / 3600);
+      const minutes = Math.floor((s % 3600) / 60);
+      const seconds = s % 60;
+      if (hours > 0) {
+        return `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      }
+      return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+    }
+
+    const updateTimerDisplay = () => {
+      if (timerEl) {
+        timerEl.textContent = formatTime(elapsedSeconds);
+      }
+    }
+
+    const startTimer = () => {
+      if (timerInterval !== null) return;
+      timerInterval = window.setInterval(() => {
+        elapsedSeconds += 1;
+        updateTimerDisplay();
+      }, 1000);
+    };
+
+    const stopTimer = () => {
+      if (timerInterval !== null) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+    };
+
+    const startAnimation = async () => {
+      startModal.classList.remove("hidden");
+      await sleep(850);
+      startModalText.classList.add('opacity-0');
+      await sleep(150);
+      startModalText.classList.remove("opacity-0");
+      startModalText.textContent = "- 2 -";
+      await sleep(850);
+      startModalText.classList.add('opacity-0');
+      await sleep(150);
+      startModalText.classList.remove("opacity-0");
+      startModalText.textContent = "- 1 -";
+      await sleep(850);
+      startModalText.classList.add('opacity-0');
+      await sleep(150);
+      startModalText.classList.remove("opacity-0");
+      startModal.classList.add('hidden');
+      startModalText.textContent = "- 3 -";
+    }
+
+    player1NameEl.textContent = sessionStorage.getItem('player1Name');
+    player2NameEl.textContent = sessionStorage.getItem('player2Name');
 
     currentGame = new GameComponentOnline(
       gameContainer,
@@ -66,34 +118,27 @@ export const GameOnlineTournament: Page = {
 
     // Afficher les infos du match si disponibles
     const matchRound = sessionStorage.getItem('matchRound');
-    const matchOpponent = sessionStorage.getItem('matchOpponent');
-    const playerName = sessionStorage.getItem('username') || 'Player';
-    
+
     if (matchRound) {
       matchTitleEl.textContent = matchRound;
-    }
-    if (matchOpponent) {
-      matchInfoEl.textContent = `${playerName} VS ${matchOpponent}`;
     }
 
     // Le match de tournoi est géré directement par le serveur
     // Pas besoin d'envoyer "ready", on attend juste les messages du serveur
 
     if (ws) {
-      ws.onmessage = message => {
+      ws.onmessage = async message => {
         const response = JSON.parse(message.data);
 
         // Début du match
         if (response.method === "Start") {
+          console.log("BOBO");
           waiting = false;
           canStart = true;
           if (currentGame) {
             currentGame.setCanStart(canStart);
-
-          }
-          
-          if (matchInfoEl) {
-            matchInfoEl.textContent = `VS ${matchOpponent || 'Opponent'} - Match in progress!`;
+            await startAnimation();
+            startTimer();
           }
         }
 
@@ -102,19 +147,18 @@ export const GameOnlineTournament: Page = {
           const game = response.room;
           if (currentGame && game) {
             currentGame.updateGameState(game);
+            if (response.isGoal) {
+              stopTimer();
+              if (response.isLastGoal === undefined) {
+                await startAnimation();
+                startTimer();
+              }
+            }
           }
         }
 
         // Fin du match
         if (response.method === "gameEnd") {
-          const winner = response.winner;
-          const score1 = response.score1;
-          const score2 = response.score2;
-          
-          if (matchInfoEl) {
-            matchInfoEl.textContent = `Match finished! ${score1} - ${score2}`;
-          }
-          
           if (currentGame) {
             currentGame.destroy();
           }
@@ -130,8 +174,7 @@ export const GameOnlineTournament: Page = {
           
           // Nettoyer les infos du match
           sessionStorage.removeItem('matchRound');
-          sessionStorage.removeItem('matchOpponent');
-          
+
           // Sauvegarder le tournamentId pour revenir au bon tournoi
           if (response.tournamentId) {
             sessionStorage.setItem('tournamentId', response.tournamentId);
@@ -164,7 +207,6 @@ export const GameOnlineTournament: Page = {
 
       // Nettoyer les infos du match
       sessionStorage.removeItem('matchRound');
-      sessionStorage.removeItem('matchOpponent');
 
       window.removeEventListener('popstate', popstateHandler);
     };

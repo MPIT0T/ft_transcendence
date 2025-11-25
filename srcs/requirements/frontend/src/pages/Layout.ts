@@ -70,7 +70,7 @@ export const Layout = {
         <nav class="fixed w-screen z-20 h-24 flex items-center justify-between backdrop-blur-2xs border-b border-gray-50">
           <!-- Navigation gauche -->
           <div class="flex my-5 gap-3 mx-5">
-            <button id="home-btn" class="flex items-center px-3 py-1  hover:bg-gray-700 transition-all duration-300">
+            <button id="home-btn" class="flex items-center px-3 py-1  hover:bg-gray-700/50 transition-all duration-300">
               <div class="relative inline-block
                   z-10 text-4xl text-transparent bg-clip-text
                   bg-linear-to-r from-red-500 via-blue-500 to-green-500
@@ -116,7 +116,7 @@ export const Layout = {
               class="flex items-center px-3 py-2
                   bg-gray-800 text-gray-50
                   shadow-[3px_3px_0_#000]
-                  hover:bg-gray-700
+                  hover:bg-gray-700/50
                   hover:translate-x-px hover:translate-y-px hover:shadow-[1px_1px_0_#000]
                   transition-all duration-100">
               <span class="text-lg mr-2">👤</span>
@@ -174,13 +174,13 @@ export const Layout = {
               <div class="flex space-x-4 mt-6">
                 <button 
                   type="submit" 
-                  class="flex-1 text-white py-2 px-4 border border-gray-50 hover:border-blue-500 hover:bg-gray-700 transition-all font-bold">
+                  class="flex-1 text-white py-2 px-4 border border-gray-50 hover:border-blue-500 hover:bg-gray-700/50 transition-all font-bold">
                   LOGIN
                 </button>
                 <button 
                   type="button" 
                   id="cancel-login" 
-                  class="flex-1 text-white py-2 px-4 border border-gray-50 hover:border-red-500 hover:bg-gray-700 transition-all font-bold">
+                  class="flex-1 text-white py-2 px-4 border border-gray-50 hover:border-red-500 hover:bg-gray-700/50 transition-all font-bold">
                   CANCEL
                 </button>
               </div>
@@ -238,13 +238,13 @@ export const Layout = {
               <div class="flex space-x-4 mt-6">
                 <button 
                   type="submit" 
-                  class="flex-1 text-white py-2 px-4 border border-white hover:border-green-500 hover:bg-gray-700 transition-colors font-bold">
+                  class="flex-1 text-white py-2 px-4 border border-white hover:border-green-500 hover:bg-gray-700/50 transition-colors font-bold">
                   REGISTER
                 </button>
                 <button 
                   type="button" 
                   id="cancel-register" 
-                  class="flex-1 text-white py-2 px-4 border border-white hover:border-red-500 hover:bg-gray-700 transition-colors font-bold">
+                  class="flex-1 text-white py-2 px-4 border border-white hover:border-red-500 hover:bg-gray-700/50 transition-colors font-bold">
                   CANCEL
                 </button>
               </div>
@@ -697,7 +697,7 @@ export const Layout = {
       `;
         loginBtn.className = `
         flex items-center px-3 py-2
-        hover:bg-gray-700
+        hover:bg-gray-700/50
         transition-all duration-100
       `;
       } else {
@@ -708,7 +708,7 @@ export const Layout = {
         loginBtn.className = `
         flex items-center px-3 py-2
         text-gray-50
-        hover:bg-gray-700
+        hover:bg-gray-700/50
         transition-all duration-100
       `;
       }

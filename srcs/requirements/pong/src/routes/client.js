@@ -6,15 +6,16 @@ class Client {
 		this._player = null;
 		this._elo = 1000;
 		this._conection = socket;
+		this._currentPage = null;
 	}
 
 	toJSON() {
 		return {
 				name: this._name,
 				elo: this._elo,
+                player: this._player,
 		};
 	}
-
 }
 
 module.exports = Client;

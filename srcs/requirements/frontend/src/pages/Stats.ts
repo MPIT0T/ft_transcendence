@@ -62,15 +62,15 @@ const Stats: StatsPage = {
     const indicatorTransform = activeTab === 'profile'
       ? 'translateX(0%)' : 'translateX(100%)';
     return `
-<div class="bg-transparent flex flex-col w-[70vw] pt-20 items-start">
+<div class="bg-transparent flex flex-col w-[60vw] pt-20 items-start">
 	<!-- Header avec onglets -->
-		<div class="mb-6 w-[70vw] mx-auto">
-	<div class="relative backdrop-blur-2xs border border-gray-50 flex overflow-hidden">
+  <div class="mb-6 w-[60vw] mx-auto">
+	  <div class="relative backdrop-blur-2xs border border-gray-50 flex overflow-hidden">
 			<!-- Sliding indicator -->
 			<div id="tab-indicator" class="absolute top-0 left-0 h-full w-1/2 bg-gray-700 transition-transform duration-300 ease-in-out" style="transform:${indicatorTransform};"></div>
 			<button 
-				id="profile-tab"
-				class="relative z-10 flex-1 px-6 py-3 text-center transition-colors duration-200 hover:bg-gray-700/40 text-white">
+		    	id="profile-tab"
+				  class="relative z-10 flex-1 px-6 py-3 text-center transition-colors duration-200 hover:bg-gray-700/50 text-white">
 				<div class="relative inline-block">
 					<div class="relative z-10 text-7xl text-transparent bg-clip-text
 							bg-linear-to-r from-red-500 via-blue-500 to-green-500
@@ -78,11 +78,11 @@ const Stats: StatsPage = {
 						Profil
 					</div>
 				</div>
-		</button>
-		<button 
-			id="history-tab"
-			class="relative z-10 flex-1 px-6 py-3 text-center transition-colors duration-200 hover:bg-gray-700/40 text-white">
-			<div class="relative inline-block">
+		  </button>
+		  <button 
+			    id="history-tab"
+			    class="relative z-10 flex-1 px-6 py-3 text-center transition-colors duration-200 hover:bg-gray-700/50 text-white">
+			  <div class="relative inline-block">
 					<div class="relative z-10 text-7xl text-transparent bg-clip-text
 							bg-linear-to-r from-red-500 via-blue-500 to-green-500
 							bg-size-[200%_100%] bg-position-[100%_100%]">
@@ -93,13 +93,13 @@ const Stats: StatsPage = {
 		</div>
 	</div>
 
-	<div id="content-container" class="w-[70vw] mx-auto min-h-[60vh] max-h-[70vh] overflow-y-auto">
+	<div id="content-container" class="w-[60vw] mx-auto min-h-[60vh] max-h-[60vh] overflow-y-auto">
 		${activeTab === 'profile' ? this.renderProfile() : this.renderHistory()}
 	</div>
-		<div class="w-[70vw] mx-auto flex items-center justify-center p-6 gap-6">
-		<button class="text-blue-500  px-6 py-2 text-2xl font-bold backdrop-blur-2xs hover:bg-gray-700 hover:bg-opacity-50">🇫🇷</button>
-		<button class="text-red-500  px-6 py-2 text-2xl font-bold backdrop-blur-2xs hover:bg-gray-700 hover:bg-opacity-50">🇬🇧</button>
-		<button class="text-yellow-400  px-6 py-2 text-2xl font-bold backdrop-blur-2xs hover:bg-gray-700 hover:bg-opacity-50">🇪🇸</button>
+		<div class="w-[60vw] mx-auto flex items-center justify-center p-6 gap-6">
+		<button class="text-blue-500  px-6 py-2 text-2xl font-bold backdrop-blur-2xs hover:bg-gray-700/50">🇫🇷</button>
+		<button class="text-red-500  px-6 py-2 text-2xl font-bold backdrop-blur-2xs hover:bg-gray-700/50">🇬🇧</button>
+		<button class="text-yellow-400  px-6 py-2 text-2xl font-bold backdrop-blur-2xs hover:bg-gray-700/50">🇪🇸</button>
 	</div>
 </div>
 	`;
@@ -114,8 +114,8 @@ const Stats: StatsPage = {
         <div class="backdrop-blur-2xs border border-gray-50 p-6">
         <!-- Avatar -->
         <div class="text-center mb-6">
-          <div class="w-64 h-64 rounded-full mx-auto mb-4 flex items-center justify-center border-2 border-gray-50 overflow-hidden">
-            <img src="${avatar}" id="user-avatar" alt="avatar" class="w-64 h-64 object-cover rounded-full"/>
+          <div class="w-64 h-64 mx-auto mb-4 flex items-center justify-center overflow-hidden">
+            <img src="${avatar}" id="user-avatar" alt="avatar" class="w-64 h-64 object-cover"/>
           </div>
           <button
             id="open-avatar-modal"
