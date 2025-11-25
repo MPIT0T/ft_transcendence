@@ -293,7 +293,6 @@ export const Layout = {
     }
   },
 
-
   mount(root: HTMLElement): void {
     // Navigation buttons
 
@@ -371,10 +370,9 @@ export const Layout = {
 
     // Login button and modal management
     const loginBtn = root.querySelector('#login-btn') as HTMLButtonElement;
-
     if (loginBtn) {
       loginBtn.addEventListener('click', () => {
-        this.handleLoginClick(root);
+          this.handleLoginClick(root);
       });
     }
 
