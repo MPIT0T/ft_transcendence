@@ -74,6 +74,19 @@ export const GameOnline: Page = {
 
   mount(root) {
 
+    // Cleanup previous game if exists
+    if (currentGame) {
+      currentGame.destroy();
+      currentGame = null;
+    }
+
+    // Reset timer
+    if (timerInterval !== null) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+    elapsedSeconds = 0;
+
     Layout.redirectIfNotLoggedIn();
 
     let roomId = sessionStorage.getItem('roomId');
@@ -107,7 +120,7 @@ export const GameOnline: Page = {
 
       sessionStorage.removeItem('roomId');
 
-      if (!path.includes('gameroom')) {
+      if (!path.includes('gameroom') && !path.includes('gameonline')) {
         if (ws)
           ws.close();
       }
@@ -143,7 +156,7 @@ export const GameOnline: Page = {
           ws.send(JSON.stringify(payLoad));
         }
         window.removeEventListener('popstate', popstateHandler);
-        const p = '/gameRoom';
+        const p = '/';
         history.pushState(null, '', p);
         window.dispatchEvent(new PopStateEvent('popstate'));
 
@@ -299,7 +312,7 @@ export const GameOnline: Page = {
                 }
 
                 sessionStorage.removeItem('roomId');
-                const p = '/gameRoom';
+                const p = '/';
                 history.pushState(null, '', p);
                 window.dispatchEvent(new PopStateEvent('popstate'));
               });
@@ -309,15 +322,12 @@ export const GameOnline: Page = {
       }
     } else {
       window.removeEventListener('popstate', popstateHandler);
-      const p = '/gameRoom';
+      const p = '/';
       history.pushState(null, '', p);
       window.dispatchEvent(new PopStateEvent('popstate'));
       sessionStorage.removeItem('roomId');
     }
-    // Cleanup previous game if exists
-    if (currentGame) {
-      currentGame.destroy();
-    }
+
     window.addEventListener('popstate', popstateHandler);
   }
 }
