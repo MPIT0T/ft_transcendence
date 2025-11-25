@@ -95,7 +95,7 @@ const Stats: StatsPage = {
             id="open-avatar-modal"
             class="px-4 py-2 text-sm text-gray-100 hover:bg-gray-700/50 transition-colors"
           >
-            <div class="w-64 h-64 mx-auto mb-4 flex items-center justify-center overflow-hidden">
+            <div class="w-64 h-64 mx-auto mb-4 flex items-center rounded-full border border-gray-50 justify-center overflow-hidden">
               <img src="${avatar}" id="user-avatar" alt="avatar" class="w-64 h-64 object-cover"/>
             </div>
           </button>
