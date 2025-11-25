@@ -36,7 +36,8 @@ function getUserbyId(id) {
 function checkToken(token, username){
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
-        if (decoded.username == username)
+        const user = getUserbyUsername(username);
+        if (decoded.username == username && user)
             return true;
         else return false;
     } catch (err) {
@@ -51,9 +52,7 @@ function errorToken(authorization, username)
     }
     const token = authorization.split(' ')[1];
     if (!checkToken(token, username))
-    {
         return "Token manquant ou invalide";
-    }
     return "";
 }
 

@@ -288,24 +288,43 @@ export const Layout = {
       const loginModal = root.querySelector('#login-modal') as HTMLDivElement;
       this.closeModal(loginModal);
       (root.querySelector('#login-form') as HTMLFormElement).reset();
-      const username = userInfo.username;
-      (globalThis as any).loginIntervalId = setInterval(async () => {
-        try {
-          await fetch('/user/login/ping', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username })
-          });
-        } catch (err) {
-          console.error(err);
-        }
-      }, 29000);
     }
   },
 
 
   mount(root: HTMLElement): void {
     // Navigation buttons
+
+    if (!(globalThis as any).loginIntervalId)
+    {
+      (globalThis as any).loginIntervalId = setInterval(async () => {
+        if (sessionStorage.getItem('token') && sessionStorage.getItem('username') && sessionStorage.getItem('isLoggedIn')) {
+          try {
+            const res = await fetch('/user/login/ping', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+              },
+              body: JSON.stringify({username: sessionStorage.getItem('username')}),
+            });
+            if (!res.ok)
+            {
+              sessionStorage.removeItem('token');
+              sessionStorage.removeItem('isLoggedIn');
+              sessionStorage.removeItem('username');
+              this.updateLoginButton(root, false);
+            }
+          } catch (err) {
+            sessionStorage.removeItem('token');
+            sessionStorage.removeItem('isLoggedIn');
+            sessionStorage.removeItem('username');
+            this.updateLoginButton(root, false);
+          }
+        }
+      }, 5000);
+    }
+
     const homeBtn = root.querySelector('#home-btn') as HTMLButtonElement;
     if (homeBtn) {
       homeBtn.addEventListener('click', () => {
@@ -413,7 +432,8 @@ export const Layout = {
       fetch('/user/api/check-token', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${sessionStorage.getItem('token')}`
         },
         body: JSON.stringify({ token: sessionStorage.getItem('token'), username: sessionStorage.getItem('username') })
       })
@@ -542,17 +562,6 @@ export const Layout = {
         const loginModal = root.querySelector('#login-modal') as HTMLDivElement;
         this.closeModal(loginModal);
         (root.querySelector('#login-form') as HTMLFormElement).reset();
-        (globalThis as any).loginIntervalId = setInterval(async () => {
-          try {
-            await fetch('/user/login/ping', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ username })
-            });
-          } catch (err) {
-            console.error(err);
-          }
-        }, 29000);
       } else if (res.status === 401) {
         this.showNotification('Nom d\'utilisateur ou mot de passe invalide', 'error');
       }
@@ -608,17 +617,6 @@ export const Layout = {
           this.showNotification(`Compte créé avec succès ! Bienvenue ${username} !`);
 
           this.updateLoginButton(root, true);
-          (globalThis as any).loginIntervalId = setInterval(async () => {
-            try {
-              await fetch('/user/login/ping', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username })
-              });
-            } catch (err) {
-              console.error(err);
-            }
-          }, 29000);
         }
         else if (res.status === 400) {
           const data = await res.json();
