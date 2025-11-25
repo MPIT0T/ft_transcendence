@@ -107,7 +107,7 @@ const Stats: StatsPage = {
           <div class="relative">
             <span
               id="change-username"
-              class="flex items-center justify-center w-full h-10 px-3 text-center text-3xl text-gray-100 bg-white/5 border border-gray-700 cursor-text hover:border-gray-500 transition focus:outline-none focus:border-gray-500"
+              class="flex w-full px-3 py-2 border border-gray-400 text-2xl font-bold text-gray-200 focus:outline-none focus:border-gray-50"
               contenteditable="false"
             >
               ${sessionStorage.getItem('username')}
@@ -159,37 +159,37 @@ const Stats: StatsPage = {
 
         <!-- Friends Lists with tabs -->
         <div class="backdrop-blur-2xs border border-gray-50 p-6">
-        <h3 class="text-lg font-semibold text-gray-100">Friends</h3>
+        <h3 class="text-lg font-semibold text-gray-100">Amis</h3>
         
         <div class="mb-4">
           <label for="add-friend-input" class="block text-sm text-gray-300 mb-2">Ajouter un ami</label>
           <div class="flex gap-2">
-          <input id="add-friend-input" type="text" placeholder="Nom de l'ami" class="flex-1 px-3 py-2 bg-white/5 border border-gray-700 text-sm text-gray-100 rounded" />
-          <button id="add-friend-btn" class="px-3 py-2 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition-colors">Ajouter</button>
+          <input id="add-friend-input" type="text" placeholder="Nom de l'ami" class="flex w-full px-3 py-2 border border-gray-400 text-lg font-bold text-gray-200 focus:outline-none focus:border-gray-50" />
+          <button id="add-friend-btn" class="px-3 py-2 bg-transparent border border-gray-400 text-gray-50 text-lg hover:bg-gray-700/50 hover:border-blue-500 transition-colors">Ajouter</button>
           </div>
         </div>
         
         <div class="mb-4 flex items-center justify-between">
           <div class="relative w-60">
-          <div id="friends-tab-indicator" class="absolute top-0 left-0 h-full w-1/3 bg-gray-700 rounded-md transition-transform duration-200" style="transform: translateX(0%);"></div>
+          <div id="friends-tab-indicator" class="absolute top-0 left-0 h-full w-1/3 bg-gray-700 transition-transform duration-200" style="transform: translateX(0%);"></div>
           <div class="relative z-10 flex">
-            <button id="friends-online-tab" class="flex-1 px-3 py-2 text-sm text-white text-center">Online</button>
-            <button id="friends-offline-tab" class="flex-1 px-3 py-2 text-sm text-white text-center">Offline</button>
-            <button id="friends-request-tab" class="flex-1 px-3 py-2 text-sm text-white text-center">Request</button>
+            <button id="friends-online-tab" class="flex-1 px-3 py-2 text-sm hover:bg-gray-700/50 text-white text-center">Online</button>
+            <button id="friends-offline-tab" class="flex-1 px-3 py-2 text-sm hover:bg-gray-700/50 text-white text-center">Offline</button>
+            <button id="friends-request-tab" class="flex-1 px-3 py-2 text-sm hover:bg-gray-700/50 text-white text-center">Request</button>
           </div>
           </div>
         </div>
 
         <div id="friends-container">
-          <div id="online-friends" class="space-y-3 p-6 overflow-y-auto max-h-[38vh]">
+          <div id="online-friends" class="space-y-3 p-6 overflow-y-auto max-h-[37vh]">
           <ul id="online-friends-container">
           </ul>
           </div>
 
-          <div id="offline-friends" class="space-y-3 p-6 overflow-y-auto max-h-[38vh]">
+          <div id="offline-friends" class="space-y-3 p-6 overflow-y-auto max-h-[37vh]">
           <ul id="offline-friends-container"></ul>
           </div>
-          <div id="request-friends" class="space-y-3 p-6 overflow-y-auto max-h-[38vh]">
+          <div id="request-friends" class="space-y-3 p-6 overflow-y-auto max-h-[37vh]">
           <ul id="request-friends-container"></ul>
           </div>
         </div>
@@ -759,20 +759,20 @@ const Stats: StatsPage = {
           .map((entry) => entry.username);
         usernames.forEach((username: string) => {
           const li = document.createElement('li');
-          li.className = 'flex items-center justify-between';
+          li.className = 'flex items-center justify-between mb-3';
           li.innerHTML = `
-        }
-				<span class="text-gray-200 flex items-center">
-					<span class="inline-block w-2 h-2 mr-2 relative">
-					<span class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0 
-						 border-l-[4px] border-r-[4px] border-b-[6px] border-l-transparent border-r-transparent border-b-purple-500"></span>
-					</span>
-          ${username}
-				</span>
-				<button class="invite-btn px-3 py-1 text-xs bg-blue-500 text-white hover:bg-blue-600 transition-colors" id="Btn-${username}">
-        Accept
-				</button>
-        `;
+<div class="flex items-center">
+  <span class="inline-block w-2 h-2 mr-2 relative">
+    <span class="absolute bottom-0 left-0 w-0 h-0
+       border-l-[4px] border-r-[4px] border-b-[6px]
+       border-l-transparent border-r-transparent border-b-purple-500"></span>
+  </span>
+  <span class="text-gray-200 text-xl">${username}</span>
+</div>
+<button class="invite-btn px-3 py-1 text-md text-white border border-gray-50 hover:border-blue-500 hover:bg-gray-700/50 transition-colors" id="Btn-${username}">
+  Accepter
+</button>
+  `;
           const btn = li.querySelector('button') as HTMLButtonElement;
           btn.addEventListener('click', () => {
             this.acceptFriendRequest(username, li);
@@ -847,7 +847,7 @@ const Stats: StatsPage = {
             const li = document.createElement('li');
             li.className = 'flex items-center justify-between';
             li.innerHTML = `
-					<span class="text-gray-200 flex items-center">
+					<span class="text-gray-200 flex text-xl items-center">
 					<span class="w-2 h-2 bg-green-500 mr-2"></span>
 					${user.username}
 					</span>
@@ -953,7 +953,7 @@ const Stats: StatsPage = {
             li.className = 'flex items-center';
             li.innerHTML = `
 					<span class="w-2 h-2 bg-gray-400 rounded-full mr-2"></span>
-					<span class="text-gray-200">${user.username}</span>
+					<span class="text-gray-200 text-xl">${user.username}</span>
 					`;
             container.appendChild(li);
           }
