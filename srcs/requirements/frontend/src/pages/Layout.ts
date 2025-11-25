@@ -447,6 +447,13 @@ export const Layout = {
     }
   },
 
+  redirectIfNotLoggedIn(redirectTo = '/') {
+    if (!Layout.isLoggedIn()) {
+      history.pushState(null, '', redirectTo);
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    }
+  },
+
 
 
   setupRegisterModal(root: HTMLElement): void {
@@ -683,7 +690,7 @@ export const Layout = {
   },
 
   isLoggedIn(): boolean {
-    return !!localStorage.getItem('access_token');
+    return  (sessionStorage.getItem('token')) ? true : false;
   },
 
   updateLoginButton(root: HTMLElement, isLoggedIn: boolean): void {

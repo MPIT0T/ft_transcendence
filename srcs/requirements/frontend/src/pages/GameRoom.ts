@@ -1,4 +1,5 @@
 import type { Page } from "../interface/gameInterface.js"
+import {Layout} from "./Layout";
 
 export let ws: WebSocket | undefined;
 let clientId: string | undefined;
@@ -14,6 +15,8 @@ const reloadRooms = function (root: HTMLElement) {
 	if (ws)
 		ws.send(JSON.stringify(payLoad));
 }
+
+Layout.redirectIfNotLoggedIn();
 
 const reloadFriends = function (root: HTMLElement) {
 
@@ -305,6 +308,9 @@ export const GameRoom: Page = {
 	mount(root: HTMLElement): void {
 		let roomId;
 		let currentPage = true;
+
+    Layout.redirectIfNotLoggedIn();
+
 		if (ws === undefined || ws.readyState === WebSocket.CLOSED) {
 			const host = window.location.host;
 			ws = new WebSocket(`wss://${host}/pong/ws`);

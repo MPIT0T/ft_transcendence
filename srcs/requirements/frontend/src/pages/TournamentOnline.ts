@@ -1,5 +1,6 @@
 import type { Page } from "../interface/gameInterface.js"
 import { ws } from "./TournamentRoom.js";
+import {Layout} from "./Layout";
 
 export const TournamentOnline: Page = {
 	render() {
@@ -179,6 +180,9 @@ export const TournamentOnline: Page = {
 	},
 
 	mount(root: HTMLElement): void {
+
+    Layout.redirectIfNotLoggedIn();
+
 		const tournamentId = sessionStorage.getItem('tournamentId');
 		const tournamentName = sessionStorage.getItem('tournamentName');
 		const clientId = sessionStorage.getItem('clientId');

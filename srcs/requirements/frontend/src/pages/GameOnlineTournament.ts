@@ -2,6 +2,7 @@ import type { Page } from "../interface/gameInterface.js"
 import { GameComponentOnline } from "../components/GameComponentOnline.js";
 import { ws } from "./TournamentRoom.js";
 import {sleep} from "../utils/sleep";
+import {Layout} from "./Layout";
 
 let currentGame: GameComponentOnline | null = null;
 let timerInterval: number | null = null;
@@ -40,6 +41,9 @@ export const GameOnlineTournament: Page = {
   },
 
   mount(root) {
+
+    Layout.redirectIfNotLoggedIn();
+    
     const clientId = sessionStorage.getItem('clientId');
     const tournamentId = sessionStorage.getItem('tournamentId');
     let canStart = false;
