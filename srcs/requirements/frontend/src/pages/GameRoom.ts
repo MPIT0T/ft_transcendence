@@ -217,8 +217,8 @@ export const GameRoom: Page = {
 						id="room-name" 
 						class="w-full px-3 py-2 border border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50"
 						placeholder="Enter room name"
-						pattern="^[\\w\\s\\-\\.\\!\\?\\,\\:\\;\\(\\)\\[\\]\\{\\}\\@\\#\\$\\%\\^\\&\\*\\+\\=\\/\\\\]+$"
-						title="Le nom ne doit contenir que des caractères affichables (lettres, chiffres, espaces et ponctuation)"
+						pattern="^[a-zA-Z0-9]{3,12}$"
+                  		title="Le nom doit contenir uniquement des lettres et chiffres (3-12 caractères)"
 						required
 					>
 					<p id="room-name-error" class="text-red-500 text-sm mt-1 hidden">Le nom contient des caractères non autorisés</p>

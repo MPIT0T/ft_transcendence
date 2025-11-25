@@ -213,6 +213,8 @@ export const Layout = {
                   id="reg-username" 
                   class="w-full px-3 py-2 border border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50"
                   placeholder="Choose a username"
+                  pattern="^[a-zA-Z0-9]{3,12}$"
+                  title="Le nom doit contenir uniquement des lettres et chiffres (3-12 caractères)"
                   required
                 >
               </div>
@@ -295,8 +297,7 @@ export const Layout = {
   mount(root: HTMLElement): void {
     // Navigation buttons
 
-    if (!(globalThis as any).loginIntervalId)
-    {
+    if (!(globalThis as any).loginIntervalId) {
       (globalThis as any).loginIntervalId = setInterval(async () => {
         if (sessionStorage.getItem('token') && sessionStorage.getItem('username') && sessionStorage.getItem('isLoggedIn')) {
           try {
@@ -306,10 +307,9 @@ export const Layout = {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${sessionStorage.getItem('token')}`
               },
-              body: JSON.stringify({username: sessionStorage.getItem('username')}),
+              body: JSON.stringify({ username: sessionStorage.getItem('username') }),
             });
-            if (!res.ok)
-            {
+            if (!res.ok) {
               sessionStorage.removeItem('token');
               sessionStorage.removeItem('isLoggedIn');
               sessionStorage.removeItem('username');
