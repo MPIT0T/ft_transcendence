@@ -288,84 +288,83 @@ const Stats: StatsPage = {
     window.clearInterval((globalThis as any).showOfflineFriendsIntervalId);
     window.clearInterval((globalThis as any).showFriendRequestIntervalId);
     return `
-							<div class="space-y-6">
-									
-									<!-- Historique des matches -->
-									<div class="backdrop-blur-2xs border border-gray-50 ">
-											<div class="px-6 py-4 border-b border-gray-700">
-													<h3 class="text-lg font-semibold text-gray-100">📈 Stats des matches</h3>
-									</div>
-									<div class="flex gap-10 flex-wrap justify-center">
-                  <div class="p-6 rounded-xl shadow-md w-80 text-center">
-                    <svg id="wr-pieChart" width="204" height="204" viewBox="0 0 32 32"></svg>
-                    <div class="mt-4">
-                      <div class="flex items-center gap-2 text-gray-400">
-                        <span class="w-3 h-3 bg-green-400 rounded-full"></span>
-                        <span id="victory-class">You need atleast one game</span>
-                      </div>
-                    </div>
-                  </div>
-                
-                  <div class="p-6 rounded-xl shadow-md w-80 text-center">
-                    <svg id="play-daily-pieChart" width="200" height="200" viewBox="0 0 32 32"></svg>
-                    <div class="mt-4">
-                      <div class="flex items-center gap-2 text-gray-400">
-                        <span class="w-3 h-3 bg-fuchsia-400 rounded-full"></span>
-                        <span id="day-time-played">You didnt played today</span>
-                      </div>
-                    </div>
-                  </div>
-                
-                  <div class="p-6 rounded-xl shadow-md w-80 text-center">
-                    <svg id="play-weekly-pieChart" width="200" height="200" viewBox="0 0 32 32"></svg>
-                    <div class="mt-4">
-                      <div class="flex items-center gap-2 text-gray-400">
-                        <span class="w-3 h-3 bg-blue-400 rounded-full"></span>
-                        <span id="week-time-played">You didnt played this week</span>
-                      </div>
-                    </div>
-                  </div>
-                 </div>
-									<div class="backdrop-blur-2xs border border-gray-50 ">
-											<div class="px-6 py-4 border-b border-gray-700">
-													<h3 class="text-lg font-semibold text-gray-100">📈 Historique des matches</h3>
-									</div>
-										<div class="p-6 overflow-y-auto min-h-[30vh] max-h-[30vh]">
-													<table class="w-full">
-													<thead class="bg-transparent">
-																	<tr>
-																<th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Date</th>
-																<th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Adversaire</th>
-																<th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Score</th>
-																<th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Résultat</th>
-																<th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Mode de jeu</th>
-																	</tr>
-													</thead>
-													<tbody class="bg-transparent divide-y divide-gray-800" id="history-container"></tbody>
-													</table>
-											</div>
-									</div>
-	
-									<!-- Statistiques de la période -->
-									<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-											<div class="backdrop-blur-2xs border border-gray-50 p-6 text-center">
-													<div class="text-3xl font-bold text-blue-400" id="histo-weekly-played">0</div>
-													<div class="text-sm text-gray-400">Parties cette semaine</div>
-											</div>
-											<div class="backdrop-blur-2xs border border-gray-50 p-6 text-center">
-													<div class="text-3xl font-bold text-green-400" id="histo-victory">0</div>
-													<div class="text-sm text-gray-400">Victoires</div>
-											</div>
-											<div class="backdrop-blur-2xs border border-gray-50 p-6 text-center">
-													<div class="text-3xl font-bold text-red-400" id="histo-loose">0</div>
-													<div class="text-sm text-gray-400">Défaites</div>
-											</div>
-											<div class="backdrop-blur-2xs border border-gray-50 p-6 text-center">
-													<div class="text-3xl font-bold text-purple-400" id="histo-wr">0%</div>
-													<div class="text-sm text-gray-400">Winrate</div>
-											</div>
-									</div>
-							</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+  <div class="backdrop-blur-2xs border border-gray-50">
+    <div class="px-6 py-4 border-b border-gray-700">
+      <h3 class="text-lg font-semibold text-gray-100">Stats des matches</h3>
+    </div>
+    <div class="flex gap-10 flex-wrap justify-center">
+      <div class="p-6 rounded-xl shadow-md w-80 text-center">
+        <svg id="wr-pieChart" width="100" height="100" viewBox="0 0 32 32"></svg>
+        <div class="mt-4">
+          <div class="flex items-center gap-2 text-gray-400">
+            <span class="w-3 h-3 bg-green-400 rounded-full"></span>
+            <span id="victory-class">Tu n'as jamais joué !</span>
+          </div>
+        </div>
+      </div>
+  
+      <div class="p-6 rounded-xl shadow-md w-80 text-center">
+        <svg id="play-daily-pieChart" width="100" height="100" viewBox="0 0 32 32"></svg>
+        <div class="mt-4">
+          <div class="flex items-center gap-2 text-gray-400">
+            <span class="w-3 h-3 bg-fuchsia-400 rounded-full"></span>
+            <span id="day-time-played">You didnt played today</span>
+          </div>
+        </div>
+      </div>
+  
+      <div class="p-6 rounded-xl shadow-md w-80 text-center">
+        <svg id="play-weekly-pieChart" width="100" height="100" viewBox="0 0 32 32"></svg>
+        <div class="mt-4">
+          <div class="flex items-center gap-2 text-gray-400">
+            <span class="w-3 h-3 bg-blue-400 rounded-full"></span>
+            <span id="week-time-played">You didnt played this week</span>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  <div class="backdrop-blur-2xs border border-gray-50 ">
+    <div class="px-6 py-4 border-b border-gray-700">
+      <h3 class="text-lg font-semibold text-gray-100">Historique des matches</h3>
+    </div>
+    <div class="p-6 overflow-y-auto min-h-[38vh] max-h-[38vh]">
+      <table class="w-full">
+        <thead class="bg-transparent">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Date</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Adversaire</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Score</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Résultat</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Mode de jeu</th>
+          </tr>
+        </thead>
+        <tbody class="bg-transparent divide-y divide-gray-800" id="history-container"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+  <div class="backdrop-blur-2xs border border-gray-50 p-6 text-center">
+    <div class="text-3xl font-bold text-blue-400" id="histo-weekly-played">0</div>
+    <div class="text-sm text-gray-400">Parties cette semaine</div>
+  </div>
+  <div class="backdrop-blur-2xs border border-gray-50 p-6 text-center">
+    <div class="text-3xl font-bold text-green-400" id="histo-victory">0</div>
+    <div class="text-sm text-gray-400">Victoires</div>
+  </div>
+  <div class="backdrop-blur-2xs border border-gray-50 p-6 text-center">
+    <div class="text-3xl font-bold text-red-400" id="histo-loose">0</div> 
+    <div class="text-sm text-gray-400">Défaites</div>
+  </div>
+  <div class="backdrop-blur-2xs border border-gray-50 p-6 text-center">
+    <div class="text-3xl font-bold text-purple-400" id="histo-wr">0%</div>
+    <div class="text-sm text-gray-400">Winrate</div>
+  </div>
+</div>
+
 					`;
   },
 
