@@ -78,7 +78,6 @@ function displayRooms(root: HTMLElement, rooms: any[]) {
 const createRoom = function (root: HTMLElement): void {
 	const roomName = (root.querySelector('#room-name') as HTMLInputElement).value;
 	const gamePoint = (root.querySelector('#game-point') as HTMLSelectElement).value;
-	const gameMode = (root.querySelector('#game-mode') as HTMLSelectElement).value;
 
 	const payLoad = {
 		"method": "createR",
@@ -189,12 +188,12 @@ export const GameRoom: Page = {
 			<div class="text-center">
 				<h2 class="text-3xl text-gray-50 font-bold mb-4">Matchmaking en cours</h2>
 				<div class="flex justify-center mb-4">
-          <div class="h-16 flex items-center justify-center gap-3">
-            <span class="h-2 w-2 bg-white animate-bounceHigh [animation-delay:0ms]"></span>
-            <span class="h-2 w-2 bg-white animate-bounceHigh [animation-delay:150ms]"></span>
-            <span class="h-2 w-2 bg-white animate-bounceHigh [animation-delay:300ms]"></span>
-          </div>
-        </div>
+		  <div class="h-16 flex items-center justify-center gap-3">
+			<span class="h-2 w-2 bg-white animate-bounceHigh [animation-delay:0ms]"></span>
+			<span class="h-2 w-2 bg-white animate-bounceHigh [animation-delay:150ms]"></span>
+			<span class="h-2 w-2 bg-white animate-bounceHigh [animation-delay:300ms]"></span>
+		  </div>
+		</div>
 				<p class="text-gray-400 mb-6">Veuillez patienter pendant que nous cherchons un adversaire</p>
 				<button 
 					id="cancel-matchmaking" 
@@ -218,8 +217,11 @@ export const GameRoom: Page = {
 						id="room-name" 
 						class="w-full px-3 py-2 border border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50"
 						placeholder="Enter room name"
+						pattern="^[a-zA-Z0-9]{3,12}$"
+                  		title="Le nom doit contenir uniquement des lettres et chiffres (3-12 caractères)"
 						required
 					>
+					<p id="room-name-error" class="text-red-500 text-sm mt-1 hidden">Le nom contient des caractères non autorisés</p>
 				</div>
 				
 				<div>
@@ -229,13 +231,6 @@ export const GameRoom: Page = {
 						<option value="5">5</option>
 						<option value="10">10</option>
 						<option value="15">15</option>
-					</select>
-				</div>
-				
-				<div>
-					<label class="block text-sm font-bold mb-2">Mode de Jeu :</label>
-					<select id="game-mode" class="w-full px-3 py-2 text-gray-200 border border-gray-400 focus:outline-none focus:border-gray-50">
-						<option value="classic">Pong Classique</option>
 					</select>
 				</div>
 				

@@ -49,6 +49,10 @@ async function registerRoute(fastify, options) {
     if (!username || !password) {
       return reply.status(400).send({ error: 'Nom d\'utilisateur et mot de passe requis' });
     }
+    const usernameRegex = /^[a-zA-Z0-9]{3,12}$/;
+    if (!usernameRegex.test(username))
+      return reply.status(400).send({ error: 'Le nom doit contenir uniquement des lettres et chiffres (3-12 caractères)'});
+    
     const regex = /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{6,18}$/;
     if (!regex.test(password))
       return reply.status(400).send({ error: 'Le mot de passe doit faire entre 6 et 18 charateres et avoir au moins 1 majuscule et 1 chiffre'});
