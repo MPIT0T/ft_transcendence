@@ -159,7 +159,7 @@ const Stats: StatsPage = {
 
         <!-- Friends Lists with tabs -->
         <div class="backdrop-blur-2xs border border-gray-50 p-6">
-        <h3 class="text-lg font-semibold text-gray-100">Amis</h3>
+        <h3 class="text-2xl font-bold text-gray-100">Amis</h3>
         
         <div class="mb-4">
           <label for="add-friend-input" class="block text-sm text-gray-300 mb-2">Ajouter un ami</label>
