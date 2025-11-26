@@ -294,7 +294,7 @@ const Stats: StatsPage = {
       <h3 class="text-lg font-semibold text-gray-100">Stats des matches</h3>
     </div>
     <div class="flex gap-10 flex-wrap justify-center">
-      <div class="p-6 rounded-xl shadow-md w-80 text-center">
+      <div class="p-6 rounded-xl shadow-md w-80 text-center flex flex-col items-center justify-center">
         <svg id="wr-pieChart" width="100" height="100" viewBox="0 0 32 32"></svg>
         <div class="mt-4">
           <div class="flex items-center gap-2 text-gray-400">
@@ -304,7 +304,7 @@ const Stats: StatsPage = {
         </div>
       </div>
   
-      <div class="p-6 rounded-xl shadow-md w-80 text-center">
+      <div class="p-6 rounded-xl shadow-md w-80 text-center flex flex-col items-center justify-center">
         <svg id="play-daily-pieChart" width="100" height="100" viewBox="0 0 32 32"></svg>
         <div class="mt-4">
           <div class="flex items-center gap-2 text-gray-400">
@@ -314,7 +314,7 @@ const Stats: StatsPage = {
         </div>
       </div>
   
-      <div class="p-6 rounded-xl shadow-md w-80 text-center">
+      <div class="p-6 rounded-xl shadow-md w-80 text-center flex flex-col items-center justify-center">
         <svg id="play-weekly-pieChart" width="100" height="100" viewBox="0 0 32 32"></svg>
         <div class="mt-4">
           <div class="flex items-center gap-2 text-gray-400">
@@ -364,7 +364,6 @@ const Stats: StatsPage = {
     <div class="text-sm text-gray-400">Winrate</div>
   </div>
 </div>
-
 					`;
   },
 
