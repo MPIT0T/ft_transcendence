@@ -58,7 +58,7 @@ class Tournament {
 		// 4 Quarter Finals
 		for (let i = 1; i <= 4; i++) {
 			const roomId = `${this.tournamentId}_quarter_${i}`;
-			this.rooms.createRoom(roomId, this.gameMode, this.gamePoint, `Quarter Final ${i}`);
+			this.rooms.createRoom(roomId, this.gameMode, this.gamePoint, `Quart de Finale ${i}`);
 			this.allTournamentRooms.push({
 				roomId: roomId,
 				roomName: `Quarter Final ${i}`,
@@ -76,7 +76,7 @@ class Tournament {
 		// 2 Semi Finals
 		for (let i = 1; i <= 2; i++) {
 			const roomId = `${this.tournamentId}_semi_${i}`;
-			this.rooms.createRoom(roomId, this.gameMode, this.gamePoint, `Semi Final ${i}`);
+			this.rooms.createRoom(roomId, this.gameMode, this.gamePoint, `Semi-Finale ${i}`);
 			this.allTournamentRooms.push({
 				roomId: roomId,
 				roomName: `Semi Final ${i}`,
@@ -93,7 +93,7 @@ class Tournament {
 
 		// 1 Final
 		const finalRoomId = `${this.tournamentId}_final`;
-		this.rooms.createRoom(finalRoomId, this.gameMode, this.gamePoint, 'Final');
+		this.rooms.createRoom(finalRoomId, this.gameMode, this.gamePoint, 'Finale');
 		this.allTournamentRooms.push({
 			roomId: finalRoomId,
 			roomName: 'Final',

@@ -157,7 +157,7 @@ export const TournamentOnline: Page = {
 								    <div class="w-16 h-16">
 								      <img id="winner-profile-pic" class="w-16 h-16 object-cover mx-auto block" src="anonymous.png" alt="profile picture"/>
 								    </div>
-								    <div class="text-gray-400 text-lg wrap-break-word overflow-hidden">AC...</div>
+								    <div id="winner-name" class="text-gray-400 text-lg wrap-break-word overflow-hidden">AC...</div>
 								  </div>
 								</div>
 							</div>
@@ -203,6 +203,35 @@ export const TournamentOnline: Page = {
 		}
 		if (ws)
 			ws.send(JSON.stringify(payLoad));
+
+		const popstateHandler = (event: PopStateEvent) => {
+			const path = window.location.pathname.toLowerCase();
+			// If we're still on a tournament-related page (Tournament Online or Game Online), don't notify server about leaving
+			if (path.includes('tournamentonline') || path.includes('gameonlinetournament')) {
+				return;
+			}
+			const payLoad = {
+				"method": "leave",
+				"clientId": clientId
+			}
+
+			if (ws)
+				ws.send(JSON.stringify(payLoad));
+
+			if (sessionStorage.getItem('gamestate') === 'playing-game') {
+				if (ws)
+					ws.close();
+			}
+
+			sessionStorage.removeItem('tournamentName');
+			sessionStorage.removeItem('tournamentId');
+			sessionStorage.removeItem('gamestate');
+			sessionStorage.removeItem('player1Name');
+			sessionStorage.removeItem('player2Name');
+			sessionStorage.removeItem('roomId');
+
+			window.removeEventListener('popstate', popstateHandler);
+		};
 
 		if (ws) {
 			ws.onmessage = message => {
@@ -255,7 +284,7 @@ export const TournamentOnline: Page = {
 				// Quand le tournoi commence
 				if (response.method === "Start") {
 					sessionStorage.setItem('gamestate', 'playing-game');
-					if (tournamentNameEl) tournamentNameEl.textContent = 'QUARTER FINALS';
+					if (tournamentNameEl) tournamentNameEl.textContent = 'Quarts de Finale';
 				}
 
 				// 📊 Recevoir l'état complet du tournoi (tous les matchs)
@@ -263,14 +292,14 @@ export const TournamentOnline: Page = {
 					const allMatches = response.allMatches;
 
 					// Déterminer le round actuel basé sur les matchs en cours
-					let currentRound = 'QUARTER FINALS';
+					let currentRound = 'Quarts de Finale';
 					const hasCompletedQuarters = allMatches.filter((m: any) => m.round === 'Quarter Finals' && m.status === 'completed').length;
 					const hasCompletedSemis = allMatches.filter((m: any) => m.round === 'Semi Finals' && m.status === 'completed').length;
 
 					if (hasCompletedSemis === 2) {
-						currentRound = 'FINAL';
+						currentRound = 'Finale';
 					} else if (hasCompletedQuarters === 4) {
-						currentRound = 'SEMI FINALS';
+						currentRound = 'Semi-Finales';
 					}
 
 					if (tournamentNameEl) {
@@ -439,21 +468,23 @@ export const TournamentOnline: Page = {
 
 					// Afficher le gagnant dans la zone Winner
 					// Chercher le div avec le trophée (maintenant text-5xl au lieu de text-6xl)
-					const trophyDiv = root.querySelector('.text-5xl.mb-3.text-white');
+					const winnerProfilePicEl = root.querySelector('#winner-profile-pic');
+          const winnerNameEl = root.querySelector('#winner-name');
 
-					if (trophyDiv && trophyDiv.parentElement) {
-						const winnerNameDiv = trophyDiv.nextElementSibling;
-
-						if (winnerNameDiv) {
-							winnerNameDiv.textContent = response.winner;
-							winnerNameDiv.classList.remove('text-gray-400', 'text-sm');
-							winnerNameDiv.classList.add('text-white', 'text-lg', 'font-bold', 'break-words');
-						}
+          if (winnerNameEl && winnerProfilePicEl) {
+            winnerNameEl.textContent = response.winner;
+            winnerNameEl.classList.remove('text-gray-400', 'text-sm');
+            winnerNameEl.classList.add('text-white', 'text-lg', 'font-bold', 'break-words');
 					}
 				}
 
 			}
-		}
+		} else {
+      window.removeEventListener('popstate', popstateHandler);
+      const p = '/tournamentRoom';
+      history.pushState(null, '', p);
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    }
 
 		// Bouton pour quitter le tournoi
 		if (leaveTournamentBtn) {
@@ -488,35 +519,6 @@ export const TournamentOnline: Page = {
 				window.dispatchEvent(new PopStateEvent('popstate'));
 			});
 		}
-
-		const popstateHandler = (event: PopStateEvent) => {
-			const path = window.location.pathname.toLowerCase();
-			// If we're still on a tournament-related page (Tournament Online or Game Online), don't notify server about leaving
-			if (path.includes('tournamentonline') || path.includes('gameonlinetournament')) {
-				return;
-			}
-			const payLoad = {
-				"method": "leave",
-				"clientId": clientId
-			}
-
-			if (ws)
-				ws.send(JSON.stringify(payLoad));
-
-			if (sessionStorage.getItem('gamestate') === 'playing-game') {
-				if (ws)
-					ws.close();
-			}
-
-			sessionStorage.removeItem('tournamentName');
-			sessionStorage.removeItem('tournamentId');
-			sessionStorage.removeItem('gamestate');
-			sessionStorage.removeItem('player1Name');
-			sessionStorage.removeItem('player2Name');
-			sessionStorage.removeItem('roomId');
-
-			window.removeEventListener('popstate', popstateHandler);
-		};
 		window.addEventListener('popstate', popstateHandler);
 	}
 };

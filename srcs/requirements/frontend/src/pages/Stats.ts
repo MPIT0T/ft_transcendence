@@ -1150,11 +1150,12 @@ const Stats: StatsPage = {
           return;
       }
       data.matchHistory.forEach(match => {
-        const victory = match.winner ? "✅ Victoire" : "❌ Défaite";
-        const victoryColor = match.winner ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800";
+        const victory = match.winner ? "Victoire" : "Défaite";
+        const victoryColorText = match.winner ? "text-green-300" : "text-red-300";
+        const victoryColorBG = match.winner ? "bg-green-700/10" : "bg-red-700/10";
 
         const tr = document.createElement('tr');
-        tr.className = 'hover:bg-gray-700/40';
+        tr.className = `hover:bg-gray-700/40 ${victoryColorBG}`;
         tr.innerHTML = `
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${match.date}</td>
               <td class="px-6 py-4 whitespace-nowrap">
@@ -1167,7 +1168,7 @@ const Stats: StatsPage = {
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-100">${match.score}</td>
               <td class="px-6 py-4 whitespace-nowrap">
-                  <span class="px-2 py-1 text-xs font-semibold ${victoryColor} rounded-full">
+                  <span class="px-2 py-1 text-xs font-semibold ${victoryColorText}">
                       ${victory}
                   </span>
               </td>

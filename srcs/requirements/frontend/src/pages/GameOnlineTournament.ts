@@ -164,6 +164,14 @@ export const GameOnlineTournament: Page = {
         // Fin du match
         if (response.method === "gameEnd") {
           if (currentGame) {
+            if (response.winner === 1) {
+              matchTitleEl.textContent = `Winner: ${sessionStorage.getItem('player1Name')}`;
+            } else if (response.winner === 2) {
+              matchTitleEl.textContent = `Winner: ${sessionStorage.getItem('player2Name')}`;
+            } else {
+              matchTitleEl.textContent = `Winner: ${sessionStorage.getItem('username')}`;
+            }
+
             currentGame.destroy();
           }
 
