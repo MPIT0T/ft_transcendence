@@ -293,7 +293,6 @@ export const Layout = {
     }
   },
 
-
   mount(root: HTMLElement): void {
     // Navigation buttons
 
@@ -371,10 +370,9 @@ export const Layout = {
 
     // Login button and modal management
     const loginBtn = root.querySelector('#login-btn') as HTMLButtonElement;
-
     if (loginBtn) {
       loginBtn.addEventListener('click', () => {
-        this.handleLoginClick(root);
+          this.handleLoginClick(root);
       });
     }
 
@@ -444,6 +442,13 @@ export const Layout = {
             sessionStorage.removeItem('username');
           }
         })
+    }
+  },
+
+  redirectIfNotLoggedIn(redirectTo = '/') {
+    if (!Layout.isLoggedIn()) {
+      history.pushState(null, '', redirectTo);
+      window.dispatchEvent(new PopStateEvent('popstate'));
     }
   },
 
@@ -683,7 +688,7 @@ export const Layout = {
   },
 
   isLoggedIn(): boolean {
-    return !!localStorage.getItem('access_token');
+    return  (sessionStorage.getItem('token')) ? true : false;
   },
 
   updateLoginButton(root: HTMLElement, isLoggedIn: boolean): void {

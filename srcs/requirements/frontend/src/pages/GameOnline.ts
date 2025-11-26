@@ -2,6 +2,7 @@ import type { Page } from "../interface/gameInterface.js"
 import { GameComponentOnline } from "../components/GameComponentOnline.js";
 import { ws } from "./GameRoom.js";
 import { sleep } from "../utils/sleep.js"
+import {Layout} from "./Layout";
 
 let currentGame: GameComponentOnline | null = null;
 let timerInterval: number | null = null;
@@ -72,6 +73,22 @@ export const GameOnline: Page = {
 
 
   mount(root) {
+
+    // Cleanup previous game if exists
+    if (currentGame) {
+      currentGame.destroy();
+      currentGame = null;
+    }
+
+    // Reset timer
+    if (timerInterval !== null) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+    elapsedSeconds = 0;
+
+    Layout.redirectIfNotLoggedIn();
+
     let roomId = sessionStorage.getItem('roomId');
     let clientId = sessionStorage.getItem('clientId');
     let canStart = false;
@@ -103,7 +120,7 @@ export const GameOnline: Page = {
 
       sessionStorage.removeItem('roomId');
 
-      if (!path.includes('gameroom')) {
+      if (!path.includes('gameroom') && !path.includes('gameonline')) {
         if (ws)
           ws.close();
       }
@@ -139,7 +156,7 @@ export const GameOnline: Page = {
           ws.send(JSON.stringify(payLoad));
         }
         window.removeEventListener('popstate', popstateHandler);
-        const p = '/gameRoom';
+        const p = '/';
         history.pushState(null, '', p);
         window.dispatchEvent(new PopStateEvent('popstate'));
 
@@ -286,8 +303,16 @@ export const GameOnline: Page = {
               closeWinnerModalBtn.addEventListener('click', () => {
                 window.removeEventListener('popstate', popstateHandler);
 
+                const payLoad = {
+                  "method": "leave",
+                  "clientId": clientId
+                };
+                if (ws) {
+                  ws.send(JSON.stringify(payLoad));
+                }
+
                 sessionStorage.removeItem('roomId');
-                const p = '/gameRoom';
+                const p = '/';
                 history.pushState(null, '', p);
                 window.dispatchEvent(new PopStateEvent('popstate'));
               });
@@ -297,15 +322,12 @@ export const GameOnline: Page = {
       }
     } else {
       window.removeEventListener('popstate', popstateHandler);
-      const p = '/gameRoom';
+      const p = '/';
       history.pushState(null, '', p);
       window.dispatchEvent(new PopStateEvent('popstate'));
       sessionStorage.removeItem('roomId');
     }
-    // Cleanup previous game if exists
-    if (currentGame) {
-      currentGame.destroy();
-    }
+
     window.addEventListener('popstate', popstateHandler);
   }
 }

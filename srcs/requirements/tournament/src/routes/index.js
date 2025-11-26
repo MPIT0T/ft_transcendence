@@ -1,7 +1,9 @@
 'use strict'
 const Games = require('./games');
+const { SERVER_SECRET } = require('./config.js');
 
 const g_Games = new Games();
+
 
 module.exports = async function (fastify, opts) {
 
@@ -81,6 +83,16 @@ function removeClient(clientId) {
 
 }
 
+function checkClient(clientId, socket) {
+
+	const client = g_Games.findClient(clientId);
+	if (!client)
+		return false;
+	if (client._conection !== socket)
+		return false;
+	return true;
+}
+
 function leave(clientId) {
 
 	const client = g_Games.findClient(clientId);
@@ -90,6 +102,17 @@ function leave(clientId) {
 
 	g_Games._tournaments.removeClientsTournament(clientId);
 
+}
+
+function isClientInAnyRoom(clientId) {
+	const tournaments = Object.values(g_Games._tournaments._tournaments);
+	const joiningClient = g_Games.findClient(clientId);
+	for (const tournament of tournaments) {
+		if (tournament.clients.some(c => c._clientId === clientId) || tournament.clients.some(c => c._dbId === joiningClient?._dbId)) {
+			return true;
+		}
+	}
+	return false;
 }
 
 function getEloFromJwt(token) {
@@ -103,15 +126,54 @@ function getEloFromJwt(token) {
 	return payload.elo;
 }
 
-function handleUser(socket, data) {
-	const client = g_Games.findClient(data.clientId);
-	if (client === undefined)
-		throw "Client id not good";
-	client._token = data.token;
-	client._elo = getEloFromJwt(data.token);
-	client._name = data.username;
+async function getDbId(username, token) {
+	let dbId = null;
+
+	const bodyPayload = { username, secret: SERVER_SECRET };
+
+	try {
+		const res = await fetch('https://user_handling:3003/api/get-id-server', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${token}`
+			},
+			body: JSON.stringify(bodyPayload),
+		});
+
+		const bodyText = await res.text().catch(() => '');
+
+		if (!res.ok) {
+			console.log('getDbId - error response:', {
+				status: res.status,
+				statusText: res.statusText,
+				body: bodyText,
+				username
+			});
+		} else {
+			try {
+				const parsed = JSON.parse(bodyText);
+				dbId = parsed.id || parsed.dbId || parsed.userId || null;
+			} catch (parseErr) {
+				console.log('getDbId - JSON parse error:', parseErr);
+			}
+		}
+	} catch (err) {
+		console.log('getDbId - fetch error:', err);
+	}
+
+	return dbId;
 }
 
+async function handleUser(socket, data) {
+	const client = g_Games.findClient(data.clientId);
+	if (!checkClient(data.clientId, socket))
+		throw "Client id not good";
+	client._token = data.token || null;
+	client._elo = getEloFromJwt(data.token);
+	client._name = data.username || null;
+	client._dbId = await getDbId(data.username, data.token);
+}
 
 
 function handleGetTournaments(socket, data) {
@@ -149,30 +211,26 @@ async function handleJoinTournament(socket, data) {
 		return;
 	}
 
-	const tournaments = Object.values(g_Games._tournaments._tournaments);
-	for (const t of tournaments) {
-		const clientIndex = t.clients.findIndex(c => c._clientId === data.clientId);
-		if (clientIndex !== -1) {
-			socket.send(JSON.stringify({
-				method: 'joinT',
-				status: 'error',
-				message: 'Client already in a tournament'
-			}));
-			return;
-		}
+
+	if (isClientInAnyRoom(data.clientId)) {
+		socket.send(JSON.stringify({
+			method: 'joinT',
+			status: 'error',
+			message: 'Client already in a tournament'
+		}));
+		return;
 	}
 
-	tournament.join(g_Games.findClient(data.clientId), socket);
+
+
+tournament.join(g_Games.findClient(data.clientId), socket);
 }
 
 function handleCreateTournaments(socket, data) {
 	if (g_Games.findClient(data.clientId) === undefined)
 		throw "Client id not good";
 
-	const tournaments = Object.values(g_Games._tournaments._tournaments);
-	for (const tournament of tournaments) {
-		const clientIndex = tournament.clients.findIndex(c => c._clientId === data.clientId);
-		if (clientIndex !== -1) {
+		if (isClientInAnyRoom(data.clientId)) {
 			socket.send(JSON.stringify({
 				method: 'joinT',
 				status: 'error',
@@ -180,18 +238,14 @@ function handleCreateTournaments(socket, data) {
 			}));
 			return;
 		}
-	}
 
 	g_Games.createTournament(socket, data.gameMode, data.gamePoint, data.tournamentName);
 }
 
 function handleTournamentMove(socket, data) {
-	// Trouver le tournoi qui contient cette room
-	// g_Games._tournaments est l'objet Tournaments, qui contient _tournaments (les tournois)
 	const tournamentsObj = g_Games._tournaments._tournaments || {};
 	let tournament = null;
 
-	// Parcourir tous les tournois pour trouver celui qui contient cette room
 	for (const tournamentId in tournamentsObj) {
 		const t = tournamentsObj[tournamentId];
 		if (t.rooms && t.rooms.findRoom(data.roomId)) {
@@ -212,8 +266,7 @@ async function handleReadyTournament(socket, data) {
 	const client = g_Games.findClient(data.clientId);
 	const tournament = g_Games.findTournament(data.tournamentId);
 
-	// Ignorer silencieusement si le client ou tournoi n'existe plus
-	if (!client || !tournament) {
+	if (!checkClient(data.clientId, socket) || !tournament) {
 		return;
 	}
 

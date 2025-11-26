@@ -1,5 +1,6 @@
 const Player = require('./player.js');
 const Ball = require('./ball.js');
+const { SERVER_SECRET } = require('./config.js');
 
 function sleep(ms) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
@@ -22,6 +23,8 @@ class Room {
 		this.clients = [];
 		this.startTime = 0;
 		this.endTime = 0;
+		this.dbIdP1 = null;
+		this.dbIdP2 = null;
 
 		// Constantes du jeu
 		this.CANVAS_WIDTH = 900;
@@ -100,7 +103,47 @@ class Room {
 		return false;
 	}
 
+	async updateElo() {
+		const ids = [];
 
+		ids.push(this.dbIdP1);
+		ids.push(this.dbIdP2);
+
+		const bodyPayload = {
+			ids: ids,
+			secret: SERVER_SECRET,
+		};
+
+		try {
+			const res = await fetch('https://user_handling:3003/api/get-elo-server', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(bodyPayload),
+			});
+
+			const bodyText = await res.text().catch(() => '');
+
+			if (!res.ok) {
+				console.log('updatePlayerR - get-elo-server error:', res.status, res.statusText, bodyText);
+			} else {
+				try {
+					const data = JSON.parse(bodyText);
+					if (data.elos && Array.isArray(data.elos)) {
+						if (this.clients[0]) this.clients[0]._elo = Number(data.elos[0]?.toFixed(0)) || 1000;
+						if (this.clients[1]) this.clients[1]._elo = Number(data.elos[1]?.toFixed(0)) || 1000;
+					} else if (data.elo1 !== undefined && data.elo2 !== undefined) {
+						if (this.clients[0]) this.clients[0]._elo = Number(data.elo1.toFixed(0));
+						if (this.clients[1]) this.clients[1]._elo = Number(data.elo2.toFixed(0));
+					}
+					console.log('Elos assigned:', this.clients[0]?._elo, this.clients[1]?._elo);
+				} catch (parseErr) {
+					console.log('updatePlayerR - JSON parse error:', parseErr);
+				}
+			}
+		} catch (err) {
+			console.log('updatePlayerR - fetch error:', err);
+		}
+	}
 
 
 	async updatePlayerR(int) {
@@ -108,6 +151,11 @@ class Room {
 		this.playerR += int;
 		if (this.playerR === 2) {
 			this.state = "playing-game";
+
+			this.dbIdP1 = this.clients[0]?._dbId || -1;
+			this.dbIdP2 = this.clients[1]?._dbId || -1;
+
+			await this.updateElo();
 
 			const payLoad = {
 				"method": "Start",
@@ -121,8 +169,8 @@ class Room {
 					console.error("Client socket non défini pour", c);
 				}
 			});
-			
-			await sleep(3000); // Délai de 3 secondes avant de commencer
+
+			await sleep(3000);
 			await this.gameLoop();
 		}
 	}
@@ -212,21 +260,21 @@ class Room {
 		}
 
 		if (scorer === 1 || scorer === 2) {
-            let payLoad;
-            if (this.p1Score >= this.gamePoint || this.p2Score >= this.gamePoint) {
-                payLoad = {
-                    "method": "update",
-                    "room": this.toJsonGoal(),
-                    "isGoal": true,
-                    "isLastGoal": true,
-                };
-            } else {
-                payLoad = {
-                    "method": "update",
-                    "room": this.toJsonGoal(),
-                    "isGoal": true,
-                };
-            }
+			let payLoad;
+			if (this.p1Score >= this.gamePoint || this.p2Score >= this.gamePoint) {
+				payLoad = {
+					"method": "update",
+					"room": this.toJsonGoal(),
+					"isGoal": true,
+					"isLastGoal": true,
+				};
+			} else {
+				payLoad = {
+					"method": "update",
+					"room": this.toJsonGoal(),
+					"isGoal": true,
+				};
+			}
 
 			this.clients.forEach(c => {
 				if (c._conection && typeof c._conection.send === 'function') {
@@ -264,10 +312,24 @@ class Room {
 	async sendGameEnd() {
 
 		this.endTime = Date.now();
-        const winner = this.p1Score > this.p2Score ? 1 : this.p1Score < this.p2Score ? 2 : 0;
-        const winnerName = winner === 1 ? this.clients[0].name : winner === 2 ? this.clients[1].name : "No one";
+		let winner;
+		let winnerName;
 
-        const payLoad = {
+		if (this.clients.length === 1) {
+			// Le joueur restant gagne
+			const remainingClient = this.clients[0];
+			winner = remainingClient._player; // 1 ou 2
+			winnerName = remainingClient._name || `Player ${winner}`;
+		} else if (this.clients.length === 0) {
+			// Les deux ont quitté, on garde la formule du score
+			winner = this.p1Score > this.p2Score ? 1 : 2;
+			winnerName = `Player ${winner}`;
+		} else {
+			// Les deux joueurs sont présents, on utilise le score
+			winner = this.p1Score > this.p2Score ? 1 : 2;
+			winnerName = winner === 1 ? (this.clients[0]?._name || "Player 1") : (this.clients[1]?._name || "Player 2");
+		}
+		const payLoad = {
 			"method": "gameEnd",
 			"winner": winnerName,
 			"finalScore": {
@@ -283,16 +345,10 @@ class Room {
 			}
 		});
 
+		const ids = [];
 
-		const clients = this.clients.map(client => client.id || client)
-
-		const tokens = [];
-		const usernames = [];
-
-		usernames.push(clients[0]._name);
-		usernames.push(clients[1]._name);
-		tokens.push(clients[0]._token);
-		tokens.push(clients[1]._token);
+		ids.push(this.dbIdP1);
+		ids.push(this.dbIdP2);
 
 		const bodyPayload = {
 			winner: winner,
@@ -301,13 +357,12 @@ class Room {
 				player1: this.p1Score,
 				player2: this.p2Score,
 			},
-			tokens: tokens,
-			usernames: usernames,
-			duration: Math.floor((this.endTime - this.startTime) / 1000), // Duration in seconds
+			ids: ids,
+			secret: SERVER_SECRET,
+			duration: Math.floor((this.endTime - this.startTime) / 1000),
 		};
-       
+
 		try {
-			// Internal call should omit external nginx prefix '/user/'
 			const res = await fetch('https://user_handling:3003/api/post-match', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
@@ -320,6 +375,10 @@ class Room {
 		} catch (err) {
 			console.log('sendGameEnd - fetch error:', err);
 		}
+
+		await sleep(3000);
+
+		await this.updateElo();
 	}
 
 	toJSON() {
