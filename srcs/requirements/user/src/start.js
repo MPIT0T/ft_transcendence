@@ -32,7 +32,7 @@ const fastify = fastifyFactory({
     key,
     allowHTTP1: true
   },
-  logger: { level: 'info' }
+  logger: { level: 'warn' }  // 'warn' = only warnings/errors, 'error' = errors only
 });
 
 // Autoload plugins & routes (mimic previous CLI behavior)

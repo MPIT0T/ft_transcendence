@@ -20,6 +20,7 @@ class Games {
 	constructor() {
 		this._clients = new Clients();
 		this._rooms = new Rooms();
+		
 		this._clientsList = [];
 	}
 

@@ -1,7 +1,10 @@
 'use strict'
 const Games = require('./games');
+const { SERVER_SECRET } = require('./config.js');
 
 const g_Games = new Games();
+
+
 
 module.exports = async function (fastify, opts) {
 	// Route WebSocket pour le jeu Pong
@@ -19,6 +22,9 @@ module.exports = async function (fastify, opts) {
 				try {
 					const data = JSON.parse(message.toString());
 					switch (data.method) {
+						case 'page':
+							await handleChangePage(socket, data);
+							break;
 						case 'user':
 							await handleUser(socket, data);
 							break;
@@ -90,12 +96,9 @@ function checkClient(clientId, socket) {
 	const client = g_Games.findClient(clientId);
 	if (!client)
 		return false;
-	if (client._conection != socket)
+	if (client._conection !== socket)
 		return false;
 	return true;
-
-
-	
 }
 
 function removeClient(clientId) {
@@ -163,17 +166,66 @@ function getEloFromJwt(token) {
 	return payload.elo;
 }
 
-function handleUser(socket, data) {
+function handleChangePage(socket, data) {
+	const client = g_Games.findClient(data.clientId);
+	if (!checkClient(data.clientId,socket))
+		throw "Client id not good";
+
+	client._currentPage = data.currentPage || null;
+}
+
+
+async function getDbId(username, token) {
+    let dbId = null;
+
+    const bodyPayload = { username, secret: SERVER_SECRET };
+
+    try {
+        const res = await fetch('https://user_handling:3003/api/get-id-server', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(bodyPayload),
+        });
+
+        const bodyText = await res.text().catch(() => '');
+
+        if (!res.ok) {
+            console.log('getDbId - error response:', {
+                status: res.status,
+                statusText: res.statusText,
+                body: bodyText,
+                username
+            });
+        } else {
+            try {
+                const parsed = JSON.parse(bodyText);
+                dbId = parsed.id || parsed.dbId || parsed.userId || null;
+            } catch (parseErr) {
+                console.log('getDbId - JSON parse error:', parseErr);
+            }
+        }
+    } catch (err) {
+        console.log('getDbId - fetch error:', err);
+    }
+
+    return dbId;
+}
+
+
+
+async function handleUser(socket, data) {
 	const client = g_Games.findClient(data.clientId);
 	if (!checkClient(data.clientId,socket))
 		throw "Client id not good";
 	client._token = data.token || null;
 	client._elo = getEloFromJwt(data.token);
 	client._name = data.username || null;
-	client._currentPage = data.currentPage || null;
+	client._dbId = await getDbId(data.username, data.token);
 }
 
-// Helper: vérifier si un client est dans une room
 function isClientInAnyRoom(clientId) {
 	const rooms = Object.values(g_Games._rooms._rooms);
 	for (const room of rooms) {

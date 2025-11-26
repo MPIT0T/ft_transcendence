@@ -1,5 +1,5 @@
 import type { Page } from "../interface/gameInterface.js"
-import {Layout} from "./Layout";
+import { Layout } from "./Layout";
 
 export let ws: WebSocket | undefined;
 let clientId: string | undefined;
@@ -309,7 +309,7 @@ export const GameRoom: Page = {
 		let roomId;
 		let currentPage = true;
 
-    Layout.redirectIfNotLoggedIn();
+		Layout.redirectIfNotLoggedIn();
 
 		if (ws === undefined || ws.readyState === WebSocket.CLOSED) {
 			const host = window.location.host;
@@ -330,7 +330,6 @@ export const GameRoom: Page = {
 					"clientId": clientId,
 					"token": sessionStorage.getItem('token'),
 					"username": sessionStorage.getItem('username'),
-					"currentPage": "gameRoom"
 				}
 				if (ws)
 					ws.send(JSON.stringify(payLoad));
@@ -451,10 +450,8 @@ export const GameRoom: Page = {
 				}
 
 				const payLoad = {
-					"method": "user",
+					"method": "page",
 					"clientId": clientId,
-					"token": sessionStorage.getItem('token'),
-					"username": sessionStorage.getItem('username'),
 					"currentPage": "null"
 				}
 				if (ws)
@@ -562,10 +559,8 @@ export const GameRoom: Page = {
 			reloadFriends(root);
 			if (currentPage === true) {
 				const payLoad = {
-					"method": "user",
+					"method": "page",
 					"clientId": clientId,
-					"token": sessionStorage.getItem('token'),
-					"username": sessionStorage.getItem('username'),
 					"currentPage": "gameRoom"
 				}
 				if (ws)
@@ -576,10 +571,8 @@ export const GameRoom: Page = {
 		const popstateHandler = (event: PopStateEvent) => {
 			window.clearInterval(statusRoom);
 			const payLoad = {
-				"method": "user",
+				"method": "page",
 				"clientId": clientId,
-				"token": sessionStorage.getItem('token'),
-				"username": sessionStorage.getItem('username'),
 				"currentPage": "null"
 			}
 			if (ws)

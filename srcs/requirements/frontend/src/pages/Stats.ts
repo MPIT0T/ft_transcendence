@@ -360,6 +360,8 @@ const Stats: StatsPage = {
   },
 
   mount(root) {
+
+ 
     // Gestion des onglets
     let _friends = 0;
     Object.defineProperty(globalThis, "friends", {
