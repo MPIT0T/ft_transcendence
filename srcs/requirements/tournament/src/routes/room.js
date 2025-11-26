@@ -1,5 +1,6 @@
 const Player = require('./player.js');
 const Ball = require('./ball.js');
+const { SERVER_SECRET } = require('./config.js');
 
 function sleep(ms) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
@@ -22,6 +23,8 @@ class Room {
 		this.clients = [];
 		this.startTime = 0;
 		this.endTime = 0;
+		this.dbIdP1 = null;
+		this.dbIdP2 = null;
 
 		// Constantes du jeu
 		this.CANVAS_WIDTH = 900;
@@ -84,7 +87,7 @@ class Room {
 
 
 	async updatePlayerR(int) {
-		
+
 		this.playerR += int;
 		if (this.playerR === 2) {
 			this.state = "playing-game";
@@ -94,7 +97,7 @@ class Room {
 				"room": this.toJSON()
 			};
 
-            await sleep(1000);
+			await sleep(1000);
 			this.clients.forEach(c => {
 				if (c._conection && typeof c._conection.send === 'function') {
 					c._conection.send(JSON.stringify(payLoad));
@@ -114,26 +117,29 @@ class Room {
 
 
 	updatePlayer(socket, data) {
-        this.clients.forEach(c => {
+		this.clients.forEach(c => {
 			if (c._conection && c._conection === socket) {
-                const player = c._player === 1 ? this.player1 : this.player2;
-                
-                if (data.type === "UP") {
-                    if (data.key === "KeyW" || data.key === "ArrowUp") {
-                        player.setVelocity(-8); // Monter
-                    } else if (data.key === "KeyS" || data.key === "ArrowDown") {
-                        player.setVelocity(8); // Descendre
-                    }
-                } else if (data.type === "DOWN") {
-                    player.setVelocity(0);
-                }
-            }
-        });
-    }
+				const player = c._player === 1 ? this.player1 : this.player2;
+
+				if (data.type === "UP") {
+					if (data.key === "KeyW" || data.key === "ArrowUp") {
+						player.setVelocity(-8); // Monter
+					} else if (data.key === "KeyS" || data.key === "ArrowDown") {
+						player.setVelocity(8); // Descendre
+					}
+				} else if (data.type === "DOWN") {
+					player.setVelocity(0);
+				}
+			}
+		});
+	}
 
 	async gameLoop() {
 		let lastTime = Date.now();
 		this.startTime = Date.now();
+
+		this.dbIdP1 = this.clients[0]?._dbId || -1;
+		this.dbIdP2 = this.clients[1]?._dbId || -1;
 
 		while (this.state === "playing-game") {
 			const currentTime = Date.now();
@@ -191,23 +197,23 @@ class Room {
 			this.player1.reset();
 			this.player2.reset();
 		}
-		
+
 		if (scorer === 1 || scorer === 2) {
-            let payLoad;
-            if (this.p1Score >= this.gamePoint || this.p2Score >= this.gamePoint) {
-                payLoad = {
-                    "method": "update",
-                    "room": this.toJsonGoal(),
-                    "isGoal": true,
-                    "isLastGoal": true,
-                };
-            } else {
-                payLoad = {
-                    "method": "update",
-                    "room": this.toJsonGoal(),
-                    "isGoal": true,
-                };
-            }
+			let payLoad;
+			if (this.p1Score >= this.gamePoint || this.p2Score >= this.gamePoint) {
+				payLoad = {
+					"method": "update",
+					"room": this.toJsonGoal(),
+					"isGoal": true,
+					"isLastGoal": true,
+				};
+			} else {
+				payLoad = {
+					"method": "update",
+					"room": this.toJsonGoal(),
+					"isGoal": true,
+				};
+			}
 
 			this.clients.forEach(c => {
 				if (c._conection && typeof c._conection.send === 'function') {
@@ -223,7 +229,7 @@ class Room {
 
 		// 6. Vérifier la condition de victoire
 		if (this.p1Score >= this.gamePoint || this.p2Score >= this.gamePoint) {
-			
+
 			const payLoad = {
 				"method": "update",
 				"room": this.toJsonUpdate(),
@@ -237,7 +243,7 @@ class Room {
 				}
 			});
 
-			
+
 			this.state = "ended";
 		}
 	}
@@ -245,7 +251,6 @@ class Room {
 	async sendGameEnd() {
 		this.endTime = Date.now();
 		const winner = this.p1Score > this.p2Score ? 1 : 2;
-		// const winner = this.p1Score >= this.gamePoint ? 1 : 2;
 
 		const payLoad = {
 			"method": "gameEnd",
@@ -263,15 +268,10 @@ class Room {
 			}
 		});
 
-		const clients = this.clients.map(client => client.id || client)
+		const ids = [];
 
-		const tokens = [];
-		const usernames = [];
-
-		usernames.push(clients[0]._name);
-		usernames.push(clients[1]._name);
-		tokens.push(clients[0]._token);
-		tokens.push(clients[1]._token);
+		ids.push(this.dbIdP1);
+		ids.push(this.dbIdP2);
 
 		const bodyPayload = {
 			winner: winner,
@@ -280,13 +280,12 @@ class Room {
 				player1: this.p1Score,
 				player2: this.p2Score,
 			},
-			tokens: tokens,
-			usernames: usernames,
-			duration: Math.floor((this.endTime - this.startTime) / 1000), // Duration in seconds
+			ids: ids,
+			secret: SERVER_SECRET,
+			duration: Math.floor((this.endTime - this.startTime) / 1000),
 		};
-       
+
 		try {
-			// Internal call should omit external nginx prefix '/user/'
 			const res = await fetch('https://user_handling:3003/api/post-match', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
@@ -317,7 +316,7 @@ class Room {
 			player2: this.player2?.toJSON ? this.player2.toJSON() : this.player2,
 		};
 	}
-	
+
 	toJsonUpdate() {
 		return {
 			ball: this.ball?.toJSON ? this.ball.toJSON() : this.ball,
@@ -335,7 +334,7 @@ class Room {
 			player2: this.player2?.toJsonMove ? this.player2.toJsonMove() : this.player2,
 		};
 	}
-	
+
 	toJsonJoin() {
 		return {
 			roomId: this.roomId,

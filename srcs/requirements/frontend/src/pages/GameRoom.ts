@@ -42,7 +42,6 @@ function displayFriends(root: HTMLElement, friends: any[]) {
 		friendBtn.innerHTML = `
 			<div class="w-full flex items-center">
 				<div class="flex-1 min-w-0 font-semibold truncate mr-4">${friend.username || 'Unknown'}</div>
-				<div class="w-20 text-md text-gray-300 text-right mr-4">${(friend.elo) ? 'Elo: ' + friend.elo : ''}</div>
 			</div>
 		`;
 		friendBtn.addEventListener('click', () => {
@@ -360,6 +359,11 @@ export const GameRoom: Page = {
 					history.pushState(null, '', p);
 					window.dispatchEvent(new PopStateEvent('popstate'));
 				} else {
+					const matchmakingModal = root.querySelector('#matchmaking-modal') as HTMLDivElement;
+					if (matchmakingModal) {
+						matchmakingModal.classList.add('hidden');
+						matchmakingModal.classList.remove('flex');
+					}
 					alert(response.message);
 				}
 			}

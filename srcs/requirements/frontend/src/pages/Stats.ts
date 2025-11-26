@@ -58,6 +58,7 @@ if (!Layout.isLoggedIn()) {
 
 const Stats: StatsPage = {
   render() {
+    activeTab = 'profile';
     // Position the sliding indicator
     const indicatorTransform = activeTab === 'profile'
       ? 'translateX(0%)' : 'translateX(100%)';
@@ -361,7 +362,17 @@ const Stats: StatsPage = {
 
   mount(root) {
 
- 
+    activeTab = 'profile';
+    const layoutLoginBtn = document.querySelector('#login-btn') as HTMLButtonElement | null;
+    let _prevLoginBtnClass: string | null = null;
+    let _prevLoginBtnDisabled: boolean | null = null;
+    if (layoutLoginBtn) {
+      _prevLoginBtnClass = layoutLoginBtn.className;
+      _prevLoginBtnDisabled = layoutLoginBtn.disabled;
+      layoutLoginBtn.disabled = true;
+      layoutLoginBtn.className = `${layoutLoginBtn.className} opacity-50 pointer-events-none`;
+    }
+
     // Gestion des onglets
     let _friends = 0;
     Object.defineProperty(globalThis, "friends", {

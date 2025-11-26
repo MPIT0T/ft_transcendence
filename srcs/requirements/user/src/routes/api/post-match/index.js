@@ -39,14 +39,15 @@ async function apiPostMatchRoute(fastify, options) {
 
         let userWinner;
         let userLooser;
-
+        if (ids[0] === -1 || ids[1] === -1)
+            return reply.status(400).send({error: 'user id not define'});
         try {
             userWinner = await getUserbyId(ids[winner - 1]);
             userLooser = await getUserbyId(ids[2 - winner]);
         }
         catch (e)
         {
-            return reply.status(404).send({error: 'winner: ' + ids[winner - 1] + ' looser: '+ids[2 - winner] + ' user not found'});
+            return reply.status(404).send({error: 'user not found'});
         }
         try {
             if (!userWinner || !userLooser)
