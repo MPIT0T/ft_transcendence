@@ -1,5 +1,5 @@
 import type { Page } from "../interface/gameInterface.js"
-import {Layout} from "./Layout";
+import { Layout } from "./Layout";
 
 export let ws: WebSocket | undefined;
 let clientId: string | undefined;
@@ -42,7 +42,6 @@ function displayFriends(root: HTMLElement, friends: any[]) {
 		friendBtn.innerHTML = `
 			<div class="w-full flex items-center">
 				<div class="flex-1 min-w-0 font-semibold truncate mr-4">${friend.username || 'Unknown'}</div>
-				<div class="w-20 text-md text-gray-300 text-right mr-4">${(friend.elo) ? 'Elo: ' + friend.elo : ''}</div>
 			</div>
 		`;
 		friendBtn.addEventListener('click', () => {
@@ -309,7 +308,7 @@ export const GameRoom: Page = {
 		let roomId;
 		let currentPage = true;
 
-    Layout.redirectIfNotLoggedIn();
+		Layout.redirectIfNotLoggedIn();
 
 		if (ws === undefined || ws.readyState === WebSocket.CLOSED) {
 			const host = window.location.host;
@@ -330,7 +329,6 @@ export const GameRoom: Page = {
 					"clientId": clientId,
 					"token": sessionStorage.getItem('token'),
 					"username": sessionStorage.getItem('username'),
-					"currentPage": "gameRoom"
 				}
 				if (ws)
 					ws.send(JSON.stringify(payLoad));
@@ -361,6 +359,11 @@ export const GameRoom: Page = {
 					history.pushState(null, '', p);
 					window.dispatchEvent(new PopStateEvent('popstate'));
 				} else {
+					const matchmakingModal = root.querySelector('#matchmaking-modal') as HTMLDivElement;
+					if (matchmakingModal) {
+						matchmakingModal.classList.add('hidden');
+						matchmakingModal.classList.remove('flex');
+					}
 					alert(response.message);
 				}
 			}
@@ -451,10 +454,8 @@ export const GameRoom: Page = {
 				}
 
 				const payLoad = {
-					"method": "user",
+					"method": "page",
 					"clientId": clientId,
-					"token": sessionStorage.getItem('token'),
-					"username": sessionStorage.getItem('username'),
 					"currentPage": "null"
 				}
 				if (ws)
@@ -562,10 +563,8 @@ export const GameRoom: Page = {
 			reloadFriends(root);
 			if (currentPage === true) {
 				const payLoad = {
-					"method": "user",
+					"method": "page",
 					"clientId": clientId,
-					"token": sessionStorage.getItem('token'),
-					"username": sessionStorage.getItem('username'),
 					"currentPage": "gameRoom"
 				}
 				if (ws)
@@ -576,10 +575,8 @@ export const GameRoom: Page = {
 		const popstateHandler = (event: PopStateEvent) => {
 			window.clearInterval(statusRoom);
 			const payLoad = {
-				"method": "user",
+				"method": "page",
 				"clientId": clientId,
-				"token": sessionStorage.getItem('token'),
-				"username": sessionStorage.getItem('username'),
 				"currentPage": "null"
 			}
 			if (ws)

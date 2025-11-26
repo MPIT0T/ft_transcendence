@@ -1,7 +1,8 @@
 'use strict';
+const fs = require('fs');
 const db = require("../../../db.js");
-const { getUserbyUsername } = require("../../../utils.js");
-const {checkToken} = require("../../../utils");
+const { getUserbyId } = require("../../../utils.js");
+const SERVER_SECRET = fs.readFileSync('/run/secrets/server_key', 'utf8').trim(); 
 
 function create_matchHistory(is_winner, scores, second_id, gamemode, duration)
 {
@@ -31,15 +32,24 @@ async function calculElo(winner, looser)
 async function apiPostMatchRoute(fastify, options) {
     fastify.post('/', async (req, reply) => {
         //set all post matches info like elo and match history
-        const {usernames, winner, scores, gameMode, tokens, duration} = req.body || {};
+        const {ids, winner, scores, gameMode, secret, duration} = req.body || {};
 
-        if (!checkToken(tokens[0], usernames[0]) || !checkToken(tokens[1], usernames[1]))
-            return reply.status(401).send({error: "invalid token"});
-        if (!usernames[0] || !usernames[1] || !gameMode)
+        if (!gameMode || SERVER_SECRET !== secret)
             return reply.status(400).send({error: 'Missing credentials'});
+
+        let userWinner;
+        let userLooser;
+        if (ids[0] === -1 || ids[1] === -1)
+            return reply.status(400).send({error: 'user id not define'});
         try {
-            const userWinner = await getUserbyUsername(usernames[winner - 1]);
-            const userLooser = await getUserbyUsername(usernames[2 - winner]);
+            userWinner = await getUserbyId(ids[winner - 1]);
+            userLooser = await getUserbyId(ids[2 - winner]);
+        }
+        catch (e)
+        {
+            return reply.status(404).send({error: 'user not found'});
+        }
+        try {
             if (!userWinner || !userLooser)
                 return reply.status(400).send({ error: 'Account not found' });
             userWinner.match_history = userWinner.match_history || "";
