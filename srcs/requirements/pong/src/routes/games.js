@@ -87,7 +87,8 @@ class Games {
 	isClientInMatchMaking(clientId) {
 
 		const joiningClient = this.findClient(clientId);
-		if (this._clientsList.some(c => c._clientId === clientId) || this._clientsList.some(c => c._dbId === joiningClient?._dbId)) {
+		if (!joiningClient) return false;
+		if (this._clientsList.some(c => c._client._clientId === clientId) || this._clientsList.some(c => c._client._dbId === joiningClient._dbId)) {
 			return true;
 		}
 		return false;
