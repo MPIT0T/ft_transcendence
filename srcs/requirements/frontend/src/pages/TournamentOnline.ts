@@ -236,249 +236,268 @@ export const TournamentOnline: Page = {
 		if (ws) {
 			ws.onmessage = message => {
 
-				const response = JSON.parse(message.data);
+        const response = JSON.parse(message.data);
 
-				if (response.method === "playerLeaveTournament") {
-					// Mettre à jour le compteur et le sidebar
-					if (playerCountEl) playerCountEl.textContent = `${response.playerCount}/8 PLAYERS`;
+        if (response.method === "playerLeaveTournament") {
+          // Mettre à jour le compteur et le sidebar
+          if (playerCountEl) playerCountEl.textContent = `${response.playerCount}/8 PLAYERS`;
 
-					// Mettre à jour les slots du bracket (quarter-finals)
-					const slots = root.querySelectorAll('[data-slot]');
-					slots.forEach((slot, index) => {
-						const nameEl = slot.querySelector('.player-name');
-						if (!nameEl) return;
+          // Mettre à jour les slots du bracket (quarter-finals)
+          const slots = root.querySelectorAll('[data-slot]');
+          slots.forEach((slot, index) => {
+            const nameEl = slot.querySelector('.player-name');
+            if (!nameEl) return;
 
-						const client = response.clients && Array.isArray(response.clients) ? response.clients[index] : null;
-						if (client) {
-							nameEl.textContent = client.name || `Player ${index + 1}`;
-							nameEl.classList.remove('text-gray-400');
-							nameEl.classList.add('text-white');
-						} else {
-							nameEl.textContent = 'En attente...';
-							nameEl.classList.remove('text-white');
-							nameEl.classList.add('text-gray-400');
-							// retirer les éventuels styles de gagnant
-							slot.classList.remove('bg-green-900', 'border-green-400');
-						}
-					});
-				}
+            const client = response.clients && Array.isArray(response.clients) ? response.clients[index] : null;
+            if (client) {
+              nameEl.textContent = client.name || `Player ${index + 1}`;
+              nameEl.classList.remove('text-gray-400');
+              nameEl.classList.add('text-white');
+            } else {
+              nameEl.textContent = 'En attente...';
+              nameEl.classList.remove('text-white');
+              nameEl.classList.add('text-gray-400');
+              // retirer les éventuels styles de gagnant
+              slot.classList.remove('bg-green-900', 'border-green-400');
+            }
+          });
+        }
 
-				if (response.method === "playerJoinTournament") {
-					if (playerCountEl) playerCountEl.textContent = `${response.playerCount}/8 PLAYERS`;
+        if (response.method === "playerJoinTournament") {
+          if (playerCountEl) playerCountEl.textContent = `${response.playerCount}/8 PLAYERS`;
 
-					if (response.clients && Array.isArray(response.clients)) {
-						response.clients.forEach((client: any, index: number) => {
-							const slot = root.querySelector(`[data-slot="${index}"]`);
-							if (slot) {
-								const nameEl = slot.querySelector('.player-name');
-								if (nameEl) {
-									nameEl.textContent = client.name || `Player ${index + 1}`;
-									nameEl.classList.remove('text-gray-400');
-									nameEl.classList.add('text-white');
-								}
-							}
-						});
-					}
-				}
+          if (response.clients && Array.isArray(response.clients)) {
+            response.clients.forEach((client: any, index: number) => {
+              const slot = root.querySelector(`[data-slot="${index}"]`);
+              if (slot) {
+                const nameEl = slot.querySelector('.player-name');
+                if (nameEl) {
+                  nameEl.textContent = client.name || `Player ${index + 1}`;
+                  nameEl.classList.remove('text-gray-400');
+                  nameEl.classList.add('text-white');
+                }
+              }
+            });
+          }
+        }
 
-				// Quand le tournoi commence
-				if (response.method === "Start") {
-					sessionStorage.setItem('gamestate', 'playing-game');
-					if (tournamentNameEl) tournamentNameEl.textContent = 'Quarts de Finale';
-				}
+        // Quand le tournoi commence
+        if (response.method === "Start") {
+          sessionStorage.setItem('gamestate', 'playing-game');
+          if (tournamentNameEl) tournamentNameEl.textContent = 'Quarts de Finale';
+        }
 
-				// 📊 Recevoir l'état complet du tournoi (tous les matchs)
-				if (response.method === "tournamentState") {
-					const allMatches = response.allMatches;
+        // 📊 Recevoir l'état complet du tournoi (tous les matchs)
+        if (response.method === "tournamentState") {
+          const allMatches = response.allMatches;
 
-					// Déterminer le round actuel basé sur les matchs en cours
-					let currentRound = 'Quarts de Finale';
-					const hasCompletedQuarters = allMatches.filter((m: any) => m.round === 'Quarter Finals' && m.status === 'completed').length;
-					const hasCompletedSemis = allMatches.filter((m: any) => m.round === 'Semi Finals' && m.status === 'completed').length;
+          // Déterminer le round actuel basé sur les matchs en cours
+          let currentRound = 'Quarts de Finale';
+          const hasCompletedQuarters = allMatches.filter((m: any) => m.round === 'Quarter Finals' && m.status === 'completed').length;
+          const hasCompletedSemis = allMatches.filter((m: any) => m.round === 'Semi Finals' && m.status === 'completed').length;
 
-					if (hasCompletedSemis === 2) {
-						currentRound = 'Finale';
-					} else if (hasCompletedQuarters === 4) {
-						currentRound = 'Semi-Finales';
-					}
+          if (hasCompletedSemis === 2) {
+            currentRound = 'Finale';
+          } else if (hasCompletedQuarters === 4) {
+            currentRound = 'Semi-Finales';
+          }
 
-					if (tournamentNameEl) {
-						tournamentNameEl.textContent = currentRound;
-					}
+          if (tournamentNameEl) {
+            tournamentNameEl.textContent = currentRound;
+          }
 
-					// Mettre à jour tous les matchs
-					allMatches.forEach((match: any) => {
-						let matchBox = null;
+          // Mettre à jour tous les matchs
+          allMatches.forEach((match: any) => {
+            let matchBox = null;
 
-						// Trouver la box correspondante
-						if (match.round === 'Quarter Finals') {
-							const matchId = `quarter-${match.matchNumber}`;
-							matchBox = root.querySelector(`[data-match="${matchId}"]`);
+            // Trouver la box correspondante
+            if (match.round === 'Quarter Finals') {
+              const matchId = `quarter-${match.matchNumber}`;
+              matchBox = root.querySelector(`[data-match="${matchId}"]`);
 
-							if (matchBox && match.player1 && match.player2) {
-								const slots = matchBox.querySelectorAll('[data-slot]');
-								const name1 = slots[0]?.querySelector('.player-name');
-								const name2 = slots[1]?.querySelector('.player-name');
+              if (matchBox && match.player1 && match.player2) {
+                const slots = matchBox.querySelectorAll('[data-slot]');
+                const name1 = slots[0]?.querySelector('.player-name');
+                const name2 = slots[1]?.querySelector('.player-name');
 
-								if (name1) {
-									name1.textContent = match.player1;
-									name1.classList.remove('text-gray-400');
-									name1.classList.add('text-white');
-								}
-								if (name2) {
-									name2.textContent = match.player2;
-									name2.classList.remove('text-gray-400');
-									name2.classList.add('text-white');
-								}
+                if (name1) {
+                  name1.textContent = match.player1;
+                  name1.classList.remove('text-gray-400');
+                  name1.classList.add('text-white');
+                }
+                if (name2) {
+                  name2.textContent = match.player2;
+                  name2.classList.remove('text-gray-400');
+                  name2.classList.add('text-white');
+                }
 
-								// Si le match est terminé, afficher les scores
-								if (match.status === 'completed') {
-									const score1El = matchBox.querySelector('.score-1');
-									const score2El = matchBox.querySelector('.score-2');
+                // Si le match est terminé, afficher les scores
+                if (match.status === 'completed') {
+                  const score1El = matchBox.querySelector('.score-1');
+                  const score2El = matchBox.querySelector('.score-2');
 
-									if (score1El) score1El.textContent = match.score1;
-									if (score2El) score2El.textContent = match.score2;
+                  if (score1El) score1El.textContent = match.score1;
+                  if (score2El) score2El.textContent = match.score2;
 
-									// Highlight winner
-									if (match.winner === match.player1) {
-										slots[0]?.classList.add('bg-green-900', 'border-green-400');
-									} else {
-										slots[1]?.classList.add('bg-green-900', 'border-green-400');
-									}
-								}
-							}
-						} else if (match.round === 'Semi Finals') {
-							const matchId = `semi-${match.matchNumber}`;
-							matchBox = root.querySelector(`[data-match="${matchId}"]`);
+                  // Highlight winner
+                  if (match.winner === match.player1) {
+                    slots[0]?.classList.add('bg-green-900', 'border-green-400');
+                  } else {
+                    slots[1]?.classList.add('bg-green-900', 'border-green-400');
+                  }
+                }
+              }
+            } else if (match.round === 'Semi Finals') {
+              const matchId = `semi-${match.matchNumber}`;
+              matchBox = root.querySelector(`[data-match="${matchId}"]`);
 
-							if (matchBox && match.player1 && match.player2) {
-								const player1Slot = matchBox.querySelector('[data-player="1"]');
-								const player2Slot = matchBox.querySelector('[data-player="2"]');
-								const name1 = player1Slot?.querySelector('.player-name');
-								const name2 = player2Slot?.querySelector('.player-name');
+              if (matchBox && match.player1 && match.player2) {
+                const player1Slot = matchBox.querySelector('[data-player="1"]');
+                const player2Slot = matchBox.querySelector('[data-player="2"]');
+                const name1 = player1Slot?.querySelector('.player-name');
+                const name2 = player2Slot?.querySelector('.player-name');
 
-								if (name1) {
-									name1.textContent = match.player1;
-									name1.classList.remove('text-gray-400');
-									name1.classList.add('text-white');
-								}
-								if (name2) {
-									name2.textContent = match.player2;
-									name2.classList.remove('text-gray-400');
-									name2.classList.add('text-white');
-								}
+                if (name1) {
+                  name1.textContent = match.player1;
+                  name1.classList.remove('text-gray-400');
+                  name1.classList.add('text-white');
+                }
+                if (name2) {
+                  name2.textContent = match.player2;
+                  name2.classList.remove('text-gray-400');
+                  name2.classList.add('text-white');
+                }
 
-								// Si le match est terminé, afficher les scores
-								if (match.status === 'completed') {
-									const score1El = matchBox.querySelector('.score-1');
-									const score2El = matchBox.querySelector('.score-2');
+                // Si le match est terminé, afficher les scores
+                if (match.status === 'completed') {
+                  const score1El = matchBox.querySelector('.score-1');
+                  const score2El = matchBox.querySelector('.score-2');
 
-									if (score1El) score1El.textContent = match.score1;
-									if (score2El) score2El.textContent = match.score2;
+                  if (score1El) score1El.textContent = match.score1;
+                  if (score2El) score2El.textContent = match.score2;
 
-									// Highlight winner
-									if (match.winner === match.player1) {
-										player1Slot?.classList.add('bg-green-900', 'border-green-400');
-									} else {
-										player2Slot?.classList.add('bg-green-900', 'border-green-400');
-									}
-								}
-							}
-						} else if (match.round === 'Final') {
-							matchBox = root.querySelector('[data-match="final"]');
+                  // Highlight winner
+                  if (match.winner === match.player1) {
+                    player1Slot?.classList.add('bg-green-900', 'border-green-400');
+                  } else {
+                    player2Slot?.classList.add('bg-green-900', 'border-green-400');
+                  }
+                }
+              }
+            } else if (match.round === 'Final') {
+              matchBox = root.querySelector('[data-match="final"]');
 
-							if (matchBox && match.player1 && match.player2) {
-								const player1Slot = matchBox.querySelector('[data-player="1"]');
-								const player2Slot = matchBox.querySelector('[data-player="2"]');
-								const name1 = player1Slot?.querySelector('.player-name');
-								const name2 = player2Slot?.querySelector('.player-name');
+              if (matchBox && match.player1 && match.player2) {
+                const player1Slot = matchBox.querySelector('[data-player="1"]');
+                const player2Slot = matchBox.querySelector('[data-player="2"]');
+                const name1 = player1Slot?.querySelector('.player-name');
+                const name2 = player2Slot?.querySelector('.player-name');
 
-								if (name1) {
-									name1.textContent = match.player1;
-									name1.classList.remove('text-gray-400');
-									name1.classList.add('text-white');
-								}
-								if (name2) {
-									name2.textContent = match.player2;
-									name2.classList.remove('text-gray-400');
-									name2.classList.add('text-white');
-								}
+                if (name1) {
+                  name1.textContent = match.player1;
+                  name1.classList.remove('text-gray-400');
+                  name1.classList.add('text-white');
+                }
+                if (name2) {
+                  name2.textContent = match.player2;
+                  name2.classList.remove('text-gray-400');
+                  name2.classList.add('text-white');
+                }
 
-								// Si le match est terminé, afficher les scores
-								if (match.status === 'completed') {
-									const score1El = matchBox.querySelector('.score-1');
-									const score2El = matchBox.querySelector('.score-2');
+                // Si le match est terminé, afficher les scores
+                if (match.status === 'completed') {
+                  const score1El = matchBox.querySelector('.score-1');
+                  const score2El = matchBox.querySelector('.score-2');
 
-									if (score1El) score1El.textContent = match.score1;
-									if (score2El) score2El.textContent = match.score2;
+                  if (score1El) score1El.textContent = match.score1;
+                  if (score2El) score2El.textContent = match.score2;
 
-									// Highlight winner et afficher dans la winner box
-									if (match.winner === match.player1) {
-										player1Slot?.classList.add('bg-green-900', 'border-green-400');
-									} else {
-										player2Slot?.classList.add('bg-green-900', 'border-green-400');
-									}
+                  // Highlight winner et afficher dans la winner box
+                  if (match.winner === match.player1) {
+                    player1Slot?.classList.add('bg-green-900', 'border-green-400');
+                  } else {
+                    player2Slot?.classList.add('bg-green-900', 'border-green-400');
+                  }
 
-									// Afficher le champion
-									const winnerBox = root.querySelector('.winner-box');
-									if (winnerBox) {
-										const winnerName = winnerBox.querySelector('.text-5xl.mb-3.text-white');
-										if (winnerName) {
-											winnerName.textContent = match.winner;
-										}
-									}
-								}
-							}
-						}
-					});
-				}
+                  // Afficher le champion
+                  const winnerBox = root.querySelector('.winner-box');
+                  if (winnerBox) {
+                    const winnerName = winnerBox.querySelector('.text-5xl.mb-3.text-white');
+                    if (winnerName) {
+                      winnerName.textContent = match.winner;
+                    }
+                  }
+                }
+              }
+            }
+          });
+        }
 
-				// 🎮 Redirection vers un match
-				if (response.method === "startMatch") {
-					// Sauvegarder les infos du match dans sessionStorage
-					sessionStorage.setItem('matchRound', response.matchRound);
-					sessionStorage.setItem('player1Name', response.player1Name);
-					sessionStorage.setItem('player2Name', response.player2Name);
-					sessionStorage.setItem('roomId', response.roomId);
+        // 🎮 Redirection vers un match
+        if (response.method === "startMatch") {
+          // Sauvegarder les infos du match dans sessionStorage
+          sessionStorage.setItem('matchRound', response.matchRound);
+          sessionStorage.setItem('player1Name', response.player1Name);
+          sessionStorage.setItem('player2Name', response.player2Name);
+          sessionStorage.setItem('roomId', response.roomId);
 
-					// Rediriger vers la page de jeu après 1 seconde
-					setTimeout(() => {
-						// navigate using History API instead of hash
-						const p = response.roomUrl;
-						history.pushState(null, '', p);
-						window.dispatchEvent(new PopStateEvent('popstate'));
-					}, 1000);
-				}				// 🔙 Retour au bracket après un match
-				if (response.method === "returnToBracket") {
-					// Rediriger vers le bracket après 2 secondes (History API)
-					setTimeout(() => {
-						const p = '/tournamentOnline';
-						history.pushState(null, '', p);
-						window.dispatchEvent(new PopStateEvent('popstate'));
-					}, 2000);
-				}
+          // Rediriger vers la page de jeu après 1 seconde
+          setTimeout(() => {
+            // navigate using History API instead of hash
+            const p = response.roomUrl;
+            history.pushState(null, '', p);
+            window.dispatchEvent(new PopStateEvent('popstate'));
+          }, 1000);
+        }				// 🔙 Retour au bracket après un match
+        if (response.method === "returnToBracket") {
+          // Rediriger vers le bracket après 2 secondes (History API)
+          setTimeout(() => {
+            const p = '/tournamentOnline';
+            history.pushState(null, '', p);
+            window.dispatchEvent(new PopStateEvent('popstate'));
+          }, 2000);
+        }
 
-				// Annonce du gagnant du tournoi
-				if (response.method === "tournamentWinner") {
-					sessionStorage.setItem('gamestate', 'finished');
+        // Annonce du gagnant du tournoi
+        if (response.method === "tournamentWinner") {
+          sessionStorage.setItem('gamestate', 'finished');
 
-					if (tournamentNameEl) {
-						tournamentNameEl.textContent = 'Tournoi terminé !';
-					}
+          if (tournamentNameEl) {
+            tournamentNameEl.textContent = 'Tournoi terminé !';
+          }
 
-					// Afficher le gagnant dans la zone Winner
-					// Chercher le div avec le trophée (maintenant text-5xl au lieu de text-6xl)
-					const winnerProfilePicEl = root.querySelector('#winner-profile-pic');
+          // Afficher le gagnant dans la zone Winner
+          // Chercher le div avec le trophée (maintenant text-5xl au lieu de text-6xl)
+          const winnerProfilePicEl = root.querySelector('#winner-profile-pic');
           const winnerNameEl = root.querySelector('#winner-name');
+          let avatar: string = 'anonymous.png';
+          fetch('/user/api/get-avatar', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({username: response.winner}),
+          }).then (res => {
+            if (!res.ok) {
+              return res.json().then(data => Promise.reject(data));
+            }
+            return res.json();
+          }).then ((data: { avatar: string }) => {
+            avatar = data.avatar;
+            if (winnerProfilePicEl) winnerProfilePicEl.setAttribute('src', avatar);
+          }).catch(err => {
+            const msg = err?.error || 'Impossible de recevoir l\'avatar du joueur';
+            Layout.showNotification(msg, 'error');
+          });
 
           if (winnerNameEl && winnerProfilePicEl) {
             winnerNameEl.textContent = response.winner;
             winnerNameEl.classList.remove('text-gray-400', 'text-sm');
             winnerNameEl.classList.add('text-white', 'text-lg', 'font-bold', 'break-words');
-					}
-				}
+          }
+        }
 
-			}
+      }
 		} else {
       window.removeEventListener('popstate', popstateHandler);
       const p = '/tournamentRoom';
@@ -522,4 +541,3 @@ export const TournamentOnline: Page = {
 		window.addEventListener('popstate', popstateHandler);
 	}
 };
-
