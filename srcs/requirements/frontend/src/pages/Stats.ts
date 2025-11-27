@@ -115,13 +115,13 @@ const Stats: StatsPage = {
         <div class="backdrop-blur-2xs border border-gray-50 p-6">
         <!-- Avatar -->
         <div class="text-center mb-6">
-          <div class="w-64 h-64 mx-auto mb-4 flex items-center justify-center overflow-hidden">
-            <img src="${avatar}" id="user-avatar" alt="avatar" class="w-64 h-64 object-cover"/>
-          </div>
           <button
             id="open-avatar-modal"
-            class="px-4 py-2 text-sm border border-gray-50 text-gray-100 hover:bg-gray-700 transition-colors">
-            Changer d'avatar
+            class="px-4 py-2 text-sm text-gray-100 hover:bg-gray-700/50 transition-colors"
+          >
+            <div class="w-64 h-64 mx-auto mb-4 flex items-center rounded-full border border-gray-50 justify-center overflow-hidden">
+              <img src="${avatar}" id="user-avatar" alt="avatar" class="w-64 h-64 object-cover"/>
+            </div>
           </button>
         </div>
 
@@ -131,7 +131,7 @@ const Stats: StatsPage = {
           <div class="relative">
             <span
               id="change-username"
-              class="flex items-center justify-center w-full h-10 px-3 text-center text-sm text-gray-100 bg-white/5 border border-gray-700 rounded cursor-text hover:border-gray-500 transition"
+              class="flex w-full px-3 py-2 border border-gray-400 text-2xl font-bold text-gray-200 focus:outline-none focus:border-gray-50"
               contenteditable="false"
             >
               ${sessionStorage.getItem('username')}
@@ -142,18 +142,23 @@ const Stats: StatsPage = {
           </div>
         </div>
 
-         <!-- Password change trigger -->
-        <div class="mb-6">
-          <button
-            id="open-password-modal"
-            class="w-full px-4 py-2 text-sm border border-gray-50 text-gray-100 hover:bg-gray-700 transition-colors">
-            Changer le mot de passe
-          </button>
-        </div>
-
-        <!-- disconnect Btn -->
-        <div class="text-center mb-6">
-          <button class="px-3 py-3 font-bold border border-gray-50 backdrop-blur-2xs text-2xl hover:border-red-500 hover:bg-gray-700 text-gray-50 transition-transform" id="disconnectBtn">Se déconnecter</button>
+        <div class="grid grid-cols-1 lg:grid-cols-2 justify-between gap-6">
+          <div class="mb-6">
+            <button
+              id="open-password-modal"
+              class="w-full py-7 font-bold border bg-gray-50/5 border-gray-50 text-2xl text-gray-100 text-center hover:border-blue-500 hover:bg-gray-700/50 transition-transform"
+            >
+              Changer le mot de passe
+            </button>
+          </div>
+          <div class="mb-6">
+            <button
+              class="w-full py-7 font-bold border bg-gray-50/5 border-gray-50 text-2xl text-gray-50 text-center hover:border-red-500 hover:bg-gray-700/50 transition-transform"
+              id="disconnectBtn"
+             >
+               Se déconnecter
+             </button>
+          </div>
         </div>
         
 
@@ -178,37 +183,37 @@ const Stats: StatsPage = {
 
         <!-- Friends Lists with tabs -->
         <div class="backdrop-blur-2xs border border-gray-50 p-6">
-        <h3 class="text-lg font-semibold text-gray-100">Friends</h3>
+        <h3 class="text-2xl font-bold text-gray-100">Amis</h3>
         
         <div class="mb-4">
           <label for="add-friend-input" class="block text-sm text-gray-300 mb-2">Ajouter un ami</label>
           <div class="flex gap-2">
-          <input id="add-friend-input" type="text" placeholder="Nom de l'ami" class="flex-1 px-3 py-2 bg-white/5 border border-gray-700 text-sm text-gray-100 rounded" />
-          <button id="add-friend-btn" class="px-3 py-2 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition-colors">Ajouter</button>
+          <input id="add-friend-input" type="text" placeholder="Nom de l'ami" class="flex w-full px-3 py-2 border border-gray-400 text-lg font-bold text-gray-200 focus:outline-none focus:border-gray-50" />
+          <button id="add-friend-btn" class="px-3 py-2 bg-transparent border border-gray-400 text-gray-50 text-lg hover:bg-gray-700/50 hover:border-blue-500 transition-colors">Ajouter</button>
           </div>
         </div>
         
         <div class="mb-4 flex items-center justify-between">
           <div class="relative w-60">
-          <div id="friends-tab-indicator" class="absolute top-0 left-0 h-full w-1/3 bg-gray-700 rounded-md transition-transform duration-200" style="transform: translateX(0%);"></div>
+          <div id="friends-tab-indicator" class="absolute top-0 left-0 h-full w-1/3 bg-gray-700 transition-transform duration-200" style="transform: translateX(0%);"></div>
           <div class="relative z-10 flex">
-            <button id="friends-online-tab" class="flex-1 px-3 py-2 text-sm text-white text-center">Online</button>
-            <button id="friends-offline-tab" class="flex-1 px-3 py-2 text-sm text-white text-center">Offline</button>
-            <button id="friends-request-tab" class="flex-1 px-3 py-2 text-sm text-white text-center">Request</button>
+            <button id="friends-online-tab" class="flex-1 px-3 py-2 text-sm hover:bg-gray-700/50 text-white text-center">Online</button>
+            <button id="friends-offline-tab" class="flex-1 px-3 py-2 text-sm hover:bg-gray-700/50 text-white text-center">Offline</button>
+            <button id="friends-request-tab" class="flex-1 px-3 py-2 text-sm hover:bg-gray-700/50 text-white text-center">Request</button>
           </div>
           </div>
         </div>
 
         <div id="friends-container">
-          <div id="online-friends" class="space-y-3 p-6 overflow-y-auto max-h-[38vh]">
+          <div id="online-friends" class="space-y-3 p-6 overflow-y-auto max-h-[37vh]">
           <ul id="online-friends-container">
           </ul>
           </div>
 
-          <div id="offline-friends" class="space-y-3 p-6 overflow-y-auto max-h-[38vh]">
+          <div id="offline-friends" class="space-y-3 p-6 overflow-y-auto max-h-[37vh]">
           <ul id="offline-friends-container"></ul>
           </div>
-          <div id="request-friends" class="space-y-3 p-6 overflow-y-auto max-h-[38vh]">
+          <div id="request-friends" class="space-y-3 p-6 overflow-y-auto max-h-[37vh]">
           <ul id="request-friends-container"></ul>
           </div>
         </div>
@@ -216,56 +221,61 @@ const Stats: StatsPage = {
       </div>
 
       <!-- Avatar Modal -->
-      <div id="avatar-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-        <div class="bg-gray-900 border border-gray-700 rounded-lg w-full max-w-2xl p-6">
+      <div id="avatar-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center backdrop-blur-lg">
+        <div class="bg-transparent border border-gray-50 w-full max-w-2xl p-6">
           <div class="flex items-center justify-between mb-4">
             <h4 class="text-lg font-semibold text-gray-100">Choisir un avatar</h4>
-            <button type="button" class="text-gray-300 hover:text-white" data-close-avatar-modal>✕</button>
+            <button type="button" class="text-gray-300 hover:text-white hover:bg-gray-700/50 py-2 px-3" data-close-avatar-modal>✕</button>
           </div>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6">
             ${['alien.png', 'astronaut.png', 'martian.png', 'robot.png'].map(a => `
               <button type="button" data-avatar="${a}" class="group flex flex-col items-center gap-3 focus:outline-none">
-                <div class="w-24 h-24 rounded-full overflow-hidden border border-gray-700 group-hover:border-blue-500 transition-colors">
+                <div class="w-24 h-24 overflow-hidden group-hover:bg-gray-700/50 transition-transform">
                   <img src="${a}" alt="${a.split('.')[0]}" class="w-24 h-24 object-cover"/>
                 </div>
-                <span class="text-xs text-gray-300 group-hover:text-blue-400 transition">${a.split('.')[0]}</span>
               </button>
             `).join('')}
-          </div>
-          <div class="flex justify-end">
-            <button type="button" class="px-3 py-2 bg-gray-700 text-gray-200 rounded hover:bg-gray-600" data-close-avatar-modal>Annuler</button>
           </div>
         </div>
       </div>
 
       <!-- Password Modal -->
-      <div id="password-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-        <div class="bg-gray-900 border border-gray-700 rounded-lg w-full max-w-md p-6">
+      <div id="password-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center backdrop-blur-lg">
+        <div class="bg-transparent border border-gray-50 w-full max-w-md p-6">
           <div class="flex items-center justify-between mb-4">
             <h4 class="text-lg font-semibold text-gray-100">Changer le mot de passe</h4>
-            <button type="button" class="text-gray-300 hover:text-white" data-close-password-modal>✕</button>
+            <button type="button" class="text-gray-300 hover:text-white hover:bg-gray-700/50 py-2 px-3" data-close-password-modal>✕</button>
           </div>
           <form id="password-form" class="space-y-4">
             <div>
               <label for="old-password" class="block text-xs text-gray-400 mb-1">Mot de passe actuel</label>
               <input id="old-password" type="password" required
-                     class="w-full px-3 py-2 bg-white/5 border border-gray-700 text-sm text-gray-100 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+                     class="w-full px-3 py-2 bg-white/5 border border-gray-400 text-sm text-gray-200 focus:outline-none focus:border-gray-50"/>
             </div>
             <div>
               <label for="new-password" class="block text-xs text-gray-400 mb-1">Nouveau mot de passe</label>
               <input id="new-password" type="password" minlength="6" required
-                     class="w-full px-3 py-2 bg-white/5 border border-gray-700 text-sm text-gray-100 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+                     class="w-full px-3 py-2 bg-white/5 border border-gray-400 text-sm text-gray-200 focus:outline-none focus:border-gray-50"/>
             </div>
             <div>
               <label for="confirm-password" class="block text-xs text-gray-400 mb-1">Confirmer</label>
               <input id="confirm-password" type="password" required
-                     class="w-full px-3 py-2 bg-white/5 border border-gray-700 text-sm text-gray-100 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+                     class="w-full px-3 py-2 bg-white/5 border border-gray-400 text-sm text-gray-200 focus:outline-none focus:border-gray-50"/>
             </div>
-            <div class="flex justify-end gap-3 pt-2">
-              <button type="button" class="px-3 py-2 bg-gray-700 text-gray-200 rounded hover:bg-gray-600" data-close-password-modal>Annuler</button>
-              <button type="submit" id="submit-password-btn"
-                      class="px-4 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-500 transition-colors">
+            <div class="flex space-x-4 mt-6">
+              <button
+                type="submit"
+                id="submit-password-btn"
+                class="flex-1 text-white py-2 px-4 border border-gray-50 hover:border-blue-500 hover:bg-gray-700/50 transition-colors font-bold"
+              >
                 Enregistrer
+              </button>
+              <button
+                type="button" 
+                class="flex-1 text-white py-2 px-4 border border-gray-50 hover:border-red-500 hover:bg-gray-700/50 transition-colors font-bold"
+                data-close-password-modal
+              >
+                Annuler
               </button>
             </div>
           </form>
@@ -279,84 +289,82 @@ const Stats: StatsPage = {
     window.clearInterval((globalThis as any).showOfflineFriendsIntervalId);
     window.clearInterval((globalThis as any).showFriendRequestIntervalId);
     return `
-							<div class="space-y-6">
-									
-									<!-- Historique des matches -->
-									<div class="backdrop-blur-2xs border border-gray-50 ">
-											<div class="px-6 py-4 border-b border-gray-700">
-													<h3 class="text-lg font-semibold text-gray-100">📈 Stats des matches</h3>
-									</div>
-									<div class="flex gap-10 flex-wrap justify-center">
-                  <div class="p-6 rounded-xl shadow-md w-80 text-center">
-                    <svg id="wr-pieChart" width="204" height="204" viewBox="0 0 32 32"></svg>
-                    <div class="mt-4">
-                      <div class="flex items-center gap-2 text-gray-400">
-                        <span class="w-3 h-3 bg-green-400 rounded-full"></span>
-                        <span id="victory-class">You need atleast one game</span>
-                      </div>
-                    </div>
-                  </div>
-                
-                  <div class="p-6 rounded-xl shadow-md w-80 text-center">
-                    <svg id="play-daily-pieChart" width="200" height="200" viewBox="0 0 32 32"></svg>
-                    <div class="mt-4">
-                      <div class="flex items-center gap-2 text-gray-400">
-                        <span class="w-3 h-3 bg-fuchsia-400 rounded-full"></span>
-                        <span id="day-time-played">You didnt played today</span>
-                      </div>
-                    </div>
-                  </div>
-                
-                  <div class="p-6 rounded-xl shadow-md w-80 text-center">
-                    <svg id="play-weekly-pieChart" width="200" height="200" viewBox="0 0 32 32"></svg>
-                    <div class="mt-4">
-                      <div class="flex items-center gap-2 text-gray-400">
-                        <span class="w-3 h-3 bg-blue-400 rounded-full"></span>
-                        <span id="week-time-played">You didnt played this week</span>
-                      </div>
-                    </div>
-                  </div>
-                 </div>
-									<div class="backdrop-blur-2xs border border-gray-50 ">
-											<div class="px-6 py-4 border-b border-gray-700">
-													<h3 class="text-lg font-semibold text-gray-100">📈 Historique des matches</h3>
-									</div>
-										<div class="p-6 overflow-y-auto min-h-[30vh] max-h-[30vh]">
-													<table class="w-full">
-													<thead class="bg-transparent">
-																	<tr>
-																<th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Date</th>
-																<th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Adversaire</th>
-																<th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Score</th>
-																<th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Résultat</th>
-																<th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Mode de jeu</th>
-																	</tr>
-													</thead>
-													<tbody class="bg-transparent divide-y divide-gray-800" id="history-container"></tbody>
-													</table>
-											</div>
-									</div>
-	
-									<!-- Statistiques de la période -->
-									<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-											<div class="backdrop-blur-2xs border border-gray-50 p-6 text-center">
-													<div class="text-3xl font-bold text-blue-400" id="histo-weekly-played">0</div>
-													<div class="text-sm text-gray-400">Parties cette semaine</div>
-											</div>
-											<div class="backdrop-blur-2xs border border-gray-50 p-6 text-center">
-													<div class="text-3xl font-bold text-green-400" id="histo-victory">0</div>
-													<div class="text-sm text-gray-400">Victoires</div>
-											</div>
-											<div class="backdrop-blur-2xs border border-gray-50 p-6 text-center">
-													<div class="text-3xl font-bold text-red-400" id="histo-loose">0</div>
-													<div class="text-sm text-gray-400">Défaites</div>
-											</div>
-											<div class="backdrop-blur-2xs border border-gray-50 p-6 text-center">
-													<div class="text-3xl font-bold text-purple-400" id="histo-wr">0%</div>
-													<div class="text-sm text-gray-400">Winrate</div>
-											</div>
-									</div>
-							</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+  <div class="backdrop-blur-2xs border border-gray-50">
+    <div class="px-6 py-4 border-b border-gray-700">
+      <h3 class="text-lg font-semibold text-gray-100">Stats des matches</h3>
+    </div>
+    <div class="flex gap-10 flex-wrap justify-center">
+      <div class="p-6 rounded-xl shadow-md w-80 text-center flex flex-col items-center justify-center">
+        <svg id="wr-pieChart" width="100" height="100" viewBox="0 0 32 32"></svg>
+        <div class="mt-4">
+          <div class="flex items-center gap-2 text-gray-400">
+            <span class="w-3 h-3 bg-green-400 rounded-full"></span>
+            <span id="victory-class">Tu n'as jamais joué !</span>
+          </div>
+        </div>
+      </div>
+  
+      <div class="p-6 rounded-xl shadow-md w-80 text-center flex flex-col items-center justify-center">
+        <svg id="play-daily-pieChart" width="100" height="100" viewBox="0 0 32 32"></svg>
+        <div class="mt-4">
+          <div class="flex items-center gap-2 text-gray-400">
+            <span class="w-3 h-3 bg-fuchsia-400 rounded-full"></span>
+            <span id="day-time-played">You didnt played today</span>
+          </div>
+        </div>
+      </div>
+  
+      <div class="p-6 rounded-xl shadow-md w-80 text-center flex flex-col items-center justify-center">
+        <svg id="play-weekly-pieChart" width="100" height="100" viewBox="0 0 32 32"></svg>
+        <div class="mt-4">
+          <div class="flex items-center gap-2 text-gray-400">
+            <span class="w-3 h-3 bg-blue-400 rounded-full"></span>
+            <span id="week-time-played">You didnt played this week</span>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  <div class="backdrop-blur-2xs border border-gray-50 ">
+    <div class="px-6 py-4 border-b border-gray-700">
+      <h3 class="text-lg font-semibold text-gray-100">Historique des matches</h3>
+    </div>
+    <div class="p-6 overflow-y-auto min-h-[38vh] max-h-[38vh]">
+      <table class="w-full">
+        <thead class="bg-transparent">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Date</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Adversaire</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Score</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Résultat</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Mode de jeu</th>
+          </tr>
+        </thead>
+        <tbody class="bg-transparent divide-y divide-gray-800" id="history-container"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+  <div class="backdrop-blur-2xs border border-gray-50 p-6 text-center">
+    <div class="text-3xl font-bold text-blue-400" id="histo-weekly-played">0</div>
+    <div class="text-sm text-gray-400">Parties cette semaine</div>
+  </div>
+  <div class="backdrop-blur-2xs border border-gray-50 p-6 text-center">
+    <div class="text-3xl font-bold text-green-400" id="histo-victory">0</div>
+    <div class="text-sm text-gray-400">Victoires</div>
+  </div>
+  <div class="backdrop-blur-2xs border border-gray-50 p-6 text-center">
+    <div class="text-3xl font-bold text-red-400" id="histo-loose">0</div> 
+    <div class="text-sm text-gray-400">Défaites</div>
+  </div>
+  <div class="backdrop-blur-2xs border border-gray-50 p-6 text-center">
+    <div class="text-3xl font-bold text-purple-400" id="histo-wr">0%</div>
+    <div class="text-sm text-gray-400">Winrate</div>
+  </div>
+</div>
 					`;
   },
 
@@ -809,20 +817,20 @@ const Stats: StatsPage = {
           .map((entry) => entry.username);
         usernames.forEach((username: string) => {
           const li = document.createElement('li');
-          li.className = 'flex items-center justify-between';
+          li.className = 'flex items-center justify-between mb-3';
           li.innerHTML = `
-        }
-				<span class="text-gray-200 flex items-center">
-					<span class="inline-block w-2 h-2 mr-2 relative">
-					<span class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0 
-						 border-l-[4px] border-r-[4px] border-b-[6px] border-l-transparent border-r-transparent border-b-purple-500"></span>
-					</span>
-          ${username}
-				</span>
-				<button class="invite-btn px-3 py-1 text-xs bg-blue-500 text-white hover:bg-blue-600 transition-colors" id="Btn-${username}">
-        Accept
-				</button>
-        `;
+<div class="flex items-center">
+  <span class="inline-block w-2 h-2 mr-2 relative">
+    <span class="absolute bottom-0 left-0 w-0 h-0
+       border-l-[4px] border-r-[4px] border-b-[6px]
+       border-l-transparent border-r-transparent border-b-purple-500"></span>
+  </span>
+  <span class="text-gray-200 text-xl">${username}</span>
+</div>
+<button class="invite-btn px-3 py-1 text-md text-white border border-gray-50 hover:border-blue-500 hover:bg-gray-700/50 transition-colors" id="Btn-${username}">
+  Accepter
+</button>
+  `;
           const btn = li.querySelector('button') as HTMLButtonElement;
           btn.addEventListener('click', () => {
             this.acceptFriendRequest(username, li);
@@ -897,7 +905,7 @@ const Stats: StatsPage = {
             const li = document.createElement('li');
             li.className = 'flex items-center justify-between';
             li.innerHTML = `
-					<span class="text-gray-200 flex items-center">
+					<span class="text-gray-200 flex text-xl items-center">
 					<span class="w-2 h-2 bg-green-500 mr-2"></span>
 					${user.username}
 					</span>
@@ -1003,7 +1011,7 @@ const Stats: StatsPage = {
             li.className = 'flex items-center';
             li.innerHTML = `
 					<span class="w-2 h-2 bg-gray-400 rounded-full mr-2"></span>
-					<span class="text-gray-200">${user.username}</span>
+					<span class="text-gray-200 text-xl">${user.username}</span>
 					`;
             container.appendChild(li);
           }
@@ -1142,11 +1150,12 @@ const Stats: StatsPage = {
           return;
       }
       data.matchHistory.forEach(match => {
-        const victory = match.winner ? "✅ Victoire" : "❌ Défaite";
-        const victoryColor = match.winner ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800";
+        const victory = match.winner ? "Victoire" : "Défaite";
+        const victoryColorText = match.winner ? "text-green-300" : "text-red-300";
+        const victoryColorBG = match.winner ? "bg-green-700/10" : "bg-red-700/10";
 
         const tr = document.createElement('tr');
-        tr.className = 'hover:bg-gray-700/40';
+        tr.className = `hover:bg-gray-700/40 ${victoryColorBG}`;
         tr.innerHTML = `
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${match.date}</td>
               <td class="px-6 py-4 whitespace-nowrap">
@@ -1159,7 +1168,7 @@ const Stats: StatsPage = {
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-100">${match.score}</td>
               <td class="px-6 py-4 whitespace-nowrap">
-                  <span class="px-2 py-1 text-xs font-semibold ${victoryColor} rounded-full">
+                  <span class="px-2 py-1 text-xs font-semibold ${victoryColorText}">
                       ${victory}
                   </span>
               </td>
