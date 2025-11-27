@@ -11,11 +11,14 @@ async function apiChangeUsernameRoute(fastify, options) {
         //change username in db
         const { username, password, newPassword} = req.body || {};
         if (!username || !password || !newPassword) {
+
             return reply.status(400).send({ error: "missing credentials" });
         }
         const regex = /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{6,18}$/;
         if (!regex.test(newPassword) || !regex.test(password))
+        {
             return reply.status(400).send({ error: 'Le mot de passe doit faire entre 6 et 18 charateres et avoir au moins 1 majuscule et 1 chiffre'});
+        }
         if (errorToken(req.headers['authorization'], username))
         {
             return reply.status(401).send({error: "Token manquant ou invalide"});
@@ -29,7 +32,7 @@ async function apiChangeUsernameRoute(fastify, options) {
             {
                 const hashedPassword = await bcrypt.hash(newPassword, 10);
                 stmt.run(hashedPassword, username);
-                reply.status(200).send({ message: "password modifie avec succes", token});
+                reply.status(200).send({ message: "password modifie avec succes"});
             }
         }
         catch (err) {
