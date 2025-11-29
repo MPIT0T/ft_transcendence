@@ -1,15 +1,15 @@
 services:
   api:
-    container_name: trans-api
+    container_name: trans-upload
     build:
-      context: requirements/api/
+      context: requirements/upload/
     develop:
       watch:
         - action: sync+restart
-          path: requirements/api/src
+          path: requirements/upload/src
           target: app/src
         - action: rebuild
-          path: requirements/api/Dockerfile
+          path: requirements/upload/Dockerfile
     networks:
       - transcendence
     secrets:

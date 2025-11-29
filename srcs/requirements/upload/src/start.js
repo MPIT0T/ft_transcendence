@@ -19,7 +19,7 @@ try {
   cert = fs.readFileSync(certPath);
   key = fs.readFileSync(keyPath);
 } catch (e) {
-  console.error('❌ Unable to read TLS cert/key for api service.', e);
+  console.error('❌ Unable to read TLS cert/key for upload service.', e);
   process.exit(1);
 }
 

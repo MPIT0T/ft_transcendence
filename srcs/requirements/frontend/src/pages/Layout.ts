@@ -697,7 +697,7 @@ export const Layout = {
       if (isLoggedIn) {
         const username = sessionStorage.getItem('username') || 'User';
         const userInfo = this.getUserInfoFromJwt(sessionStorage.getItem('token'));
-        const avatarSrc = userInfo.avatar;
+        const avatarSrc = userInfo.avatar || 'anonymous.png';
 
         loginBtn.innerHTML = `
         <img src="${avatarSrc}" alt="avatar" id="user-avatar-layout" class="w-8 h-8 mr-2" />

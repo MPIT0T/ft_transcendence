@@ -8,7 +8,7 @@ async function apiChangeAvatarRoute(fastify, options) {
 
     fastify.post('/', async (req, reply) => {
         //change avatar in db
-        const { username, avatar } = req.body || {};
+        const { username, avatar} = req.body || {};
         if (!username || !avatar) {
             return reply.status(400).send({ error: "missing credentials" });
         }
@@ -21,6 +21,7 @@ async function apiChangeAvatarRoute(fastify, options) {
             const userInfo = await userInfoPrep.get(username);
             const stmt = db.prepare('UPDATE users SET avatar = ? WHERE username = ?');
             stmt.run(avatar, username);
+
             const token = jwt.sign(
                 { username, avatar: avatar, elo: userInfo.elo },
                 JWT_SECRET,
