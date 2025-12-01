@@ -34,14 +34,13 @@ fastify.register(fastifyMultipart, {
   limits: { fileSize: 800 * 1024 } // 800KB
 });
 
+fastify.register(AutoLoad, { dir: path.join(__dirname, 'plugins') });
+fastify.register(AutoLoad, { dir: path.join(__dirname, 'routes') });
+
 fastify.register(fastifyStatic, {
   root: path.join(__dirname, 'avatars'),
   prefix: '/avatars/',
 });
-
-
-fastify.register(AutoLoad, { dir: path.join(__dirname, 'plugins') });
-fastify.register(AutoLoad, { dir: path.join(__dirname, 'routes') });
 
 fastify.listen({ host: serverAddr, port }).then(addr => {
   console.log(`🚀 API service listening (HTTPS) on ${addr}`);
