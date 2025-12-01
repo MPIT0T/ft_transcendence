@@ -1,21 +1,22 @@
 services:
-  api:
-    container_name: trans-api
+  upload:
+    container_name: trans-upload
     build:
-      context: requirements/api/
+      context: requirements/upload/
     develop:
       watch:
         - action: sync+restart
-          path: requirements/api/src
+          path: requirements/upload/src
           target: app/src
         - action: rebuild
-          path: requirements/api/Dockerfile
+          path: requirements/upload/Dockerfile
     networks:
       - transcendence
     secrets:
       - internal_ca_cert
-      - api_cert
-      - api_key
+      - upload_cert
+      - upload_key
+      - server_key
     environment:
       NODE_EXTRA_CA_CERTS: /run/secrets/internal_ca_cert
     restart: always
@@ -145,10 +146,10 @@ secrets:
     file: ../secrets/jwt_secret_key
   internal_ca_cert:
     file: ../secrets/internal_ca_cert
-  api_cert:
-    file: ../secrets/api_cert
-  api_key:
-    file: ../secrets/api_key
+  upload_cert:
+    file: ../secrets/upload_cert
+  upload_key:
+    file: ../secrets/upload_key
   pong_cert:
     file: ../secrets/pong_cert
   pong_key:

@@ -165,15 +165,15 @@ export const Layout = {
                 >
               </div>
               
-              <div class="flex items-center justify-between">
-                <label class="flex items-center">
-                  <input type="checkbox" id="remember-me" class="mr-2">
-                  <span class="text-sm text-gray-50">Remember me</span>
-                </label>
-                <button type="button" class="text-sm text-gray-50 hover:underline">
-                  Forgot password?
-                </button>
-              </div>
+<!--              <div class="flex items-center justify-between">-->
+<!--                <label class="flex items-center">-->
+<!--                  <input type="checkbox" id="remember-me" class="mr-2">-->
+<!--                  <span class="text-sm text-gray-50">Remember me</span>-->
+<!--                </label>-->
+<!--                <button type="button" class="text-sm text-gray-50 hover:underline">-->
+<!--                  Forgot password?-->
+<!--                </button>-->
+<!--              </div>-->
               
               <div class="flex space-x-4 mt-6">
                 <button 
@@ -190,12 +190,20 @@ export const Layout = {
               </div>
               
               <div class="text-center mt-4 pt-4 border-t border-gray-300">
-                <p class="text-sm text-gray-400">Don't have an account?</p>
-                <button type="button" id="signup-btn" class="text-gray-50 hover:underline font-semibold">
+                <button type="button" id="signup-btn" class="py-2 text-gray-50 font-bold w-full flex items-center justify-center border border-gray-50 bg-transparent hover:bg-gray-700/50">
                   Sign up here
                 </button>
-                <button type="button" id="github-btn" class="text-md text-white hover:text-blue-500">github</button>
               </div>
+              
+              <div class="text-center mt-4 pt-4 border-t border-gray-300">
+                <button type="button" id="github-btn" class="py-2 text-gray-50 font-bold w-full flex items-center justify-center border border-gray-50 bg-transparent hover:bg-gray-700/50">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 mr-2" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd" clip-rule="evenodd" viewBox="0 0 512 499.368">
+                    <path fill="#fff" fill-rule="nonzero" d="M256.003 0C114.555 0 0 114.555 0 256.003c0 113.286 73.28 208.961 175.038 242.865 12.796 2.247 17.586-5.433 17.586-12.153 0-6.077-.309-26.225-.309-47.686-64.313 11.844-80.941-15.674-86.058-30.055-2.896-7.37-15.359-30.1-26.269-36.177-8.948-4.808-21.752-16.652-.31-16.961 20.168-.309 34.574 18.564 39.382 26.244 23.038 38.732 59.839 27.828 74.555 21.101 2.227-16.627 8.947-27.828 16.318-34.239-56.968-6.386-116.467-28.471-116.467-126.399 0-27.827 9.907-50.866 26.225-68.787-2.562-6.41-11.51-32.655 2.562-67.853 0 0 21.436-6.72 70.409 26.244 20.483-5.767 42.227-8.638 63.998-8.638 21.751 0 43.52 2.896 63.997 8.638 48.973-33.279 70.39-26.244 70.39-26.244 14.09 35.192 5.117 61.443 2.562 67.853 16.318 17.921 26.244 40.625 26.244 68.787 0 98.237-59.84 119.988-116.801 126.399 9.282 8.014 17.277 23.373 17.277 47.371 0 34.238-.309 61.751-.309 70.389 0 6.721 4.808 14.735 17.586 12.179C438.739 464.964 512 368.955 512 256.003 512 114.555 397.445 0 256.003 0z"/>
+                  </svg>
+                  Sign in with GitHub
+                </button>
+              </div>
+              
             </form>
           </div>
         </div>
@@ -260,11 +268,20 @@ export const Layout = {
               </div>
               
               <div class="text-center mt-4 pt-4 border-t border-gray-300">
-                <p class="text-sm text-gray-400">Already have an account?</p>
-                <button type="button" id="back-to-login" class="text-gray-50 hover:underline font-semibold">
+                <button type="button" id="back-to-login" class="py-2 text-gray-50 font-bold w-full flex items-center justify-center border border-gray-50 bg-transparent hover:bg-gray-700/50">
                   Login here
                 </button>
               </div>
+              
+              <div class="text-center mt-4 pt-4 border-t border-gray-300">
+                <button type="button" id="github-btn2" class="py-2 text-gray-50 w-full flex items-center justify-center border border-gray-50 bg-transparent hover:bg-gray-700/50">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 mr-2" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd" clip-rule="evenodd" viewBox="0 0 512 499.368">
+                    <path fill="#fff" fill-rule="nonzero" d="M256.003 0C114.555 0 0 114.555 0 256.003c0 113.286 73.28 208.961 175.038 242.865 12.796 2.247 17.586-5.433 17.586-12.153 0-6.077-.309-26.225-.309-47.686-64.313 11.844-80.941-15.674-86.058-30.055-2.896-7.37-15.359-30.1-26.269-36.177-8.948-4.808-21.752-16.652-.31-16.961 20.168-.309 34.574 18.564 39.382 26.244 23.038 38.732 59.839 27.828 74.555 21.101 2.227-16.627 8.947-27.828 16.318-34.239-56.968-6.386-116.467-28.471-116.467-126.399 0-27.827 9.907-50.866 26.225-68.787-2.562-6.41-11.51-32.655 2.562-67.853 0 0 21.436-6.72 70.409 26.244 20.483-5.767 42.227-8.638 63.998-8.638 21.751 0 43.52 2.896 63.997 8.638 48.973-33.279 70.39-26.244 70.39-26.244 14.09 35.192 5.117 61.443 2.562 67.853 16.318 17.921 26.244 40.625 26.244 68.787 0 98.237-59.84 119.988-116.801 126.399 9.282 8.014 17.277 23.373 17.277 47.371 0 34.238-.309 61.751-.309 70.389 0 6.721 4.808 14.735 17.586 12.179C438.739 464.964 512 368.955 512 256.003 512 114.555 397.445 0 256.003 0z"/>
+                  </svg>
+                  Sign in with GitHub
+                </button>
+              </div>
+              
             </form>
           </div>
         </div>
@@ -460,6 +477,7 @@ export const Layout = {
     const registerForm = root.querySelector('#register-form') as HTMLFormElement;
     const backToLoginBtn = root.querySelector('#back-to-login') as HTMLButtonElement;
     const githubBtn = root.querySelector('#github-btn') as HTMLButtonElement;
+    const githubBtn2 = root.querySelector('#github-btn2') as HTMLButtonElement;
 
     window.githubAuthListenerAdded = window.githubAuthListenerAdded || false;
 
@@ -510,6 +528,21 @@ export const Layout = {
       });
     }
 
+    if (githubBtn2) {
+      githubBtn2.addEventListener('click', () => {
+        const width = 600;
+        const height = 700;
+        const left = window.screen.width / 2 - width / 2;
+        const top = window.screen.height / 2 - height / 2;
+
+        const githubWindow = window.open(
+          `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}`,
+          'GitHub OAuth',
+          `width=${width},height=${height},top=${top},left=${left}`
+        );
+      });
+    }
+
 
     // Register form submission
     if (registerForm) {
@@ -545,9 +578,6 @@ export const Layout = {
   async handleLogin(root: HTMLElement): Promise<void> {
     const username = (root.querySelector('#username') as HTMLInputElement).value;
     const password = (root.querySelector('#password') as HTMLInputElement).value;
-    const rememberMe = (root.querySelector('#remember-me') as HTMLInputElement).checked;
-
-    console.log('🔐 Login attempt:', { username, rememberMe });
 
     if (username && password) {
       const res = await fetch('/user/login', {
@@ -578,7 +608,7 @@ export const Layout = {
     if (!token) {
       return {
         username: "anonymous",
-        avatar: "anonymous.png",
+        avatar: "/anonymous.png",
       };
     }
     const payloadBase64 = token.split('.')[1];
@@ -697,10 +727,10 @@ export const Layout = {
       if (isLoggedIn) {
         const username = sessionStorage.getItem('username') || 'User';
         const userInfo = this.getUserInfoFromJwt(sessionStorage.getItem('token'));
-        const avatarSrc = userInfo.avatar;
+        const avatarSrc = this.getAvatarPath(userInfo.avatar || 'anonymous.png');
 
         loginBtn.innerHTML = `
-        <img src="${avatarSrc}" alt="avatar" id="user-avatar-layout" class="w-8 h-8 mr-2" />
+        <img src="${avatarSrc}" alt="avatar" id="user-avatar-layout" class="w-8 h-8 mr-2 rounded-full border border-gray-50" />
         <span class="text-3xl font-bold text-transparent bg-clip-text
         bg-gradient-to-r from-red-500 via-blue-500 to-green-500
         bg-[length:400%_400%] animate-gradientShift" id="username-layout">${username}</span>
@@ -712,7 +742,7 @@ export const Layout = {
       `;
       } else {
         loginBtn.innerHTML = `
-        <img src="anonymous.png" alt="login" class="w-8 h-8 mr-2"/>
+        <img src="/anonymous.png" alt="login" class="w-8 h-8 mr-2 rounded-full border border-gray-50"/>
         <span data-i18n="login-btn" class="text-2xl text-gray-50">Connexion</span>
       `;
         loginBtn.className = `
@@ -757,8 +787,30 @@ export const Layout = {
   updateAvatar() {
     const avatar = document.getElementById('user-avatar-layout') as HTMLImageElement;
 
-    if (avatar)
-      avatar.src = Layout.getUserInfoFromJwt(sessionStorage.getItem('token')).avatar;
+    if (avatar) {
+      const avatarData = Layout.getUserInfoFromJwt(sessionStorage.getItem('token')).avatar;
+      avatar.src = this.getAvatarPath(avatarData);
+    }
+  },
+
+  getAvatarPath(avatar: string): string {
+    // If avatar is already a full URL, extract the pathname
+    if (avatar.startsWith('http://') || avatar.startsWith('https://')) {
+      try {
+        const url = new URL(avatar);
+        return url.pathname;
+      } catch {
+        return '/anonymous.png';
+      }
+    }
+
+    // If avatar already starts with /, it's a relative path - use as is
+    if (avatar.startsWith('/')) {
+      return avatar;
+    }
+
+    // Otherwise it's a filename, prepend /
+    return '/' + avatar;
   },
 
   updateUsername() {

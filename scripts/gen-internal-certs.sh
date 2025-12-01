@@ -8,7 +8,7 @@ SECRETS_DIR="$REPO_ROOT/secrets"
 INTERNAL_CA_KEY="$SECRETS_DIR/internal_ca_key.pem"
 INTERNAL_CA_CERT="$SECRETS_DIR/internal_ca_cert"
 
-SERVICES=(api pong tournament user)
+SERVICES=(upload pong tournament user)
 
 mkdir -p "$SECRETS_DIR"
 
