@@ -3,6 +3,8 @@ const db = require("../../../db.js");
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = require("../../../utils.js");
 const {errorToken} = require("../../../utils");
+const fs = require('fs');
+const SERVER_SECRET = fs.readFileSync('/run/secrets/server_key', 'utf8').trim();
 
 async function apiChangeUsernameRoute(fastify, options) {
 
@@ -29,7 +31,7 @@ async function apiChangeUsernameRoute(fastify, options) {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({ username: newUsername, oldUsername: username}),
+                body: JSON.stringify({ username: newUsername, oldUsername: username, secret: SERVER_SECRET}),
             });
             if (!res.ok)
             {

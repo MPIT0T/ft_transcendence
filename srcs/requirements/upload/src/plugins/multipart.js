@@ -1,5 +1,5 @@
 'use strict';
-const fastifyMultipart = require('fastify-multipart');
+const fastifyMultipart = require('@fastify/multipart');
 
 module.exports = async function (fastify, opts) {
   await fastify.register(fastifyMultipart, {
