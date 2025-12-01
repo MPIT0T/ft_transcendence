@@ -716,6 +716,7 @@ const Stats: StatsPage = {
             const uploadResponse = await fetch('/upload', {
               method: 'POST',
               headers: {
+                'username': `${sessionStorage.getItem('username')}`,
                 'Authorization': `Bearer ${sessionStorage.getItem('token')}`
               },
               body: formData
