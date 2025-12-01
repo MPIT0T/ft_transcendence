@@ -608,7 +608,7 @@ export const Layout = {
     if (!token) {
       return {
         username: "anonymous",
-        avatar: "anonymous.png",
+        avatar: "/anonymous.png",
       };
     }
     const payloadBase64 = token.split('.')[1];
@@ -727,7 +727,7 @@ export const Layout = {
       if (isLoggedIn) {
         const username = sessionStorage.getItem('username') || 'User';
         const userInfo = this.getUserInfoFromJwt(sessionStorage.getItem('token'));
-        const avatarSrc = userInfo.avatar || 'anonymous.png';
+        const avatarSrc = this.getAvatarPath(userInfo.avatar || 'anonymous.png');
 
         loginBtn.innerHTML = `
         <img src="${avatarSrc}" alt="avatar" id="user-avatar-layout" class="w-8 h-8 mr-2" />
@@ -742,7 +742,7 @@ export const Layout = {
       `;
       } else {
         loginBtn.innerHTML = `
-        <img src="anonymous.png" alt="login" class="w-8 h-8 mr-2"/>
+        <img src="/anonymous.png" alt="login" class="w-8 h-8 mr-2"/>
         <span data-i18n="login-btn" class="text-2xl text-gray-50">Connexion</span>
       `;
         loginBtn.className = `
@@ -787,8 +787,30 @@ export const Layout = {
   updateAvatar() {
     const avatar = document.getElementById('user-avatar-layout') as HTMLImageElement;
 
-    if (avatar)
-      avatar.src = Layout.getUserInfoFromJwt(sessionStorage.getItem('token')).avatar;
+    if (avatar) {
+      const avatarData = Layout.getUserInfoFromJwt(sessionStorage.getItem('token')).avatar;
+      avatar.src = this.getAvatarPath(avatarData);
+    }
+  },
+
+  getAvatarPath(avatar: string): string {
+    // If avatar is already a full URL, extract the pathname
+    if (avatar.startsWith('http://') || avatar.startsWith('https://')) {
+      try {
+        const url = new URL(avatar);
+        return url.pathname;
+      } catch {
+        return '/anonymous.png';
+      }
+    }
+
+    // If avatar already starts with /, it's a relative path - use as is
+    if (avatar.startsWith('/')) {
+      return avatar;
+    }
+
+    // Otherwise it's a filename, prepend /
+    return '/' + avatar;
   },
 
   updateUsername() {

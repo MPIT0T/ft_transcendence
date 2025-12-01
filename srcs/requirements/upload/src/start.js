@@ -31,7 +31,7 @@ const fastify = fastifyFactory({
 });
 
 fastify.register(fastifyMultipart, {
-  limits: { fileSize: 800 * 1024 } // 800KB
+  limits: { fileSize: 1000 * 1024 } // 800KB
 });
 
 fastify.register(AutoLoad, { dir: path.join(__dirname, 'plugins') });

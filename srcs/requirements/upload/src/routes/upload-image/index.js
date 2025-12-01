@@ -56,8 +56,8 @@ async function uploadAvatarRoute(fastify, options) {
                 if (!detectedExt)
                     return reply.code(400).send({ error: "Corrupted file or not an image file" });
 
-                if (fileBuffer.length > 800 * 1024)
-                    return reply.code(400).send({ error: "File is limited to 800 KB" });
+                if (fileBuffer.length > 1000 * 1024)
+                    return reply.code(400).send({ error: "File is limited to 1000 KB" });
             }
         }
 

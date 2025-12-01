@@ -106,9 +106,30 @@ const Stats: StatsPage = {
 	`;
   },
 
+  getAvatarPath(avatar: string): string {
+    // If avatar is already a full URL, extract the pathname
+    if (avatar.startsWith('http://') || avatar.startsWith('https://')) {
+      try {
+        const url = new URL(avatar);
+        return url.pathname;
+      } catch {
+        return '/anonymous.png';
+      }
+    }
+
+    // If avatar already starts with /, it's a relative path - use as is
+    if (avatar.startsWith('/')) {
+      return avatar;
+    }
+
+    // Otherwise it's a filename, prepend /
+    return '/' + avatar;
+  },
+
   renderProfile() {
     const avatar = Layout.getUserInfoFromJwt(sessionStorage.getItem('token')).avatar;
-    const avatar_name = avatar.split('.').slice(0, -1).join('.');
+    // Ensure avatar path works from any host - use relative path
+    const avatarPath = this.getAvatarPath(avatar);
     return `
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Profil Section -->
@@ -120,7 +141,7 @@ const Stats: StatsPage = {
             class="text-sm text-gray-100 rounded-full items-center justify-center border border-gray-50 transition-all"
           >
             <div class="relative w-64 h-64 mx-auto flex items-center rounded-full justify-center overflow-hidden">
-              <img src="${avatar}" id="user-avatar" alt="avatar" class="w-64 h-64"/>
+              <img src="${avatarPath}" id="user-avatar" alt="avatar" class="w-64 h-64"/>
               <span class="absolute inset-0 rounded-full transition-all hover:bg-gray-700/50"></span>
             </div>
           </button>
@@ -230,16 +251,16 @@ const Stats: StatsPage = {
           </div>
           <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
             ${['alien.png', 'astronaut.png', 'martian.png', 'robot.png'].map(a => `
-              <button type="button" data-avatar="${a}" class="group flex flex-col items-center gap-3 focus:outline-none">
+              <button type="button" data-avatar="/${a}" class="group flex flex-col items-center gap-3 focus:outline-none">
                 <div class="w-24 h-24 overflow-hidden group-hover:bg-gray-700/50 transition-transform">
-                  <img src="${a}" alt="${a.split('.')[0]}" class="w-24 h-24 object-cover"/>
+                  <img src="/${a}" alt="${a.split('.')[0]}" class="w-24 h-24 object-cover"/>
                 </div>
               </button>
             `).join('')}
             <label for="upload-btn" 
               class="group flex flex-col items-center gap-3 cursor-pointer">
               <div class="w-24 h-24 overflow-hidden group-hover:bg-gray-700/50 transition-transform">
-                <img src="upload.png" alt="upload" class="w-24 h-24 object-cover"/>
+                <img src="/upload.png" alt="upload" class="w-24 h-24 object-cover"/>
               </div>
             </label>
             <input
@@ -732,7 +753,8 @@ const Stats: StatsPage = {
             const uploadData = await uploadResponse.json();
 
             // Step 2: Send the response to /user/api/change-avatar
-            this.changeNewAvatar(root, window.location.origin + "/upload" + uploadData.fileUrl);
+            // Store as relative path: /upload/avatars/username.ext
+            this.changeNewAvatar(root, "/upload" + uploadData.fileUrl);
             avatarModal.classList.add('hidden');
 
             // Reset the input
@@ -1091,7 +1113,8 @@ const Stats: StatsPage = {
     const avatar = document.getElementById('user-avatar') as HTMLImageElement;
 
     if (avatar) {
-      avatar.src = Layout.getUserInfoFromJwt(sessionStorage.getItem('token')).avatar || 'anonymous.png';
+      const avatarData = Layout.getUserInfoFromJwt(sessionStorage.getItem('token')).avatar || 'anonymous.png';
+      avatar.src = this.getAvatarPath(avatarData);
       Layout.updateAvatar();
     }
   },
