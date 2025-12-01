@@ -47,16 +47,12 @@ async function uploadAvatarRoute(fastify, options) {
                 }
 
                 const chunks = [];
-                let header = null;
 
                 for await (const chunk of part.file) {
-                    if (!header) header = chunk.slice(0, 12);
                     chunks.push(chunk);
                 }
-
                 fileBuffer = Buffer.concat(chunks);
-
-                detectedExt = isValidImageMagic(header);
+                detectedExt = isValidImageMagic(fileBuffer);
                 if (!detectedExt)
                     return reply.code(400).send({ error: "Corrupted file or not an image file" });
 
@@ -77,7 +73,7 @@ async function uploadAvatarRoute(fastify, options) {
         if (metadata.width !== 500 || metadata.height !== 500)
             return reply.code(400).send({ error: "Must be 500×500" });
 
-        const folderPath = path.join(__dirname, 'avatars');
+        const folderPath = '/app/src/avatars';
         const finalFilename = `${username}.${detectedExt}`;
         const uploadPath = path.join(folderPath, finalFilename);
 
@@ -94,7 +90,6 @@ async function uploadAvatarRoute(fastify, options) {
             }
         }
         await fs.promises.writeFile(uploadPath, fileBuffer);
-        
         return reply.send({
             success: true,
             username,

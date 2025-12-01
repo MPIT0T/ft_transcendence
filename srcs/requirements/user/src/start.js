@@ -36,6 +36,7 @@ const fastify = fastifyFactory({
 });
 
 // Autoload plugins & routes (mimic previous CLI behavior)
+
 fastify.register(AutoLoad, {
   dir: path.join(__dirname, 'plugins')
 });
