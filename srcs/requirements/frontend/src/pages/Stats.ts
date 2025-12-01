@@ -117,10 +117,11 @@ const Stats: StatsPage = {
         <div class="text-center mb-6">
           <button
             id="open-avatar-modal"
-            class="px-4 py-2 text-sm text-gray-100 rounded-full border border-gray-50 hover:bg-gray-700/50 transition-colors"
+            class="text-sm text-gray-100 rounded-full items-center justify-center border border-gray-50 transition-all"
           >
-            <div class="w-64 h-64 mx-auto mb-4 flex items-center rounded-full justify-center overflow-hidden">
-              <img src="${avatar}" id="user-avatar" alt="avatar" class="w-64 h-64 object-cover"/>
+            <div class="relative w-64 h-64 mx-auto flex items-center rounded-full justify-center overflow-hidden">
+              <img src="${avatar}" id="user-avatar" alt="avatar" class="w-64 h-64"/>
+              <span class="absolute inset-0 rounded-full transition-all hover:bg-gray-700/50"></span>
             </div>
           </button>
         </div>
