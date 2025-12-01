@@ -730,7 +730,7 @@ const Stats: StatsPage = {
             const uploadData = await uploadResponse.json();
 
             // Step 2: Send the response to /user/api/change-avatar
-            this.changeNewAvatar(root, uploadData.filename || uploadData.path || uploadData);
+            this.changeNewAvatar(root, uploadData.fileUrl);
             avatarModal.classList.add('hidden');
 
             // Reset the input
