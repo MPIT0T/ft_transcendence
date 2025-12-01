@@ -12,14 +12,14 @@ require('dotenv').config({ path: envPath });
 const serverAddr = process.env.SERVER_ADDR || '0.0.0.0';
 const port = parseInt(process.env.SERVER_PORT || '3000', 10);
 
-const certPath = '/run/secrets/api_cert';
-const keyPath = '/run/secrets/api_key';
+const certPath = '/run/secrets/upload_cert';
+const keyPath = '/run/secrets/upload_key';
 let cert, key;
 try {
   cert = fs.readFileSync(certPath);
   key = fs.readFileSync(keyPath);
 } catch (e) {
-  console.error('❌ Unable to read TLS cert/key for api service.', e);
+  console.error('❌ Unable to read TLS cert/key for upload service.', e);
   process.exit(1);
 }
 

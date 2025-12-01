@@ -450,7 +450,7 @@ const Stats: StatsPage = {
     //   const tokens = [];
     //   tokens.push(sessionStorage.getItem("token"));
     //   tokens.push(sessionStorage.getItem("token"));
-    //   fetch('/user/api/post-match', {
+    //   fetch('/user/upload/post-match', {
     //     method: 'POST',
     //     headers: {
     //       'Content-Type': 'application/json',
@@ -1088,7 +1088,7 @@ const Stats: StatsPage = {
     const avatar = document.getElementById('user-avatar') as HTMLImageElement;
 
     if (avatar) {
-      avatar.src = Layout.getUserInfoFromJwt(sessionStorage.getItem('token')).avatar;
+      avatar.src = Layout.getUserInfoFromJwt(sessionStorage.getItem('token')).avatar || 'anonymous.png';
       Layout.updateAvatar();
     }
   },
