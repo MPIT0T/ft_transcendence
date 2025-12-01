@@ -578,9 +578,6 @@ export const Layout = {
   async handleLogin(root: HTMLElement): Promise<void> {
     const username = (root.querySelector('#username') as HTMLInputElement).value;
     const password = (root.querySelector('#password') as HTMLInputElement).value;
-    const rememberMe = (root.querySelector('#remember-me') as HTMLInputElement).checked;
-
-    console.log('🔐 Login attempt:', { username, rememberMe });
 
     if (username && password) {
       const res = await fetch('/user/login', {

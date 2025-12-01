@@ -705,8 +705,8 @@ const Stats: StatsPage = {
 
           // Validate file type
           console.log('file type is: ' + file.type);
-          if (!file.type.match(/^image\/(png|jpg)$/)) {
-            Layout.showNotification('Seuls les fichiers PNG et JPEG sont acceptés', 'error');
+          if (!file.type.match(/^image\/(png|jpeg|gif)$/)) {
+            Layout.showNotification('Seuls les fichiers PNG, JPEG, GIF sont acceptés', 'error');
             return;
           }
 
@@ -1225,7 +1225,7 @@ const Stats: StatsPage = {
               <td class="px-6 py-4 whitespace-nowrap">
                   <div class="flex items-center">
                       <div class="w-8 h-8 rounded-full flex items-center justify-center mr-3 border border-gray-50">
-                          <img src="${match.avatar || '/default-avatar.png'}" alt="avatar"/>
+                          <img src="${match.avatar || '/default-avatar.png'}" alt="avatar" class="rounded-full"/>
                       </div>
                       <span class="text-sm font-medium text-gray-100">${match.versus || 'Inconnu'}</span>
                   </div>
