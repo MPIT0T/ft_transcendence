@@ -17,74 +17,96 @@ function isValidImageMagic(buffer) {
     return false;
 }
 
-
 async function uploadAvatarRoute(fastify, options) {
 
     fastify.post('/', async (req, reply) => {
-        let username;
 
-        const mp = await req.multipart(handler);
-        mp.on("field", (key, value) => {
-            if (key === "username") username = value;
-        });
+        let username = null;
+        let fileBuffer = null;
+        let detectedExt = null;
+
+        const mp = await req.parts();
+
+        for await (const part of mp) {
+
+            if (part.type === "field") {
+                if (part.fieldname === "username") {
+                    username = part.value;
+                }
+                continue;
+            }
+
+            if (part.type === "file") {
+
+                if (!part.mimetype.startsWith("image/")) {
+                    return reply.code(400).send({ error: "Filetype expected: PNG, JPEG, GIF, WEBP" });
+                }
+
+                const chunks = [];
+                let header = null;
+
+                for await (const chunk of part.file) {
+                    if (!header) header = chunk.slice(0, 12);
+                    chunks.push(chunk);
+                }
+
+                fileBuffer = Buffer.concat(chunks);
+
+                detectedExt = isValidImageMagic(header);
+                if (!detectedExt)
+                    return reply.code(400).send({ error: "Corrupted file or not an image file" });
+
+                if (fileBuffer.length > 800 * 1024)
+                    return reply.code(400).send({ error: "File is limited to 800 KB" });
+            }
+        }
 
         if (!username)
-        {
             return reply.code(400).send({ error: "Username is required" });
-        }
+
+        if (!fileBuffer)
+            return reply.code(400).send({ error: "Image file is required" });
+
         const res = await fetch('https://user_handling:3003/api/check-token', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `${req.headers['authorization']}`},
-            body: JSON.stringify({username}),
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': req.headers['authorization'] || ""
+            },
+            body: JSON.stringify({ username }),
         });
-        if (!res.ok) {
+
+        if (!res.ok)
             return reply.code(401).send({ error: "Unauthorized" });
+
+        let metadata;
+        try {
+            metadata = await sharp(fileBuffer).metadata();
+        } catch {
+            return reply.code(400).send({ error: "Cannot read image file" });
         }
-        async function handler(field, file, filename, encoding, mimetype) {
-            if (!mimetype.startsWith("image/"))
-                return reply.code(400).send({error: "Filetype expected: image in the following formats: PNG, JPEG, GIF, WEBP"});
-            const chunks = [];
-            let totalBytes = 0;
 
-            for await (const chunk of file) {
-                chunks.push(chunk);
-                totalBytes += chunk.length;
-                if (totalBytes >= 12) break;
+        if (metadata.width !== 500 || metadata.height !== 500)
+            return reply.code(400).send({ error: "Must be 500×500" });
+
+        const folderPath = path.join(__dirname, 'avatars');
+        const finalFilename = `${username}.${detectedExt}`;
+        const uploadPath = path.join(folderPath, finalFilename);
+
+        const files = await fs.promises.readdir(folderPath);
+        for (const file of files) {
+            if (path.parse(file).name === username && file !== finalFilename) {
+                await fs.promises.unlink(path.join(folderPath, file));
             }
-
-            const header = Buffer.concat(chunks);
-
-            const detectedExt = isValidImageMagic(header);
-
-            if (!detectedExt) {
-                return reply.code(400).send({error: "Corrupted file or not an image file"});
-            }
-
-            const buffer = Buffer.concat(chunks.concat(await file.toBuffer()));
-            const maxBytes = 800 * 1024;
-            if (buffer.length > maxBytes) {
-                return reply.code(400).send({ error: "File is limited to 800 KB" });
-            }
-            let metadata;
-            try {
-                metadata = await sharp(buffer).metadata();
-            } catch (e) {
-                return reply.code(400).send({ error: "Cant read image file" });
-            }
-            if (metadata.width !== 500 || metadata.height !== 500) {
-                return reply.code(400).send({ error: "Must be in 500×500" });
-            }
-            const finalFilename = `${username}.${detectedExt}`;
-            const uploadPath = path.join("avatars", finalFilename);
-            await fs.promises.writeFile(uploadPath, buffer);
-
-            mp.fileSaved = "/avatars/" + finalFilename;
-            return reply.send({
-                success: true,
-                username,
-                fileUrl: "/avatars/" + finalFilename
-            });
         }
+
+        await fs.promises.writeFile(uploadPath, fileBuffer);
+        
+        return reply.send({
+            success: true,
+            username,
+            fileUrl: "/avatars/" + finalFilename
+        });
     });
 }
 

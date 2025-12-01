@@ -9,13 +9,10 @@ async function apiChangeUsernameRoute(fastify, options) {
     fastify.post('/', async (req, reply) => {
         //change username in db
         const { username, newUsername} = req.body || {};
-        if (!username) {
+        if (!username)
             return reply.status(400).send({ error: "missing credentials" });
-        }
         if (errorToken(req.headers['authorization'], username))
-        {
             return reply.status(401).send({error: "Token manquant ou invalide"});
-        }
         try {
             const prepUserInfo = db.prepare('SELECT * from users where username = ?');
             const allUserInfo = prepUserInfo.get(username);
@@ -26,6 +23,19 @@ async function apiChangeUsernameRoute(fastify, options) {
                 JWT_SECRET,
                 { expiresIn: '7d' }
             );
+            const res = await fetch('https://upload:3000/change-name', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ username: newUsername, oldUsername: username}),
+            });
+            if (!res.ok)
+            {
+                const resData = await res.json();
+                return reply.status(res.status).send({ error: resData.error });
+            }
             reply.status(200).send({ message: "nom d'utilisateur modifie avec succes", token});
         }
         catch (err) {
