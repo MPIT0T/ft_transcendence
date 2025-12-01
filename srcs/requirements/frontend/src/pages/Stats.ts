@@ -227,7 +227,7 @@ const Stats: StatsPage = {
             <h4 class="text-lg font-semibold text-gray-100">Choisir un avatar</h4>
             <button type="button" class="text-gray-300 hover:text-white hover:bg-gray-700/50 py-2 px-3" data-close-avatar-modal>✕</button>
           </div>
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6">
+          <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
             ${['alien.png', 'astronaut.png', 'martian.png', 'robot.png'].map(a => `
               <button type="button" data-avatar="${a}" class="group flex flex-col items-center gap-3 focus:outline-none">
                 <div class="w-24 h-24 overflow-hidden group-hover:bg-gray-700/50 transition-transform">
@@ -235,6 +235,19 @@ const Stats: StatsPage = {
                 </div>
               </button>
             `).join('')}
+            <label for="upload-btn" 
+              class="group flex flex-col items-center gap-3 cursor-pointer">
+              <div class="w-24 h-24 overflow-hidden group-hover:bg-gray-700/50 transition-transform">
+                <img src="upload.png" alt="upload" class="w-24 h-24 object-cover"/>
+              </div>
+            </label>
+            <input
+              type="file"
+              id="upload-btn"
+              name="upload"
+              accept="image/png, image/jpeg"
+              class="hidden"
+            />
           </div>
         </div>
       </div>
@@ -669,6 +682,7 @@ const Stats: StatsPage = {
     //change avatar
     const openAvatarBtn = root.querySelector('#open-avatar-modal') as HTMLButtonElement | null;
     const avatarModal = root.querySelector('#avatar-modal') as HTMLDivElement | null;
+    const avatarUploadEl = root.querySelector('#upload-btn') as HTMLInputElement | null;
     const closeAvatarEls = avatarModal ? avatarModal.querySelectorAll('[data-close-avatar-modal]') : [];
     if (openAvatarBtn && avatarModal) {
       openAvatarBtn.addEventListener('click', () => avatarModal.classList.remove('hidden'));
@@ -681,6 +695,53 @@ const Stats: StatsPage = {
           avatarModal.classList.add('hidden');
         });
       });
+
+      // Handle custom file upload
+      if (avatarUploadEl) {
+        avatarUploadEl.addEventListener('change', async (e) => {
+          const file = (e.target as HTMLInputElement).files?.[0];
+          if (!file) return;
+
+          // Validate file type
+          if (!file.type.match(/^image\/(png|jpeg)$/)) {
+            Layout.showNotification('Seuls les fichiers PNG et JPEG sont acceptés', 'error');
+            return;
+          }
+
+          try {
+            // Step 1: Upload file to /upload endpoint
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const uploadResponse = await fetch('/upload', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+              },
+              body: formData
+            });
+
+            if (!uploadResponse.ok) {
+              const errorData = await uploadResponse.json().catch(() => ({ error: 'Upload failed' }));
+              throw new Error(errorData.error || 'Upload failed');
+            }
+
+            const uploadData = await uploadResponse.json();
+
+            // Step 2: Send the response to /user/api/change-avatar
+            this.changeNewAvatar(root, uploadData.filename || uploadData.path || uploadData);
+            avatarModal.classList.add('hidden');
+
+            // Reset the input
+            avatarUploadEl.value = '';
+          } catch (err) {
+            console.error('Upload error:', err);
+            const msg = err instanceof Error ? err.message : 'Impossible d\'uploader l\'image';
+            Layout.showNotification(msg, 'error');
+            avatarUploadEl.value = '';
+          }
+        });
+      }
     }
 
     // Friends tabs (Online / Offline)
@@ -940,35 +1001,35 @@ const Stats: StatsPage = {
         avatar: newAvatar
       })
     })
-      .then(async (res) => {
-        const text = await res.text();
-        let data;
-        try {
-          data = JSON.parse(text);
-        } catch {
-          data = text;
-        }
+    .then(async (res) => {
+      const text = await res.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        data = text;
+      }
 
-        console.log('Response status:', res.status);
-        console.log('Response data:', data);
+      console.log('Response status:', res.status);
+      console.log('Response data:', data);
 
-        if (!res.ok) {
-          return Promise.reject(data);
-        }
-        return data;
-      })
-      .then((data: { message: string; token?: string }) => {
-        if (data.token) {
-          sessionStorage.setItem('token', data.token);
-          this.updateAvatar();
-        }
-        Layout.showNotification(data.message || 'Avatar changé avec succès', 'success');
-      })
-      .catch(err => {
-        console.error('Fetch error:', err);
-        const msg = (err && (err.error || err.message)) || 'Impossible de changer d\'avatar';
-        Layout.showNotification(msg, 'error');
-      });
+      if (!res.ok) {
+        return Promise.reject(data);
+      }
+      return data;
+    })
+    .then((data: { message: string; token?: string }) => {
+      if (data.token) {
+        sessionStorage.setItem('token', data.token);
+        this.updateAvatar();
+      }
+      Layout.showNotification(data.message || 'Avatar changé avec succès', 'success');
+    })
+    .catch(err => {
+      console.error('Fetch error:', err);
+      const msg = (err && (err.error || err.message)) || 'Impossible de changer d\'avatar';
+      Layout.showNotification(msg, 'error');
+    });
   },
 
   showOfflineFriends(root: HTMLElement) {
