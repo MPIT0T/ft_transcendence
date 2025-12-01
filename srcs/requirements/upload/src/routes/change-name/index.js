@@ -1,14 +1,16 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
-
+const SERVER_SECRET = fs.readFileSync('/run/secrets/server_key', 'utf8').trim();
 
 async function uploadChangeUsernameRoute(fastify, options) {
 
     fastify.post('/', async (req, reply) => {
-        const { username, oldUsername} = req.body || {};
+        const { username, oldUsername, secret} = req.body || {};
         if (!username || !oldUsername)
             return reply.status(400).send({ error: "missing credentials" });
+        if (!secret || secret !== SERVER_SECRET)
+            return reply.status(401).send({ error: "server side api only" });
         const res = await fetch('https://user_handling:3003/api/check-token', {
             method: 'POST',
             headers: {

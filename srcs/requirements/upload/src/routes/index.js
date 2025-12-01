@@ -21,21 +21,25 @@ async function uploadAvatarRoute(fastify, options) {
 
     fastify.post('/', async (req, reply) => {
 
-        let username = null;
+        const username = req.headers['username'] || null;
         let fileBuffer = null;
         let detectedExt = null;
 
+        if (!username)
+            return reply.code(400).send({ error: "Username is required" });
+        const res = await fetch('https://user_handling:3003/api/check-token', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': req.headers['authorization'] || ""
+            },
+            body: JSON.stringify({ username }),
+        });
+        if (!res.ok)
+            return reply.code(401).send({ error: "Unauthorized" });
         const mp = await req.parts();
 
         for await (const part of mp) {
-
-            if (part.type === "field") {
-                if (part.fieldname === "username") {
-                    username = part.value;
-                }
-                continue;
-            }
-
             if (part.type === "file") {
 
                 if (!part.mimetype.startsWith("image/")) {
@@ -61,24 +65,8 @@ async function uploadAvatarRoute(fastify, options) {
             }
         }
 
-        if (!username)
-            return reply.code(400).send({ error: "Username is required" });
-
         if (!fileBuffer)
             return reply.code(400).send({ error: "Image file is required" });
-
-        const res = await fetch('https://user_handling:3003/api/check-token', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': req.headers['authorization'] || ""
-            },
-            body: JSON.stringify({ username }),
-        });
-
-        if (!res.ok)
-            return reply.code(401).send({ error: "Unauthorized" });
-
         let metadata;
         try {
             metadata = await sharp(fileBuffer).metadata();
@@ -93,13 +81,18 @@ async function uploadAvatarRoute(fastify, options) {
         const finalFilename = `${username}.${detectedExt}`;
         const uploadPath = path.join(folderPath, finalFilename);
 
+        if (!fs.existsSync(folderPath))
+            fs.mkdirSync(folderPath, { recursive: true });
         const files = await fs.promises.readdir(folderPath);
         for (const file of files) {
             if (path.parse(file).name === username && file !== finalFilename) {
-                await fs.promises.unlink(path.join(folderPath, file));
+                try {
+                    await fs.promises.unlink(path.join(folderPath, file));
+                } catch (e) {
+                    return reply.code(400).send({ error: "Failed to remove old avatar" });
+                }
             }
         }
-
         await fs.promises.writeFile(uploadPath, fileBuffer);
         
         return reply.send({

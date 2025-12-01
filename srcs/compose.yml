@@ -16,6 +16,7 @@ services:
       - internal_ca_cert
       - upload_cert
       - upload_key
+      - server_key
     environment:
       NODE_EXTRA_CA_CERTS: /run/secrets/internal_ca_cert
     restart: always
