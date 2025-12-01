@@ -730,7 +730,7 @@ export const Layout = {
         const avatarSrc = this.getAvatarPath(userInfo.avatar || 'anonymous.png');
 
         loginBtn.innerHTML = `
-        <img src="${avatarSrc}" alt="avatar" id="user-avatar-layout" class="w-8 h-8 mr-2" />
+        <img src="${avatarSrc}" alt="avatar" id="user-avatar-layout" class="w-8 h-8 mr-2 rounded-full border border-gray-50" />
         <span class="text-3xl font-bold text-transparent bg-clip-text
         bg-gradient-to-r from-red-500 via-blue-500 to-green-500
         bg-[length:400%_400%] animate-gradientShift" id="username-layout">${username}</span>
@@ -742,7 +742,7 @@ export const Layout = {
       `;
       } else {
         loginBtn.innerHTML = `
-        <img src="/anonymous.png" alt="login" class="w-8 h-8 mr-2"/>
+        <img src="/anonymous.png" alt="login" class="w-8 h-8 mr-2 rounded-full border border-gray-50"/>
         <span data-i18n="login-btn" class="text-2xl text-gray-50">Connexion</span>
       `;
         loginBtn.className = `

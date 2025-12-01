@@ -1122,7 +1122,8 @@ const Stats: StatsPage = {
   playedTimesinHours(matches, timesInHours): {
     matchesPlayed: number;
     timePlayed: number;
-  } {
+  }
+  {
     const HOUR = 3600000;
     let matchInPoT = 0;
     let timePlayedInPot = 0;

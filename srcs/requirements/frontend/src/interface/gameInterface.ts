@@ -44,6 +44,7 @@ interface StatsPage extends Page {
     timePlayed: number;
   };
   updateTimeplayed(matches: any[]): void;
+  getAvatarPath(avatar: string): string;
 }
 
 export type { Player, Ball, GameState , Page, StatsPage};
