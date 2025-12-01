@@ -703,7 +703,8 @@ const Stats: StatsPage = {
           if (!file) return;
 
           // Validate file type
-          if (!file.type.match(/^image\/(png|jpeg)$/)) {
+          console.log('file type is: ' + file.type);
+          if (!file.type.match(/^image\/(png|jpg)$/)) {
             Layout.showNotification('Seuls les fichiers PNG et JPEG sont acceptés', 'error');
             return;
           }
@@ -713,7 +714,7 @@ const Stats: StatsPage = {
             const formData = new FormData();
             formData.append('file', file);
 
-            const uploadResponse = await fetch('/upload', {
+            const uploadResponse = await fetch('/upload/upload-image', {
               method: 'POST',
               headers: {
                 'username': `${sessionStorage.getItem('username')}`,
@@ -730,7 +731,7 @@ const Stats: StatsPage = {
             const uploadData = await uploadResponse.json();
 
             // Step 2: Send the response to /user/api/change-avatar
-            this.changeNewAvatar(root, uploadData.fileUrl);
+            this.changeNewAvatar(root, 'https://upload:3000/' + uploadData.fileUrl);
             avatarModal.classList.add('hidden');
 
             // Reset the input

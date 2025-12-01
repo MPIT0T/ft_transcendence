@@ -5,6 +5,8 @@ const path = require('node:path');
 const fs = require('node:fs');
 const fastifyFactory = require('fastify');
 const AutoLoad = require('@fastify/autoload');
+const fastifyMultipart = require('@fastify/multipart');
+const fastifyStatic = require('@fastify/static');
 
 const envPath = path.join(__dirname, '../.env');
 require('dotenv').config({ path: envPath });
@@ -27,6 +29,16 @@ const fastify = fastifyFactory({
   https: { cert, key, allowHTTP1: true },
   logger: { level: 'info' }
 });
+
+fastify.register(fastifyMultipart, {
+  limits: { fileSize: 800 * 1024 } // 800KB
+});
+
+fastify.register(fastifyStatic, {
+  root: path.join(__dirname, 'avatars'),
+  prefix: '/avatars/',
+});
+
 
 fastify.register(AutoLoad, { dir: path.join(__dirname, 'plugins') });
 fastify.register(AutoLoad, { dir: path.join(__dirname, 'routes') });
