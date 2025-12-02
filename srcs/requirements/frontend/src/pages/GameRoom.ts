@@ -345,16 +345,13 @@ export const GameRoom: Page = {
 						sessionStorage.setItem('roomId', roomId);
 					}
 
-					// Fermer le modal de matchmaking si ouvert
 					const matchmakingModal = root.querySelector('#matchmaking-modal') as HTMLDivElement;
 					if (matchmakingModal) {
 						matchmakingModal.classList.add('hidden');
 						matchmakingModal.classList.remove('flex');
 					}
 
-					// navigate using History API
-					const raw = response.url || '/';
-					const p = raw.startsWith('#') ? raw.replace(/^#\/?/, '/') : (raw.startsWith('/') ? raw : '/' + raw);
+					const p = response.url;
 					history.pushState(null, '', p);
 					window.dispatchEvent(new PopStateEvent('popstate'));
 				} else {

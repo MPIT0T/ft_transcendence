@@ -1,5 +1,5 @@
 import type { Page } from "../interface/gameInterface.js"
-import {Layout} from "./Layout";
+import { Layout } from "./Layout";
 
 export let ws: WebSocket | undefined;
 let clientId: string | undefined;
@@ -191,14 +191,11 @@ export const TournamentRoom: Page = {
 						sessionStorage.setItem('tournamentId', tournamentId);
 					}
 
-          const tournamentName = response.tournamentName;
-          if (tournamentName !== undefined) {
-            sessionStorage.setItem('tournamentName', tournamentName);
-          }
-
-					// navigate using History API
-					const raw = response.url || '/';
-					const p = raw.startsWith('#') ? raw.replace(/^#\/?/, '/') : (raw.startsWith('/') ? raw : '/' + raw);
+					const tournamentName = response.tournamentName;
+					if (tournamentName !== undefined) {
+						sessionStorage.setItem('tournamentName', tournamentName);
+					}
+					const p = response.url;
 					history.pushState(null, '', p);
 					window.dispatchEvent(new PopStateEvent('popstate'));
 				} else {

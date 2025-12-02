@@ -445,7 +445,7 @@ export const TournamentOnline: Page = {
           setTimeout(() => {
             // navigate using History API instead of hash
             const p = response.roomUrl;
-            history.pushState(null, '', p);
+            history.replaceState(null, '', p);
             window.dispatchEvent(new PopStateEvent('popstate'));
           }, 1000);
         }				// 🔙 Retour au bracket après un match
@@ -453,7 +453,7 @@ export const TournamentOnline: Page = {
           // Rediriger vers le bracket après 2 secondes (History API)
           setTimeout(() => {
             const p = '/tournamentOnline';
-            history.pushState(null, '', p);
+            history.replaceState(null, '', p);
             window.dispatchEvent(new PopStateEvent('popstate'));
           }, 2000);
         }
@@ -501,7 +501,7 @@ export const TournamentOnline: Page = {
 		} else {
       window.removeEventListener('popstate', popstateHandler);
       const p = '/tournamentRoom';
-      history.pushState(null, '', p);
+      history.replaceState(null, '', p);
       window.dispatchEvent(new PopStateEvent('popstate'));
     }
 
@@ -520,7 +520,7 @@ export const TournamentOnline: Page = {
 
 					window.removeEventListener('popstate', popstateHandler);
 					const p = '/';
-					history.pushState(null, '', p);
+					history.replaceState(null, '', p);
 					window.dispatchEvent(new PopStateEvent('popstate'));
 					return;
 				}
@@ -534,7 +534,7 @@ export const TournamentOnline: Page = {
 
 				window.removeEventListener('popstate', popstateHandler);
 				const p = '/tournamentRoom';
-				history.pushState(null, '', p);
+				history.replaceState(null, '', p);
 				window.dispatchEvent(new PopStateEvent('popstate'));
 			});
 		}

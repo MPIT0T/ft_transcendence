@@ -157,7 +157,7 @@ export const GameOnline: Page = {
         }
         window.removeEventListener('popstate', popstateHandler);
         const p = '/';
-        history.pushState(null, '', p);
+        history.replaceState(null, '', p);
         window.dispatchEvent(new PopStateEvent('popstate'));
 
       });
@@ -313,7 +313,7 @@ export const GameOnline: Page = {
 
                 sessionStorage.removeItem('roomId');
                 const p = '/';
-                history.pushState(null, '', p);
+                history.replaceState(null, '', p);
                 window.dispatchEvent(new PopStateEvent('popstate'));
               });
             }
@@ -323,7 +323,7 @@ export const GameOnline: Page = {
     } else {
       window.removeEventListener('popstate', popstateHandler);
       const p = '/';
-      history.pushState(null, '', p);
+      history.replaceState(null, '', p);
       window.dispatchEvent(new PopStateEvent('popstate'));
       sessionStorage.removeItem('roomId');
     }
