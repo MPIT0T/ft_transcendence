@@ -91,6 +91,7 @@ export const GameOnline: Page = {
 
     let roomId = sessionStorage.getItem('roomId');
     let clientId = sessionStorage.getItem('clientId');
+    let username = sessionStorage.getItem('username');
     let canStart = false;
     let waiting = true;
 
@@ -284,7 +285,7 @@ export const GameOnline: Page = {
 
         if (response.method === "gameEnd") {
           if (currentGame) {
-            const winner = currentGame.getScores().p1Score > currentGame.getScores().p2Score ? player1NameEl.textContent : currentGame.getScores().p1Score < currentGame.getScores().p2Score ? player2NameEl.textContent : "Personne";
+            const winner = currentGame.getScores().p1Score > currentGame.getScores().p2Score ? player1NameEl.textContent : currentGame.getScores().p1Score < currentGame.getScores().p2Score ? player2NameEl.textContent : `${username}`;
             currentGame.destroy();
             stopTimer();
             const winnerModal = root.querySelector('#winner-modal') as HTMLElement;

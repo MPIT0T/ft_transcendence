@@ -107,22 +107,9 @@ const Stats: StatsPage = {
   },
 
   getAvatarPath(avatar: string): string {
-    // If avatar is already a full URL, extract the pathname
-    if (avatar.startsWith('http://') || avatar.startsWith('https://')) {
-      try {
-        const url = new URL(avatar);
-        return url.pathname;
-      } catch {
-        return '/anonymous.png';
-      }
-    }
-
-    // If avatar already starts with /, it's a relative path - use as is
-    if (avatar.startsWith('/')) {
+    if (avatar.startsWith('/') || avatar.startsWith('http://') || avatar.startsWith('https://')) {
       return avatar;
     }
-
-    // Otherwise it's a filename, prepend /
     return '/' + avatar;
   },
 
@@ -267,7 +254,7 @@ const Stats: StatsPage = {
               type="file"
               id="upload-btn"
               name="upload"
-              accept="image/png, image/jpeg"
+              accept="image/png, image/jpeg, image/gif"
               class="hidden"
             />
           </div>
