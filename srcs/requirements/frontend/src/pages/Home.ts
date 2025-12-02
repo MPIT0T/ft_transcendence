@@ -20,7 +20,7 @@ const initGamePreview = function () {
 	const gameState = {
 		p1: { x: 10, y: 125, width: 10, height: 50, vel_y: 0, score: 3 },
 		p2: { x: 480, y: 125, width: 10, height: 50, vel_y: 0, score: 2 },
-		ball: { x: 250, y: 150, width: 10, height: 10, vel_x: 2, vel_y: 1.5 }
+		ball: { x: 245, y: 145, width: 10, height: 10, vel_x: 2, vel_y: 1.5 }
 	};
 
 	let animationFrame: number;
@@ -47,8 +47,8 @@ const initGamePreview = function () {
 
 		// Reset si la balle sort
 		if (gameState.ball.x < 0 || gameState.ball.x > BASE_WIDTH) {
-			gameState.ball.x = BASE_WIDTH / 2;
-			gameState.ball.y = BASE_HEIGHT / 2;
+			gameState.ball.x = (BASE_WIDTH / 2) - 5;
+			gameState.ball.y = (BASE_HEIGHT / 2) - 5;
 			gameState.ball.vel_x *= -1;
 		}
 
