@@ -13,7 +13,7 @@ module.exports = async function (fastify, opts) {
         } catch (err) {
             fastify.log.error("❌ Error checking users online:", err)
         }
-    }, 10000)
+    }, 5000)
 }
 
 async function checkUsersOnline() {
