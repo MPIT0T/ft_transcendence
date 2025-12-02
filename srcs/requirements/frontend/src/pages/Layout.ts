@@ -59,7 +59,7 @@ const initPastelBackground = () => {
 
 declare global {
   interface Window {
-    githubAuthListenerAdded?: boolean;
+    googleAuthListenerAdded?: boolean;
   }
 }
 
@@ -196,7 +196,7 @@ export const Layout = {
               </div>
               
               <div class="text-center mt-4 pt-4 border-t border-gray-300">
-                <button type="button" id="github-btn" class="py-2 text-gray-50 font-bold w-full flex items-center justify-center border border-gray-50 bg-transparent hover:bg-gray-700/50">
+                <button type="button" id="google-btn" class="py-2 text-gray-50 font-bold w-full flex items-center justify-center border border-gray-50 bg-transparent hover:bg-gray-700/50">
                   <img class="w-8 h-8 mr-3" src="google-logo.svg" alt="google-logo"/>
                   Sign in with Google
                 </button>
@@ -272,7 +272,7 @@ export const Layout = {
               </div>
               
               <div class="text-center mt-4 pt-4 border-t border-gray-300">
-                <button type="button" id="github-btn2" class="py-2 text-gray-50 font-bold w-full flex items-center justify-center border border-gray-50 bg-transparent hover:bg-gray-700/50">
+                <button type="button" id="google-btn2" class="py-2 text-gray-50 font-bold w-full flex items-center justify-center border border-gray-50 bg-transparent hover:bg-gray-700/50">
                   <img class="w-8 h-8 mr-3" src="google-logo.svg" alt="google-logo"/>
                   Sign in with Google
                 </button>
@@ -285,9 +285,9 @@ export const Layout = {
     `;
   },
 
-  async handleGithubLogin(root: HTMLElement, code: string): Promise<void> {
+  async handleGoogleLogin(root: HTMLElement, code: string): Promise<void> {
 
-    const res = await fetch("/user/github", {
+    const res = await fetch("/user/google", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ code })
@@ -473,22 +473,22 @@ export const Layout = {
     const cancelRegisterBtn = root.querySelector('#cancel-register') as HTMLButtonElement;
     const registerForm = root.querySelector('#register-form') as HTMLFormElement;
     const backToLoginBtn = root.querySelector('#back-to-login') as HTMLButtonElement;
-    const githubBtn = root.querySelector('#github-btn') as HTMLButtonElement;
-    const githubBtn2 = root.querySelector('#github-btn2') as HTMLButtonElement;
+    const googleBtn = root.querySelector('#google-btn') as HTMLButtonElement;
+    const googleBtn2 = root.querySelector('#google-btn2') as HTMLButtonElement;
 
-    window.githubAuthListenerAdded = window.githubAuthListenerAdded || false;
+    window.googleAuthListenerAdded = window.googleAuthListenerAdded || false;
 
-    if (!window.githubAuthListenerAdded) {
+    if (!window.googleAuthListenerAdded) {
       const handler = (event: MessageEvent) => {
         if (event.origin !== window.origin) return;
-        if (event.data.type === 'github-auth') {
+        if (event.data.type === 'google-auth') {
           const code = event.data.code;
-          this.handleGithubLogin(root, code);
+          this.handleGoogleLogin(root, code);
         }
       };
 
       window.addEventListener('message', handler);
-      window.githubAuthListenerAdded = true;
+      window.googleAuthListenerAdded = true;
     }
 
     // Cancel button
@@ -505,36 +505,54 @@ export const Layout = {
       }
     });
 
-    // Github registration
-    const clientId = "Ov23libyRMWHw34E2bL0";
-    const redirectUri = "https://127.0.0.1:4430/oauth-callback.html";
-    const scope = "read:user";
+    // google registration
+    const clientId = "646709615614-o4v2kdnbn5mhjkncnme6mdqhbd0j3lt5.apps.googleusercontent.com";
+    const redirectUri = window.location.origin + "/oauth-callback.html";
+    console.log(redirectUri);
 
-    if (githubBtn) {
-      githubBtn.addEventListener('click', () => {
+    if (googleBtn) {
+      googleBtn.addEventListener('click', () => {
         const width = 600;
         const height = 700;
         const left = window.screen.width / 2 - width / 2;
         const top = window.screen.height / 2 - height / 2;
 
-        const githubWindow = window.open(
-          `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}`,
-          'GitHub OAuth',
+        const googleAuthUrl =
+          `https://accounts.google.com/o/oauth2/v2/auth?` +
+          `client_id=${clientId}` +
+          `&redirect_uri=${redirectUri}` +
+          `&response_type=code` +
+          `&scope=openid%20email%20profile` +
+          `&access_type=online` +
+          `&prompt=consent`;
+
+        const googleWindow = window.open(
+          googleAuthUrl,
+          'Google OAuth',
           `width=${width},height=${height},top=${top},left=${left}`
         );
       });
     }
 
-    if (githubBtn2) {
-      githubBtn2.addEventListener('click', () => {
+    if (googleBtn2) {
+      googleBtn2.addEventListener('click', () => {
         const width = 600;
         const height = 700;
         const left = window.screen.width / 2 - width / 2;
         const top = window.screen.height / 2 - height / 2;
 
-        const githubWindow = window.open(
-          `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}`,
-          'GitHub OAuth',
+        const googleAuthUrl =
+          `https://accounts.google.com/o/oauth2/v2/auth?` +
+          `client_id=${clientId}` +
+          `&redirect_uri=${redirectUri}` +
+          `&response_type=code` +
+          `&scope=openid%20email%20profile` +
+          `&access_type=online` +
+          `&prompt=consent`;
+
+        const googleWindow = window.open(
+          googleAuthUrl,
+          'Google OAuth',
           `width=${width},height=${height},top=${top},left=${left}`
         );
       });
@@ -791,7 +809,7 @@ export const Layout = {
   },
 
   getAvatarPath(avatar: string): string {
-    // If avatar is already a full URL, extract the pathname
+    console.log(avatar);
     if (avatar.startsWith('http://') || avatar.startsWith('https://')) {
       try {
         const url = new URL(avatar);
@@ -801,12 +819,10 @@ export const Layout = {
       }
     }
 
-    // If avatar already starts with /, it's a relative path - use as is
     if (avatar.startsWith('/')) {
       return avatar;
     }
 
-    // Otherwise it's a filename, prepend /
     return '/' + avatar;
   },
 

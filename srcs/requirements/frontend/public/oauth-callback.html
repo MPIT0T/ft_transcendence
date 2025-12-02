@@ -9,7 +9,7 @@
     const code = params.get('code');
 
     if (code && window.opener) {
-        window.opener.postMessage({ type: 'github-auth', code }, window.origin);
+        window.opener.postMessage({ type: 'google-auth', code }, window.origin);
         window.close();
     }
 </script>
