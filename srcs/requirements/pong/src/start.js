@@ -26,6 +26,10 @@ const fastify = fastifyFactory({
   logger: { level: 'info' }
 });
 
+process.on("SIGTERM", () => {
+    fastify.close(() => process.exit(0));
+})
+
 fastify.register(AutoLoad, { dir: path.join(__dirname, 'plugins') });
 fastify.register(AutoLoad, { dir: path.join(__dirname, 'routes') });
 

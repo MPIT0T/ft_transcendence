@@ -37,6 +37,10 @@ const fastify = fastifyFactory({
 
 // Autoload plugins & routes (mimic previous CLI behavior)
 
+process.on("SIGTERM", () => {
+    fastify.close(() => process.exit(0));
+})
+
 fastify.register(AutoLoad, {
   dir: path.join(__dirname, 'plugins')
 });

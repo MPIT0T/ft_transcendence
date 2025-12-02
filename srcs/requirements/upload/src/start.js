@@ -34,6 +34,10 @@ fastify.register(fastifyMultipart, {
   limits: { fileSize: 1000 * 1024 } // 800KB
 });
 
+process.on("SIGTERM", () => {
+    fastify.close(() => process.exit(0));
+})
+
 fastify.register(AutoLoad, { dir: path.join(__dirname, 'plugins') });
 fastify.register(AutoLoad, { dir: path.join(__dirname, 'routes') });
 
