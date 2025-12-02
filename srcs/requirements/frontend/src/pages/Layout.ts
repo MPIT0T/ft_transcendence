@@ -811,19 +811,9 @@ export const Layout = {
 
   getAvatarPath(avatar: string): string {
     console.log(avatar);
-    if (avatar.startsWith('http://') || avatar.startsWith('https://')) {
-      try {
-        const url = new URL(avatar);
-        return url.pathname;
-      } catch {
-        return '/anonymous.png';
-      }
-    }
-
-    if (avatar.startsWith('/')) {
+    if (avatar.startsWith('/') || avatar.startsWith('http://') || avatar.startsWith('https://')) {
       return avatar;
     }
-
     return '/' + avatar;
   },
 
