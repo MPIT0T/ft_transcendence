@@ -41,7 +41,7 @@ export const GameOnline: Page = {
           <span class="h-2 w-2 bg-white animate-bounceHigh [animation-delay:300ms]"></span>
         </div>
       </div>
-      <p class="text-gray-400">Le jeu démarrera automatiquement quand tous les joueurs seront prêts</p>
+      <p class="text-gray-400 mb-5">Le jeu démarrera automatiquement quand tous les joueurs seront prêts</p>
       <button
 					id="cancel-matchmaking"
 					class="w-full text-gray-50 py-3 px-6 border border-gray-50 hover:border-red-500 hover:bg-gray-700/50 transition-colors font-bold">
