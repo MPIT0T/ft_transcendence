@@ -126,7 +126,7 @@ export const GameLobby: Page = {
 		const localBtn = root.querySelector('#local-mode') as HTMLButtonElement;
 		if (localBtn) {
 			localBtn.addEventListener('click', () => {
-				const p = '/game';
+				const p = '/localLobby';
 				history.pushState(null, '', p);
 				window.dispatchEvent(new PopStateEvent('popstate'));
 			});
