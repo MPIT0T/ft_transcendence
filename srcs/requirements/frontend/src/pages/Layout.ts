@@ -325,12 +325,14 @@ export const Layout = {
               sessionStorage.removeItem('token');
               sessionStorage.removeItem('isLoggedIn');
               sessionStorage.removeItem('username');
+              this.redirectIfNotLoggedIn('/', true)
               this.updateLoginButton(root, false);
             }
           } catch (err) {
             sessionStorage.removeItem('token');
             sessionStorage.removeItem('isLoggedIn');
             sessionStorage.removeItem('username');
+            this.redirectIfNotLoggedIn('/', true)
             this.updateLoginButton(root, false);
           }
         }
@@ -453,6 +455,9 @@ export const Layout = {
             sessionStorage.removeItem('token');
             sessionStorage.removeItem('isLoggedIn');
             sessionStorage.removeItem('username');
+            const p = '/';
+            history.pushState(null, '', p);
+            window.dispatchEvent(new PopStateEvent('popstate'));
           }
         })
     }
