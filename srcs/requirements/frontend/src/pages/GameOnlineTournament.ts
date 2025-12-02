@@ -195,7 +195,7 @@ export const GameOnlineTournament: Page = {
           // Rediriger vers la page du tournoi après un délai (History API)
           setTimeout(() => {
             const p = '/tournamentOnline';
-            history.pushState(null, '', p);
+            history.replaceState(null, '', p);
             window.dispatchEvent(new PopStateEvent('popstate'));
           }, 2000);
         }
