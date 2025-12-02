@@ -181,7 +181,7 @@ export const TournamentOnline: Page = {
 
 	mount(root: HTMLElement): void {
 
-    Layout.redirectIfNotLoggedIn();
+    Layout.redirectIfNotLoggedIn('/', true);
 
 		const tournamentId = sessionStorage.getItem('tournamentId');
 		const tournamentName = sessionStorage.getItem('tournamentName');

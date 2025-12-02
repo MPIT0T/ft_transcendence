@@ -42,7 +42,7 @@ export const GameOnlineTournament: Page = {
 
   mount(root) {
 
-    Layout.redirectIfNotLoggedIn();
+    Layout.redirectIfNotLoggedIn('/', true);
 
     const clientId = sessionStorage.getItem('clientId');
     const tournamentId = sessionStorage.getItem('tournamentId');

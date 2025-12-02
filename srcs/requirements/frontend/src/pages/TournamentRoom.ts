@@ -151,7 +151,7 @@ export const TournamentRoom: Page = {
 	},
 
 	mount(root: HTMLElement): void {
-    Layout.redirectIfNotLoggedIn();
+    Layout.redirectIfNotLoggedIn('/', true);
 
 		let tournamentId;
 		if (ws === undefined || ws.readyState === WebSocket.CLOSED) {

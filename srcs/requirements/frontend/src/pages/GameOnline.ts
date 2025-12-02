@@ -87,7 +87,7 @@ export const GameOnline: Page = {
     }
     elapsedSeconds = 0;
 
-    Layout.redirectIfNotLoggedIn();
+    Layout.redirectIfNotLoggedIn('/', true);
 
     let roomId = sessionStorage.getItem('roomId');
     let clientId = sessionStorage.getItem('clientId');

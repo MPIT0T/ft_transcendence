@@ -16,8 +16,6 @@ const reloadRooms = function (root: HTMLElement) {
 		ws.send(JSON.stringify(payLoad));
 }
 
-Layout.redirectIfNotLoggedIn();
-
 const reloadFriends = function (root: HTMLElement) {
 
 	const payLoad = {
@@ -305,10 +303,11 @@ export const GameRoom: Page = {
 	},
 
 	mount(root: HTMLElement): void {
+    Layout.redirectIfNotLoggedIn('/', true);
 		let roomId;
 		let currentPage = true;
 
-		Layout.redirectIfNotLoggedIn();
+    Layout.redirectIfNotLoggedIn('/', true);
 
 		if (ws === undefined || ws.readyState === WebSocket.CLOSED) {
 			const host = window.location.host;

@@ -462,10 +462,11 @@ export const Layout = {
     }
   },
 
-  redirectIfNotLoggedIn(redirectTo = '/') {
+  redirectIfNotLoggedIn(redirectTo = '/', triedTo: boolean = false): void {
     if (!Layout.isLoggedIn()) {
       history.pushState(null, '', redirectTo);
       window.dispatchEvent(new PopStateEvent('popstate'));
+      if (triedTo) Layout.showNotification('Connectez-vous pour accéder à ce contenu', 'error');
     }
   },
 
@@ -757,8 +758,8 @@ export const Layout = {
 
   showNotification(message: string, type: string = 'success'): void {
     const notification = document.createElement('div');
-    const bgColor = type === 'error' ? 'bg-red-500' : 'bg-blue-500';
-    notification.className = `fixed bottom-4 right-4 ${bgColor} text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300 transform translate-x-full`;
+    const bgColor = type === 'error' ? 'bg-red-500/20' : 'bg-blue-500/20';
+    notification.className = `fixed bottom-4 right-4 ${bgColor} text-gray-50 font-tiny5 px-4 py-2 border border-gray-50 z-50 transition-all duration-300 transform translate-x-full`;
     notification.textContent = message;
 
     document.body.appendChild(notification);
