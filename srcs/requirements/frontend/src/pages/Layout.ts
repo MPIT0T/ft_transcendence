@@ -804,7 +804,8 @@ export const Layout = {
 
     if (avatar) {
       const avatarData = Layout.getUserInfoFromJwt(sessionStorage.getItem('token')).avatar;
-      avatar.src = this.getAvatarPath(avatarData);
+      const cacheBuster = `?t=${Date.now()}`;
+      avatar.src = this.getAvatarPath(avatarData) + cacheBuster;
     }
   },
 

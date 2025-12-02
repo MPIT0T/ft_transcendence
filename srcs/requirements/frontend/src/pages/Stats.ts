@@ -1114,7 +1114,8 @@ const Stats: StatsPage = {
 
     if (avatar) {
       const avatarData = Layout.getUserInfoFromJwt(sessionStorage.getItem('token')).avatar || 'anonymous.png';
-      avatar.src = this.getAvatarPath(avatarData);
+      const cacheBuster = `?t=${Date.now()}`;
+      avatar.src = this.getAvatarPath(avatarData) + cacheBuster;
       Layout.updateAvatar();
     }
   },
