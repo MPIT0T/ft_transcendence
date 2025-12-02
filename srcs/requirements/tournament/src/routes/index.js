@@ -172,7 +172,12 @@ async function handleUser(socket, data) {
 	client._token = data.token || null;
 	client._elo = getEloFromJwt(data.token);
 	client._name = data.username || null;
-	client._dbId = await getDbId(data.username, data.token);
+	// Only fetch dbId if username is provided
+	if (data.username) {
+		client._dbId = await getDbId(data.username, data.token);
+	} else {
+		client._dbId = null;
+	}
 }
 
 

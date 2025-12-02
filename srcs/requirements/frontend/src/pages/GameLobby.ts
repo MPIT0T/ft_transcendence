@@ -4,7 +4,7 @@ export const GameLobby: Page = {
 	render() {
 		return `
 			<!-- Modes de jeu -->
-			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-64 flex-1">
+			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto flex-1 pt-20 px-4">
 
 				<!-- Mode Local -->
 				<button id="local-mode" class="relative group w-full backdrop-blur-2xs border border-gray-50 p-6 transition-all duration-300 hover:bg-gray-700/50 text-left">
@@ -39,6 +39,39 @@ export const GameLobby: Page = {
 					<div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
             <div class="absolute inset-0 bg-gray-700 opacity-30"></div>
             <span class="relative text-white text-2xl font-bold">Click to Join!</span>
+          </div>
+				</button>
+
+				<!-- Mode Tournament Local -->
+				<button id="tournament-local-mode" class="relative group w-full backdrop-blur-2xs border border-gray-50 p-6 transition-all duration-300 hover:bg-gray-700/50 text-left">
+					<div class="text-center mt-8">
+						<div class="relative inline-block mb-4
+								relative z-10 text-5xl text-transparent bg-clip-text
+								bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500
+								bg-[length:300%_100%] bg-[position:0%_50%]">
+							Tournoi Local
+						</div>
+						<p class="text-gray-400 mb-8 text-xl">
+							Organisez un tournoi local avec 4 ou 8 joueurs sur le même écran !
+						</p>
+					</div>
+					<div class="space-y-2 mb-8">
+						<div class="flex justify-between text-xl">
+							<span class="text-gray-300">Joueurs :</span>
+							<span class="font-semibold text-white">4 ou 8</span>
+						</div>
+						<div class="flex justify-between text-xl">
+							<span class="text-gray-300">Format :</span>
+							<span class="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 bg-[length:300%_100%] bg-[position:0%_50%]">
+							  Élimination directe
+              </span>
+						</div>
+					</div>
+
+					<!-- Overlay text -->
+					<div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+            <div class="absolute inset-0 bg-gray-700 opacity-30"></div>
+            <span class="relative text-white text-2xl font-bold">Click to Create!</span>
           </div>
 				</button>
 
@@ -81,14 +114,14 @@ export const GameLobby: Page = {
           </div>
 				</button>
 
-				<!-- Mode Tournoi -->
+				<!-- Mode Tournoi Online -->
 				<button id="tournament-mode" class="relative group w-full backdrop-blur-2xs border border-gray-50 p-6 transition-all duration-300 hover:bg-gray-700/50 text-left">
 					<div class="text-center mt-8">
 						<div id="mode-tournament-title" class="relative inline-block
-								relative z-10 text-7xl text-transparent bg-clip-text mb-4
+								relative z-10 text-5xl text-transparent bg-clip-text mb-4
 								bg-gradient-to-r from-red-500 via-blue-500 to-green-500
 								bg-[length:300%_100%] bg-[position:100%_50%]">
-							Tournoi
+							Tournoi Online
 						</div>
 						<p class="text-gray-400 mb-6 text-xl">
 							Participez à des tournois avec élimination directe. Montez dans le classement mondial !
@@ -116,8 +149,6 @@ export const GameLobby: Page = {
 				</button>
 
 			</div>
-
-				
 		`;
 	},
 
@@ -127,6 +158,17 @@ export const GameLobby: Page = {
 		if (localBtn) {
 			localBtn.addEventListener('click', () => {
 				const p = '/game';
+				history.pushState(null, '', p);
+				window.dispatchEvent(new PopStateEvent('popstate'));
+			});
+		}
+
+		// Mode Tournament Local
+		const tournamentLocalBtn = root.querySelector('#tournament-local-mode') as HTMLButtonElement;
+		
+		if (tournamentLocalBtn) {
+			tournamentLocalBtn.addEventListener('click', () => {
+				const p = '/tournamentLocal';
 				history.pushState(null, '', p);
 				window.dispatchEvent(new PopStateEvent('popstate'));
 			});
@@ -143,7 +185,7 @@ export const GameLobby: Page = {
 		}
 
 
-		// Mode Tournoi
+		// Mode Tournoi Online
 		const tournamentBtn = root.querySelector('#tournament-mode') as HTMLButtonElement;
 		if (tournamentBtn) {
 			tournamentBtn.addEventListener('click', () => {
@@ -168,7 +210,7 @@ export const GameLobby: Page = {
 				} catch (error) {
 					ping.textContent = `?`;
 				}
-			}, 1000);
+			}, 10000);
 		}
 
 		let statusPlayer: ReturnType<typeof setInterval> | undefined;
@@ -183,7 +225,7 @@ export const GameLobby: Page = {
 				} catch (error) {
 					player.textContent = `?`;
 				}
-			}, 1000);
+			}, 10000);
 		}
 
 		// popstate handler to clear intervals
