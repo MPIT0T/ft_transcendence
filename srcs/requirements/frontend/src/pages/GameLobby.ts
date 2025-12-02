@@ -27,18 +27,18 @@ export const GameLobby: Page = {
 						</div>
 						<div class="flex justify-between text-xl">
 							<span class="text-gray-300">Contrôles :</span>
-							<span class="font-semibold text-white">W/S vs ↑/↓</span>
-						</div>
-						<div class="flex justify-between text-xl">
-							<span class="text-gray-300">Difficulté :</span>
-							<span class="font-semibold text-green-600">Facile</span>
+							<span class="font-semibold justify-between text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-blue-500 to-green-500 bg-[length:300%_100%] bg-[position:0%_50%]">
+							  <span>W/S</span>
+							  <span class="text-gray-50">vs</span>
+							  <span>↑/↓</span>
+              </span>
 						</div>
 					</div>
 
 					<!-- Overlay text -->
 					<div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
             <div class="absolute inset-0 bg-gray-700 opacity-30"></div>
-            <span class="relative text-white text-xl font-bold">Click to Join!</span>
+            <span class="relative text-white text-2xl font-bold">Click to Join!</span>
           </div>
 				</button>
 
@@ -52,30 +52,32 @@ export const GameLobby: Page = {
 								bg-[length:300%_100%] bg-[position:50%_50%]">
 							En ligne
 						</div>
-						<p class="text-gray-400 mb-6 text-xl z-10">
+						<p class="text-gray-400 mb-6 text-xl">
 							Affrontez des joueurs du monde entier en temps réel.
 							Système de matchmaking automatique !
 						</p>
 					</div>
-					<div class="space-y-2 mb-8 z-10">
+					<div class="space-y-2 mb-8">
 						<div class="flex justify-between text-xl">
 							<span class="text-gray-300">Joueurs :</span>
-							<span id="player" class="font-semibold text-white">2 en ligne</span>
+							<span class="font-semibold justify-between text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-blue-500 to-green-500 bg-[length:300%_100%] bg-[position:50%_50%]">
+							  <span id="player">?</span>
+							  <span class="text-gray-50">en ligne</span>
+              </span>
 						</div>
 						<div class="flex justify-between text-xl">
 							<span class="text-gray-300">Latence :</span>
-							<span id="ping" class="font-semibold text-green-600">< 50ms</span>
-						</div>
-						<div class="flex justify-between text-xl">
-							<span class="text-gray-300">Classement :</span>
-							<span class="font-semibold text-purple-600">Actif</span>
+							<span class="font-semibold justify-between text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-blue-500 to-green-500 bg-[length:300%_100%] bg-[position:50%_50%]">
+							  <span id="ping">?</span>
+							  <span class="text-gray-50">ms</span>
+              </span>
 						</div>
 					</div>
 
 					<!-- Overlay text -->
 					<div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
             <div class="absolute inset-0 bg-gray-700 opacity-30"></div>
-            <span class="relative text-white text-xl font-bold">Click to Join!</span>
+            <span class="relative text-white text-2xl font-bold">Click to Join!</span>
           </div>
 				</button>
 
@@ -93,24 +95,23 @@ export const GameLobby: Page = {
 						</p>
 					</div>
 					<div class="space-y-2 mb-8">
-					<div class="flex justify-between text-xl">
-						<span class="text-gray-300">Format :</span>
-						<span class="font-semibold text-white">Élimination directe</span>
-						</div>
-					<div class="flex justify-between text-xl">
-						<span class="text-gray-300">Participants :</span>
-						<span class="font-semibold text-white">8-16 joueurs</span>
-					</div>
-					<div class="flex justify-between text-xl">
-						<span class="text-gray-300">Récompenses :</span>
-						<span class="font-semibold text-yellow-600">Points & Badges</span>
-					</div>
+            <div class="flex justify-between text-xl">
+              <span class="text-gray-300">Format :</span>
+              <span class="font-semibold text-white">Élimination directe</span>
+              </div>
+            <div class="flex justify-between text-xl">
+              <span class="text-gray-300">Participants :</span>
+              <span class="justify-between text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-blue-500 to-green-500 bg-[length:300%_100%] bg-[position:100%_50%]">
+                <span class="font-bold">8</span>
+                <span>joueurs</span>
+              </span>
+            </div>  
 					</div>
 
 					<!-- Overlay text -->
 					<div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
             <div class="absolute inset-0 bg-gray-700 opacity-30"></div>
-            <span class="relative text-white text-3xl font-bold">Click to Join!</span>
+            <span class="relative text-white text-2xl font-bold">Click to Join!</span>
           </div>
 				</button>
 
@@ -163,9 +164,9 @@ export const GameLobby: Page = {
 					const response = await fetch("/pong/status");
 					const end = Date.now();
 					const latency = end - start;
-					ping.textContent = `< ${latency}ms`;
+					ping.textContent = `${latency}`;
 				} catch (error) {
-					ping.textContent = `< error`;
+					ping.textContent = `?`;
 				}
 			}, 1000);
 		}
@@ -178,9 +179,9 @@ export const GameLobby: Page = {
 				try {
 					const response = await fetch("/pong/statusPlayer");
 					const count = await response.text();
-					player.textContent = `${count} en ligne`;
+					player.textContent = `${count}`;
 				} catch (error) {
-					player.textContent = `erreur`;
+					player.textContent = `?`;
 				}
 			}, 1000);
 		}
