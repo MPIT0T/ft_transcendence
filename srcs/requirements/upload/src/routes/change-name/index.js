@@ -22,6 +22,8 @@ async function uploadChangeUsernameRoute(fastify, options) {
         if (!res.ok)
             return reply.status(401).send({ error: "Invalid or missing token" });
         const folderPath = path.join(__dirname, 'avatars');
+        if (!fs.existsSync(folderPath))
+            return reply.status(200).send({ message: "avatar name changed successfully" });
         const files = await fs.promises.readdir(folderPath);
         for (const file of files) {
             const parsed = path.parse(file);
