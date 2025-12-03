@@ -11,8 +11,6 @@ let tournamentBracket: { round: number; matches: { player1: string; player2: str
 let currentMatchIndex = 0;
 let currentRound = 0;
 let currentGame: GameComponent | null = null;
-let timerInterval: number | null = null;
-let elapsedSeconds: number = 0;
 let animationController: AbortController | null = null;
 let winningScore: number = 5;
 let currentScore1: number = 0;
@@ -177,15 +175,12 @@ function resetTournament() {
 		currentGame.destroy();
 		currentGame = null;
 	}
-	if (timerInterval !== null) {
-		clearInterval(timerInterval);
-		timerInterval = null;
-	}
+	
 	if (animationController) {
 		animationController.abort();
 		animationController = null;
 	}
-	elapsedSeconds = 0;
+	
 }
 
 // ============================================
@@ -747,6 +742,12 @@ export const TournamentLocal: Page = {
 		// Event Listeners - Game Phase
 		// ============================================
 		showBracketBtn.addEventListener('click', () => {
+			// If a game is currently running (canStart === true), prevent
+			// opening the bracket. Require the user to pause first.
+			if (currentGame && canStart) {
+				Layout.showNotification('Mettez le jeu en pause pour ouvrir le bracket', 'info');
+				return;
+			}
 			showBracket(false);
 		});
 
