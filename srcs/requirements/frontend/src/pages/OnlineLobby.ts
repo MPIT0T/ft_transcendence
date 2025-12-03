@@ -4,8 +4,8 @@ export const OnlineLobby: Page = {
   render() {
     return `
 <div class="flex items-center justify-center mb-16">
-  <div class="text-center text-8xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 bg-[length:400%_400%] animate-gradientShift">
-    en ligne
+  <div class="text-center text-8xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-sky-500 to-purple-500 bg-[length:400%_400%] animate-gradientShift">
+    ft_trans_online
   </div>
 </div>
 
@@ -25,17 +25,17 @@ export const OnlineLobby: Page = {
     <div class="space-y-2 mb-8">
       <div class="flex justify-between text-xl">
         <span class="text-gray-300">Joueurs :</span>
-        <span class="font-semibold justify-between text-sky-400">
-          <span id="players-online">?</span>
+        <span class="font-semibold justify-between">
+          <span id="players-online" class="text-blue-400">?</span>
           <span class="text-gray-50">en ligne</span>
         </span>
       </div>
       <div class="flex justify-between text-xl">
         <span class="text-gray-300">Modes :</span>
-        <span class="font-semibold justify-between text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-blue-500 to-green-500 bg-[length:300%_100%] bg-[position:0%_50%]">
-          <span>Classé</span>
+        <span class="font-semibold justify-between">
+          <span class="text-blue-400">Classé</span>
           <span class="text-gray-50"> ou </span>
-          <span>Amical</span>
+          <span class="text-indigo-400">Amical</span>
         </span>
       </div>
     </div>
@@ -46,7 +46,7 @@ export const OnlineLobby: Page = {
   </button>
   
   <!-- Tournament mode -->
-  <button id="online-mode" class="relative group w-full backdrop-blur-2xs border border-gray-50 p-6 transition-all duration-300 hover:bg-gray-700/50 text-left">
+  <button id="online-mode" class="relative group w-full backdrop-blur-2xs border border-gray-50 p-6 transition-all duration-300 hover:bg-gray-700/50 hover:border-purple-500 text-left">
     <div class="text-center mt-8">
       <div id="mode-online-title" class="mb-4 text-7xl text-purple-400">
         tournoi
@@ -59,16 +59,16 @@ export const OnlineLobby: Page = {
     <div class="space-y-2 mb-8">
       <div class="flex justify-between text-xl">
         <span class="text-gray-300">Joueurs :</span>
-        <span class="font-semibold justify-between text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-blue-500 to-green-500 bg-[length:300%_100%] bg-[position:50%_50%]">
-          <span id="player">?</span>
+        <span class="font-semibold justify-between">
+          <span id="player" class="text-purple-400">?</span>
           <span class="text-gray-50">en ligne</span>
         </span>
       </div>
       <div class="flex justify-between text-xl">
-        <span class="text-gray-300">Latence :</span>
-        <span class="font-semibold justify-between text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-blue-500 to-green-500 bg-[length:300%_100%] bg-[position:50%_50%]">
-          <span id="ping">?</span>
-          <span class="text-gray-50">ms</span>
+        <span class="text-gray-300">Mode :</span>
+        <span class="font-semibold justify-between">
+          <span class="text-purple-400">8</span>
+          <span class="text-gray-50">joueurs</span>
         </span>
       </div>
     </div>
