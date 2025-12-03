@@ -136,7 +136,7 @@ export const GameLobby: Page = {
 		const onlineBtn = root.querySelector('#online-mode') as HTMLButtonElement;
 		if (onlineBtn) {
 			onlineBtn.addEventListener('click', () => {
-				const p = '/gameRoom';
+				const p = '/onlineLobby';
 				history.pushState(null, '', p);
 				window.dispatchEvent(new PopStateEvent('popstate'));
 			});
