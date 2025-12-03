@@ -12,7 +12,7 @@ export const LocalLobby: Page = {
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 max-w-3xl mx-64 flex-1">
 
   <!-- 1v1 Mode -->
-  <button id="game-btn" class="relative group w-full backdrop-blur-2xs border border-gray-50 p-6 transition-all duration-300 hover:bg-gray-700/50 hover:border-amber-500 text-left">
+  <button id="game-local-btn" class="relative group w-full backdrop-blur-2xs border border-gray-50 p-6 transition-all duration-300 hover:bg-gray-700/50 hover:border-amber-500 text-left">
     <div class="text-center mt-8">
       <div class="mb-4 text-7xl text-amber-500">
         1vs1
@@ -41,13 +41,12 @@ export const LocalLobby: Page = {
     </div>
     <!-- Overlay text -->
     <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-      <div class="absolute inset-0 bg-gray-700 opacity-30"></div>
       <span class="relative text-white text-2xl font-bold">Click to Join!</span>
     </div>
   </button>
   
   <!-- Tournament mode -->
-  <button id="online-mode" class="relative group w-full backdrop-blur-2xs border border-gray-50 p-6 transition-all duration-300 hover:bg-gray-700/50 hover:border-green-500 text-left">
+  <button id="tournament-local-btn" class="relative group w-full backdrop-blur-2xs border border-gray-50 p-6 transition-all duration-300 hover:bg-gray-700/50 hover:border-green-500 text-left">
     <div class="text-center mt-8">
       <div id="mode-online-title" class="mb-4 text-7xl text-green-500">
         tournoi
@@ -77,7 +76,6 @@ export const LocalLobby: Page = {
 
     <!-- Overlay text -->
     <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-      <div class="absolute inset-0 bg-gray-700 opacity-30"></div>
       <span class="relative text-white text-2xl font-bold">Click to Join!</span>
     </div>
   </button>
@@ -86,18 +84,18 @@ export const LocalLobby: Page = {
   },
 
   mount(root: HTMLElement): void {
-    const gameBtn = root.querySelector('#game-btn');
-    if (gameBtn) {
-      gameBtn.addEventListener('click', (e) => {
+    const gameLocalBtn = root.querySelector('#game-local-btn');
+    if (gameLocalBtn) {
+      gameLocalBtn.addEventListener('click', (e) => {
         const p = '/game';
         history.pushState(null, '', p);
         window.dispatchEvent(new PopStateEvent('popstate'));
       });
     }
 
-    const tournamentBtn = root.querySelector('#tournament-btn');
-    if (tournamentBtn) {
-      tournamentBtn.addEventListener('click', (e) => {
+    const tournamentLocalBtn = root.querySelector('#tournament-local-btn');
+    if (tournamentLocalBtn) {
+      tournamentLocalBtn.addEventListener('click', (e) => {
         const p = '/localTournament';
         history.pushState(null, '', p);
         window.dispatchEvent(new PopStateEvent('popstate'));

@@ -12,7 +12,7 @@ export const OnlineLobby: Page = {
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 max-w-3xl mx-64 flex-1">
 
   <!-- 1v1 Mode -->
-  <button id="game-btn" class="relative group w-full backdrop-blur-2xs border border-gray-50 p-6 transition-all duration-300 hover:bg-gray-700/50 hover:border-sky-400 text-left">
+  <button id="online-game-btn" class="relative group w-full backdrop-blur-2xs border border-gray-50 p-6 transition-all duration-300 hover:bg-gray-700/50 hover:border-sky-400 text-left">
     <div class="text-center mt-8">
       <div class="mb-4 text-7xl text-sky-400">
         1vs1
@@ -46,7 +46,7 @@ export const OnlineLobby: Page = {
   </button>
   
   <!-- Tournament mode -->
-  <button id="online-mode" class="relative group w-full backdrop-blur-2xs border border-gray-50 p-6 transition-all duration-300 hover:bg-gray-700/50 hover:border-purple-500 text-left">
+  <button id="online-tournament-btn" class="relative group w-full backdrop-blur-2xs border border-gray-50 p-6 transition-all duration-300 hover:bg-gray-700/50 hover:border-purple-500 text-left">
     <div class="text-center mt-8">
       <div id="mode-online-title" class="mb-4 text-7xl text-purple-400">
         tournoi
@@ -75,15 +75,30 @@ export const OnlineLobby: Page = {
 
     <!-- Overlay text -->
     <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-      <div class="absolute inset-0 bg-gray-700 opacity-30"></div>
       <span class="relative text-white text-2xl font-bold">Click to Join!</span>
     </div>
   </button>
 </div>
     `;
   },
-
   mount(root: HTMLElement): void {
+    const gameOnlineBtn = document.querySelector('#online-game-btn');
+    if (gameOnlineBtn) {
+      gameOnlineBtn.addEventListener('click', (e) => {
+        const p = '/gameOnline';
+        history.pushState(null, '', p);
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      });
+    }
+
+    const tournamentOnlineBtn = root.querySelector('#online-tournament-btn');
+    if (tournamentOnlineBtn) {
+      tournamentOnlineBtn.addEventListener('click', (e) => {
+        const p = '/tournamentOnline';
+        history.pushState(null, '', p);
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      });
+    }
 
   }
 }
