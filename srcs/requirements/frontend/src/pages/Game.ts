@@ -4,129 +4,70 @@ import { createCountdown } from "../utils/countdown.js";
 
 let currentGame: GameComponent | null = null;
 
-// Vérifier si on est en mode tournoi
-function isTournamentMode(): boolean {
-	return window.location.search.includes('mode=tournament');
-}
+		export const Game: Page = {
+		render() {
+			const player1Name = 'Joueur 1';
+			const player2Name = 'Joueur 2';
+			return `
+	<div class="mt-24">
+		<div class="relative overflow-hidden text-gray-50 text-lg border border-gray-50 backdrop-blur-2xs">
+			<div class="absolute inset-0 bg-gradient-to-r from-red-500 to-blue-500 opacity-30"></div>
+			<div class="relative z-10">
+				<div class="flex items-center justify-between px-6 pt-2">
+					<span id="player1-name" class="font-semibold text-5xl text-blue-400">${player1Name}</span>
+					<span id="score" class="text-5xl font-extrabold tracking-wide">0 : 0</span>
+					<span id="player2-name" class="font-semibold text-5xl text-red-400">${player2Name}</span>
+				</div>
+				<div class="flex items-center justify-between px-6 pb-2 text-md opacity-90">
+					<span>W/S</span>
+					<span id="winning-score-info">Premier à <span id="winning-score-display" class="text-yellow-400 font-bold">5</span></span>
+					<span>↑/↓</span>
+				</div>
+			</div>
+		</div>
+		<div class="flex-1 p-5 flex flex-col items-center justify-center bg-transparent">
+			<div id="game-container" class="mb-8"></div>
+			<div class="flex gap-4 items-center mb-8 z-100">
+				<button id="start-btn" class="px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-gray-700/50 hover:border-green-500">Jouer</button>
+				<button id="restart-btn" class="px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:border-blue-500 hover:bg-gray-700/50">Recommencer</button>
+			</div>
+		</div>
+		<div id="start-modal" class="fixed inset-0 flex justify-center items-center z-75 hidden">
+			<div id="start-modal-text" class="text-8xl font-bold text-gray-50 mb-4 ml-4 text-center px-16 py-16">- 3 -</div>
+		</div>
 
-function getTournamentData(): any | null {
-	const data = sessionStorage.getItem('localTournamentMatch');
-	if (data) {
-		try {
-			return JSON.parse(data);
-		} catch {
-			return null;
-		}
-	}
-	return null;
-}
+		<!-- Match end modal -->
+		<div id="match-end-modal" class="fixed inset-0 backdrop-blur-lg bg-black/70 hidden items-center justify-center z-50">
+			<div class="border border-gray-50 bg-gray-900/90 p-8 max-w-md w-full mx-4 text-center">
+				<div class="text-6xl mb-4">🎉</div>
+				<h3 class="text-2xl text-gray-300 font-bold mb-2">Match terminé !</h3>
+				<p id="match-winner-name" class="text-4xl text-green-400 font-bold mb-2"></p>
+				<p id="match-final-score" class="text-xl text-gray-400 mb-6"></p>
+				<div class="flex gap-3">
+					<button id="close-match-modal-btn" class="flex-1 py-3 text-white border-2 border-yellow-500 hover:bg-yellow-500/20 transition-colors font-bold">Fermer</button>
+					<button id="leave-to-lobby-btn" class="flex-1 py-3 text-white border border-gray-50 hover:bg-gray-700/50 font-bold">Retour au lobby</button>
+				</div>
+			</div>
+		</div>
 
-export const Game: Page = {
-	render() {
-		const tournamentData = getTournamentData();
-		const isTournament = isTournamentMode() && tournamentData;
-		
-		const player1Name = isTournament ? tournamentData.player1 : 'Joueur 1';
-		const player2Name = isTournament ? tournamentData.player2 : 'Joueur 2';
-		
-		return `
-<div class="mt-24">
-	${isTournament ? `
-	<div class="text-center mb-4">
-		<span class="text-2xl text-yellow-400 font-bold">🏆 Mode Tournoi</span>
-	</div>
-	` : ''}
-	<div class="relative overflow-hidden text-gray-50 text-lg border border-gray-50 backdrop-blur-2xs">
-		<div class="absolute inset-0 bg-gradient-to-r from-red-500 to-blue-500 opacity-30"></div>
-		<div class="relative z-10">
-			<div class="flex items-center justify-between px-6 pt-2">
-				<span id="player1-name" class="font-semibold text-5xl text-blue-400">${player1Name}</span>
-				<span id="score" class="text-5xl font-extrabold tracking-wide"></span>
-				<span id="player2-name" class="font-semibold text-5xl text-red-400">${player2Name}</span>
-			</div>
-			<div class="flex items-center justify-between px-6 pb-2 text-md opacity-90">
-				<span>W/S</span>
-				<span id="winning-score-info">Premier à <span id="winning-score-display" class="text-yellow-400 font-bold">5</span></span>
-				<span>↑/↓</span>
+		<!-- Modal de sélection du nombre de points (local 1v1) -->
+		<div id="points-modal" class="fixed inset-0 flex justify-center items-center z-80 hidden bg-black/60">
+			<div class="border border-gray-50 bg-gray-900/90 p-6 max-w-md w-full mx-4 text-center">
+				<h3 class="text-2xl text-yellow-400 font-bold mb-4">Choisir le nombre de points</h3>
+				<p class="text-gray-300 mb-4">Sélectionnez le score cible pour gagner la partie</p>
+				<div class="flex gap-3 justify-center mb-6">
+					<button class="points-option px-5 py-2 border border-gray-600 text-gray-400 hover:border-gray-50 hover:text-gray-50 transition-colors" data-score="3">3</button>
+					<button class="points-option px-5 py-2 border border-gray-600 text-gray-400 hover:border-gray-50 hover:text-gray-50 transition-colors" data-score="5">5</button>
+					<button class="points-option px-5 py-2 border border-gray-600 text-gray-400 hover:border-gray-50 hover:text-gray-50 transition-colors" data-score="10">10</button>
+					<button class="points-option px-5 py-2 border border-gray-600 text-gray-400 hover:border-gray-50 hover:text-gray-50 transition-colors" data-score="15">15</button>
+				</div>
+				<div class="flex gap-3 justify-center">
+					<button id="confirm-points-btn" class="px-6 py-3 font-bold border-2 border-green-500 text-green-400 disabled:opacity-40" disabled>Confirmer</button>
+					<button id="cancel-points-btn" class="px-6 py-3 font-bold border border-gray-50 text-gray-50">Exit</button>
+				</div>
 			</div>
 		</div>
 	</div>
-	<div class="flex-1 p-5 flex flex-col items-center justify-center bg-transparent">
-		<div id="game-container" class="mb-8">
-		<!-- Game component will be mounted here -->
-		</div>
-		<div class="flex gap-4 items-center mb-8 z-100">
-			<button
-					id="start-btn"
-					class="px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-gray-700/50 hover:border-green-500">
-				Jouer
-			</button>
-			<button
-					id="restart-btn"
-					class="px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:border-blue-500 hover:bg-gray-700/50 ${isTournament ? 'hidden' : ''}">
-				Recommencer
-			</button>
-			${isTournament ? `
-			<button
-					id="quit-tournament-btn"
-					class="px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:border-red-500 hover:bg-gray-700/50">
-				Quitter le tournoi
-			</button>
-			` : ''}
-		</div>
-	</div>
-	<div id="start-modal" class="fixed inset-0 flex justify-center items-center z-75 hidden">
-		<div id="start-modal-text" class="text-8xl font-bold text-gray-50 mb-4 ml-4 text-center px-16 py-16">
-			- 3 -
-		</div>
-	</div>
-
-	<!-- Modal de sélection du nombre de points (local 1v1) -->
-	<div id="points-modal" class="fixed inset-0 flex justify-center items-center z-80 hidden bg-black/60">
-		<div class="border border-gray-50 bg-gray-900/90 p-6 max-w-md w-full mx-4 text-center">
-			<h3 class="text-2xl text-yellow-400 font-bold mb-4">Choisir le nombre de points</h3>
-			<p class="text-gray-300 mb-4">Sélectionnez le score cible pour gagner la partie</p>
-			<div class="flex gap-3 justify-center mb-6">
-				<button class="points-option px-5 py-2 border border-gray-600 text-gray-400 hover:border-gray-50 hover:text-gray-50 transition-colors" data-score="3">3</button>
-				<button class="points-option px-5 py-2 border border-gray-600 text-gray-400 hover:border-gray-50 hover:text-gray-50 transition-colors" data-score="5">5</button>
-				<button class="points-option px-5 py-2 border border-gray-600 text-gray-400 hover:border-gray-50 hover:text-gray-50 transition-colors" data-score="7">7</button>
-				<button class="points-option px-5 py-2 border border-gray-600 text-gray-400 hover:border-gray-50 hover:text-gray-50 transition-colors" data-score="11">11</button>
-			</div>
-			<div class="flex gap-3 justify-center">
-				<button id="confirm-points-btn" class="px-6 py-3 font-bold border-2 border-green-500 text-green-400 disabled:opacity-40" disabled>Confirmer</button>
-				<button id="cancel-points-btn" class="px-6 py-3 font-bold border border-gray-50 text-gray-50">Exit</button>
-			</div>
-		</div>
-	</div>
-	
-	<!-- Modal fin de match tournoi -->
-	<div id="tournament-winner-modal" class="fixed inset-0 backdrop-blur-lg hidden items-center justify-center z-50">
-		<div class="border border-gray-50 p-8 max-w-md w-full mx-4 text-center">
-			<h3 class="text-3xl text-green-400 font-bold mb-4">🎉 Match terminé !</h3>
-			<p class="text-gray-200 text-xl mb-2">Vainqueur :</p>
-			<p id="match-winner-name" class="text-4xl text-yellow-400 font-bold mb-6"></p>
-			<button 
-				id="next-match-btn"
-				class="w-full py-3 text-white border border-gray-50 hover:bg-gray-700/50 hover:border-green-500 transition-colors font-bold">
-				➡️ Match suivant
-			</button>
-		</div>
-	</div>
-	
-	<!-- Modal fin de tournoi -->
-	<div id="tournament-end-modal" class="fixed inset-0 backdrop-blur-lg hidden items-center justify-center z-50">
-		<div class="border border-gray-50 p-8 max-w-md w-full mx-4 text-center">
-			<h3 class="text-3xl text-yellow-400 font-bold mb-4">🏆 TOURNOI TERMINÉ 🏆</h3>
-			<p class="text-gray-200 text-xl mb-2">Le champion est :</p>
-			<p id="tournament-champion" class="text-4xl text-green-400 font-bold mb-6"></p>
-			<button 
-				id="finish-tournament-btn"
-				class="w-full py-3 text-white border border-gray-50 hover:bg-gray-700/50 transition-colors font-bold">
-				🔄 Retour au lobby
-			</button>
-		</div>
-	</div>
-</div>
 		`;
 	},
 
@@ -172,14 +113,19 @@ export const Game: Page = {
 		const startModal = root.querySelector('#start-modal') as HTMLElement;
 		const startModalText = root.querySelector('#start-modal-text') as HTMLElement;
 
+		// Match end modal elements
+		const matchEndModal = root.querySelector('#match-end-modal') as HTMLDivElement | null;
+		const matchWinnerName = root.querySelector('#match-winner-name') as HTMLElement | null;
+		const matchFinalScore = root.querySelector('#match-final-score') as HTMLElement | null;
+		const closeMatchModalBtn = root.querySelector('#close-match-modal-btn') as HTMLButtonElement | null;
+		const leaveToLobbyBtn = root.querySelector('#leave-to-lobby-btn') as HTMLButtonElement | null;
+
 		
 
 		const countdown = createCountdown();
 
 		if (startBtn && gameContainer && score) {
-				// Tournament mode variables
-				const isTournament = isTournamentMode();
-				let tournamentData = getTournamentData();
+				// Local mode variables
 				let winningScore = 5; // Score pour gagner un match (modifiable via modal)
 
 				// Points modal elements
@@ -188,8 +134,8 @@ export const Game: Page = {
 				const confirmPointsBtn = root.querySelector('#confirm-points-btn') as HTMLButtonElement | null;
 				const cancelPointsBtn = root.querySelector('#cancel-points-btn') as HTMLButtonElement | null;
 
-				// If not tournament mode, show the points modal to let user choose match length
-				if (!isTournament && pointsModal) {
+				// Show the points modal to let user choose match length
+				if (pointsModal) {
 					pointsModal.classList.remove('hidden');
 					pointsModal.classList.add('flex');
 					// While modal is open, disable the main start button to avoid conflicts
@@ -261,108 +207,31 @@ export const Game: Page = {
 					}
 				}
 
-				// Hide restart button during an active match for local mode; show only at match end
-				if (restartBtn && !isTournament) {
+				// Hide restart button during an active match; show only at match end
+				if (restartBtn) {
 					restartBtn.classList.add('hidden');
 				}
 
-				// Initialize game component
+				// Initialize game component (local 1v1)
 				currentGame = new GameComponent(
 					gameContainer,
 					canStart,
-					(p1, p2) => { 
-					score.textContent = `${p1} : ${p2}`;
-					
-					// Vérifier si quelqu'un a gagné en mode tournoi
-						if (isTournament && tournamentData) {
-						if (p1 >= winningScore || p2 >= winningScore) {
-							// Déterminer le vainqueur
-							const winner = p1 >= winningScore ? tournamentData.player1 : tournamentData.player2;
-							
-							// Arrêter le jeu
-							canStart = false;
-							if (currentGame) currentGame.setCanStart(false);
-							
-							// Mettre à jour le bracket
-							const bracket = tournamentData.bracket;
-							const currentRound = tournamentData.round;
-							const currentMatchIndex = tournamentData.matchIndex;
-							
-							if (bracket[currentRound] && bracket[currentRound].matches[currentMatchIndex]) {
-								bracket[currentRound].matches[currentMatchIndex].winner = winner;
-							}
-							
-							// Passer au match suivant
-							let nextRound = currentRound;
-							let nextMatchIndex = currentMatchIndex + 1;
-							
-							// Vérifier si on doit passer au round suivant
-							if (nextMatchIndex >= bracket[currentRound].matches.length) {
-								// Vérifier si c'est la finale
-								if (bracket[currentRound].matches.length === 1) {
-									// Tournoi terminé !
-									const championEl = root.querySelector('#tournament-champion') as HTMLSpanElement;
-									if (championEl) championEl.textContent = winner;
-									
-									const endModal = root.querySelector('#tournament-end-modal') as HTMLDivElement;
-									if (endModal) {
-										endModal.classList.remove('hidden');
-										endModal.classList.add('flex');
-									}
-									
-									// Nettoyer les données du tournoi
-									sessionStorage.removeItem('localTournamentMatch');
-									return;
-								}
-								
-								// Générer le round suivant
-								const winners = bracket[currentRound].matches.map((m: any) => m.winner).filter(Boolean);
-								const nextRoundMatches: any[] = [];
-								for (let i = 0; i < winners.length; i += 2) {
-									nextRoundMatches.push({
-										player1: winners[i],
-										player2: winners[i + 1],
-										winner: undefined
-									});
-								}
-								if (nextRoundMatches.length > 0) {
-									bracket.push({ round: bracket.length + 1, matches: nextRoundMatches });
-								}
-								
-								nextRound = currentRound + 1;
-								nextMatchIndex = 0;
-							}
-							
-							// Préparer le prochain match
-							const nextMatch = bracket[nextRound]?.matches[nextMatchIndex];
-								if (nextMatch) {
-								// Afficher le modal de victoire
-								const winnerNameEl = root.querySelector('#match-winner-name') as HTMLSpanElement;
-								if (winnerNameEl) winnerNameEl.textContent = winner;
-								
-								const winnerModal = root.querySelector('#tournament-winner-modal') as HTMLDivElement;
-								if (winnerModal) {
-									winnerModal.classList.remove('hidden');
-									winnerModal.classList.add('flex');
-								}
-								
-								// Sauvegarder les données pour le prochain match
-								sessionStorage.setItem('localTournamentMatch', JSON.stringify({
-									player1: nextMatch.player1,
-									player2: nextMatch.player2,
-									round: nextRound,
-									matchIndex: nextMatchIndex,
-									bracket: bracket,
-									players: tournamentData.players
-								}));
-								}
-						}
-					} else {
+					(p1, p2) => {
+						score.textContent = `${p1} : ${p2}`;
 						// Local (non-tournament) match end handling
 						if (p1 >= winningScore || p2 >= winningScore) {
-							// Stop the game and timer
+							// Stop the game
 							canStart = false;
+
 							if (currentGame) currentGame.setCanStart(false);
+
+							const winner = p1 >= winningScore ? 'Joueur 1' : 'Joueur 2';
+							if (matchWinnerName) matchWinnerName.textContent = winner;
+							if (matchFinalScore) matchFinalScore.textContent = `Score: ${p1} - ${p2}`;
+							if (matchEndModal) {
+								matchEndModal.classList.remove('hidden');
+								matchEndModal.classList.add('flex');
+							}
 
 							// Update start button to 'Jouer'
 							startBtn.className = "px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-gray-700/50 hover:border-blue-500";
@@ -371,24 +240,23 @@ export const Game: Page = {
 							// Show the restart button so user can relaunch same-match with same winningScore
 							if (restartBtn) restartBtn.classList.remove('hidden');
 						}
-					}
-				},
-				async (state: boolean) => {
-					if (state) {
-						// Do not run countdown if this goal ended the match
-						const sc1 = currentGame?.getScoreP1() ?? 0;
-						const sc2 = currentGame?.getScoreP2() ?? 0;
-						if (sc1 >= winningScore || sc2 >= winningScore) {
-							return;
+					},
+					async (state: boolean) => {
+						if (state) {
+							// Do not run countdown if this goal ended the match
+							const sc1 = currentGame?.getScoreP1() ?? 0;
+							const sc2 = currentGame?.getScoreP2() ?? 0;
+							if (sc1 >= winningScore || sc2 >= winningScore) {
+								return;
+							}
+							try {
+								await countdown.start(startModal, startModalText);
+							} catch (e: any) {
+								if (!(e && (e.name === 'AbortError' || e instanceof DOMException))) throw e;
+							}
 						}
-						try {
-							await countdown.start(startModal, startModalText);
-						} catch (e: any) {
-							if (!(e && (e.name === 'AbortError' || e instanceof DOMException))) throw e;
-						}
 					}
-				}
-			);
+				);
 
 			
 
@@ -427,9 +295,18 @@ export const Game: Page = {
 			// Start/Pause button
 			startBtn.addEventListener('click', async () => {
 				// If the local match is already finished, show points modal instead of toggling
-				const isTournamentLocal = isTournamentMode();
+				const isTournamentLocal = false;
 				const localMatchOver = (currentGame?.getScoreP1() ?? 0) >= winningScore || (currentGame?.getScoreP2() ?? 0) >= winningScore;
 				if (!isTournamentLocal && localMatchOver) {
+
+					if (currentGame) {
+						currentGame.restart();
+					}
+					if(startBtn && restartBtn) {
+						startBtn.disabled = true;
+						startBtn.classList.add('opacity-50', 'pointer-events-none');
+						restartBtn.classList.add('hidden');
+					}
 					const pointsModalEl = root.querySelector('#points-modal') as HTMLDivElement | null;
 					if (pointsModalEl) {
 						pointsModalEl.classList.remove('hidden');
@@ -468,8 +345,8 @@ export const Game: Page = {
 				}
 			});
 
-			// Restart button (only in non-tournament mode)
-			if (restartBtn && !isTournament) {
+			// Restart button
+			if (restartBtn) {
 				restartBtn.addEventListener('click', async () => {
 					if (currentGame) {
 						// Pause the game first and ensure ball is not moving
@@ -503,6 +380,24 @@ export const Game: Page = {
 							startBtn.textContent = "Jouer";
 						}
 					}
+				});
+			}
+
+			// Match end modal controls
+			if (closeMatchModalBtn) {
+				closeMatchModalBtn.addEventListener('click', () => {
+					if (matchEndModal) {
+						matchEndModal.classList.add('hidden');
+						matchEndModal.classList.remove('flex');
+					}
+				});
+			}
+
+			if (leaveToLobbyBtn) {
+				leaveToLobbyBtn.addEventListener('click', () => {
+					sessionStorage.removeItem('localTournamentMatch');
+					history.pushState(null, '', '/localLobby');
+					window.dispatchEvent(new PopStateEvent('popstate'));
 				});
 			}
 		}

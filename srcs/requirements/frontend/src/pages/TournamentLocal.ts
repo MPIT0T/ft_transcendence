@@ -77,45 +77,51 @@ function getRoundName(matchCount: number): string {
 }
 
 function getBracketHTML(): string {
-	// Find the winner if tournament is finished
-	const lastRound = tournamentBracket[tournamentBracket.length - 1];
-	const finalMatch = lastRound?.matches[0];
-	const champion = finalMatch?.winner;
-	
+	// Build a consistent set of rounds so all matches are visible even if not played yet
+	const firstRoundMatches = tournamentBracket[0]?.matches || [];
+	const playersCount = Math.max(2, tournamentPlayers.length || (firstRoundMatches.length * 2));
+	const expectedRounds = Math.max(1, Math.ceil(Math.log2(playersCount)));
+
+	// Determine first round match count (fallback to 4 matches for 8 players)
+	const firstMatchCount = firstRoundMatches.length || Math.floor(playersCount / 2) || 4;
+
 	let html = '<div class="flex justify-center items-start gap-8">';
-	
-	// Generate each round column (always 8 players: Quarters, Semis, Final)
-	tournamentBracket.forEach((round, roundIndex) => {
-		const roundName = getRoundName(round.matches.length);
-		
-		// Calculate margin-top for vertical centering of rounds
+
+	for (let roundIndex = 0; roundIndex < expectedRounds; roundIndex++) {
+		// calculate number of matches in this round
+		const matchesCount = Math.max(1, Math.ceil(firstMatchCount / Math.pow(2, roundIndex)));
+		const round = tournamentBracket[roundIndex];
+		const roundName = getRoundName(matchesCount);
+
+		// vertical offset to visually align later rounds
 		let marginTopClass = '';
-		if (roundIndex === 1) marginTopClass = 'mt-24'; // Semi-finals
-		if (roundIndex === 2) marginTopClass = 'mt-48'; // Final
-		
+		if (roundIndex === 1) marginTopClass = 'mt-24';
+		if (roundIndex === 2) marginTopClass = 'mt-48';
+
 		html += `
 			<div class="flex flex-col min-w-[200px] gap-8">
 				<div class="text-center border border-gray-50 p-2 backdrop-blur-2xs">
 					<h3 class="text-2xl font-bold text-white">${roundName}</h3>
 				</div>
 				<div class="flex flex-col gap-8 ${marginTopClass}">`;
-		
-		round.matches.forEach((match, matchIndex) => {
+
+		for (let matchIndex = 0; matchIndex < matchesCount; matchIndex++) {
+			const match = round?.matches?.[matchIndex] || { player1: '', player2: '', winner: undefined, score1: undefined, score2: undefined };
 			const isCurrentMatch = roundIndex === currentRound && matchIndex === currentMatchIndex;
 			const isPlayed = match.winner !== undefined;
-			
+
 			const p1Won = match.winner === match.player1;
 			const p2Won = match.winner === match.player2;
 			const p1BgClass = p1Won ? 'bg-green-700' : '';
 			const p2BgClass = p2Won ? 'bg-green-700' : '';
-			
+
 			const score1 = isPlayed ? match.score1 : '';
 			const score2 = isPlayed ? match.score2 : '';
-			
+
 			html += `
 				<div class="border border-gray-50 p-3 backdrop-blur-2xs ${isCurrentMatch && !isPlayed ? 'border-green-500 border-2' : ''}">
 					<div class="p-2 mb-1 border border-gray-50 backdrop-blur-2xs ${p1BgClass}">
-						<span class="text-white">${match.player1 || '???'}</span>
+						<span class="text-white">${match.player1 || ''}</span>
 					</div>
 					<div class="text-center text-white text-lg my-1 flex items-center justify-center gap-3">
 						<span class="text-yellow-400 font-bold">${score1}</span>
@@ -123,32 +129,14 @@ function getBracketHTML(): string {
 						<span class="text-yellow-400 font-bold">${score2}</span>
 					</div>
 					<div class="p-2 border border-gray-50 backdrop-blur-2xs ${p2BgClass}">
-						<span class="text-white">${match.player2 || '???'}</span>
+						<span class="text-white">${match.player2 || ''}</span>
 					</div>
 				</div>`;
-		});
-		
+		}
+
 		html += '</div></div>';
-	});
-	
-	// Add Winner column
-	html += `
-		<div class="flex flex-col min-w-[200px] gap-8">
-			<div class="text-center border border-gray-50 p-2 backdrop-blur-2xs">
-				<h3 class="text-2xl font-bold text-white">Vainqueur</h3>
-			</div>
-			<div class="flex flex-col justify-center mt-48">
-				<div class="border border-gray-50 p-4 text-center backdrop-blur-2xs">
-					<div class="flex flex-col items-center gap-3">
-						<div class="w-16 h-16">
-							<img class="w-16 h-16 object-cover mx-auto block" src="alien.png" alt="trophy"/>
-						</div>
-						<div class="text-lg text-white font-bold">${champion || '???'}</div>
-					</div>
-				</div>
-			</div>
-		</div>`;
-	
+	}
+
 	html += '</div>';
 	return html;
 }
@@ -231,8 +219,8 @@ export const TournamentLocal: Page = {
 			<div class="flex gap-2 justify-center">
 				<button class="score-option px-5 py-2 border border-gray-600 text-gray-400 hover:border-gray-50 hover:text-gray-50 transition-colors" data-score="3">3</button>
 				<button class="score-option px-5 py-2 border border-yellow-500 text-yellow-400 bg-yellow-500/20" data-score="5">5</button>
-				<button class="score-option px-5 py-2 border border-gray-600 text-gray-400 hover:border-gray-50 hover:text-gray-50 transition-colors" data-score="7">7</button>
-				<button class="score-option px-5 py-2 border border-gray-600 text-gray-400 hover:border-gray-50 hover:text-gray-50 transition-colors" data-score="11">11</button>
+				<button class="score-option px-5 py-2 border border-gray-600 text-gray-400 hover:border-gray-50 hover:text-gray-50 transition-colors" data-score="10">10</button>
+				<button class="score-option px-5 py-2 border border-gray-600 text-gray-400 hover:border-gray-50 hover:text-gray-50 transition-colors" data-score="15">15</button>
 			</div>
 		</div>
 		
@@ -358,6 +346,11 @@ export const TournamentLocal: Page = {
 					class="w-full py-3 text-white border border-gray-50 hover:bg-gray-700/50 transition-colors font-bold">
 					📊 Voir le bracket final
 				</button>
+						<button
+							id="back-to-local-lobby-btn"
+							class="w-full py-3 text-white border border-gray-50 hover:bg-gray-700/50 transition-colors font-bold">
+							↩ Retour au lobby
+						</button>
 				<button 
 					id="new-tournament-btn"
 					class="w-full py-3 text-white border-2 border-green-500 hover:bg-green-500/20 transition-colors font-bold">
@@ -412,6 +405,7 @@ export const TournamentLocal: Page = {
 		const tournamentChampion = root.querySelector('#tournament-champion') as HTMLSpanElement;
 		const showFinalBracketBtn = root.querySelector('#show-final-bracket-btn') as HTMLButtonElement;
 		const newTournamentBtn = root.querySelector('#new-tournament-btn') as HTMLButtonElement;
+		const backToLocalLobbyBtn = root.querySelector('#back-to-local-lobby-btn') as HTMLButtonElement;
 		const scoreOptions = root.querySelectorAll('.score-option');
 
 		let canStart = false;
@@ -683,7 +677,7 @@ export const TournamentLocal: Page = {
 		});
 
 		backBtn.addEventListener('click', () => {
-			history.pushState(null, '', '/gameLobby');
+			history.pushState(null, '', '/localLobby');
 			window.dispatchEvent(new PopStateEvent('popstate'));
 		});
 
@@ -759,9 +753,11 @@ export const TournamentLocal: Page = {
 		// Event Listeners - Match End Modal
 		// ============================================
 		showBracketAfterMatchBtn.addEventListener('click', () => {
-			matchEndModal.classList.add('hidden');
-			matchEndModal.classList.remove('flex');
-			// Advance to next match FIRST, then show bracket with updated info
+			// Hide match modal and open bracket; remember origin so closing bracket can restore it
+			if (matchEndModal) {
+				matchEndModal.classList.add('hidden');
+				matchEndModal.classList.remove('flex');
+			}
 			advanceToNextMatch();
 			showBracket(true);
 		});
@@ -770,8 +766,13 @@ export const TournamentLocal: Page = {
 		// Event Listeners - Tournament End Modal
 		// ============================================
 		showFinalBracketBtn.addEventListener('click', () => {
-			tournamentEndModal.classList.add('hidden');
-			tournamentEndModal.classList.remove('flex');
+			// Hide the tournament-end modal and open the bracket for final view.
+			// We intentionally do NOT set an origin so closing the bracket does
+			// not reopen the tournament-end modal (prevents unexpected UI loops).
+			if (tournamentEndModal) {
+				tournamentEndModal.classList.add('hidden');
+				tournamentEndModal.classList.remove('flex');
+			}
 			showBracket(false);
 		});
 
@@ -783,6 +784,18 @@ export const TournamentLocal: Page = {
 			gamePhase.classList.add('hidden');
 			updatePlayersList();
 		});
+
+		// Back to local lobby from tournament end modal
+		if (backToLocalLobbyBtn) {
+			backToLocalLobbyBtn.addEventListener('click', () => {
+				if (tournamentEndModal) {
+					tournamentEndModal.classList.add('hidden');
+					tournamentEndModal.classList.remove('flex');
+				}
+				history.pushState(null, '', '/localLobby');
+				window.dispatchEvent(new PopStateEvent('popstate'));
+			});
+		}
 
 		// ============================================
 		// Initialize
