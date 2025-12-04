@@ -1,7 +1,20 @@
+/**
+ * @fileoverview Online lobby page component for choosing between 1v1 online matches and online tournaments.
+ * Requires user authentication and provides navigation to different online game modes.
+ */
+
 import type { Page } from "../interface/gameInterface.js"
 import { Layout } from "./Layout";
 
+/**
+ * Online lobby page component allowing authenticated players to select between
+ * 1v1 online games and online tournament modes for remote multiplayer.
+ */
 export const OnlineLobby: Page = {
+  /**
+   * Renders the online lobby HTML with 1v1 and tournament mode selection cards.
+   * @returns HTML string containing the online lobby interface with player counts
+   */
   render() {
     return `
 <div class="flex items-center justify-center mb-16">
@@ -82,6 +95,11 @@ export const OnlineLobby: Page = {
 </div>
     `;
   },
+  /**
+   * Mounts navigation event listeners and handles authentication redirect.
+   * Sets up click handlers for 1v1 and tournament buttons with login verification.
+   * @param root - Root element containing the rendered lobby page
+   */
   mount(root: HTMLElement): void {
 
     Layout.redirectIfNotLoggedIn('/gameLobby', true);

@@ -1,23 +1,27 @@
 /**
- * i18n - Internationalization utility module
- * Provides translation functions and language management
+ * @fileoverview Internationalization (i18n) utility module
+ * Provides translation functions and language management for the application
  */
 
 type TranslationDict = Record<string, Record<string, string>>;
 
-// Default language (French)
+/** Default language code */
 const DEFAULT_LANG = 'fr';
+/** List of supported language codes */
 const SUPPORTED_LANGS = ['fr', 'en', 'es'] as const;
 type SupportedLang = typeof SUPPORTED_LANGS[number];
 
-// Cache for translations
+/** Cache for loaded translations */
 let translationsCache: TranslationDict | null = null;
+/** Currently selected language */
 let currentLang: string = DEFAULT_LANG;
+/** Promise for ongoing translation load */
 let loadingPromise: Promise<TranslationDict> | null = null;
 
 /**
- * Load translations from JSON file (cached)
- * Automatically called - no need to call manually
+ * Loads translations from the JSON file (cached)
+ * Automatically called when needed - no need to call manually
+ * @returns Promise resolving to the translations dictionary
  */
 export async function loadTranslations(): Promise<TranslationDict> {
   if (translationsCache) return translationsCache;
@@ -43,7 +47,8 @@ export async function loadTranslations(): Promise<TranslationDict> {
 }
 
 /**
- * Get the current language from storage or default
+ * Gets the current language from storage or returns default
+ * @returns Current language code
  */
 export function getCurrentLang(): SupportedLang {
   const stored = localStorage.getItem('language') || sessionStorage.getItem('language');
@@ -54,7 +59,8 @@ export function getCurrentLang(): SupportedLang {
 }
 
 /**
- * Set the current language and persist it
+ * Sets the current language and persists it to storage
+ * @param lang - Language code to set
  */
 export function setCurrentLang(lang: SupportedLang): void {
   currentLang = lang;
@@ -63,9 +69,13 @@ export function setCurrentLang(lang: SupportedLang): void {
 }
 
 /**
- * Translate a key to the current language
+ * Translates a key to the current language
  * Falls back to French if key not found, then to the key itself
- * Supports interpolation: t('hello', { name: 'John' }) for "Hello {{name}}"
+ * @param key - Translation key to look up
+ * @param params - Optional interpolation parameters for placeholders like {{name}}
+ * @returns Translated string
+ * @example
+ * t('hello', { name: 'John' }) // Returns "Hello John" for "Hello {{name}}"
  */
 export function t(key: string, params?: Record<string, string | number>): string {
   if (!translationsCache) {
@@ -90,8 +100,9 @@ export function t(key: string, params?: Record<string, string | number>): string
 }
 
 /**
- * Apply translations to all elements with data-i18n attribute
- * Call this after rendering a page/component
+ * Applies translations to all elements with data-i18n attribute
+ * Call this after rendering a page or component
+ * @param root - Root element to search for translatable elements (default: document)
  */
 export async function applyTranslations(root: HTMLElement | Document = document): Promise<void> {
   if (!translationsCache) {
@@ -136,7 +147,9 @@ export async function applyTranslations(root: HTMLElement | Document = document)
 }
 
 /**
- * Change language and re-apply all translations
+ * Changes the language and re-applies all translations
+ * @param lang - Language code to switch to
+ * @param root - Root element to update translations in (default: document)
  */
 export async function changeLanguage(lang: SupportedLang, root: HTMLElement | Document = document): Promise<void> {
   if (!SUPPORTED_LANGS.includes(lang)) {
@@ -158,7 +171,8 @@ export async function changeLanguage(lang: SupportedLang, root: HTMLElement | Do
 }
 
 /**
- * Initialize i18n - call this at app startup
+ * Initializes the i18n system - call this at application startup
+ * Loads translations and sets the initial language from storage
  */
 export async function initI18n(): Promise<void> {
   currentLang = getCurrentLang();
@@ -166,7 +180,9 @@ export async function initI18n(): Promise<void> {
 }
 
 /**
- * Get supported languages list (for language selector)
+ * Gets the list of supported language codes
+ * Useful for building language selector UIs
+ * @returns Array of supported language codes
  */
 export function getSupportedLanguages(): readonly string[] {
   return SUPPORTED_LANGS;

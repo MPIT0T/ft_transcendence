@@ -1,9 +1,21 @@
+/**
+ * @fileoverview Tournament room page component for creating and joining online tournaments.
+ * Handles WebSocket connections for tournament lobby management.
+ */
+
 import type { Page } from "../interface/gameInterface.js"
 import { Layout } from "./Layout";
 
+/** WebSocket connection for real-time tournament communication */
 export let ws: WebSocket | undefined;
+
+/** Current client's unique identifier */
 let clientId: string | undefined;
 
+/**
+ * Requests the list of available tournaments from the server.
+ * @param root - Root element (unused but kept for consistency)
+ */
 const reloadTournaments = function (root: HTMLElement) {
 
 	const payLoad = {
@@ -14,7 +26,12 @@ const reloadTournaments = function (root: HTMLElement) {
 		ws.send(JSON.stringify(payLoad));
 }
 
-
+/**
+ * Renders the list of available tournaments in the container.
+ * Creates clickable buttons for each tournament to join.
+ * @param root - Root element containing the tournaments container
+ * @param tournaments - Array of tournament objects with tournamentId, tournamentName, and players
+ */
 function displayTournament(root: HTMLElement, tournaments: any[]) {
 	const container = root.querySelector('#tournaments-container') as HTMLDivElement;
 	container.innerHTML = '';
@@ -35,6 +52,11 @@ function displayTournament(root: HTMLElement, tournaments: any[]) {
 	});
 }
 
+/**
+ * Creates a new tournament with the specified settings.
+ * Sends tournament creation request to server and closes the modal.
+ * @param root - Root element containing the tournament creation form
+ */
 const createTournament = function (root: HTMLElement): void {
 	const tournamentName = (root.querySelector('#tournament-name') as HTMLInputElement).value;
 	const gamePoint = (root.querySelector('#game-point') as HTMLSelectElement).value;
@@ -59,6 +81,10 @@ const createTournament = function (root: HTMLElement): void {
 	(root.querySelector('#create-tournament-form') as HTMLFormElement).reset();
 }
 
+/**
+ * Sends a request to join a specific tournament.
+ * @param tournamentId - Unique identifier of the tournament to join
+ */
 const joinTournament = function (tournamentId: string) {
 	const payLoad = {
 		"method": "joinT",
@@ -69,7 +95,15 @@ const joinTournament = function (tournamentId: string) {
 		ws.send(JSON.stringify(payLoad));
 }
 
+/**
+ * Tournament room page component for creating and joining online tournaments.
+ * Manages WebSocket connections and provides tournament lobby functionality.
+ */
 export const TournamentRoom: Page = {
+	/**
+	 * Renders the tournament room HTML with creation button and available tournaments list.
+	 * @returns HTML string containing the tournament room interface with creation modal
+	 */
 	render() {
 		return `
 	<div class="max-w-6xl mx-auto p-6 space-y-6">
@@ -151,6 +185,11 @@ export const TournamentRoom: Page = {
 		`;
 	},
 
+	/**
+	 * Mounts WebSocket connection and event listeners for the tournament room.
+	 * Handles tournament creation, joining, and periodic tournament list refresh.
+	 * @param root - Root element containing the rendered tournament room page
+	 */
 	mount(root: HTMLElement): void {
     Layout.redirectIfNotLoggedIn('/', true);
 

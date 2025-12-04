@@ -1,6 +1,19 @@
+/**
+ * @fileoverview Local lobby page component for choosing between 1v1 local matches and local tournaments.
+ * Provides navigation to different local game modes played on the same device.
+ */
+
 import type { Page } from "../interface/gameInterface.js"
 
+/**
+ * Local lobby page component allowing players to select between 1v1 local games
+ * and local tournament modes for same-device multiplayer.
+ */
 export const LocalLobby: Page = {
+  /**
+   * Renders the local lobby HTML with 1v1 and tournament mode selection cards.
+   * @returns HTML string containing the local lobby interface
+   */
   render() {
     return `
 <div class="flex items-center justify-center mb-16">
@@ -83,6 +96,11 @@ export const LocalLobby: Page = {
     `;
   },
 
+  /**
+   * Mounts navigation event listeners for local game mode selection.
+   * Sets up click handlers for 1v1 and tournament buttons.
+   * @param root - Root element containing the rendered lobby page
+   */
   mount(root: HTMLElement): void {
     const gameLocalBtn = root.querySelector('#game-local-btn');
     if (gameLocalBtn) {

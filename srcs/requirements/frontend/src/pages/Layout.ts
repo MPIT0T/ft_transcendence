@@ -1,5 +1,13 @@
+/**
+ * @fileoverview Main layout component with navigation, authentication modals, and background
+ */
+
 import { t } from '../utils/i18n.js';
 
+/**
+ * Initializes the animated pastel particle background
+ * Creates floating particles with random colors on a black canvas
+ */
 const initPastelBackground = () => {
   const canvas = document.getElementById('background-canvas') as HTMLCanvasElement;
   if (!canvas) return;
@@ -65,7 +73,15 @@ declare global {
   }
 }
 
+/**
+ * Main layout component containing navigation, modals, and page wrapper
+ */
 export const Layout = {
+  /**
+   * Renders the layout HTML with embedded content
+   * @param content - Inner page content to render within the layout
+   * @returns Complete HTML string for the layout
+   */
   render(content: string): string {
     return `
       <div class="flex flex-col h-screen font-custom font-tiny5 ">
@@ -292,6 +308,11 @@ export const Layout = {
     `;
   },
 
+  /**
+   * Handles Google OAuth login flow
+   * @param root - Root element containing the modals
+   * @param code - Authorization code from Google
+   */
   async handleGoogleLogin(root: HTMLElement, code: string): Promise<void> {
 
     const res = await fetch("/user/google", {
@@ -312,6 +333,12 @@ export const Layout = {
       (root.querySelector('#login-form') as HTMLFormElement).reset();
     }
   },
+
+  /**
+   * Mounts event listeners and initializes the layout
+   * Sets up navigation, modals, and background animation
+   * @param root - Root element containing the layout
+   */
   mount(root: HTMLElement): void {
     // Navigation buttons
 
@@ -405,6 +432,10 @@ export const Layout = {
     this.updateLoginButton(root, sessionStorage.getItem('isLoggedIn') === 'true');
   },
 
+  /**
+   * Sets up the login modal with form submission and navigation events
+   * @param root - Root element containing the modal
+   */
   setupLoginModal(root: HTMLElement): void {
     const loginModal = root.querySelector('#login-modal') as HTMLDivElement;
     const cancelLoginBtn = root.querySelector('#cancel-login') as HTMLButtonElement;
@@ -469,6 +500,11 @@ export const Layout = {
     }
   },
 
+  /**
+   * Redirects to a page if user is not logged in
+   * @param redirectTo - Path to redirect to (default: '/')
+   * @param triedTo - Whether to show an error notification
+   */
   redirectIfNotLoggedIn(redirectTo = '/', triedTo: boolean = false): void {
     if (!Layout.isLoggedIn()) {
       history.pushState(null, '', redirectTo);
@@ -479,6 +515,10 @@ export const Layout = {
 
 
 
+  /**
+   * Sets up the registration modal with form submission and Google OAuth
+   * @param root - Root element containing the modal
+   */
   setupRegisterModal(root: HTMLElement): void {
     const registerModal = root.querySelector('#register-modal') as HTMLDivElement;
     const cancelRegisterBtn = root.querySelector('#cancel-register') as HTMLButtonElement;
@@ -587,6 +627,10 @@ export const Layout = {
     }
   },
 
+  /**
+   * Handles click on login button - opens modal or navigates to stats
+   * @param root - Root element containing the modal
+   */
   handleLoginClick(root: HTMLElement): void {
     const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true';
 
@@ -601,6 +645,10 @@ export const Layout = {
     }
   },
 
+  /**
+   * Handles login form submission
+   * @param root - Root element containing the form
+   */
   async handleLogin(root: HTMLElement): Promise<void> {
     const username = (root.querySelector('#username') as HTMLInputElement).value;
     const password = (root.querySelector('#password') as HTMLInputElement).value;
@@ -629,6 +677,11 @@ export const Layout = {
     }
   },
 
+  /**
+   * Extracts user information from a JWT token
+   * @param token - JWT token string
+   * @returns Object containing username, avatar, and elo
+   */
   getUserInfoFromJwt(token: string | null) {
 
     if (!token) {
@@ -647,6 +700,10 @@ export const Layout = {
     };
   },
 
+  /**
+   * Handles registration form submission
+   * @param root - Root element containing the form
+   */
   async handleRegister(root: HTMLElement): Promise<void> {
     const username = (root.querySelector('#reg-username') as HTMLInputElement).value;
     const password = (root.querySelector('#reg-password') as HTMLInputElement).value;
@@ -700,16 +757,29 @@ export const Layout = {
     }
   },
 
+  /**
+   * Opens a modal dialog
+   * @param modal - Modal element to open
+   */
   openModal(modal: HTMLDivElement): void {
     modal.classList.remove('hidden');
     modal.classList.add('flex');
   },
 
+  /**
+   * Closes a modal dialog
+   * @param modal - Modal element to close
+   */
   closeModal(modal: HTMLDivElement): void {
     modal.classList.add('hidden');
     modal.classList.remove('flex');
   },
 
+  /**
+   * Changes the application language
+   * @param root - Root element for updating translations
+   * @param lang - Language code ('fr', 'en', or 'es')
+   */
   async changeLanguage(root: HTMLElement, lang: string): Promise<void> {
     // Use the new i18n module
     const { changeLanguage: i18nChangeLanguage } = await import("../utils/i18n.js");
@@ -717,6 +787,11 @@ export const Layout = {
     this.setActiveLanguage(root, lang);
   },
 
+  /**
+   * Sets visual active state on language buttons
+   * @param root - Root element containing language buttons
+   * @param lang - Currently active language code
+   */
   setActiveLanguage(root: HTMLElement, lang: string): void {
     const langButtons = root.querySelectorAll('[data-lang]') as NodeListOf<HTMLButtonElement>;
 
@@ -729,10 +804,19 @@ export const Layout = {
     });
   },
 
+  /**
+   * Checks if a user is currently logged in
+   * @returns True if user has a valid token
+   */
   isLoggedIn(): boolean {
     return  (sessionStorage.getItem('token')) ? true : false;
   },
 
+  /**
+   * Updates the login button to show user info or login prompt
+   * @param root - Root element containing the button
+   * @param isLoggedIn - Whether user is logged in
+   */
   updateLoginButton(root: HTMLElement, isLoggedIn: boolean): void {
     const loginBtn = root.querySelector('#login-btn') as HTMLButtonElement;
     if (loginBtn) {
@@ -767,6 +851,11 @@ export const Layout = {
     }
   },
 
+  /**
+   * Displays a notification toast message
+   * @param message - Message to display
+   * @param type - Notification type ('success' or 'error')
+   */
   showNotification(message: string, type: string = 'success'): void {
     const notification = document.createElement('div');
     const bgColor = type === 'error' ? 'bg-red-500/20' : 'bg-blue-500/20';
@@ -787,6 +876,11 @@ export const Layout = {
     }, 3000);
   },
 
+  /**
+   * Gets the display name for a language code
+   * @param lang - Language code
+   * @returns Full language name
+   */
   getLanguageName(lang: string): string {
     const names = {
       fr: 'Français',
@@ -796,6 +890,7 @@ export const Layout = {
     return names[lang as keyof typeof names] || lang;
   },
 
+  /** Updates the user avatar in the navigation bar */
   updateAvatar() {
     const avatar = document.getElementById('user-avatar-layout') as HTMLImageElement;
 
@@ -806,6 +901,11 @@ export const Layout = {
     }
   },
 
+  /**
+   * Gets the full path for an avatar image
+   * @param avatar - Avatar filename or path
+   * @returns Full avatar URL path
+   */
   getAvatarPath(avatar: string): string {
     console.log(avatar);
     if (avatar.startsWith('/') || avatar.startsWith('http://') || avatar.startsWith('https://')) {
@@ -814,6 +914,7 @@ export const Layout = {
     return '/' + avatar;
   },
 
+  /** Updates the username display in the navigation bar */
   updateUsername() {
     const username = document.getElementById('username-layout') as HTMLSpanElement;
 

@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Online tournament game page component for tournament match gameplay.
+ * Handles tournament-specific WebSocket communication and match progression.
+ */
+
 import type { Page } from "../interface/gameInterface.js"
 import { GameComponentOnline } from "../components/GameComponentOnline.js";
 import { ws } from "./TournamentRoom.js";
@@ -5,11 +10,24 @@ import {sleep} from "../utils/sleep";
 import {Layout} from "./Layout";
 import { t } from "../utils/i18n.js";
 
+/** Current game component instance for tournament match */
 let currentGame: GameComponentOnline | null = null;
+
+/** Interval ID for the game timer */
 let timerInterval: number | null = null;
+
+/** Total elapsed seconds in the current match */
 let elapsedSeconds: number = 0;
 
+/**
+ * Online tournament game page component for playing tournament matches.
+ * Displays match round info, player names, scores, and handles tournament progression.
+ */
 export const GameOnlineTournament: Page = {
+  /**
+   * Renders the tournament match HTML with round title, player info, and game canvas.
+   * @returns HTML string containing the tournament match interface
+   */
   render() {
     return `
 <div id="tournament-match-title" class="text-7xl text-center mb-5 text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-blue-500 to-green-500 bg-[length:400%_400%] animate-gradientShift">
@@ -41,6 +59,11 @@ export const GameOnlineTournament: Page = {
     `;
   },
 
+  /**
+   * Mounts the tournament game component and WebSocket message handlers.
+   * Initializes game state, handles match start/end, and manages tournament bracket navigation.
+   * @param root - Root element containing the rendered game page
+   */
   mount(root) {
 
     Layout.redirectIfNotLoggedIn('/', true);

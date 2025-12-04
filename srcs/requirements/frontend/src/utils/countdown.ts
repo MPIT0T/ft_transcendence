@@ -1,9 +1,28 @@
+/**
+ * @fileoverview Countdown animation utility for game start sequences
+ */
+
 import { sleep } from "./sleep.js";
 
+/**
+ * Creates a countdown controller with start and abort methods
+ * Used to display "3, 2, 1" countdown before game starts
+ * @returns Object with start() and abort() methods
+ * @example
+ * const countdown = createCountdown();
+ * await countdown.start(modalElement, textElement);
+ * // To cancel: countdown.abort();
+ */
 export function createCountdown() {
   let controller: AbortController | null = null;
 
   return {
+    /**
+     * Starts the countdown animation (3, 2, 1)
+     * @param modal - The modal container element to show/hide
+     * @param text - The text element to display countdown numbers
+     * @throws {DOMException} If countdown is aborted
+     */
     async start(modal: HTMLElement, text: HTMLElement) {
       // Cancel any existing animation first
       if (controller) {
@@ -43,6 +62,10 @@ export function createCountdown() {
       }
     },
 
+    /**
+     * Aborts the current countdown animation
+     * Safe to call even if no countdown is running
+     */
     abort() {
       if (controller) {
         controller.abort();

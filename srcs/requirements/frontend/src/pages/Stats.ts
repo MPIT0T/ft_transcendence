@@ -1,7 +1,18 @@
+/**
+ * @fileoverview Stats page component for user profile, match history, and friend management.
+ * Provides profile editing, statistics visualization, and language settings.
+ */
+
 import type { StatsPage } from "../interface/gameInterface.js"
 import { Layout } from "./Layout";
 import { changeLanguage, applyTranslations, loadTranslations, getCurrentLang, t } from "../utils/i18n.js";
 
+/**
+ * Draws a pie chart in an SVG element.
+ * @param slices - Array of slice objects with value and color properties
+ * @param elementId - ID of the SVG element to render into
+ * @param maxValue - Maximum value representing 100% of the chart (default: 100)
+ */
 function drawPieChart(slices: { value: number; color: string }[], elementId: string, maxValue: number = 100) {
   const svg = document.getElementById(elementId) as SVGElement | null;
   if (!svg) return;
@@ -48,7 +59,7 @@ function drawPieChart(slices: { value: number; color: string }[], elementId: str
   });
 }
 
-
+/** Currently active tab ('profile' or 'history') */
 let activeTab: 'profile' | 'history' = 'profile';
 
 if (!Layout.isLoggedIn()) {
@@ -57,7 +68,15 @@ if (!Layout.isLoggedIn()) {
   window.dispatchEvent(new PopStateEvent('popstate'));
 }
 
+/**
+ * Stats page component providing user profile management, match history, and friend features.
+ * Includes avatar selection, password change, username editing, and statistics visualization.
+ */
 const Stats: StatsPage = {
+  /**
+   * Renders the stats page HTML with profile/history tabs and language selection.
+   * @returns HTML string containing the stats interface with tab navigation
+   */
   render() {
     activeTab = 'profile';
     // Position the sliding indicator
@@ -107,6 +126,11 @@ const Stats: StatsPage = {
 	`;
   },
 
+  /**
+   * Normalizes the avatar path for proper display.
+   * @param avatar - Avatar filename or path
+   * @returns Properly formatted avatar path with leading slash if needed
+   */
   getAvatarPath(avatar: string): string {
     if (avatar.startsWith('/') || avatar.startsWith('http://') || avatar.startsWith('https://')) {
       return avatar;
@@ -114,6 +138,10 @@ const Stats: StatsPage = {
     return '/' + avatar;
   },
 
+  /**
+   * Renders the profile tab content with avatar, username, stats, and friend list.
+   * @returns HTML string containing the profile section
+   */
   renderProfile() {
     const avatar = Layout.getUserInfoFromJwt(sessionStorage.getItem('token')).avatar;
     // Ensure avatar path works from any host - use relative path
@@ -311,6 +339,10 @@ const Stats: StatsPage = {
         `;
   },
 
+  /**
+   * Renders the history tab content with match statistics and game history.
+   * @returns HTML string containing the history section with pie charts and match table
+   */
   renderHistory() {
     window.clearInterval((globalThis as any).showOnlineFriendsIntervalId);
     window.clearInterval((globalThis as any).showOfflineFriendsIntervalId);
@@ -395,6 +427,11 @@ const Stats: StatsPage = {
 					`;
   },
 
+  /**
+   * Mounts tab switching logic, language selection, and profile/history event handlers.
+   * Initializes friend list updates and ELO fetching.
+   * @param root - Root element containing the rendered stats page
+   */
   mount(root) {
 
     activeTab = 'profile';
@@ -568,6 +605,11 @@ const Stats: StatsPage = {
 
   },
 
+  /**
+   * Mounts event handlers specific to the profile tab.
+   * Sets up username editing, avatar selection, password change, and friend management.
+   * @param root - Root element containing the profile content
+   */
   mountProfileEvents(root: HTMLElement) {
 
     this.showOnlineFriends(root);
@@ -855,6 +897,11 @@ const Stats: StatsPage = {
     if (requestTab) requestTab.addEventListener('click', showRequestTab);
   },
 
+  /**
+   * Handles the add friend button click event.
+   * Sends a friend request to the specified username.
+   * @param root - Root element containing the friend input field
+   */
   handleAddFriendClick(root: HTMLElement) {
     const input = root.querySelector('#add-friend-input') as HTMLInputElement;
     const invitedUsername = input?.value?.trim();
@@ -900,6 +947,11 @@ const Stats: StatsPage = {
       });
   },
 
+  /**
+   * Fetches and displays pending friend requests.
+   * Creates accept buttons for each pending request.
+   * @param root - Root element containing the request container
+   */
   showFriendRequest(root: HTMLElement) {
     const currentUser = sessionStorage.getItem('username');
     const container = root.querySelector('#request-friends-container') as HTMLDivElement;
@@ -960,6 +1012,11 @@ const Stats: StatsPage = {
       });
   },
 
+  /**
+   * Accepts a pending friend request.
+   * @param username - Username of the friend request sender
+   * @param element - DOM element to remove after accepting
+   */
   acceptFriendRequest(username: string, element: HTMLElement) {
     fetch('/user/friends/accept-request', {
       method: 'POST',
@@ -982,6 +1039,10 @@ const Stats: StatsPage = {
       });
   },
 
+  /**
+   * Fetches and displays online friends in the friends list.
+   * @param root - Root element containing the online friends container
+   */
   showOnlineFriends(root: HTMLElement) {
     const currentUser = sessionStorage.getItem('username');
     const container = root.querySelector('#online-friends-container') as HTMLDivElement;
@@ -1036,6 +1097,11 @@ const Stats: StatsPage = {
       });
   },
 
+  /**
+   * Updates the user's avatar on the server.
+   * @param root - Root element (unused but kept for consistency)
+   * @param newAvatar - New avatar path or URL
+   */
   changeNewAvatar(root: HTMLElement, newAvatar: string) {
     const currentUser = sessionStorage.getItem('username');
     const token = sessionStorage.getItem('token');
@@ -1087,6 +1153,10 @@ const Stats: StatsPage = {
     });
   },
 
+  /**
+   * Fetches and displays offline friends in the friends list.
+   * @param root - Root element containing the offline friends container
+   */
   showOfflineFriends(root: HTMLElement) {
     const currentUser = sessionStorage.getItem('username');
     const container = root.querySelector('#offline-friends-container') as HTMLDivElement;
@@ -1139,6 +1209,10 @@ const Stats: StatsPage = {
       });
   },
 
+  /**
+   * Updates the avatar display in the UI after a change.
+   * Adds cache-busting query parameter to force refresh.
+   */
   updateAvatar() {
     const avatar = document.getElementById('user-avatar') as HTMLImageElement;
 
@@ -1150,6 +1224,12 @@ const Stats: StatsPage = {
     }
   },
 
+  /**
+   * Calculates matches played and time spent within a given time period.
+   * @param matches - Array of match objects with date and duration
+   * @param timesInHours - Time period in hours to look back
+   * @returns Object with matchesPlayed count and timePlayed in seconds
+   */
   playedTimesinHours(matches, timesInHours): {
     matchesPlayed: number;
     timePlayed: number;
@@ -1186,6 +1266,10 @@ const Stats: StatsPage = {
     };
   },
 
+  /**
+   * Updates the time played pie charts for daily and weekly statistics.
+   * @param matches - Array of match objects to calculate time from
+   */
   updateTimeplayed(matches) {
     const matchDay = this.playedTimesinHours(matches, 24);
     const matchWeek = this.playedTimesinHours(matches, 24 * 7);
@@ -1235,6 +1319,10 @@ const Stats: StatsPage = {
     }
   },
 
+  /**
+   * Fetches and renders the match history content.
+   * Updates statistics, win rate, and pie charts based on match data.
+   */
   updateContentHistory() {
     const token = sessionStorage.getItem('token');
     if (!token) return;

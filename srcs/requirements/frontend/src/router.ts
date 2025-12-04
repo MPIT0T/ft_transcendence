@@ -1,3 +1,8 @@
+/**
+ * @fileoverview SPA Router for ft_transcendence
+ * Handles navigation between pages without full page reloads
+ */
+
 import type { Page } from "./interface/gameInterface.js";
 import { Home } from      "./pages/Home.js";
 import { Game } from      "./pages/Game.js";
@@ -14,6 +19,7 @@ import { TournamentOnline } from "./pages/TournamentOnline.js";
 import { TournamentLocal } from "./pages/TournamentLocal.js";
 import { applyTranslations, t } from "./utils/i18n.js";
 
+/** Route table - maps URL paths to page components */
 const routes: Record<string, Page> = {
   "/": Home,
   "/stats": Stats,
@@ -29,12 +35,22 @@ const routes: Record<string, Page> = {
   "/game": Game,
 }
 
+/**
+ * Gets the current URL path
+ * @returns The current URL pathname (e.g., "/stats", "/game")
+ */
 const getPath = (): string => {
   const base = "";
   let path = window.location.pathname.replace(base, "") || "/";
   return path;
 }
 
+/**
+ * Starts the SPA router and sets up event listeners
+ * - Renders pages based on URL
+ * - Intercepts clicks on internal links
+ * - Listens to popstate events for browser back button
+ */
 export function startRouter(){
   const root = document.getElementById("root")!;
 

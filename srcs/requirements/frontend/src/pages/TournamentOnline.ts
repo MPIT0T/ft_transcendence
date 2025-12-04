@@ -1,9 +1,22 @@
+/**
+ * @fileoverview Online tournament bracket page component displaying tournament progression.
+ * Shows real-time bracket updates, match results, and handles tournament navigation.
+ */
+
 import type { Page } from "../interface/gameInterface.js"
 import { ws } from "./TournamentRoom.js";
 import { Layout } from "./Layout";
 import { t } from "../utils/i18n.js";
 
+/**
+ * Online tournament bracket page component displaying the tournament bracket.
+ * Shows quarter-finals, semi-finals, final, and winner with real-time updates.
+ */
 export const TournamentOnline: Page = {
+  /**
+   * Renders the tournament bracket HTML with all rounds and player slots.
+   * @returns HTML string containing the bracket interface with leave button
+   */
   render() {
     return `
 		<div class="flex gap-16 p-6 pt-24 items-start justify-center">
@@ -180,6 +193,11 @@ export const TournamentOnline: Page = {
 		`;
   },
 
+  /**
+   * Mounts WebSocket message handlers and event listeners for the tournament bracket.
+   * Handles player join/leave updates, match state synchronization, and tournament progression.
+   * @param root - Root element containing the rendered bracket page
+   */
   mount(root: HTMLElement): void {
 
     Layout.redirectIfNotLoggedIn('/', true);

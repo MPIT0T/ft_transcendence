@@ -1,10 +1,20 @@
+/**
+ * @fileoverview Tournament match page component for individual local tournament matches.
+ * Handles match gameplay with countdown, scoring, and result display.
+ */
+
 import type { Page } from "../interface/gameInterface.js";
 import { GameComponent } from "../components/GameComponent.js";
 import { createCountdown } from "../utils/countdown.js";
 import { t } from "../utils/i18n.js";
 
+/** Current game component instance for the match */
 let currentGame: GameComponent | null = null;
 
+/**
+ * Retrieves tournament match data from session storage.
+ * @returns Parsed tournament match data object or null if not found
+ */
 function getTournamentData(): any | null {
   const data = sessionStorage.getItem('localTournamentMatch');
   if (!data) return null;
@@ -15,7 +25,15 @@ function getTournamentData(): any | null {
   }
 }
 
+/**
+ * Tournament match page component for playing individual local tournament matches.
+ * Displays player names, scores, and handles match completion.
+ */
 export const TournamentMatch: Page = {
+  /**
+   * Renders the tournament match HTML with player info, score display, and game canvas.
+   * @returns HTML string containing the match interface with control buttons
+   */
   render() {
     const data = getTournamentData();
     const p1 = data?.player1 || 'Joueur 1';
@@ -66,6 +84,11 @@ export const TournamentMatch: Page = {
     `;
   },
 
+  /**
+   * Mounts the tournament match game component and event listeners.
+   * Handles countdown animation, scoring, and match completion.
+   * @param root - Root element containing the rendered match page
+   */
   mount(root: HTMLElement) {
     const data = getTournamentData();
     if (!data) {

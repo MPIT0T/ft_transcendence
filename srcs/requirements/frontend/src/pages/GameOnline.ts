@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Online game page component for real-time multiplayer Pong matches.
+ * Handles WebSocket game state updates, countdown animations, and match results.
+ */
+
 import type { Page } from "../interface/gameInterface.js"
 import { GameComponentOnline } from "../components/GameComponentOnline.js";
 import { ws } from "./GameRoom.js";
@@ -5,11 +10,24 @@ import { sleep } from "../utils/sleep.js"
 import { Layout } from "./Layout";
 import { t } from "../utils/i18n.js";
 
+/** Current game component instance */
 let currentGame: GameComponentOnline | null = null;
+
+/** Interval ID for the game timer */
 let timerInterval: number | null = null;
+
+/** Total elapsed seconds in the current match */
 let elapsedSeconds: number = 0;
 
+/**
+ * Online game page component for playing real-time multiplayer Pong matches.
+ * Displays player names, scores, ELO ratings, and handles game state synchronization.
+ */
 export const GameOnline: Page = {
+  /**
+   * Renders the online game HTML with player info, score display, and game canvas container.
+   * @returns HTML string containing the game interface with waiting and winner modals
+   */
   render() {
     return `
 <div class="relative overflow-hidden text-gray-50 text-lg border border-gray-50 backdrop-blur-2xs">
@@ -73,6 +91,11 @@ export const GameOnline: Page = {
   },
 
 
+  /**
+   * Mounts the online game component and WebSocket message handlers.
+   * Initializes game state, timer, countdown animations, and handles match lifecycle.
+   * @param root - Root element containing the rendered game page
+   */
   mount(root) {
 
     // Cleanup previous game if exists

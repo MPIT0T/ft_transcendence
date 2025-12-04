@@ -1,11 +1,25 @@
+/**
+ * @fileoverview Local 2-player game page component
+ * Handles game setup, countdown, scoring, and match end logic
+ */
+
 import type { Page } from "../interface/gameInterface.js"
 import { GameComponent } from "../components/GameComponent.js";
 import { createCountdown } from "../utils/countdown.js";
 import { t } from "../utils/i18n.js";
 
+/** Current game instance */
 let currentGame: GameComponent | null = null;
 
+/**
+ * Local game page component
+ * Provides UI for playing a 2-player Pong match on the same device
+ */
 		export const Game: Page = {
+		/**
+		 * Renders the game page HTML
+		 * @returns HTML string for the game page
+		 */
 		render() {
 			const player1Name = t('game.player1');
 			const player2Name = t('game.player2');
@@ -71,6 +85,11 @@ let currentGame: GameComponent | null = null;
 		`;
 	},
 
+	/**
+	 * Mounts the game page and initializes event handlers
+	 * Sets up points selection, countdown, game controls, and match end modal
+	 * @param root - Root element containing the rendered page
+	 */
 	mount(root) {
 		const layoutLoginBtn = document.querySelector('#login-btn') as HTMLButtonElement | null;
 		let _prevLoginBtnClass: string | null = null;

@@ -1,5 +1,13 @@
+/**
+ * @fileoverview Home page component with game preview and information
+ */
+
 import type { Page } from "../interface/gameInterface.js"
 
+/**
+ * Initializes the animated game preview canvas
+ * Creates a demo Pong game with AI-controlled paddles
+ */
 const initGamePreview = function () {
 	const canvas = document.getElementById('preview-canvas') as HTMLCanvasElement;
 	if (!canvas) return;
@@ -118,11 +126,19 @@ const initGamePreview = function () {
 	// Ajouter un gestionnaire pour nettoyer l'animation
 	window.addEventListener('beforeunload', cleanup);
 
-	// Stocker la fonction de nettoyage pour pouvoir l'appeler plus tard
+	// Store cleanup function for later use
 	(window as any).cleanupGamePreview = cleanup;
 }
 
+/**
+ * Home page component
+ * Displays the main landing page with play button, game preview, and Pong history
+ */
 export const Home: Page = {
+	/**
+	 * Renders the home page HTML
+	 * @returns HTML string containing the home page content
+	 */
 	render() {
 		return `
 <!-- Home page -->
@@ -209,8 +225,12 @@ export const Home: Page = {
 		`;
 	},
 
+	/**
+	 * Mounts event listeners and initializes the home page
+	 * @param root - Root element containing the rendered page
+	 */
 	mount(root) {
-		// Bouton Jouer
+		// Play button
 		const gameBtn = root.querySelector('#play-btn') as HTMLButtonElement;
 		if (gameBtn) {
 			gameBtn.addEventListener('click', () => {

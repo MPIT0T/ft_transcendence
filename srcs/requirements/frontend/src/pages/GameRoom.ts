@@ -1,11 +1,24 @@
+/**
+ * @fileoverview Game room page component for online matchmaking and room management.
+ * Handles WebSocket connections, room creation/joining, friend challenges, and ranked/friendly matches.
+ */
+
 import type { Page } from "../interface/gameInterface.js"
 import { Layout } from "./Layout";
 
+/** WebSocket connection for real-time game communication */
 export let ws: WebSocket | undefined;
+
+/** Current client's unique identifier */
 let clientId: string | undefined;
+
+/** Username of friend being challenged (pending challenge) */
 let pendingChallengeFriend: string | undefined;
 
-// Additional methods
+/**
+ * Requests the list of available rooms from the server.
+ * @param root - Root element (unused but kept for consistency)
+ */
 const reloadRooms = function (root: HTMLElement) {
 
 	const payLoad = {
@@ -16,6 +29,10 @@ const reloadRooms = function (root: HTMLElement) {
 		ws.send(JSON.stringify(payLoad));
 }
 
+/**
+ * Requests the list of online friends from the server.
+ * @param root - Root element (unused but kept for consistency)
+ */
 const reloadFriends = function (root: HTMLElement) {
 
 	const payLoad = {
@@ -28,6 +45,12 @@ const reloadFriends = function (root: HTMLElement) {
 		ws.send(JSON.stringify(payLoad));
 }
 
+/**
+ * Renders the list of online friends in the friends container.
+ * Creates clickable buttons for each friend to initiate challenges.
+ * @param root - Root element containing the friends container
+ * @param friends - Array of friend objects with username property
+ */
 function displayFriends(root: HTMLElement, friends: any[]) {
 
 	const container = root.querySelector('#friends-container') as HTMLDivElement;
@@ -50,7 +73,12 @@ function displayFriends(root: HTMLElement, friends: any[]) {
 	});
 }
 
-
+/**
+ * Renders the list of available game rooms in the rooms container.
+ * Creates clickable buttons for each room to join.
+ * @param root - Root element containing the rooms container
+ * @param rooms - Array of room objects with roomId, roomName, gameMode, players, and gamePoint
+ */
 function displayRooms(root: HTMLElement, rooms: any[]) {
 	const container = root.querySelector('#rooms-container') as HTMLDivElement;
 	container.innerHTML = ''; // Vider le container
@@ -75,6 +103,11 @@ function displayRooms(root: HTMLElement, rooms: any[]) {
 	});
 }
 
+/**
+ * Creates a new game room with the specified settings.
+ * Sends room creation request to server and closes the modal.
+ * @param root - Root element containing the room creation form
+ */
 const createRoom = function (root: HTMLElement): void {
 	const roomName = (root.querySelector('#room-name') as HTMLInputElement).value;
 	const gamePoint = (root.querySelector('#game-point') as HTMLSelectElement).value;
@@ -98,6 +131,10 @@ const createRoom = function (root: HTMLElement): void {
 	(root.querySelector('#create-room-form') as HTMLFormElement).reset();
 }
 
+/**
+ * Opens the challenge points modal to invite a friend to a game.
+ * @param friend - Username of the friend to challenge
+ */
 const inviteFriends = function (friend: string) {
 	pendingChallengeFriend = friend;
 	const modal = document.querySelector('#challenge-points-modal') as HTMLDivElement | null;
@@ -109,6 +146,10 @@ const inviteFriends = function (friend: string) {
 	}
 }
 
+/**
+ * Sends a request to join a specific game room.
+ * @param roomId - Unique identifier of the room to join
+ */
 const joinRoom = function (roomId: string) {
 	const payLoad = {
 		"method": "join",
@@ -119,7 +160,15 @@ const joinRoom = function (roomId: string) {
 		ws.send(JSON.stringify(payLoad));
 }
 
+/**
+ * Game room page component for online matchmaking, room creation, and friend challenges.
+ * Manages WebSocket connections and provides ranked and friendly game modes.
+ */
 export const GameRoom: Page = {
+	/**
+	 * Renders the game room HTML with ranked/friendly sections, room list, and friend list.
+	 * @returns HTML string containing the room interface with modals
+	 */
 	render() {
 		return `
 	<div class="max-w-6xl mx-auto pt-20 space-y-6">
@@ -303,6 +352,11 @@ export const GameRoom: Page = {
 		`;
 	},
 
+	/**
+	 * Mounts WebSocket connection and event listeners for the game room.
+	 * Handles room creation, joining, matchmaking, and friend challenges.
+	 * @param root - Root element containing the rendered room page
+	 */
 	mount(root: HTMLElement): void {
     Layout.redirectIfNotLoggedIn('/', true);
 		let roomId;

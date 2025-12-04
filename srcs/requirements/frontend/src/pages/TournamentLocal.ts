@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Local tournament page component for 8-player elimination tournaments.
+ * Manages player registration, bracket generation, match gameplay, and tournament progression.
+ */
+
 import type { Page } from "../interface/gameInterface.js"
 import { Layout } from "./Layout";
 import { GameComponent } from "../components/GameComponent.js";
@@ -7,18 +12,39 @@ import { t } from "../utils/i18n.js";
 // ============================================
 // Tournament State
 // ============================================
+/** List of registered player names */
 let tournamentPlayers: string[] = [];
+
+/** Tournament bracket structure with rounds and matches */
 let tournamentBracket: { round: number; matches: { player1: string; player2: string; winner?: string; score1?: number; score2?: number }[] }[] = [];
+
+/** Index of current match within the current round */
 let currentMatchIndex = 0;
+
+/** Index of current round (0 = quarter-finals) */
 let currentRound = 0;
+
+/** Current game component instance */
 let currentGame: GameComponent | null = null;
+
+/** Points required to win a match */
 let winningScore: number = 5;
+
+/** Current score for player 1 in active match */
 let currentScore1: number = 0;
+
+/** Current score for player 2 in active match */
 let currentScore2: number = 0;
 
 // ============================================
 // Utility Functions
 // ============================================
+/**
+ * Shuffles an array using Fisher-Yates algorithm.
+ * @template T - Type of array elements
+ * @param array - Array to shuffle
+ * @returns New shuffled array
+ */
 function shuffleArray<T>(array: T[]): T[] {
 	const arr = [...array];
 	for (let i = arr.length - 1; i > 0; i--) {
@@ -28,6 +54,10 @@ function shuffleArray<T>(array: T[]): T[] {
 	return arr;
 }
 
+/**
+ * Generates the initial tournament bracket by shuffling players and creating first round matches.
+ * Resets bracket state and creates quarter-final pairings.
+ */
 function generateBracket() {
 	const shuffled = shuffleArray(tournamentPlayers);
 	tournamentBracket = [];
@@ -47,6 +77,10 @@ function generateBracket() {
 	tournamentBracket.push({ round: 1, matches: firstRoundMatches });
 }
 
+/**
+ * Generates the next tournament round from winners of the previous round.
+ * Creates match pairings for semi-finals or finals.
+ */
 function generateNextRound() {
 	const lastRound = tournamentBracket[tournamentBracket.length - 1];
 	if (!lastRound || lastRound.matches.length <= 1) return;
@@ -69,6 +103,11 @@ function generateNextRound() {
 	}
 }
 
+/**
+ * Gets the display name for a tournament round based on match count.
+ * @param matchCount - Number of matches in the round
+ * @returns Localized round name (Finale, Demi-finale, Quart de finale, or Tour)
+ */
 // Always 8 players: 4 matches = Quarts, 2 matches = Semis, 1 match = Finale
 function getRoundName(matchCount: number): string {
 	if (matchCount === 1) return 'Finale';
@@ -77,6 +116,11 @@ function getRoundName(matchCount: number): string {
 	return `Tour`;
 }
 
+/**
+ * Generates HTML representation of the tournament bracket.
+ * Displays all rounds with match results and highlights current/completed matches.
+ * @returns HTML string containing the bracket visualization
+ */
 function getBracketHTML(): string {
 	// Build a consistent set of rounds so all matches are visible even if not played yet
 	const firstRoundMatches = tournamentBracket[0]?.matches || [];
@@ -154,6 +198,10 @@ function getBracketHTML(): string {
 	return html;
 }
 
+/**
+ * Gets the progress text showing current match number out of total.
+ * @returns Progress string in format "Match X/Y"
+ */
 function getProgressText(): string {
 	const totalMatches = tournamentPlayers.length - 1;
 	let playedMatches = 0;
@@ -163,6 +211,10 @@ function getProgressText(): string {
 	return `Match ${playedMatches + 1}/${totalMatches}`;
 }
 
+/**
+ * Resets all tournament state to initial values.
+ * Clears players, bracket, scores, and destroys current game instance.
+ */
 function resetTournament() {
 	tournamentPlayers = [];
 	tournamentBracket = [];
@@ -183,7 +235,15 @@ function resetTournament() {
 // ============================================
 // Page Component
 // ============================================
+/**
+ * Local tournament page component for 8-player elimination tournaments.
+ * Includes player registration, bracket display, and match gameplay phases.
+ */
 export const TournamentLocal: Page = {
+	/**
+	 * Renders the tournament HTML with registration and game phases.
+	 * @returns HTML string containing registration form, game area, and modals
+	 */
 	render() {
 		return `
 <div class="flex flex-col items-center justify-center pt-16 pb-8">
@@ -375,6 +435,11 @@ export const TournamentLocal: Page = {
 		`;
 	},
 
+	/**
+	 * Mounts event listeners and initializes the tournament system.
+	 * Handles player registration, match flow, bracket display, and game lifecycle.
+	 * @param root - Root element containing the rendered tournament page
+	 */
 	mount(root: HTMLElement): void {
 		// Reset state
 		resetTournament();

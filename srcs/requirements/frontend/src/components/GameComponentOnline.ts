@@ -1,16 +1,34 @@
+/**
+ * @fileoverview Online multiplayer game component for Pong
+ * Handles rendering and input for network-synchronized gameplay
+ */
+
 import { Player, Ball } from "../interface/gameInterface";
 
+/**
+ * Online Pong game component that synchronizes with a WebSocket server
+ * Receives game state updates from server and sends player input
+ */
 export class GameComponentOnline {
+	/** Container element for the game canvas */
 	private container: HTMLElement;
+	/** Flag indicating if the game can start */
 	private canStart: boolean = false;
+	/** Canvas element for rendering */
 	private canvas: HTMLCanvasElement | null = null;
+	/** 2D rendering context */
 	private context: CanvasRenderingContext2D | null = null;
+	/** Current animation frame ID */
 	private animationId: number | null = null;
+	/** WebSocket connection for multiplayer */
 	private ws: WebSocket | undefined;
+	/** WebSocket method name for move commands */
 	private moveMethod: string = 'move';
 
-  private onScoreChange?: (p1: number, p2: number) => void;
+	/** Callback fired when score changes */
+	private onScoreChange?: (p1: number, p2: number) => void;
 
+	/** Player 1 (left) paddle state */
 	private p1: Player = {
 		x: 20,
 		y: 260,
@@ -19,6 +37,7 @@ export class GameComponentOnline {
 		vel_y: 0
 	};
 
+	/** Player 2 (right) paddle state */
 	private p2: Player = {
 		x: 872,
 		y: 260,
@@ -27,6 +46,7 @@ export class GameComponentOnline {
 		vel_y: 0
 	};
 
+	/** Ball state */
 	private ball: Ball = {
 		x: 446,
 		y: 296,
@@ -36,9 +56,19 @@ export class GameComponentOnline {
 		vel_y: 4
 	};
 
+	/** Player 1 current score */
 	private p1Score: number = 0;
+	/** Player 2 current score */
 	private p2Score: number = 0;
 
+	/**
+	 * Creates a new online game component
+	 * @param container - DOM element to render the game into
+	 * @param initialCanStart - Whether the game can start immediately
+	 * @param onScoreChange - Callback fired when score changes
+	 * @param websocket - WebSocket connection for multiplayer communication
+	 * @param moveMethod - WebSocket method name for move commands
+	 */
 	constructor(
     container: HTMLElement,
     initialCanStart: boolean = false,
@@ -57,6 +87,10 @@ export class GameComponentOnline {
     this.onScoreChange?.(this.p1Score, this.p2Score);
 	}
 
+	/**
+	 * Sets whether the game can start and controls game loop
+	 * @param canStart - True to start the game, false to pause
+	 */
 	setCanStart(canStart: boolean) {
 		this.canStart = canStart;
 		if (this.canStart) {
@@ -66,6 +100,10 @@ export class GameComponentOnline {
 		}
 	}
 
+	/**
+	 * Updates the local game state from server data
+	 * @param game - Game state object from server containing player positions, ball, and scores
+	 */
 	updateGameState(game: any){
 		if (!game) {
 			return;
@@ -97,6 +135,7 @@ export class GameComponentOnline {
 		}
 	}
 
+	/** Renders the canvas HTML into the container */
 	private render() {
 		this.container.innerHTML = `
 			<div class="w-full flex justify-center">
@@ -110,6 +149,7 @@ export class GameComponentOnline {
 		`;
 	}
 
+	/** Sets up the canvas element and 2D context */
 	private setupCanvas() {
 		this.canvas = this.container.querySelector('#game-canvas') as HTMLCanvasElement;
 		if (this.canvas) {
@@ -121,11 +161,13 @@ export class GameComponentOnline {
 		}
 	}
 
+	/** Attaches keyboard event listeners for player input */
 	private setupEventListeners() {
 		window.addEventListener('keydown', this.movePlayer.bind(this));
 		window.addEventListener('keyup', this.stopPlayer.bind(this));
 	}
 
+	/** Clears canvas and draws the center line */
 	private drawBackground() {
 		if (!this.context) return;
 
@@ -142,6 +184,7 @@ export class GameComponentOnline {
 		this.context.setLineDash([]);
 	}
 
+	/** Draws the initial game state with paddles and ball */
 	private drawInitialState() {
 		this.drawBackground();
 		
@@ -154,6 +197,7 @@ export class GameComponentOnline {
 		this.context.fillRect(this.ball.x, this.ball.y, this.ball.width, this.ball.height);		
 	}
 
+	/** Main game loop - renders current game state */
 	private update = () => {
 		if (!this.canStart || !this.context) return;
 
@@ -171,6 +215,7 @@ export class GameComponentOnline {
 		this.onScoreChange?.(this.p1Score, this.p2Score);
 	};
 
+	/** Draws the current score on the canvas */
 	private drawScore() {
 		if (!this.context) return;
 		
@@ -182,6 +227,10 @@ export class GameComponentOnline {
 		this.context.fillText(this.p2Score.toString(), 600, 60);
 	}
 
+	/**
+	 * Handles keydown events to send move commands to server
+	 * @param e - Keyboard event
+	 */
 	private movePlayer = (e: KeyboardEvent) => {
 		if (["KeyW", "KeyS", "ArrowUp", "ArrowDown"].includes(e.code)) {
 			const roomId = sessionStorage.getItem('roomId');
@@ -190,6 +239,10 @@ export class GameComponentOnline {
 		}
 	};
 
+	/**
+	 * Handles keyup events to send stop commands to server
+	 * @param e - Keyboard event
+	 */
 	private stopPlayer = (e: KeyboardEvent) => {
 		if (["KeyW", "KeyS", "ArrowUp", "ArrowDown"].includes(e.code)) {
 			const roomId = sessionStorage.getItem('roomId');
@@ -200,12 +253,14 @@ export class GameComponentOnline {
 	};
 
 
+	/** Starts the game loop */
 	private startGame() {
 		if (!this.animationId) {
 			this.update();
 		}
 	}
 
+	/** Pauses the game loop */
 	private pauseGame() {
 		if (this.animationId) {
 			cancelAnimationFrame(this.animationId);
@@ -213,12 +268,17 @@ export class GameComponentOnline {
 		}
   }
 
+	/** Cleans up the component and removes event listeners */
 	public destroy() {
 		this.pauseGame();
 		window.removeEventListener('keydown', this.movePlayer);
 		window.removeEventListener('keyup', this.stopPlayer);
 	}
 
+	/**
+	 * Gets both players' current scores
+	 * @returns Object containing p1Score and p2Score
+	 */
   public getScores() {
     return { p1Score: this.p1Score, p2Score: this.p2Score };
   }
