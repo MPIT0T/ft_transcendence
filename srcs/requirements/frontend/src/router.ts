@@ -29,11 +29,8 @@ const routes: Record<string, Page> = {
 }
 
 const getPath = (): string => {
-  // strip possible base path if your app is not at site root
-  const base = ""; // ex: "/app" if deployed under a subpath
+  const base = "";
   let path = window.location.pathname.replace(base, "") || "/";
-  // keep querystring if needed:
-  // if (path.includes('?')) path = path.split('?')[0];
   return path;
 }
 
@@ -57,7 +54,6 @@ export function startRouter(){
     }
   }
 
-  // navigation helper
   const navigate = (to: string) => {
     if (window.location.pathname !== to) {
       history.pushState(null, '', to);
@@ -65,13 +61,11 @@ export function startRouter(){
     }
   }
 
-  // intercept internal links (add data-link attr or intercept same-origin links)
   document.addEventListener('click', (e) => {
     const a = (e.target as HTMLElement).closest && (e.target as HTMLElement).closest('a');
     if (!a) return;
     const href = a.getAttribute('href');
     if (!href) return;
-    // only intercept internal links (no protocol, same origin)
     if (href.startsWith('/') && !a.hasAttribute('data-external')) {
       e.preventDefault();
       navigate(href);

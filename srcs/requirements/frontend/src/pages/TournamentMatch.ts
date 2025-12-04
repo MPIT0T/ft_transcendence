@@ -22,7 +22,7 @@ export const TournamentMatch: Page = {
     return `
 <div class="mt-24">
   <div class="text-center mb-4">
-    <span class="text-2xl text-yellow-400 font-bold">🏆 Match Tournoi Local</span>
+    <span class="text-2xl text-yellow-400 font-bold">Match Tournoi Local</span>
   </div>
   <div class="relative overflow-hidden text-gray-50 text-lg border border-gray-50 backdrop-blur-2xs">
     <div class="absolute inset-0 bg-gradient-to-r from-red-500 to-blue-500 opacity-30"></div>

@@ -4,19 +4,19 @@ import { createCountdown } from "../utils/countdown.js";
 
 let currentGame: GameComponent | null = null;
 
-		export const Game: Page = {
-		render() {
-			const player1Name = 'Joueur 1';
-			const player2Name = 'Joueur 2';
-			return `
+export const Game: Page = {
+	render() {
+		const player1Name = 'Joueur 1';
+		const player2Name = 'Joueur 2';
+		return `
 	<div class="mt-24">
 		<div class="relative overflow-hidden text-gray-50 text-lg border border-gray-50 backdrop-blur-2xs">
-			<div class="absolute inset-0 bg-gradient-to-r from-red-500 to-blue-500 opacity-30"></div>
+			<div class="absolute inset-0 bg-gradient-to-r from-red-500 via-amber-400 to-green-500 animate-gradientShift bg-[length:150%_150%] opacity-30"></div>
 			<div class="relative z-10">
 				<div class="flex items-center justify-between px-6 pt-2">
-					<span id="player1-name" class="font-semibold text-5xl text-blue-400">${player1Name}</span>
+					<span id="player1-name" class="font-semibold text-5xl text-gray-50">${player1Name}</span>
 					<span id="score" class="text-5xl font-extrabold tracking-wide">0 : 0</span>
-					<span id="player2-name" class="font-semibold text-5xl text-red-400">${player2Name}</span>
+					<span id="player2-name" class="font-semibold text-5xl text-gray-50">${player2Name}</span>
 				</div>
 				<div class="flex items-center justify-between px-6 pb-2 text-md opacity-90">
 					<span>W/S</span>
@@ -37,22 +37,21 @@ let currentGame: GameComponent | null = null;
 		</div>
 
 		<!-- Match end modal -->
-		<div id="match-end-modal" class="fixed inset-0 backdrop-blur-lg bg-black/70 hidden items-center justify-center z-50">
-			<div class="border border-gray-50 bg-gray-900/90 p-8 max-w-md w-full mx-4 text-center">
-				<div class="text-6xl mb-4">🎉</div>
+		<div id="match-end-modal" class="fixed inset-0 backdrop-blur-lg hidden items-center justify-center z-50">
+			<div class="border border-gray-50 p-8 max-w-md w-full mx-4 text-center">
 				<h3 class="text-2xl text-gray-300 font-bold mb-2">Match terminé !</h3>
 				<p id="match-winner-name" class="text-4xl text-green-400 font-bold mb-2"></p>
 				<p id="match-final-score" class="text-xl text-gray-400 mb-6"></p>
 				<div class="flex gap-3">
-					<button id="close-match-modal-btn" class="flex-1 py-3 text-white border-2 border-yellow-500 hover:bg-yellow-500/20 transition-colors font-bold">Fermer</button>
-					<button id="leave-to-lobby-btn" class="flex-1 py-3 text-white border border-gray-50 hover:bg-gray-700/50 font-bold">Retour au lobby</button>
+					<button id="close-match-modal-btn" class="flex-1 py-3 text-white border border-gray-50 hover:bg-gray-700/50 hover:border-yellow-500 transition-colors font-bold">Fermer</button>
+					<button id="leave-to-lobby-btn" class="flex-1 py-3 text-white border border-gray-50 hover:bg-gray-700/50 hover:border-red-500 font-bold">Retour au lobby</button>
 				</div>
 			</div>
 		</div>
 
 		<!-- Modal de sélection du nombre de points (local 1v1) -->
-		<div id="points-modal" class="fixed inset-0 flex justify-center items-center z-80 hidden bg-black/60">
-			<div class="border border-gray-50 bg-gray-900/90 p-6 max-w-md w-full mx-4 text-center">
+		<div id="points-modal" class="fixed inset-0 flex justify-center items-center z-80 hidden backdrop-blur-lg">
+			<div class="border border-gray-50 p-6 max-w-md w-full mx-4 text-center">
 				<h3 class="text-2xl text-yellow-400 font-bold mb-4">Choisir le nombre de points</h3>
 				<p class="text-gray-300 mb-4">Sélectionnez le score cible pour gagner la partie</p>
 				<div class="flex gap-3 justify-center mb-6">
@@ -62,8 +61,8 @@ let currentGame: GameComponent | null = null;
 					<button class="points-option px-5 py-2 border border-gray-600 text-gray-400 hover:border-gray-50 hover:text-gray-50 transition-colors" data-score="15">15</button>
 				</div>
 				<div class="flex gap-3 justify-center">
-					<button id="confirm-points-btn" class="px-6 py-3 font-bold border-2 border-green-500 text-green-400 disabled:opacity-40" disabled>Confirmer</button>
-					<button id="cancel-points-btn" class="px-6 py-3 font-bold border border-gray-50 text-gray-50">Exit</button>
+					<button id="confirm-points-btn" class="px-6 py-3 font-bold border border-gray-50 text-gray-50 disabled:opacity-40" disabled>Confirmer</button>
+					<button id="cancel-points-btn" class="px-6 py-3 font-bold border border-gray-50 text-gray-50 hover:bg-gray-700/50 hover:border-red-500">Exit</button>
 				</div>
 			</div>
 		</div>
@@ -72,7 +71,6 @@ let currentGame: GameComponent | null = null;
 	},
 
 	mount(root) {
-		// Disable the global layout login button while on the game page
 		const layoutLoginBtn = document.querySelector('#login-btn') as HTMLButtonElement | null;
 		let _prevLoginBtnClass: string | null = null;
 		let _prevLoginBtnDisabled: boolean | null = null;
@@ -80,11 +78,9 @@ let currentGame: GameComponent | null = null;
 			_prevLoginBtnClass = layoutLoginBtn.className;
 			_prevLoginBtnDisabled = layoutLoginBtn.disabled;
 			layoutLoginBtn.disabled = true;
-			// visually indicate disabled state
 			layoutLoginBtn.className = `${layoutLoginBtn.className} opacity-50 pointer-events-none`;
 		}
 
-		// When leaving the page (popstate), restore the login button
 		const _restoreLoginBtn = () => {
 			if (layoutLoginBtn) {
 				if (_prevLoginBtnClass !== null) layoutLoginBtn.className = _prevLoginBtnClass;
@@ -98,7 +94,6 @@ let currentGame: GameComponent | null = null;
 		};
 		window.addEventListener('popstate', popstateHandler);
 
-		// Cleanup previous game if exists
 		if (currentGame) {
 			currentGame.destroy();
 		}
@@ -109,156 +104,168 @@ let currentGame: GameComponent | null = null;
 		const restartBtn = root.querySelector('#restart-btn') as HTMLButtonElement;
 		const gameContainer = root.querySelector('#game-container') as HTMLElement;
 		const score = root.querySelector('#score') as HTMLElement;
-		
+
 		const startModal = root.querySelector('#start-modal') as HTMLElement;
 		const startModalText = root.querySelector('#start-modal-text') as HTMLElement;
 
-		// Match end modal elements
 		const matchEndModal = root.querySelector('#match-end-modal') as HTMLDivElement | null;
 		const matchWinnerName = root.querySelector('#match-winner-name') as HTMLElement | null;
 		const matchFinalScore = root.querySelector('#match-final-score') as HTMLElement | null;
 		const closeMatchModalBtn = root.querySelector('#close-match-modal-btn') as HTMLButtonElement | null;
 		const leaveToLobbyBtn = root.querySelector('#leave-to-lobby-btn') as HTMLButtonElement | null;
 
-		
+
 
 		const countdown = createCountdown();
 
 		if (startBtn && gameContainer && score) {
-				// Local mode variables
-				let winningScore = 5; // Score pour gagner un match (modifiable via modal)
+			let winningScore = 5; // Score pour gagner un match (modifiable via modal)
 
-				// Points modal elements
-				const pointsModal = root.querySelector('#points-modal') as HTMLDivElement | null;
-				const pointsOptions = root.querySelectorAll('.points-option');
-				const confirmPointsBtn = root.querySelector('#confirm-points-btn') as HTMLButtonElement | null;
-				const cancelPointsBtn = root.querySelector('#cancel-points-btn') as HTMLButtonElement | null;
+			const pointsModal = root.querySelector('#points-modal') as HTMLDivElement | null;
+			const pointsOptions = root.querySelectorAll('.points-option');
+			const confirmPointsBtn = root.querySelector('#confirm-points-btn') as HTMLButtonElement | null;
+			const cancelPointsBtn = root.querySelector('#cancel-points-btn') as HTMLButtonElement | null;
 
-				// Show the points modal to let user choose match length
-				if (pointsModal) {
-					pointsModal.classList.remove('hidden');
-					pointsModal.classList.add('flex');
-					// While modal is open, disable the main start button to avoid conflicts
-					if (startBtn) {
-						startBtn.disabled = true;
-						startBtn.classList.add('opacity-50', 'pointer-events-none');
-					}
+			if (pointsModal) {
+				pointsModal.classList.remove('hidden');
+				pointsModal.classList.add('flex');
+				if (startBtn) {
+					startBtn.classList.add('hidden');
+				}
 
-					let selectedScore: number | null = null;
-					pointsOptions.forEach(btn => {
-						btn.addEventListener('click', () => {
-							pointsOptions.forEach(b => b.classList.remove('border-yellow-500', 'text-yellow-400', 'bg-yellow-500/20'));
-							(btn as HTMLElement).classList.add('border-yellow-500', 'text-yellow-400', 'bg-yellow-500/20');
-							selectedScore = parseInt((btn as HTMLElement).getAttribute('data-score') || '5');
-							if (confirmPointsBtn) confirmPointsBtn.disabled = false;
-						});
+				// Ensure confirm button has no hover until user selects a score
+				if (confirmPointsBtn) {
+					confirmPointsBtn.disabled = true;
+					confirmPointsBtn.classList.remove('hover:bg-gray-700/50', 'hover:border-green-500');
+				}
+
+				let selectedScore: number | null = null;
+				pointsOptions.forEach(btn => {
+					const btnEl = btn as HTMLElement;
+					btnEl.addEventListener('click', () => {
+						const alreadySelected = btnEl.classList.contains('border-yellow-500');
+						// Clear selection on all buttons
+						pointsOptions.forEach(b => (b as HTMLElement).classList.remove('border-yellow-500', 'text-yellow-400', 'bg-yellow-500/20'));
+						if (!alreadySelected) {
+							// Select this one
+							btnEl.classList.add('border-yellow-500', 'text-yellow-400', 'bg-yellow-500/20');
+							selectedScore = parseInt(btnEl.getAttribute('data-score') || '5');
+							if (confirmPointsBtn) {
+								confirmPointsBtn.disabled = false;
+								confirmPointsBtn.classList.add('hover:bg-gray-700/50', 'hover:border-green-500');
+							}
+						} else {
+							// Deselect (no selection)
+							selectedScore = null;
+							if (confirmPointsBtn) {
+								confirmPointsBtn.disabled = true;
+								confirmPointsBtn.classList.remove('hover:bg-gray-700/50', 'hover:border-green-500');
+							}
+						}
 					});
+				});
 
-					if (confirmPointsBtn) {
-						confirmPointsBtn.addEventListener('click', async () => {
-							if (selectedScore) {
-								winningScore = selectedScore;
-								const wsEl = root.querySelector('#winning-score-display') as HTMLElement | null;
-								if (wsEl) wsEl.textContent = String(winningScore);
-							}
-							if (pointsModal) {
-								pointsModal.classList.add('hidden');
-								pointsModal.classList.remove('flex');
-							}
-							// Re-enable start button visually (we'll start the match automatically)
+				if (confirmPointsBtn) {
+					confirmPointsBtn.addEventListener('click', async () => {
+						if (selectedScore) {
+							winningScore = selectedScore;
+							const wsEl = root.querySelector('#winning-score-display') as HTMLElement | null;
+							if (wsEl) wsEl.textContent = String(winningScore);
+						}
+						if (pointsModal) {
+							pointsModal.classList.add('hidden');
+							pointsModal.classList.remove('flex');
+						}
+						// Re-enable start button visually (we'll start the match automatically)
+						if (startBtn) {
+							startBtn.classList.remove('hidden');
+						}
+						// Start countdown and begin the match automatically
+						try {
+							await countdown.start(startModal, startModalText);
+							canStart = true;
+							if (currentGame) currentGame.setCanStart(true);
+							// Update start button to Pause and enable it
 							if (startBtn) {
-								startBtn.disabled = true; // keep disabled while countdown runs
-								startBtn.classList.add('opacity-50', 'pointer-events-none');
+								startBtn.classList.remove('hidden');
+								startBtn.className = "px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-gray-700/50 hover:border-red-500";
+								startBtn.textContent = "Pause";
 							}
-							// Start countdown and begin the match automatically
-							try {
-								await countdown.start(startModal, startModalText);
-								canStart = true;
-								if (currentGame) currentGame.setCanStart(true);
-								// Update start button to Pause and enable it
-								if (startBtn) {
-									startBtn.disabled = false;
-									startBtn.classList.remove('opacity-50', 'pointer-events-none');
-									startBtn.className = "px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-gray-700/50 hover:border-red-500";
-									startBtn.textContent = "Pause";
-								}
-								// Hide restart during active match
-								if (restartBtn) restartBtn.classList.add('hidden');
-							} catch (e: any) {
-								if (!(e && (e.name === 'AbortError' || e instanceof DOMException))) throw e;
-								// If aborted, keep everything paused and re-enable start button
-								canStart = false;
-								if (startBtn) {
-									startBtn.disabled = false;
-									startBtn.classList.remove('opacity-50', 'pointer-events-none');
-									startBtn.className = "px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-gray-700/50 hover:border-blue-500";
-									startBtn.textContent = "Jouer";
-								}
-							}
-						});
-					}
-
-					if (cancelPointsBtn) {
-						cancelPointsBtn.addEventListener('click', () => {
-							// Exit to lobby
-							history.pushState(null, '', '/localLobby');
-							window.dispatchEvent(new PopStateEvent('popstate'));
-						});
-					}
-				}
-
-				// Hide restart button during an active match; show only at match end
-				if (restartBtn) {
-					restartBtn.classList.add('hidden');
-				}
-
-				// Initialize game component (local 1v1)
-				currentGame = new GameComponent(
-					gameContainer,
-					canStart,
-					(p1, p2) => {
-						score.textContent = `${p1} : ${p2}`;
-						// Local (non-tournament) match end handling
-						if (p1 >= winningScore || p2 >= winningScore) {
-							// Stop the game
+							// Hide restart during active match
+							if (restartBtn) restartBtn.classList.add('hidden');
+						} catch (e: any) {
+							if (!(e && (e.name === 'AbortError' || e instanceof DOMException))) throw e;
+							// If aborted, keep everything paused and re-enable start button
 							canStart = false;
-
-							if (currentGame) currentGame.setCanStart(false);
-
-							const winner = p1 >= winningScore ? 'Joueur 1' : 'Joueur 2';
-							if (matchWinnerName) matchWinnerName.textContent = winner;
-							if (matchFinalScore) matchFinalScore.textContent = `Score: ${p1} - ${p2}`;
-							if (matchEndModal) {
-								matchEndModal.classList.remove('hidden');
-								matchEndModal.classList.add('flex');
+							if (startBtn) {
+								startBtn.classList.remove('hidden');
+								startBtn.className = "px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-gray-700/50 hover:border-blue-500";
+								startBtn.textContent = "Jouer";
 							}
-
-							// Update start button to 'Jouer'
-							startBtn.className = "px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-gray-700/50 hover:border-blue-500";
-							startBtn.textContent = "Jouer";
-
-							// Show the restart button so user can relaunch same-match with same winningScore
-							if (restartBtn) restartBtn.classList.remove('hidden');
 						}
-					},
-					async (state: boolean) => {
-						if (state) {
-							// Do not run countdown if this goal ended the match
-							const sc1 = currentGame?.getScoreP1() ?? 0;
-							const sc2 = currentGame?.getScoreP2() ?? 0;
-							if (sc1 >= winningScore || sc2 >= winningScore) {
-								return;
-							}
-							try {
-								await countdown.start(startModal, startModalText);
-							} catch (e: any) {
-								if (!(e && (e.name === 'AbortError' || e instanceof DOMException))) throw e;
-							}
+					});
+				}
+
+				if (cancelPointsBtn) {
+					cancelPointsBtn.addEventListener('click', () => {
+						// Exit to lobby
+						history.pushState(null, '', '/localLobby');
+						window.dispatchEvent(new PopStateEvent('popstate'));
+					});
+				}
+			}
+
+			// Hide restart button during an active match; show only at match end
+			if (restartBtn) {
+				restartBtn.classList.add('hidden');
+			}
+
+			// Initialize game component (local 1v1)
+			currentGame = new GameComponent(
+				gameContainer,
+				canStart,
+				(p1, p2) => {
+					score.textContent = `${p1} : ${p2}`;
+					// Local (non-tournament) match end handling
+					if (p1 >= winningScore || p2 >= winningScore) {
+						// Stop the game
+						canStart = false;
+
+						if (currentGame) currentGame.setCanStart(false);
+
+						const winner = p1 >= winningScore ? 'Joueur 1' : 'Joueur 2';
+						if (matchWinnerName) matchWinnerName.textContent = winner;
+						if (matchFinalScore) matchFinalScore.textContent = `Score: ${p1} - ${p2}`;
+						// Hide start/restart controls while the match-end modal is visible
+						if (matchEndModal) {
+							// startBtn.classList.add('hidden');
+							// restartBtn.classList.add('hidden');
+							matchEndModal.classList.remove('hidden');
+							matchEndModal.classList.add('flex');
+						}
+
+						startBtn.className = "px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-gray-700/50 hover:border-blue-500 hidden";
+						startBtn.textContent = "Jouer";
+					}
+				},
+				async (state: boolean) => {
+					if (state) {
+						// Do not run countdown if this goal ended the match
+						const sc1 = currentGame?.getScoreP1() ?? 0;
+						const sc2 = currentGame?.getScoreP2() ?? 0;
+						if (sc1 >= winningScore || sc2 >= winningScore) {
+							return;
+						}
+						try {
+							await countdown.start(startModal, startModalText);
+						} catch (e: any) {
+							if (!(e && (e.name === 'AbortError' || e instanceof DOMException))) throw e;
 						}
 					}
-				);
+				}
+			);
 
-			
+
 
 			// Bouton "Match suivant" en mode tournoi
 			const nextMatchBtn = root.querySelector('#next-match-btn') as HTMLButtonElement;
@@ -269,7 +276,7 @@ let currentGame: GameComponent | null = null;
 					window.location.reload();
 				});
 			}
-			
+
 			// Bouton "Retour au lobby" après fin de tournoi
 			const finishTournamentBtn = root.querySelector('#finish-tournament-btn') as HTMLButtonElement;
 			if (finishTournamentBtn) {
@@ -279,7 +286,7 @@ let currentGame: GameComponent | null = null;
 					window.dispatchEvent(new PopStateEvent('popstate'));
 				});
 			}
-			
+
 			// Bouton "Quitter le tournoi"
 			const quitTournamentBtn = root.querySelector('#quit-tournament-btn') as HTMLButtonElement;
 			if (quitTournamentBtn) {
@@ -302,9 +309,8 @@ let currentGame: GameComponent | null = null;
 					if (currentGame) {
 						currentGame.restart();
 					}
-					if(startBtn && restartBtn) {
-						startBtn.disabled = true;
-						startBtn.classList.add('opacity-50', 'pointer-events-none');
+					if (startBtn && restartBtn) {
+						startBtn.classList.add('hidden');
 						restartBtn.classList.add('hidden');
 					}
 					const pointsModalEl = root.querySelector('#points-modal') as HTMLDivElement | null;
@@ -390,6 +396,8 @@ let currentGame: GameComponent | null = null;
 						matchEndModal.classList.add('hidden');
 						matchEndModal.classList.remove('flex');
 					}
+					if (startBtn) startBtn.classList.remove('hidden');
+					if (restartBtn) restartBtn.classList.remove('hidden');
 				});
 			}
 

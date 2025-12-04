@@ -1,40 +1,5 @@
 const Rooms = require('./rooms.js');
 
-/**
- * 🏆 SYSTÈME DE TOURNOI AVEC PRÉ-GÉNÉRATION DES ROOMS
- * 
- * Pour un tournoi de 8 joueurs :
- * - 4 Quarter Finals (QF1, QF2, QF3, QF4)
- * - 2 Semi Finals (SF1, SF2)
- * - 1 Final
- * 
- * TOUTES les rooms sont créées au début du tournoi (vides) et stockées dans `allTournamentRooms[]`
- * 
- * Structure d'une room pré-générée :
- * {
- *   roomId: 'tournamentId_quarter_1',
- *   roomName: 'Quarter Final 1',
- *   round: 'Quarter Finals',
- *   matchNumber: 1,
- *   player1: null,           // Assigné plus tard
- *   player2: null,           // Assigné plus tard
- *   winner: null,            // Déterminé après le match
- *   score1: null,            // Mis à jour après le match
- *   score2: null,            // Mis à jour après le match
- *   status: 'waiting'        // 'waiting' | 'ready' | 'completed'
- * }
- * 
- * MÉTHODES DISPONIBLES :
- * - generateAllTournamentRooms() : Crée toutes les 7 rooms vides au début
- * - getTournamentRoom(round, matchNumber) : Récupère une room spécifique
- * - assignPlayersToRoom(round, matchNumber, p1, p2) : Assigne des joueurs à une room
- * 
- * UTILISATION :
- * 1. Le tournoi génère toutes les rooms dès que 8 joueurs sont prêts
- * 2. Les joueurs sont assignés aux rooms au fur et à mesure
- * 3. Vous pouvez accéder/modifier les rooms via `tournament.allTournamentRooms`
- */
-
 function sleep(ms) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
 }

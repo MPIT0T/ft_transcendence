@@ -19,21 +19,26 @@ export const GameLobby: Page = {
         Local
       </div>
       <p class="text-gray-400 mb-8 text-xl">
-        Jouez à deux sur le même ordinateur. 
+        Jouez à deux sur le même ordinateur.
         Parfait pour défier un ami assis à côté de vous !
       </p>
     </div>
     <div class="space-y-2 mb-8">
       <div class="flex justify-between text-xl">
         <span class="text-gray-300">Joueurs :</span>
-        <span class="font-semibold text-white">2 locaux</span>
+        <span class="font-semibold justify-between">
+          <span class="text-lime-400">2</span>
+          <span class="text-gray-50"> / </span>
+          <span class="text-yellow-400">8</span>
+          <span class="text-gray-50">locaux</span>
+        </span>
       </div>
       <div class="flex justify-between text-xl">
         <span class="text-gray-300">Contrôles :</span>
-        <span class="font-semibold justify-between text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-blue-500 to-green-500 bg-[length:300%_100%] bg-[position:0%_50%]">
-          <span>W/S</span>
+        <span class="font-semibold justify-between">
+          <span class="text-amber-400">W/S</span>
           <span class="text-gray-50">vs</span>
-          <span>↑/↓</span>
+          <span class="text-red-400">↑/↓</span>
         </span>
       </div>
     </div>
@@ -88,7 +93,7 @@ export const GameLobby: Page = {
 	},
 
 	mount(root: HTMLElement): void {
-		// Mode Local
+		// Offline mode
 		const localBtn = root.querySelector('#local-mode') as HTMLButtonElement;
 		if (localBtn) {
 			localBtn.addEventListener('click', () => {
@@ -98,7 +103,7 @@ export const GameLobby: Page = {
 			});
 		}
 
-		// Mode Online
+		// Online Mode
 		const onlineBtn = root.querySelector('#online-mode') as HTMLButtonElement;
 		if (onlineBtn) {
 			onlineBtn.addEventListener('click', () => {
@@ -140,7 +145,6 @@ export const GameLobby: Page = {
 			}, 10000);
 		}
 
-		// popstate handler to clear intervals
 		const popstateHandler = (event: PopStateEvent) => {
 				window.clearInterval(status);
 				window.clearInterval(statusPlayer);

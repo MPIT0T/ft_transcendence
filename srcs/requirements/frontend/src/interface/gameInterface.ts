@@ -1,18 +1,18 @@
 interface Player {
-  x: number;      // Position horizontale
-  y: number;      // Position verticale
-  width: number;  // Largeur de la raquette
-  height: number; // Hauteur de la raquette
-  vel_y: number;  // Vélocité verticale
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  vel_y: number;
 }
 
 interface Ball {
-  x: number;      // Position horizontale
-  y: number;      // Position verticale
-  width: number;  // Largeur de la balle
-  height: number; // Hauteur de la balle
-  vel_x: number;  // Vélocité horizontale
-  vel_y: number;  // Vélocité verticale
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  vel_x: number;
+  vel_y: number;
 }
 
 interface GameState {

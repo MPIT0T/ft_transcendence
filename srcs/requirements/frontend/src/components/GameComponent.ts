@@ -7,18 +7,16 @@ export class GameComponent {
   private canvas: HTMLCanvasElement | null = null;
   private context: CanvasRenderingContext2D | null = null;
   private animationId: number | null = null;
-  private isPaused: boolean = false; // Pour gérer les pauses entre les buts
+  private isPaused: boolean = false;
 
   private onScoreChange?: (p1: number, p2: number) => void;
   private onGoal?: (state: boolean) => void;
 
-  // Constantes du jeu (identiques au serveur)
   private readonly CANVAS_WIDTH = 900;
   private readonly CANVAS_HEIGHT = 600;
   private readonly TICK_RATE = 60;
   private readonly TICK_INTERVAL = 1000 / this.TICK_RATE;
 
-  // Utilisation des classes Player et Ball
   private p1: Player = new Player(1);
   private p2: Player = new Player(2);
   private ball: Ball = new Ball();
@@ -37,9 +35,9 @@ export class GameComponent {
     this.canStart = initialCanStart;
     this.onScoreChange = onScoreChange;
     this.onGoal = onGoal;
-    this.render();              // Crée le HTML
-    this.setupCanvas();         // Configure le canvas
-    this.setupEventListeners(); // Ajoute les contrôles clavier
+    this.render();     
+    this.setupCanvas();
+    this.setupEventListeners();
     this.onScoreChange?.(this.p1Score, this.p2Score);
     this.onGoal?.(false);
   }
@@ -71,7 +69,6 @@ export class GameComponent {
     if (this.canvas) {
       this.context = this.canvas.getContext('2d');
       if (this.context) {
-        // Disable anti-aliasing for pixel-perfect rendering
         this.context.imageSmoothingEnabled = false;
         this.drawInitialState();
       }
@@ -86,10 +83,8 @@ export class GameComponent {
   private drawBackground() {
     if (!this.context) return;
     
-    // Clear with black background
     this.context.clearRect(0, 0, 900, 600);
     
-    // Draw center line (dashed)
     this.context.fillStyle = "#dbdbdb";
     this.context.setLineDash([10, 10]);
     this.context.beginPath();
@@ -106,15 +101,12 @@ export class GameComponent {
     
     if (!this.context) return;
     
-    // Draw paddles (white rectangles)
     this.context.fillStyle = "#FFFFFF";
     this.context.fillRect(this.p1.x, this.p1.y, this.p1.width, this.p1.height);
     this.context.fillRect(this.p2.x, this.p2.y, this.p2.width, this.p2.height);
     
-    // Draw ball (white square)
     this.context.fillRect(this.ball.x, this.ball.y, this.ball.width, this.ball.height);
     
-    // this.drawScore();
   }
 
   private update = () => {
@@ -122,37 +114,29 @@ export class GameComponent {
 
     this.animationId = requestAnimationFrame(this.update);
     
-    // Calculer le delta time (comme le serveur)
     const currentTime = Date.now();
     const deltaTime = currentTime - this.lastTime;
     
-    // Mettre à jour la physique du jeu seulement si pas en pause
     if (!this.isPaused) {
       this.updateGamePhysics();
     }
     
-    // Dessiner l'état actuel (même pendant la pause)
     this.drawGame();
     
     this.lastTime = currentTime;
   };
 
   private updateGamePhysics(): void {
-    // 1. Mettre à jour les positions des joueurs
     this.p1.updatePosition(this.CANVAS_HEIGHT);
     this.p2.updatePosition(this.CANVAS_HEIGHT);
 
-    // 2. Mettre à jour la position de la balle
     this.ball.updatePosition();
 
-    // 3. Vérifier les collisions avec les murs
     this.ball.checkWallCollision(this.CANVAS_HEIGHT);
 
-    // 4. Vérifier les collisions avec les raquettes
     this.ball.checkPaddleCollision(this.p1);
     this.ball.checkPaddleCollision(this.p2);
 
-    // 5. Vérifier les points marqués
     const scorer = this.ball.checkScoring(this.CANVAS_WIDTH);
     if (scorer === 1) {
       this.p1Score++;
@@ -162,7 +146,6 @@ export class GameComponent {
       this.onScoreChange?.(this.p1Score, this.p2Score);
       this.onGoal?.(true);
       
-      // Pause de 3 secondes après un but
       this.isPaused = true;
       setTimeout(() => {
         this.isPaused = false;
@@ -175,7 +158,6 @@ export class GameComponent {
       this.onScoreChange?.(this.p1Score, this.p2Score);
       this.onGoal?.(true);
       
-      // Pause de 3 secondes après un but
       this.isPaused = true;
       setTimeout(() => {
         this.isPaused = false;
@@ -186,15 +168,12 @@ export class GameComponent {
   private drawGame(): void {
     if (!this.context) return;
     
-    // Dessiner le fond
     this.drawBackground();
     
-    // Dessiner les joueurs
     this.context.fillStyle = "#FFFFFF";
     this.context.fillRect(this.p1.x, this.p1.y, this.p1.width, this.p1.height);
     this.context.fillRect(this.p2.x, this.p2.y, this.p2.width, this.p2.height);
     
-    // Dessiner la balle
     this.context.fillRect(this.ball.x, this.ball.y, this.ball.width, this.ball.height);
     
   }
@@ -206,7 +185,6 @@ export class GameComponent {
     this.context.font = "bold 48px monospace";
     this.context.textAlign = "center";
     
-    // Draw scores in classic Pong style
     this.context.fillText(this.p1Score.toString(), 300, 60);
     this.context.fillText(this.p2Score.toString(), 600, 60);
   }
@@ -251,19 +229,15 @@ export class GameComponent {
  }
 
   public restart() {
-    // Pause the game
     this.pauseGame();
     
-    // Reset scores
     this.p1Score = 0;
     this.p2Score = 0;
     
-    // Reset players and ball
     this.p1.reset();
     this.p2.reset();
     this.ball.reset(1);
     
-    // Redraw initial state
     this.drawInitialState();
 
     this.onScoreChange?.(this.p1Score, this.p2Score);

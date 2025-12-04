@@ -1,42 +1,39 @@
 import { Player, Ball } from "../interface/gameInterface";
 
 export class GameComponentOnline {
-	private container: HTMLElement;                    // Conteneur DOM
-	private canStart: boolean = false;                 // État du jeu (pause/play)
-	private canvas: HTMLCanvasElement | null = null;   // Élément canvas
-	private context: CanvasRenderingContext2D | null = null; // Context 2D
-	private animationId: number | null = null;         // ID de l'animation
-	private ws: WebSocket | undefined;                 // WebSocket pour ce jeu
-	private moveMethod: string = 'move';               // Méthode de mouvement ('move' ou 'moveT')
+	private container: HTMLElement;
+	private canStart: boolean = false;
+	private canvas: HTMLCanvasElement | null = null;
+	private context: CanvasRenderingContext2D | null = null;
+	private animationId: number | null = null;
+	private ws: WebSocket | undefined;
+	private moveMethod: string = 'move';
 
   private onScoreChange?: (p1: number, p2: number) => void;
 
-	// Joueur 1 (gauche)
 	private p1: Player = {
-		x: 20,      // 20px du bord gauche
-		y: 260,     // Centre vertical
-		width: 8,   // Raquette fine
-		height: 80, // Assez haute
-		vel_y: 0    // Immobile au départ
-	};
-
-	// Joueur 2 (droite)  
-	private p2: Player = {
-		x: 872,     // 572px = 900-20-8 (bord droit - marge - largeur)
-		y: 260,     // Centre vertical
+		x: 20,
+		y: 260,
 		width: 8,
 		height: 80,
 		vel_y: 0
 	};
 
-	// Balle
+	private p2: Player = {
+		x: 872,
+		y: 260,
+		width: 8,
+		height: 80,
+		vel_y: 0
+	};
+
 	private ball: Ball = {
-		x: 446,     // Centre horizontal
-		y: 296,     // Centre vertical
-		width: 8,   // Carrée
+		x: 446,
+		y: 296,
+		width: 8,
 		height: 8,
-		vel_x: 6,   //3 Se déplace vers la droite
-		vel_y: 4    //2 Se déplace vers le bas
+		vel_x: 6,
+		vel_y: 4
 	};
 
 	private p1Score: number = 0;
@@ -54,9 +51,9 @@ export class GameComponentOnline {
     this.onScoreChange = onScoreChange;
     this.ws = websocket;
     this.moveMethod = moveMethod;
-		this.render();              // Crée le HTML
-		this.setupCanvas();         // Configure le canvas
-		this.setupEventListeners(); // Ajoute les contrôles clavier
+		this.render();
+		this.setupCanvas();
+		this.setupEventListeners();
     this.onScoreChange?.(this.p1Score, this.p2Score);
 	}
 
@@ -95,8 +92,6 @@ export class GameComponentOnline {
 			this.p2Score = game.p2Score;
       this.onScoreChange?.(this.p1Score, this.p2Score);
 		}
-		
-		// Redessiner immédiatement si le jeu n'est pas encore démarré
 		if (!this.canStart) {
 			this.drawInitialState();
 		}
@@ -120,7 +115,6 @@ export class GameComponentOnline {
 		if (this.canvas) {
 			this.context = this.canvas.getContext('2d');
 			if (this.context) {
-				// Disable anti-aliasing for pixel-perfect rendering
 				this.context.imageSmoothingEnabled = false;
 				this.drawInitialState();
 			}
@@ -135,10 +129,8 @@ export class GameComponentOnline {
 	private drawBackground() {
 		if (!this.context) return;
 
-		// Clear background
 		this.context.clearRect(0, 0, 900, 600);
 
-		// Draw center line (dashed)
 		this.context.fillStyle = "#dbdbdb";
 		this.context.setLineDash([10, 10]);
 		this.context.beginPath();
@@ -155,15 +147,11 @@ export class GameComponentOnline {
 		
 		if (!this.context) return;
 		
-		// Draw paddles (white rectangles)
 		this.context.fillStyle = "#FFFFFF";
 		this.context.fillRect(this.p1.x, this.p1.y, this.p1.width, this.p1.height);
 		this.context.fillRect(this.p2.x, this.p2.y, this.p2.width, this.p2.height);
 		
-		// Draw ball (white square)
-		this.context.fillRect(this.ball.x, this.ball.y, this.ball.width, this.ball.height);
-		
-		// this.drawScore();
+		this.context.fillRect(this.ball.x, this.ball.y, this.ball.width, this.ball.height);		
 	}
 
 	private update = () => {
@@ -172,15 +160,12 @@ export class GameComponentOnline {
 		
 		this.animationId = requestAnimationFrame(this.update);
 		
-		// Draw background
 		this.drawBackground();
 		
-		// Draw players and ball (white rectangles)
 		this.context.fillStyle = "#FFFFFF";
 		this.context.fillRect(this.p1.x, this.p1.y, this.p1.width, this.p1.height);
 		this.context.fillRect(this.p2.x, this.p2.y, this.p2.width, this.p2.height);
 		
-		// Draw ball
 		this.context.fillRect(this.ball.x, this.ball.y, this.ball.width, this.ball.height);
 		
 		this.onScoreChange?.(this.p1Score, this.p2Score);
@@ -193,13 +178,11 @@ export class GameComponentOnline {
 		this.context.font = "bold 48px monospace";
 		this.context.textAlign = "center";
 		
-		// Draw scores in classic Pong style
 		this.context.fillText(this.p1Score.toString(), 300, 60);
 		this.context.fillText(this.p2Score.toString(), 600, 60);
 	}
 
 	private movePlayer = (e: KeyboardEvent) => {
-		// On ne prend que W, S, ArrowUp et ArrowDown
 		if (["KeyW", "KeyS", "ArrowUp", "ArrowDown"].includes(e.code)) {
 			const roomId = sessionStorage.getItem('roomId');
 			const clientId = sessionStorage.getItem('clientId');

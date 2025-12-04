@@ -63,7 +63,7 @@ export class Ball {
         this.vel_x *= -1;
         
         const hitPosition = (this.y + this.height / 2 - player.y) / player.height;
-        const spinFactor = (hitPosition - 0.5) * 8; // -4 à +4
+        const spinFactor = (hitPosition - 0.5) * 8;
         this.vel_y = spinFactor;
         
         if (player.playerNumber === 1) {
@@ -75,10 +75,10 @@ export class Ball {
 
     checkScoring(canvasWidth: number = 900): number {
         if (this.x < 0) {
-            return 2; // Joueur 2 marque
+            return 2;
         } else if (this.x + this.width > canvasWidth) {
-            return 1; // Joueur 1 marque
+            return 1;
         }
-        return 0; // Pas de score
+        return 0;
     }
 }

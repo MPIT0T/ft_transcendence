@@ -178,7 +178,7 @@ export const TournamentLocal: Page = {
 	<div id="registration-phase" class="backdrop-blur-2xs border border-gray-50 p-8 w-[420px] mx-4">
 		<div class="text-center mb-6">
 			<h1 class="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 mb-2">
-				🏆 Tournoi Local
+				Tournoi Local
 			</h1>
 			<p class="text-gray-400">Élimination directe - 4 ou 8 joueurs</p>
 		</div>
@@ -229,7 +229,7 @@ export const TournamentLocal: Page = {
 				id="start-tournament-btn"
 				class="flex-1 py-3 font-bold text-xl border border-gray-50 text-gray-50 hover:bg-green-500/20 hover:border-green-500 transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:border-gray-50"
 				disabled>
-				🚀 Lancer le tournoi
+				Lancer le tournoi
 			</button>
 			<button 
 				id="back-btn"
@@ -320,7 +320,6 @@ export const TournamentLocal: Page = {
 	<!-- Modal match terminé -->
 	<div id="match-end-modal" class="fixed inset-0 backdrop-blur-lg bg-black/70 hidden items-center justify-center z-50">
 		<div class="border border-gray-50 bg-gray-900/90 p-8 max-w-md w-full mx-4 text-center">
-			<div class="text-6xl mb-4">🎉</div>
 			<h3 class="text-2xl text-gray-300 font-bold mb-2">Match terminé !</h3>
 			<p class="text-gray-400 text-sm mb-4">Vainqueur</p>
 			<p id="match-winner-name" class="text-4xl text-green-400 font-bold mb-2"></p>
@@ -336,7 +335,6 @@ export const TournamentLocal: Page = {
 	<!-- Modal tournoi terminé -->
 	<div id="tournament-end-modal" class="fixed inset-0 backdrop-blur-lg bg-black/70 hidden items-center justify-center z-50">
 		<div class="border border-yellow-500 bg-gray-900/90 p-8 max-w-md w-full mx-4 text-center">
-			<div class="text-6xl mb-4">🏆</div>
 			<h3 class="text-3xl text-yellow-400 font-bold mb-6">TOURNOI TERMINÉ</h3>
 			<p class="text-gray-400 text-sm uppercase tracking-wider mb-2">Le champion est</p>
 			<p id="tournament-champion" class="text-5xl text-green-400 font-bold mb-8 animate-pulse"></p>
@@ -354,7 +352,7 @@ export const TournamentLocal: Page = {
 				<button 
 					id="new-tournament-btn"
 					class="w-full py-3 text-white border-2 border-green-500 hover:bg-green-500/20 transition-colors font-bold">
-					🔄 Nouveau tournoi
+					Nouveau tournoi
 				</button>
 			</div>
 		</div>
@@ -427,12 +425,12 @@ export const TournamentLocal: Page = {
 			});
 		});
 
-		// Use shared countdown util for identical 1-2-3 animation
 		const countdown = createCountdown();
 
 		// ============================================
 		// Bracket Modal
 		// ============================================
+
 		const showBracket = (showNextMatchInfo: boolean = false) => {
 			bracketModalContent.innerHTML = getBracketHTML();
 			
@@ -442,7 +440,7 @@ export const TournamentLocal: Page = {
 					nextPlayer1.textContent = match.player1;
 					nextPlayer2.textContent = match.player2;
 					bracketNextMatch.classList.remove('hidden');
-					// Cannot close modal when showing next match - must click button
+
 					canCloseBracketModal = false;
 					closeBracketBtn.classList.add('hidden');
 				} else {
@@ -766,17 +764,22 @@ export const TournamentLocal: Page = {
 		// Event Listeners - Tournament End Modal
 		// ============================================
 		showFinalBracketBtn.addEventListener('click', () => {
-			// Hide the tournament-end modal and open the bracket for final view.
-			// We intentionally do NOT set an origin so closing the bracket does
-			// not reopen the tournament-end modal (prevents unexpected UI loops).
-			if (tournamentEndModal) {
-				tournamentEndModal.classList.add('hidden');
-				tournamentEndModal.classList.remove('flex');
-			}
+
+			// if (tournamentEndModal) {
+			// 	tournamentEndModal.classList.add('hidden');
+			// 	tournamentEndModal.classList.remove('flex');
+			// }
 			showBracket(false);
+
+			bracketModal.classList.remove('z-50');
+			bracketModal.classList.add('z-150');
+
 		});
 
 		newTournamentBtn.addEventListener('click', () => {
+			bracketModal.classList.add('z-50');
+			bracketModal.classList.remove('z-150');
+
 			tournamentEndModal.classList.add('hidden');
 			tournamentEndModal.classList.remove('flex');
 			resetTournament();
