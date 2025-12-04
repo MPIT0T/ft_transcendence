@@ -95,8 +95,8 @@ function getBracketHTML(): string {
 
 		// vertical offset to visually align later rounds
 		let marginTopClass = '';
-		if (roundIndex === 1) marginTopClass = 'mt-24';
-		if (roundIndex === 2) marginTopClass = 'mt-48';
+		if (roundIndex === 1) marginTopClass = 'gap-24 mt-37';
+		if (roundIndex === 2) marginTopClass = 'mt-68';
 
 		html += `
 			<div class="flex flex-col min-w-[200px] gap-8">
@@ -112,24 +112,36 @@ function getBracketHTML(): string {
 
 			const p1Won = match.winner === match.player1;
 			const p2Won = match.winner === match.player2;
-			const p1BgClass = p1Won ? 'bg-green-700' : '';
-			const p2BgClass = p2Won ? 'bg-green-700' : '';
+			let p1BgClass = p1Won ? 'bg-green-400/20 border-green-400 border' : '';
+			let p2BgClass = p2Won ? 'bg-green-400/20 border-green-400 border' : '';
+			let p1TxtClr = 'text-gray-300';
+			let p2TxtClr = 'text-gray-300';
 
+			if (p2Won)
+			{
+				p1BgClass = 'border-gray-400/40';
+				p1TxtClr = 'text-gray-400/40';
+			}
+			else if (p1Won)
+			{
+				p2BgClass = 'border-gray-400/40';
+				p2TxtClr = 'text-gray-400/40';
+			}
 			const score1 = isPlayed ? match.score1 : '';
 			const score2 = isPlayed ? match.score2 : '';
 
 			html += `
-				<div class="border border-gray-50 p-3 backdrop-blur-2xs ${isCurrentMatch && !isPlayed ? 'border-green-500 border-2' : ''}">
+				<div class="border border-gray-50 p-3 backdrop-blur-2xs ${isCurrentMatch && !isPlayed ? 'border-green-400 border-1' : ''}">
 					<div class="p-2 mb-1 border border-gray-50 backdrop-blur-2xs ${p1BgClass}">
-						<span class="text-white">${match.player1 || ''}</span>
+						<span class="${p1TxtClr}">${match.player1 || '???'}</span>
 					</div>
-					<div class="text-center text-white text-lg my-1 flex items-center justify-center gap-3">
+					<div class="text-center text-gray-400 text-lg my-1 flex items-center justify-center gap-3">
 						<span class="text-yellow-400 font-bold">${score1}</span>
 						<span>- VS -</span>
 						<span class="text-yellow-400 font-bold">${score2}</span>
 					</div>
 					<div class="p-2 border border-gray-50 backdrop-blur-2xs ${p2BgClass}">
-						<span class="text-white">${match.player2 || ''}</span>
+						<span class="${p2TxtClr}">${match.player2 || '???'}</span>
 					</div>
 				</div>`;
 		}
@@ -294,8 +306,8 @@ export const TournamentLocal: Page = {
 	</div>
 
 	<!-- Modal Bracket -->
-	<div id="bracket-modal" class="fixed inset-0 backdrop-blur-lg bg-black/70 hidden items-center justify-center z-50">
-		<div class="border border-gray-50 bg-gray-900/90 p-6 max-w-5xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+	<div id="bracket-modal" class="fixed inset-0 backdrop-blur-lg hidden items-center justify-center z-50">
+		<div class="backdrop-blur-lg border border-gray-50 p-6 max-w-5xl w-full mx-4 max-h-[90vh] overflow-hidden">
 			<div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-4">
 				<h3 class="text-2xl text-yellow-400 font-bold">📊 Bracket du tournoi</h3>
 				<button id="close-bracket-btn" class="text-gray-400 hover:text-white text-3xl transition-colors">&times;</button>
@@ -303,15 +315,15 @@ export const TournamentLocal: Page = {
 			<div id="bracket-modal-content" class="mb-6"></div>
 			<div id="bracket-next-match" class="mt-6 pt-6 border-t border-gray-700 text-center hidden">
 				<p class="text-gray-400 mb-3 text-sm uppercase tracking-wider">Prochain match</p>
-				<p class="text-3xl mb-6">
-					<span id="next-player1" class="text-blue-400 font-bold"></span>
-					<span class="text-yellow-400 mx-4 font-bold">VS</span>
-					<span id="next-player2" class="text-red-400 font-bold"></span>
-				</p>
+				<div class="mb-2 flex items-center px-6 pt-2">
+					<span id="next-player1" class="text-white font-semibold text-5xl flex-1 text-left-center"></span>
+					<span class="text-white text-5xl font-extrabold tracking-wide">VS</span>
+					<span id="next-player2" class="text-white font-semibold text-5xl flex-1 text-right-center"></span>
+				</div>
 				<button 
 					id="start-next-match-btn"
 					class="px-10 py-4 text-white border-2 border-green-500 hover:bg-green-500/20 transition-colors font-bold text-lg">
-					▶ Commencer le match
+					Commencer le match
 				</button>
 			</div>
 		</div>
@@ -319,7 +331,7 @@ export const TournamentLocal: Page = {
 
 	<!-- Modal match terminé -->
 	<div id="match-end-modal" class="fixed inset-0 backdrop-blur-lg bg-black/70 hidden items-center justify-center z-50">
-		<div class="border border-gray-50 bg-gray-900/90 p-8 max-w-md w-full mx-4 text-center">
+		<div class="backdrop-blur-2xs border border-gray-50 p-8 max-w-md w-full mx-4 text-center">
 			<h3 class="text-2xl text-gray-300 font-bold mb-2">Match terminé !</h3>
 			<p class="text-gray-400 text-sm mb-4">Vainqueur</p>
 			<p id="match-winner-name" class="text-4xl text-green-400 font-bold mb-2"></p>
@@ -327,7 +339,7 @@ export const TournamentLocal: Page = {
 			<button 
 				id="show-bracket-after-match-btn"
 				class="w-full py-4 text-white border-2 border-yellow-500 hover:bg-yellow-500/20 transition-colors font-bold text-lg">
-				📊 Voir le bracket →
+				📊 Voir le bracket
 			</button>
 		</div>
 	</div>
@@ -409,6 +421,29 @@ export const TournamentLocal: Page = {
 		let canStart = false;
 		let isTournamentFinished = false;
 		let canCloseBracketModal = true; // Track if modal can be closed by clicking outside
+
+
+		const layoutLoginBtn = document.querySelector('#login-btn') as HTMLButtonElement | null;
+		let _prevLoginBtnClass: string | null = null;
+		let _prevLoginBtnDisabled: boolean | null = null;
+		if (layoutLoginBtn) {
+			_prevLoginBtnClass = layoutLoginBtn.className;
+			_prevLoginBtnDisabled = layoutLoginBtn.disabled;
+			layoutLoginBtn.disabled = true;
+			layoutLoginBtn.className = `${layoutLoginBtn.className} opacity-50 pointer-events-none`;
+		}
+
+		const _restoreLoginBtn = () => {
+			if (layoutLoginBtn) {
+				if (_prevLoginBtnClass !== null) layoutLoginBtn.className = _prevLoginBtnClass;
+				if (_prevLoginBtnDisabled !== null) layoutLoginBtn.disabled = _prevLoginBtnDisabled;
+			}
+		};
+
+		if (currentGame) {
+			currentGame.destroy();
+		}
+
 
 		// ============================================
 		// Score Selection
@@ -808,6 +843,7 @@ export const TournamentLocal: Page = {
 
 		// Cleanup on page leave
 		const popstateHandler = () => {
+			_restoreLoginBtn();
 			resetTournament();
 			window.removeEventListener('popstate', popstateHandler);
 		};
