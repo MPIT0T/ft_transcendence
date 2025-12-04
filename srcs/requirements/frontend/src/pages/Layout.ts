@@ -325,12 +325,14 @@ export const Layout = {
               sessionStorage.removeItem('token');
               sessionStorage.removeItem('isLoggedIn');
               sessionStorage.removeItem('username');
+              this.redirectIfNotLoggedIn('/', true)
               this.updateLoginButton(root, false);
             }
           } catch (err) {
             sessionStorage.removeItem('token');
             sessionStorage.removeItem('isLoggedIn');
             sessionStorage.removeItem('username');
+            this.redirectIfNotLoggedIn('/', true)
             this.updateLoginButton(root, false);
           }
         }
@@ -358,7 +360,7 @@ export const Layout = {
     const gameBtn = root.querySelector('#game-btn') as HTMLButtonElement;
     if (gameBtn) {
       gameBtn.addEventListener('click', () => {
-        const p = '/gameLoby';
+        const p = '/gameLobby';
         history.pushState(null, '', p);
         window.dispatchEvent(new PopStateEvent('popstate'));
       });
@@ -453,6 +455,9 @@ export const Layout = {
             sessionStorage.removeItem('token');
             sessionStorage.removeItem('isLoggedIn');
             sessionStorage.removeItem('username');
+            const p = '/';
+            history.pushState(null, '', p);
+            window.dispatchEvent(new PopStateEvent('popstate'));
           }
         })
     }

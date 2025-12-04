@@ -4,6 +4,8 @@ import { Game } from      "./pages/Game.js";
 import { Layout } from    "./pages/Layout.js";
 import Stats from     "./pages/Stats.js";
 import { GameLobby } from  "./pages/GameLobby.js";
+import { OnlineLobby } from  "./pages/OnlineLobby.js";
+import { LocalLobby } from  "./pages/LocalLobby.js";
 import { GameOnline } from "./pages/GameOnline.js";
 import { GameOnlineTournament } from "./pages/GameOnlineTournament.js";
 import { GameRoom } from "./pages/GameRoom.js";
@@ -14,7 +16,9 @@ import { TournamentLocal } from "./pages/TournamentLocal.js";
 const routes: Record<string, Page> = {
   "/": Home,
   "/stats": Stats,
-  "/gameLoby": GameLobby,
+  "/gameLobby": GameLobby,
+  "/onlineLobby": OnlineLobby,
+  "/localLobby": LocalLobby,
   "/gameOnline": GameOnline,
   "/gameOnlineTournament": GameOnlineTournament,
   "/gameRoom": GameRoom,
