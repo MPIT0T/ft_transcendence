@@ -1,7 +1,7 @@
 import type { Page } from "../interface/gameInterface.js"
 import { Layout } from "./Layout";
 import { GameComponent } from "../components/GameComponent.js";
-import { sleep } from "../utils/sleep.js"
+import { createCountdown } from "../utils/countdown.js"
 
 // ============================================
 // Tournament State
@@ -11,7 +11,6 @@ let tournamentBracket: { round: number; matches: { player1: string; player2: str
 let currentMatchIndex = 0;
 let currentRound = 0;
 let currentGame: GameComponent | null = null;
-let animationController: AbortController | null = null;
 let winningScore: number = 5;
 let currentScore1: number = 0;
 let currentScore2: number = 0;
@@ -176,10 +175,7 @@ function resetTournament() {
 		currentGame = null;
 	}
 	
-	if (animationController) {
-		animationController.abort();
-		animationController = null;
-	}
+	// countdown abort handled by page mount scope if necessary
 	
 }
 
@@ -437,46 +433,8 @@ export const TournamentLocal: Page = {
 			});
 		});
 
-		// ============================================
-		// Countdown Animation
-		// ============================================
-		const startAnimation = async () => {
-			if (animationController) {
-				animationController.abort();
-				animationController = null;
-			}
-			animationController = new AbortController();
-			const { signal } = animationController;
-
-			countdownModal.classList.remove("hidden");
-			countdownText.textContent = "3";
-
-			try {
-				for (let i = 3; i >= 1; i--) {
-					countdownText.textContent = String(i);
-					countdownText.style.transform = 'scale(1.5)';
-					countdownText.style.opacity = '1';
-					await sleep(100, signal);
-					countdownText.style.transform = 'scale(1)';
-					await sleep(700, signal);
-					countdownText.style.opacity = '0';
-					await sleep(200, signal);
-				}
-				countdownModal.classList.add('hidden');
-			} catch (err: any) {
-				countdownModal.classList.add('hidden');
-				countdownText.style.transform = 'scale(1)';
-				countdownText.style.opacity = '1';
-				if (err && (err.name === 'AbortError' || err instanceof DOMException)) {
-					throw err;
-				}
-				throw err;
-			} finally {
-				countdownText.style.transform = 'scale(1)';
-				countdownText.style.opacity = '1';
-				animationController = null;
-			}
-		};
+		// Use shared countdown util for identical 1-2-3 animation
+		const countdown = createCountdown();
 
 		// ============================================
 		// Bracket Modal
@@ -688,7 +646,7 @@ export const TournamentLocal: Page = {
 						const isGameOver = currentScore1 >= winningScore || currentScore2 >= winningScore;
 						if (!isGameOver) {
 							try {
-								await startAnimation();
+								await countdown.start(countdownModal, countdownText);
 							} catch (e: any) {
 								if (!(e && (e.name === 'AbortError' || e instanceof DOMException))) throw e;
 							}
@@ -767,25 +725,22 @@ export const TournamentLocal: Page = {
 		playBtn.addEventListener('click', async () => {
 			canStart = !canStart;
 			
-			if (canStart) {
-				playBtn.textContent = '⏸ Pause';
-				playBtn.className = "px-8 py-3 font-bold text-lg transition border-2 border-yellow-500 backdrop-blur-2xs text-yellow-400 hover:bg-yellow-500/20";
-				try {
-					await startAnimation();
-				} catch (e: any) {
-					if (!(e && (e.name === 'AbortError' || e instanceof DOMException))) throw e;
-					canStart = false;
-					playBtn.textContent = '▶ Jouer';
-					playBtn.className = "px-8 py-3 font-bold text-lg transition border-2 border-green-500 backdrop-blur-2xs text-green-400 hover:bg-green-500/20";
-				}
-			} else {
-				playBtn.textContent = '▶ Jouer';
-				playBtn.className = "px-8 py-3 font-bold text-lg transition border-2 border-green-500 backdrop-blur-2xs text-green-400 hover:bg-green-500/20";
-				if (animationController) {
-					animationController.abort();
-					animationController = null;
-				}
-			}
+					if (canStart) {
+						playBtn.textContent = '⏸ Pause';
+						playBtn.className = "px-8 py-3 font-bold text-lg transition border-2 border-yellow-500 backdrop-blur-2xs text-yellow-400 hover:bg-yellow-500/20";
+						try {
+							await countdown.start(countdownModal, countdownText);
+						} catch (e: any) {
+							if (!(e && (e.name === 'AbortError' || e instanceof DOMException))) throw e;
+							canStart = false;
+							playBtn.textContent = '▶ Jouer';
+							playBtn.className = "px-8 py-3 font-bold text-lg transition border-2 border-green-500 backdrop-blur-2xs text-green-400 hover:bg-green-500/20";
+						}
+					} else {
+						playBtn.textContent = '▶ Jouer';
+						playBtn.className = "px-8 py-3 font-bold text-lg transition border-2 border-green-500 backdrop-blur-2xs text-green-400 hover:bg-green-500/20";
+						countdown.abort();
+					}
 
 			if (currentGame) {
 				currentGame.setCanStart(canStart);

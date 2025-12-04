@@ -1,6 +1,6 @@
 import type { Page } from "../interface/gameInterface.js"
 import { GameComponent } from "../components/GameComponent.js";
-import { sleep } from "../utils/sleep.js"
+import { createCountdown } from "../utils/countdown.js";
 
 let currentGame: GameComponent | null = null;
 
@@ -88,7 +88,7 @@ export const Game: Page = {
 			<p class="text-gray-300 mb-4">Sélectionnez le score cible pour gagner la partie</p>
 			<div class="flex gap-3 justify-center mb-6">
 				<button class="points-option px-5 py-2 border border-gray-600 text-gray-400 hover:border-gray-50 hover:text-gray-50 transition-colors" data-score="3">3</button>
-				<button class="points-option px-5 py-2 border border-yellow-500 text-yellow-400 bg-yellow-500/20" data-score="5">5</button>
+				<button class="points-option px-5 py-2 border border-gray-600 text-gray-400 hover:border-gray-50 hover:text-gray-50 transition-colors" data-score="5">5</button>
 				<button class="points-option px-5 py-2 border border-gray-600 text-gray-400 hover:border-gray-50 hover:text-gray-50 transition-colors" data-score="7">7</button>
 				<button class="points-option px-5 py-2 border border-gray-600 text-gray-400 hover:border-gray-50 hover:text-gray-50 transition-colors" data-score="11">11</button>
 			</div>
@@ -174,50 +174,7 @@ export const Game: Page = {
 
 		
 
-		// Controller to cancel the start countdown animation
-		let animationController: AbortController | null = null;
-
-		const startAnimation = async () => {
-			// Cancel any existing animation first
-			if (animationController) {
-				animationController.abort();
-				animationController = null;
-			}
-			animationController = new AbortController();
-			const { signal } = animationController;
-
-			startModal.classList.remove("hidden");
-
-			try {
-				await sleep(850, signal);
-				startModalText.classList.add('opacity-0');
-				await sleep(150, signal);
-				startModalText.classList.remove("opacity-0");
-				startModalText.textContent = "- 2 -";
-				await sleep(850, signal);
-				startModalText.classList.add('opacity-0');
-				await sleep(150, signal);
-				startModalText.classList.remove("opacity-0");
-				startModalText.textContent = "- 1 -";
-				await sleep(850, signal);
-				startModalText.classList.add('opacity-0');
-				await sleep(150, signal);
-				startModalText.classList.remove("opacity-0");
-				startModal.classList.add('hidden');
-				startModalText.textContent = "- 3 -";
-			} catch (err: any) {
-				// If aborted, ensure modal is hidden and text reset, then propagate the abort so callers don't start the timer
-				if (err && (err.name === 'AbortError' || err instanceof DOMException)) {
-					startModal.classList.add('hidden');
-					startModalText.classList.remove('opacity-0');
-					startModalText.textContent = "- 3 -";
-					throw err;
-				}
-				throw err;
-			} finally {
-				animationController = null;
-			}
-		}
+		const countdown = createCountdown();
 
 		if (startBtn && gameContainer && score) {
 				// Tournament mode variables
@@ -235,6 +192,11 @@ export const Game: Page = {
 				if (!isTournament && pointsModal) {
 					pointsModal.classList.remove('hidden');
 					pointsModal.classList.add('flex');
+					// While modal is open, disable the main start button to avoid conflicts
+					if (startBtn) {
+						startBtn.disabled = true;
+						startBtn.classList.add('opacity-50', 'pointer-events-none');
+					}
 
 					let selectedScore: number | null = null;
 					pointsOptions.forEach(btn => {
@@ -247,7 +209,7 @@ export const Game: Page = {
 					});
 
 					if (confirmPointsBtn) {
-						confirmPointsBtn.addEventListener('click', () => {
+						confirmPointsBtn.addEventListener('click', async () => {
 							if (selectedScore) {
 								winningScore = selectedScore;
 								const wsEl = root.querySelector('#winning-score-display') as HTMLElement | null;
@@ -256,6 +218,36 @@ export const Game: Page = {
 							if (pointsModal) {
 								pointsModal.classList.add('hidden');
 								pointsModal.classList.remove('flex');
+							}
+							// Re-enable start button visually (we'll start the match automatically)
+							if (startBtn) {
+								startBtn.disabled = true; // keep disabled while countdown runs
+								startBtn.classList.add('opacity-50', 'pointer-events-none');
+							}
+							// Start countdown and begin the match automatically
+							try {
+								await countdown.start(startModal, startModalText);
+								canStart = true;
+								if (currentGame) currentGame.setCanStart(true);
+								// Update start button to Pause and enable it
+								if (startBtn) {
+									startBtn.disabled = false;
+									startBtn.classList.remove('opacity-50', 'pointer-events-none');
+									startBtn.className = "px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-gray-700/50 hover:border-red-500";
+									startBtn.textContent = "Pause";
+								}
+								// Hide restart during active match
+								if (restartBtn) restartBtn.classList.add('hidden');
+							} catch (e: any) {
+								if (!(e && (e.name === 'AbortError' || e instanceof DOMException))) throw e;
+								// If aborted, keep everything paused and re-enable start button
+								canStart = false;
+								if (startBtn) {
+									startBtn.disabled = false;
+									startBtn.classList.remove('opacity-50', 'pointer-events-none');
+									startBtn.className = "px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-gray-700/50 hover:border-blue-500";
+									startBtn.textContent = "Jouer";
+								}
 							}
 						});
 					}
@@ -390,7 +382,7 @@ export const Game: Page = {
 							return;
 						}
 						try {
-							await startAnimation();
+							await countdown.start(startModal, startModalText);
 						} catch (e: any) {
 							if (!(e && (e.name === 'AbortError' || e instanceof DOMException))) throw e;
 						}
@@ -434,14 +426,28 @@ export const Game: Page = {
 
 			// Start/Pause button
 			startBtn.addEventListener('click', async () => {
+				// If the local match is already finished, show points modal instead of toggling
+				const isTournamentLocal = isTournamentMode();
+				const localMatchOver = (currentGame?.getScoreP1() ?? 0) >= winningScore || (currentGame?.getScoreP2() ?? 0) >= winningScore;
+				if (!isTournamentLocal && localMatchOver) {
+					const pointsModalEl = root.querySelector('#points-modal') as HTMLDivElement | null;
+					if (pointsModalEl) {
+						pointsModalEl.classList.remove('hidden');
+						pointsModalEl.classList.add('flex');
+					}
+					return;
+				}
+
+				// Toggle play/pause
 				canStart = !canStart;
-				// Update button appearance
+
+				// Update button appearance and run countdown when starting
 				if (canStart) {
 					startBtn.className = "px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-gray-700/50 hover:border-red-500";
 					startBtn.textContent = "Pause";
 					if (restartBtn) restartBtn.classList.add('hidden');
-						try {
-						await startAnimation();
+					try {
+						await countdown.start(startModal, startModalText);
 					} catch (e: any) {
 						if (!(e && (e.name === 'AbortError' || e instanceof DOMException))) throw e;
 						// If aborted, revert the canStart/UI state back to paused
@@ -453,10 +459,7 @@ export const Game: Page = {
 					startBtn.className = "px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-gray-700/50 hover:border-blue-500";
 					startBtn.textContent = "Jouer";
 					// Cancel any ongoing start animation
-					if (animationController) {
-						animationController.abort();
-						animationController = null;
-					}
+					countdown.abort();
 				}
 
 				// Update game state
@@ -469,32 +472,28 @@ export const Game: Page = {
 			if (restartBtn && !isTournament) {
 				restartBtn.addEventListener('click', async () => {
 					if (currentGame) {
-						// Pause the game first
+						// Pause the game first and ensure ball is not moving
 						canStart = false;
 						currentGame.setCanStart(false);
 
 						// Cancel any ongoing start animation
-						if (animationController) {
-							animationController.abort();
-							animationController = null;
-						}
-
-						
+						countdown.abort();
 
 						// Restart the game state (reset scores, ball, players)
 						currentGame.restart();
 
-						// Immediately start a new match with the same winningScore
-						canStart = true;
-						if (currentGame) currentGame.setCanStart(true);
+						// Hide restart while countdown runs
+						if (restartBtn) restartBtn.classList.add('hidden');
 
-						// Update START button to 'Pause'
+						// Update START button visually to 'Pause' while countdown runs
 						startBtn.className = "px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-gray-700/50 hover:border-red-500";
 						startBtn.textContent = "Pause";
 
-						// Run the countdown animation then start timer (handle aborts)
+						// Run the countdown animation then actually resume the game (ensure ball not launched before)
 						try {
-							await startAnimation();
+							await countdown.start(startModal, startModalText);
+							canStart = true;
+							if (currentGame) currentGame.setCanStart(true);
 						} catch (e: any) {
 							if (!(e && (e.name === 'AbortError' || e instanceof DOMException))) throw e;
 							// If animation aborted, keep game paused
