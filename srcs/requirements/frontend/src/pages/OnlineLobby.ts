@@ -1,4 +1,5 @@
 import type { Page } from "../interface/gameInterface.js"
+import { Layout } from "./Layout";
 
 export const OnlineLobby: Page = {
   render() {
@@ -82,10 +83,13 @@ export const OnlineLobby: Page = {
     `;
   },
   mount(root: HTMLElement): void {
+
+    Layout.redirectIfNotLoggedIn('/gameLobby', true);
+
     const gameOnlineBtn = document.querySelector('#online-game-btn');
     if (gameOnlineBtn) {
       gameOnlineBtn.addEventListener('click', (e) => {
-        const p = '/gameOnline';
+        const p = '/gameRoom';
         history.pushState(null, '', p);
         window.dispatchEvent(new PopStateEvent('popstate'));
       });
@@ -94,7 +98,7 @@ export const OnlineLobby: Page = {
     const tournamentOnlineBtn = root.querySelector('#online-tournament-btn');
     if (tournamentOnlineBtn) {
       tournamentOnlineBtn.addEventListener('click', (e) => {
-        const p = '/tournamentOnline';
+        const p = '/tournamentRoom';
         history.pushState(null, '', p);
         window.dispatchEvent(new PopStateEvent('popstate'));
       });

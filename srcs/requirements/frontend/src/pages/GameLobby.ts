@@ -108,18 +108,6 @@ export const GameLobby: Page = {
 			});
 		}
 
-
-		// Mode Tournoi Online
-		const tournamentBtn = root.querySelector('#tournament-mode') as HTMLButtonElement;
-		if (tournamentBtn) {
-			tournamentBtn.addEventListener('click', () => {
-				const p = '/tournamentRoom';
-				history.pushState(null, '', p);
-				window.dispatchEvent(new PopStateEvent('popstate'));
-			});
-		}
-
-		
 		let status: ReturnType<typeof setInterval> | undefined;
 		const ping = root.querySelector('#ping') as HTMLButtonElement;
 		if(ping){
@@ -143,7 +131,7 @@ export const GameLobby: Page = {
 		if (player) {
 			statusPlayer = setInterval(async () => {
 				try {
-					const response = await fetch("/pong/statusPlayer");
+					const response = await fetch("/pong/statusPlayer"); //TODO ajouter le nombre de joueurs tournoi
 					const count = await response.text();
 					player.textContent = `${count}`;
 				} catch (error) {

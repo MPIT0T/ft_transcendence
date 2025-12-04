@@ -255,7 +255,7 @@ export const Game: Page = {
 					if (cancelPointsBtn) {
 						cancelPointsBtn.addEventListener('click', () => {
 							// Exit to lobby
-							history.pushState(null, '', '/gameLoby');
+							history.pushState(null, '', '/localLobby');
 							window.dispatchEvent(new PopStateEvent('popstate'));
 						});
 					}
@@ -407,7 +407,7 @@ export const Game: Page = {
 			if (finishTournamentBtn) {
 				finishTournamentBtn.addEventListener('click', () => {
 					sessionStorage.removeItem('localTournamentMatch');
-					history.pushState(null, '', '/gameLoby');
+					history.pushState(null, '', '/gameLobby');
 					window.dispatchEvent(new PopStateEvent('popstate'));
 				});
 			}
@@ -418,7 +418,7 @@ export const Game: Page = {
 				quitTournamentBtn.addEventListener('click', () => {
 					if (confirm('Êtes-vous sûr de vouloir quitter le tournoi ?')) {
 						sessionStorage.removeItem('localTournamentMatch');
-						history.pushState(null, '', '/gameLoby');
+						history.pushState(null, '', '/gameLobby');
 						window.dispatchEvent(new PopStateEvent('popstate'));
 					}
 				});

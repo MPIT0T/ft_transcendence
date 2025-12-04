@@ -2,7 +2,7 @@ import type { Page } from "../interface/gameInterface.js"
 import { GameComponentOnline } from "../components/GameComponentOnline.js";
 import { ws } from "./GameRoom.js";
 import { sleep } from "../utils/sleep.js"
-import {Layout} from "./Layout";
+import { Layout } from "./Layout";
 
 let currentGame: GameComponentOnline | null = null;
 let timerInterval: number | null = null;

@@ -683,7 +683,7 @@ export const TournamentLocal: Page = {
 		});
 
 		backBtn.addEventListener('click', () => {
-			history.pushState(null, '', '/gameLoby');
+			history.pushState(null, '', '/gameLobby');
 			window.dispatchEvent(new PopStateEvent('popstate'));
 		});
 
@@ -750,7 +750,7 @@ export const TournamentLocal: Page = {
 		quitBtn.addEventListener('click', () => {
 			if (confirm('Êtes-vous sûr de vouloir quitter le tournoi ? Toute progression sera perdue.')) {
 				resetTournament();
-				history.pushState(null, '', '/gameLoby');
+				history.pushState(null, '', '/localLobby');
 				window.dispatchEvent(new PopStateEvent('popstate'));
 			}
 		});
