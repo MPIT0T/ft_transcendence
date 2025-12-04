@@ -130,7 +130,7 @@ export const Home: Page = {
   <div class="flex lg:flex-row items-start justify-center p-2">
     <div class="text-center mb-5 ">
       <div class=" inline-block
-           z-10 text-title text-transparent bg-clip-text
+           z-10 text-title text-transparent bg-clip-text tracking-wider
           bg-gradient-to-r from-red-500 via-blue-500 to-green-500
           bg-[length:400%_400%] animate-gradientShift">
         ft_transcendence
@@ -213,7 +213,7 @@ export const Home: Page = {
 		const gameBtn = root.querySelector('#play-btn') as HTMLButtonElement;
 		if (gameBtn) {
 			gameBtn.addEventListener('click', () => {
-				const p = '/gameLoby';
+				const p = '/gameLobby';
 				history.pushState(null, '', p);
 				window.dispatchEvent(new PopStateEvent('popstate'));
 			})

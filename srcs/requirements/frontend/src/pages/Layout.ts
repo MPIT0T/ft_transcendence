@@ -360,7 +360,7 @@ export const Layout = {
     const gameBtn = root.querySelector('#game-btn') as HTMLButtonElement;
     if (gameBtn) {
       gameBtn.addEventListener('click', () => {
-        const p = '/gameLoby';
+        const p = '/gameLobby';
         history.pushState(null, '', p);
         window.dispatchEvent(new PopStateEvent('popstate'));
       });
