@@ -1,5 +1,6 @@
 import type { StatsPage } from "../interface/gameInterface.js"
 import { Layout } from "./Layout";
+import { changeLanguage, applyTranslations, loadTranslations, getCurrentLang, t } from "../utils/i18n.js";
 
 function drawPieChart(slices: { value: number; color: string }[], elementId: string, maxValue: number = 100) {
   const svg = document.getElementById(elementId) as SVGElement | null;
@@ -75,7 +76,7 @@ const Stats: StatsPage = {
 				<div class="relative inline-block">
 					<div class="relative z-10 text-7xl text-transparent bg-clip-text
 							bg-linear-to-r from-red-500 via-blue-500 to-green-500
-							bg-size-[200%_100%] bg-position-[0%_100%]">
+							bg-size-[200%_100%] bg-position-[0%_100%]" data-i18n="stats.profile">
 						Profil
 					</div>
 				</div>
@@ -86,7 +87,7 @@ const Stats: StatsPage = {
 			  <div class="relative inline-block">
 					<div class="relative z-10 text-7xl text-transparent bg-clip-text
 							bg-linear-to-r from-red-500 via-blue-500 to-green-500
-							bg-size-[200%_100%] bg-position-[100%_100%]">
+							bg-size-[200%_100%] bg-position-[100%_100%]" data-i18n="stats.history">
 						Historique
 					</div>
 				</div>
@@ -97,10 +98,10 @@ const Stats: StatsPage = {
 	<div id="content-container" class="w-[60vw] mx-auto min-h-[60vh] max-h-[60vh] overflow-y-auto">
 		${activeTab === 'profile' ? this.renderProfile() : this.renderHistory()}
 	</div>
-		<div class="w-[60vw] mx-auto flex items-center justify-center p-6 gap-6">
-		<button class="text-blue-500  px-6 py-2 text-2xl font-bold backdrop-blur-2xs hover:bg-gray-700/50">🇫🇷</button>
-		<button class="text-red-500  px-6 py-2 text-2xl font-bold backdrop-blur-2xs hover:bg-gray-700/50">🇬🇧</button>
-		<button class="text-yellow-400  px-6 py-2 text-2xl font-bold backdrop-blur-2xs hover:bg-gray-700/50">🇪🇸</button>
+		<div class="w-[60vw] mx-auto flex items-center justify-center p-6 gap-12">
+		<button id="lang-fr" data-lang="fr" class="px-10 py-6 text-7xl font-bold backdrop-blur-2xs border border-transparent hover:border-gray-50 hover:bg-gray-700/50 transition-all">🇫🇷</button>
+		<button id="lang-en" data-lang="en" class="px-10 py-6 text-7xl font-bold backdrop-blur-2xs border border-transparent hover:border-gray-50 hover:bg-gray-700/50 transition-all">🇬🇧</button>
+		<button id="lang-es" data-lang="es" class="px-10 py-6 text-7xl font-bold backdrop-blur-2xs border border-transparent hover:border-gray-50 hover:bg-gray-700/50 transition-all">🇪🇸</button>
 	</div>
 </div>
 	`;
@@ -136,7 +137,7 @@ const Stats: StatsPage = {
 
         <!-- Username -->
         <div class="mb-6">
-          <label class="block text-xs text-gray-300 mb-2">Username</label>
+          <label class="block text-xs text-gray-300 mb-2" data-i18n="stats.username">Username</label>
           <div class="relative">
             <span
               id="change-username"
@@ -145,7 +146,7 @@ const Stats: StatsPage = {
             >
               ${sessionStorage.getItem('username')}
             </span>
-            <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-gray-400">
+            <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-gray-400" data-i18n="stats.clickToEdit">
               Cliquez pour modifier
             </span>
           </div>
@@ -156,6 +157,7 @@ const Stats: StatsPage = {
             <button
               id="open-password-modal"
               class="w-full py-7 font-bold border bg-gray-50/5 border-gray-50 text-2xl text-gray-100 text-center hover:border-blue-500 hover:bg-gray-700/50 transition-transform"
+              data-i18n="stats.changePassword"
             >
               Changer le mot de passe
             </button>
@@ -164,6 +166,7 @@ const Stats: StatsPage = {
             <button
               class="w-full py-7 font-bold border bg-gray-50/5 border-gray-50 text-2xl text-gray-50 text-center hover:border-red-500 hover:bg-gray-700/50 transition-transform"
               id="disconnectBtn"
+              data-i18n="stats.disconnect"
              >
                Se déconnecter
              </button>
@@ -175,15 +178,15 @@ const Stats: StatsPage = {
         <div class="grid grid-cols-3 gap-4 text-center mt-8">
           <div>
           <div class="text-2xl font-bold text-gray-100" id="change-elo">?</div>
-          <div class="text-sm text-gray-400">Elo</div>
+          <div class="text-sm text-gray-400" data-i18n="stats.elo">Elo</div>
           </div>
           <div>
           <div class="text-2xl font-bold text-gray-100" id="stats-win-rate">0%</div>
-          <div class="text-sm text-gray-400">Win Rate</div>
+          <div class="text-sm text-gray-400" data-i18n="stats.winRate">Win Rate</div>
           </div>
           <div>
           <div class="text-2xl font-bold text-gray-100" id="friends-counter">0</div>
-          <div class="text-sm text-gray-400">Friends</div>
+          <div class="text-sm text-gray-400" data-i18n="stats.friends">Friends</div>
           
           </div>
         </div>
@@ -192,13 +195,13 @@ const Stats: StatsPage = {
 
         <!-- Friends Lists with tabs -->
         <div class="backdrop-blur-2xs border border-gray-50 p-6">
-        <h3 class="text-2xl font-bold text-gray-100">Amis</h3>
+        <h3 class="text-2xl font-bold text-gray-100" data-i18n="friends.title">Amis</h3>
         
         <div class="mb-4">
-          <label for="add-friend-input" class="block text-sm text-gray-300 mb-2">Ajouter un ami</label>
+          <label for="add-friend-input" class="block text-sm text-gray-300 mb-2" data-i18n="friends.addFriend">Ajouter un ami</label>
           <div class="flex gap-2">
-          <input id="add-friend-input" type="text" placeholder="Nom de l'ami" class="flex w-full px-3 py-2 border border-gray-400 text-lg font-bold text-gray-200 focus:outline-none focus:border-gray-50" />
-          <button id="add-friend-btn" class="px-3 py-2 bg-transparent border border-gray-400 text-gray-50 text-lg hover:bg-gray-700/50 hover:border-blue-500 transition-colors">Ajouter</button>
+          <input id="add-friend-input" type="text" placeholder="Nom de l'ami" data-i18n-placeholder="friends.addFriendPlaceholder" class="flex w-full px-3 py-2 border border-gray-400 text-lg font-bold text-gray-200 focus:outline-none focus:border-gray-50" />
+          <button id="add-friend-btn" class="px-3 py-2 bg-transparent border border-gray-400 text-gray-50 text-lg hover:bg-gray-700/50 hover:border-blue-500 transition-colors" data-i18n="friends.addBtn">Ajouter</button>
           </div>
         </div>
         
@@ -206,9 +209,9 @@ const Stats: StatsPage = {
           <div class="relative w-60">
           <div id="friends-tab-indicator" class="absolute top-0 left-0 h-full w-1/3 bg-gray-700 transition-transform duration-200" style="transform: translateX(0%);"></div>
           <div class="relative z-10 flex">
-            <button id="friends-online-tab" class="flex-1 px-3 py-2 text-sm hover:bg-gray-700/50 text-white text-center">Online</button>
-            <button id="friends-offline-tab" class="flex-1 px-3 py-2 text-sm hover:bg-gray-700/50 text-white text-center">Offline</button>
-            <button id="friends-request-tab" class="flex-1 px-3 py-2 text-sm hover:bg-gray-700/50 text-white text-center">Request</button>
+            <button id="friends-online-tab" class="flex-1 px-3 py-2 text-sm hover:bg-gray-700/50 text-white text-center" data-i18n="friends.online">Online</button>
+            <button id="friends-offline-tab" class="flex-1 px-3 py-2 text-sm hover:bg-gray-700/50 text-white text-center" data-i18n="friends.offline">Offline</button>
+            <button id="friends-request-tab" class="flex-1 px-3 py-2 text-sm hover:bg-gray-700/50 text-white text-center" data-i18n="friends.requests">Request</button>
           </div>
           </div>
         </div>
@@ -233,7 +236,7 @@ const Stats: StatsPage = {
       <div id="avatar-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center backdrop-blur-lg">
         <div class="bg-transparent border border-gray-50 w-full max-w-2xl p-6">
           <div class="flex items-center justify-between mb-4">
-            <h4 class="text-lg font-semibold text-gray-100">Choisir un avatar</h4>
+            <h4 class="text-lg font-semibold text-gray-100" data-i18n="avatar.title">Choisir un avatar</h4>
             <button type="button" class="text-gray-300 hover:text-white hover:bg-gray-700/50 py-2 px-3" data-close-avatar-modal>✕</button>
           </div>
           <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
@@ -265,22 +268,22 @@ const Stats: StatsPage = {
       <div id="password-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center backdrop-blur-lg">
         <div class="bg-transparent border border-gray-50 w-full max-w-md p-6">
           <div class="flex items-center justify-between mb-4">
-            <h4 class="text-lg font-semibold text-gray-100">Changer le mot de passe</h4>
+            <h4 class="text-lg font-semibold text-gray-100" data-i18n="password.title">Changer le mot de passe</h4>
             <button type="button" class="text-gray-300 hover:text-white hover:bg-gray-700/50 py-2 px-3" data-close-password-modal>✕</button>
           </div>
           <form id="password-form" class="space-y-4">
             <div>
-              <label for="old-password" class="block text-xs text-gray-400 mb-1">Mot de passe actuel</label>
+              <label for="old-password" class="block text-xs text-gray-400 mb-1" data-i18n="password.current">Mot de passe actuel</label>
               <input id="old-password" type="password" required
                      class="w-full px-3 py-2 bg-white/5 border border-gray-400 text-sm text-gray-200 focus:outline-none focus:border-gray-50"/>
             </div>
             <div>
-              <label for="new-password" class="block text-xs text-gray-400 mb-1">Nouveau mot de passe</label>
+              <label for="new-password" class="block text-xs text-gray-400 mb-1" data-i18n="password.new">Nouveau mot de passe</label>
               <input id="new-password" type="password" minlength="6" required
                      class="w-full px-3 py-2 bg-white/5 border border-gray-400 text-sm text-gray-200 focus:outline-none focus:border-gray-50"/>
             </div>
             <div>
-              <label for="confirm-password" class="block text-xs text-gray-400 mb-1">Confirmer</label>
+              <label for="confirm-password" class="block text-xs text-gray-400 mb-1" data-i18n="password.confirm">Confirmer</label>
               <input id="confirm-password" type="password" required
                      class="w-full px-3 py-2 bg-white/5 border border-gray-400 text-sm text-gray-200 focus:outline-none focus:border-gray-50"/>
             </div>
@@ -289,6 +292,7 @@ const Stats: StatsPage = {
                 type="submit"
                 id="submit-password-btn"
                 class="flex-1 text-white py-2 px-4 border border-gray-50 hover:border-blue-500 hover:bg-gray-700/50 transition-colors font-bold"
+                data-i18n="password.save"
               >
                 Enregistrer
               </button>
@@ -296,6 +300,7 @@ const Stats: StatsPage = {
                 type="button" 
                 class="flex-1 text-white py-2 px-4 border border-gray-50 hover:border-red-500 hover:bg-gray-700/50 transition-colors font-bold"
                 data-close-password-modal
+                data-i18n="password.cancel"
               >
                 Annuler
               </button>
@@ -314,7 +319,7 @@ const Stats: StatsPage = {
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
   <div class="backdrop-blur-2xs border border-gray-50">
     <div class="px-6 py-4 border-b border-gray-700">
-      <h3 class="text-lg font-semibold text-gray-100">Stats des matches</h3>
+      <h3 class="text-lg font-semibold text-gray-100" data-i18n="history.matchStats">Stats des matches</h3>
     </div>
     <div class="flex gap-10 flex-wrap justify-center">
       <div class="p-6 rounded-xl shadow-md w-80 text-center flex flex-col items-center justify-center">
@@ -322,7 +327,7 @@ const Stats: StatsPage = {
         <div class="mt-4">
           <div class="flex items-center gap-2 text-gray-400">
             <span class="w-3 h-3 bg-green-400 rounded-full"></span>
-            <span id="victory-class">Tu n'as jamais joué !</span>
+            <span id="victory-class" data-i18n="history.neverPlayed">Tu n'as jamais joué !</span>
           </div>
         </div>
       </div>
@@ -332,7 +337,7 @@ const Stats: StatsPage = {
         <div class="mt-4">
           <div class="flex items-center gap-2 text-gray-400">
             <span class="w-3 h-3 bg-fuchsia-400 rounded-full"></span>
-            <span id="day-time-played">You didnt played today</span>
+            <span id="day-time-played" data-i18n="history.noPlayedToday">Vous n'avez pas joué aujourd'hui</span>
           </div>
         </div>
       </div>
@@ -342,7 +347,7 @@ const Stats: StatsPage = {
         <div class="mt-4">
           <div class="flex items-center gap-2 text-gray-400">
             <span class="w-3 h-3 bg-blue-400 rounded-full"></span>
-            <span id="week-time-played">You didnt played this week</span>
+            <span id="week-time-played" data-i18n="history.noPlayedWeek">Vous n'avez pas joué cette semaine</span>
           </div>
         </div>
       </div>
@@ -351,17 +356,17 @@ const Stats: StatsPage = {
   </div>
   <div class="backdrop-blur-2xs border border-gray-50 ">
     <div class="px-6 py-4 border-b border-gray-700">
-      <h3 class="text-lg font-semibold text-gray-100">Historique des matches</h3>
+      <h3 class="text-lg font-semibold text-gray-100" data-i18n="history.matchHistory">Historique des matches</h3>
     </div>
     <div class="p-6 overflow-y-auto min-h-[38vh] max-h-[38vh]">
       <table class="w-full">
         <thead class="bg-transparent">
           <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Date</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Adversaire</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Score</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Résultat</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Mode de jeu</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider" data-i18n="history.date">Date</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider" data-i18n="history.opponent">Adversaire</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider" data-i18n="history.score">Score</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider" data-i18n="history.result">Résultat</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider" data-i18n="history.gameMode">Mode de jeu</th>
           </tr>
         </thead>
         <tbody class="bg-transparent divide-y divide-gray-800" id="history-container"></tbody>
@@ -372,19 +377,19 @@ const Stats: StatsPage = {
 <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
   <div class="backdrop-blur-2xs border border-gray-50 p-6 text-center">
     <div class="text-3xl font-bold text-blue-400" id="histo-weekly-played">0</div>
-    <div class="text-sm text-gray-400">Parties cette semaine</div>
+    <div class="text-sm text-gray-400" data-i18n="history.gamesThisWeek">Parties cette semaine</div>
   </div>
   <div class="backdrop-blur-2xs border border-gray-50 p-6 text-center">
     <div class="text-3xl font-bold text-green-400" id="histo-victory">0</div>
-    <div class="text-sm text-gray-400">Victoires</div>
+    <div class="text-sm text-gray-400" data-i18n="history.victories">Victoires</div>
   </div>
   <div class="backdrop-blur-2xs border border-gray-50 p-6 text-center">
     <div class="text-3xl font-bold text-red-400" id="histo-loose">0</div> 
-    <div class="text-sm text-gray-400">Défaites</div>
+    <div class="text-sm text-gray-400" data-i18n="history.defeats">Défaites</div>
   </div>
   <div class="backdrop-blur-2xs border border-gray-50 p-6 text-center">
     <div class="text-3xl font-bold text-purple-400" id="histo-wr">0%</div>
-    <div class="text-sm text-gray-400">Winrate</div>
+    <div class="text-sm text-gray-400" data-i18n="history.winrate">Winrate</div>
   </div>
 </div>
 					`;
@@ -520,6 +525,47 @@ const Stats: StatsPage = {
     // In case initial tab is profile and ELO element already in DOM
     if (activeTab === 'profile') fetchElo();
 
+    // Language button event listeners
+    const langFr = root.querySelector('#lang-fr') as HTMLButtonElement;
+    const langEn = root.querySelector('#lang-en') as HTMLButtonElement;
+    const langEs = root.querySelector('#lang-es') as HTMLButtonElement;
+    const langButtons = [langFr, langEn, langEs];
+
+    const updateLangButtonStyles = (activeLang: string) => {
+      langButtons.forEach(btn => {
+        if (btn) {
+          if (btn.dataset.lang === activeLang) {
+            btn.classList.add('bg-gray-700', 'border-gray-50');
+            btn.classList.remove('border-transparent');
+          } else {
+            btn.classList.remove('bg-gray-700', 'border-gray-50');
+            btn.classList.add('border-transparent');
+          }
+        }
+      });
+    };
+
+    const handleLanguageChange = async (lang: 'fr' | 'en' | 'es') => {
+      await changeLanguage(lang, document);
+      // Re-apply to content container since it has dynamic content
+      applyTranslations(contentContainer);
+      updateLangButtonStyles(lang);
+      // Re-render dynamic content that uses t()
+      this.updateContentHistory();
+    };
+
+    if (langFr) langFr.addEventListener('click', () => handleLanguageChange('fr'));
+    if (langEn) langEn.addEventListener('click', () => handleLanguageChange('en'));
+    if (langEs) langEs.addEventListener('click', () => handleLanguageChange('es'));
+
+    // Apply translations on initial load
+    loadTranslations().then(() => {
+      applyTranslations(root);
+      // Highlight current language button
+      const currentLang = getCurrentLang();
+      updateLangButtonStyles(currentLang);
+    });
+
   },
 
   mountProfileEvents(root: HTMLElement) {
@@ -613,11 +659,11 @@ const Stats: StatsPage = {
                 sessionStorage.setItem('username', Layout.getUserInfoFromJwt(data.token).username);
                 Layout.updateUsername();
               }
-              Layout.showNotification(data.message || 'username changé avec succès', 'success');
+              Layout.showNotification(data.message || t('notifications.usernameChanged'), 'success');
             })
             .catch(err => {
               console.error('Fetch error:', err);
-              const msg = (err && (err.error || err.message)) || 'Impossible de changer de nom d\'utilisateur';
+              const msg = (err && (err.error || err.message)) || t('notifications.cannotChangeUsername');
               Layout.showNotification(msg, 'error');
             });
         }
@@ -654,7 +700,7 @@ const Stats: StatsPage = {
           const newPass = (form.querySelector('#new-password') as HTMLInputElement).value.trim();
           const confirmPass = (form.querySelector('#confirm-password') as HTMLInputElement).value.trim();
           if (newPass !== confirmPass) {
-            Layout.showNotification('Les mots de passe ne correspondent pas', 'error');
+            Layout.showNotification(t('notifications.passwordMismatch'), 'error');
             return;
           }
           fetch('/user/api/change-password', {
@@ -669,19 +715,19 @@ const Stats: StatsPage = {
               newPassword: newPass
             })
           })
-            .then(res => res.text().then(t => {
+            .then(res => res.text().then(txt => {
               let data: any;
-              try { data = JSON.parse(t); } catch { data = { message: t }; }
+              try { data = JSON.parse(txt); } catch { data = { message: txt }; }
               if (!res.ok) return Promise.reject(data);
               return data;
             }))
             .then(data => {
-              Layout.showNotification(data.message || 'Mot de passe changé', 'success');
+              Layout.showNotification(data.message || t('notifications.passwordChanged'), 'success');
               form.reset();
               pwdModal.classList.add('hidden');
             })
             .catch(err => {
-              const msg = (err && (err.error || err.message)) || 'Impossible de changer le mot de passe';
+              const msg = (err && (err.error || err.message)) || t('notifications.cannotChangePassword');
               Layout.showNotification(msg, 'error');
             });
         });
@@ -714,7 +760,7 @@ const Stats: StatsPage = {
           // Validate file type
           console.log('file type is: ' + file.type);
           if (!file.type.match(/^image\/(png|jpeg|gif)$/)) {
-            Layout.showNotification('Seuls les fichiers PNG, JPEG, GIF sont acceptés', 'error');
+            Layout.showNotification(t('notifications.onlyPngJpgGif'), 'error');
             return;
           }
 
@@ -814,18 +860,18 @@ const Stats: StatsPage = {
     const invitedUsername = input?.value?.trim();
 
     if (!invitedUsername) {
-      Layout.showNotification('Veuillez entrer un nom d\'utilisateur', 'error');
+      Layout.showNotification(t('notifications.enterUsername'), 'error');
       return;
     }
 
     const currentUser = sessionStorage.getItem('username');
     if (!currentUser) {
-      Layout.showNotification('Vous devez être connecté', 'error');
+      Layout.showNotification(t('notifications.mustBeLoggedIn'), 'error');
       return;
     }
 
     if (invitedUsername === currentUser) {
-      Layout.showNotification('Vous ne pouvez pas vous ajouter vous-même !', 'error');
+      Layout.showNotification(t('notifications.cannotAddSelf'), 'error');
       return;
     }
 
@@ -842,14 +888,14 @@ const Stats: StatsPage = {
     })
       .then(res => {
         if (res.ok) {
-          Layout.showNotification(`Invitation envoyée à ${invitedUsername} !`);
+          Layout.showNotification(t('notifications.inviteSent', { username: invitedUsername }));
           input.value = '';
         } else {
           return res.json().then(data => Promise.reject(data));
         }
       })
       .catch(err => {
-        const msg = err.error || 'Impossible d\'envoyer l\'invitation';
+        const msg = err.error || t('notifications.cannotSendInvite');
         Layout.showNotification(msg, 'error');
       });
   },
@@ -859,7 +905,7 @@ const Stats: StatsPage = {
     const container = root.querySelector('#request-friends-container') as HTMLDivElement;
 
     if (!currentUser) {
-      Layout.showNotification('Vous devez être connecté', 'error');
+      Layout.showNotification(t('notifications.mustBeLoggedIn'), 'error');
       return;
     }
 
@@ -897,8 +943,8 @@ const Stats: StatsPage = {
   </span>
   <span class="text-gray-200 text-xl">${username}</span>
 </div>
-<button class="invite-btn px-3 py-1 text-md text-white border border-gray-50 hover:border-blue-500 hover:bg-gray-700/50 transition-colors" id="Btn-${username}">
-  Accepter
+<button class="invite-btn px-3 py-1 text-md text-white border border-gray-50 hover:border-blue-500 hover:bg-gray-700/50 transition-colors" id="Btn-${username}" data-i18n="friends.accept">
+  ${t('friends.accept')}
 </button>
   `;
           const btn = li.querySelector('button') as HTMLButtonElement;
@@ -909,7 +955,7 @@ const Stats: StatsPage = {
         });
       })
       .catch(err => {
-        const msg = err.error || 'Impossible de recevoir les requetes d\'amis';
+        const msg = err.error || t('notifications.cannotGetFriends');
         Layout.showNotification(msg, 'error');
       });
   },
@@ -928,10 +974,10 @@ const Stats: StatsPage = {
           return res.json().then(data => Promise.reject(data));
         }
         element.remove();
-        Layout.showNotification(`Vous avez accepté ${username}`, 'success');
+        Layout.showNotification(t('notifications.friendAccepted', { username }), 'success');
       })
       .catch(err => {
-        const msg = err.error || `Impossible d'accepter ${username}`;
+        const msg = err.error || t('notifications.cannotAcceptFriend', { username });
         Layout.showNotification(msg, 'error');
       });
   },
@@ -941,7 +987,7 @@ const Stats: StatsPage = {
     const container = root.querySelector('#online-friends-container') as HTMLDivElement;
 
     if (!currentUser) {
-      Layout.showNotification('Vous devez être connecté', 'error');
+      Layout.showNotification(t('notifications.mustBeLoggedIn'), 'error');
       return;
     }
 
@@ -985,7 +1031,7 @@ const Stats: StatsPage = {
         });
       })
       .catch(err => {
-        const msg = err.error || 'Impossible de recevoir les requetes d\'amis';
+        const msg = err.error || t('notifications.cannotGetFriends');
         Layout.showNotification(msg, 'error');
       });
   },
@@ -995,7 +1041,7 @@ const Stats: StatsPage = {
     const token = sessionStorage.getItem('token');
 
     if (!currentUser) {
-      Layout.showNotification('Vous devez être connecté', 'error');
+      Layout.showNotification(t('notifications.mustBeLoggedIn'), 'error');
       return;
     }
 
@@ -1032,11 +1078,11 @@ const Stats: StatsPage = {
         sessionStorage.setItem('token', data.token);
         this.updateAvatar();
       }
-      Layout.showNotification(data.message || 'Avatar changé avec succès', 'success');
+      Layout.showNotification(data.message || t('notifications.avatarChanged'), 'success');
     })
     .catch(err => {
       console.error('Fetch error:', err);
-      const msg = (err && (err.error || err.message)) || 'Impossible de changer d\'avatar';
+      const msg = (err && (err.error || err.message)) || t('notifications.cannotChangeAvatar');
       Layout.showNotification(msg, 'error');
     });
   },
@@ -1046,7 +1092,7 @@ const Stats: StatsPage = {
     const container = root.querySelector('#offline-friends-container') as HTMLDivElement;
 
     if (!currentUser) {
-      Layout.showNotification('Vous devez être connecté', 'error');
+      Layout.showNotification(t('notifications.mustBeLoggedIn'), 'error');
       return;
     }
 
@@ -1167,10 +1213,12 @@ const Stats: StatsPage = {
     ];
     drawPieChart(dailySlices, 'play-daily-pieChart', 24);
     if (timePlayDaily) {
-      timePlayDaily.textContent = (matchDay.timePlayed.toString() !== 'NaN') ? "You played: " +
-        Math.floor(matchDay.timePlayed / 3600) + "h " +
-        Math.floor((matchDay.timePlayed % 3600) / 60) + "min " +
-        (matchDay.timePlayed % 60) + "sec today" : 'You didnt played today';
+      const hours = Math.floor(matchDay.timePlayed / 3600).toString();
+      const minutes = Math.floor((matchDay.timePlayed % 3600) / 60).toString();
+      const seconds = (matchDay.timePlayed % 60).toString();
+      timePlayDaily.textContent = (matchDay.timePlayed.toString() !== 'NaN') 
+        ? t('history.playedToday', { hours, minutes, seconds }) 
+        : t('history.noPlayedToday');
     }
     const weeklySlices = [
       {value: Math.max(0.01, Math.min(matchWeek.timePlayed / 3600, 168)), color: '#60a5fa'},
@@ -1178,10 +1226,12 @@ const Stats: StatsPage = {
     ];
     drawPieChart(weeklySlices, 'play-weekly-pieChart', 168);
     if (timePlayWeekly) {
-      timePlayWeekly.textContent = (matchWeek.timePlayed.toString() !== 'NaN') ? 'You played: ' + Math.floor(matchWeek.timePlayed / 3600) + "h " +
-        Math.floor((matchWeek.timePlayed % 3600) / 60) + "min " +
-        (matchWeek.timePlayed % 60) + "sec this week" : 'You didnt played this week';
-
+      const hours = Math.floor(matchWeek.timePlayed / 3600).toString();
+      const minutes = Math.floor((matchWeek.timePlayed % 3600) / 60).toString();
+      const seconds = (matchWeek.timePlayed % 60).toString();
+      timePlayWeekly.textContent = (matchWeek.timePlayed.toString() !== 'NaN') 
+        ? t('history.playedWeek', { hours, minutes, seconds }) 
+        : t('history.noPlayedWeek');
     }
   },
 
@@ -1211,7 +1261,7 @@ const Stats: StatsPage = {
         const tr = document.createElement('tr');
         tr.innerHTML = `
               <td class="px-6 py-4 whitespace-nowrap font-bold text-gray-300" colspan="5">
-                  Jouez des parties pour avoir un historique
+                  ${t('history.playGames')}
               </td>`;
         container.appendChild(tr);
           const fallbackSlices = [
@@ -1223,7 +1273,7 @@ const Stats: StatsPage = {
           return;
       }
       data.matchHistory.forEach(match => {
-        const victory = match.winner ? "Victoire" : "Défaite";
+        const victory = match.winner ? t('history.victory') : t('history.defeat');
         const victoryColorText = match.winner ? "text-green-300" : "text-red-300";
         const victoryColorBG = match.winner ? "bg-green-700/10" : "bg-red-700/10";
 
@@ -1236,7 +1286,7 @@ const Stats: StatsPage = {
                       <div class="w-8 h-8 rounded-full flex items-center justify-center mr-3 border border-gray-50">
                           <img src="${match.avatar || '/default-avatar.png'}" alt="avatar" class="rounded-full"/>
                       </div>
-                      <span class="text-sm font-medium text-gray-100">${match.versus || 'Inconnu'}</span>
+                      <span class="text-sm font-medium text-gray-100">${match.versus || t('history.unknown')}</span>
                   </div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-100">${match.score}</td>
@@ -1287,10 +1337,10 @@ const Stats: StatsPage = {
       drawPieChart(slices, 'wr-pieChart');
       const victorySpan = document.getElementById('victory-class') as HTMLDivElement;
       const defeatSpan = document.getElementById('defeat-class') as HTMLDivElement;
-      victorySpan.textContent = "Victory: "  + (total > 0 ? (victories / total) * 100 : 0).toFixed(2) + "%";
+      victorySpan.textContent = t('stats.victoryRate', { percent: (total > 0 ? (victories / total) * 100 : 0).toFixed(2) });
     })
     .catch(err => {
-      const msg = err?.error || 'Impossible de recevoir l\'historique des matches';
+      const msg = err?.error || t('notifications.cannotGetHistory');
       Layout.showNotification(msg, 'error');
     });
   }

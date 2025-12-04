@@ -2,6 +2,7 @@ import type { Page } from "../interface/gameInterface.js"
 import { Layout } from "./Layout";
 import { GameComponent } from "../components/GameComponent.js";
 import { createCountdown } from "../utils/countdown.js"
+import { t } from "../utils/i18n.js";
 
 // ============================================
 // Tournament State
@@ -189,10 +190,10 @@ export const TournamentLocal: Page = {
 	<!-- Phase d'inscription -->
 	<div id="registration-phase" class="backdrop-blur-2xs border border-gray-50 p-8 w-[420px] mx-4">
 		<div class="text-center mb-6">
-			<h1 class="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 mb-2">
+			<h1 class="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 mb-2" data-i18n="tournamentLocal.title">
 				Tournoi Local
 			</h1>
-			<p class="text-gray-400">Élimination directe - 4 ou 8 joueurs</p>
+			<p class="text-gray-400" data-i18n="tournamentLocal.subtitle">Élimination directe - 8 joueurs</p>
 		</div>
 		
 		<div class="mb-6">
@@ -202,32 +203,33 @@ export const TournamentLocal: Page = {
 					id="tournament-player-input"
 					class="flex-1 px-3 py-2 border border-gray-400 bg-transparent text-gray-200 focus:outline-none focus:border-green-500 transition-colors"
 					placeholder="Nom du joueur (3-12 caractères)"
+					data-i18n-placeholder="tournamentLocal.playerNamePlaceholder"
 					pattern="^[a-zA-Z0-9]{3,12}$"
 					maxlength="12"
 					autocomplete="off"
 				>
 				<button 
 					id="add-player-btn"
-					class="px-4 py-2 border border-gray-50 text-gray-50 hover:bg-green-500/20 hover:border-green-500 transition-colors">
+					class="px-4 py-2 border border-gray-50 text-gray-50 hover:bg-green-500/20 hover:border-green-500 transition-colors" data-i18n="tournamentLocal.addPlayer">
 					Ajouter
 				</button>
 			</div>
 			
 			<div class="flex justify-between items-center mb-2">
-				<span class="text-gray-400">Joueurs inscrits:</span>
+				<span class="text-gray-400" data-i18n="tournamentLocal.registeredPlayers">Joueurs inscrits:</span>
 				<span id="player-count" class="text-gray-200 font-bold">0/8</span>
 			</div>
 			
 			<div id="players-list" class="h-48 overflow-y-auto mb-4 space-y-2"></div>
 			
-			<p id="player-hint" class="text-sm text-gray-500 text-center">
-				Ajoutez 4 ou 8 joueurs pour commencer
+			<p id="player-hint" class="text-sm text-gray-500 text-center" data-i18n="tournamentLocal.playerHint">
+				Ajoutez 8 joueurs pour commencer
 			</p>
 		</div>
 
 		<!-- Choix du nombre de points -->
 		<div class="mb-6">
-			<label class="text-gray-400 block mb-3 text-center">Points pour gagner un match :</label>
+			<label class="text-gray-400 block mb-3 text-center" data-i18n="tournamentLocal.pointsToWin">Points pour gagner un match :</label>
 			<div class="flex gap-2 justify-center">
 				<button class="score-option px-5 py-2 border border-gray-600 text-gray-400 hover:border-gray-50 hover:text-gray-50 transition-colors" data-score="3">3</button>
 				<button class="score-option px-5 py-2 border border-yellow-500 text-yellow-400 bg-yellow-500/20" data-score="5">5</button>
@@ -240,12 +242,12 @@ export const TournamentLocal: Page = {
 			<button 
 				id="start-tournament-btn"
 				class="flex-1 py-3 font-bold text-xl border border-gray-50 text-gray-50 hover:bg-green-500/20 hover:border-green-500 transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:border-gray-50"
-				disabled>
+				disabled data-i18n="tournamentLocal.startTournament">
 				Lancer le tournoi
 			</button>
 			<button 
 				id="back-btn"
-				class="px-6 py-3 font-bold border border-gray-50 text-gray-50 hover:bg-red-500/20 hover:border-red-500 transition-colors">
+				class="px-6 py-3 font-bold border border-gray-50 text-gray-50 hover:bg-red-500/20 hover:border-red-500 transition-colors" data-i18n="tournamentLocal.back">
 				Retour
 			</button>
 		</div>
@@ -309,12 +311,12 @@ export const TournamentLocal: Page = {
 	<div id="bracket-modal" class="fixed inset-0 backdrop-blur-lg hidden items-center justify-center z-50">
 		<div class="backdrop-blur-lg border border-gray-50 p-6 max-w-5xl w-full mx-4 max-h-[90vh] overflow-hidden">
 			<div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-4">
-				<h3 class="text-2xl text-yellow-400 font-bold">📊 Bracket du tournoi</h3>
+				<h3 class="text-2xl text-yellow-400 font-bold" data-i18n="tournamentLocal.bracketTitle">📊 Bracket du tournoi</h3>
 				<button id="close-bracket-btn" class="text-gray-400 hover:text-white text-3xl transition-colors">&times;</button>
 			</div>
 			<div id="bracket-modal-content" class="mb-6"></div>
 			<div id="bracket-next-match" class="mt-6 pt-6 border-t border-gray-700 text-center hidden">
-				<p class="text-gray-400 mb-3 text-sm uppercase tracking-wider">Prochain match</p>
+				<p class="text-gray-400 mb-3 text-sm uppercase tracking-wider" data-i18n="tournamentLocal.nextMatch">Prochain match</p>
 				<div class="mb-2 flex items-center px-6 pt-2">
 					<span id="next-player1" class="text-white font-semibold text-5xl flex-1 text-left-center"></span>
 					<span class="text-white text-5xl font-extrabold tracking-wide">VS</span>
@@ -322,7 +324,7 @@ export const TournamentLocal: Page = {
 				</div>
 				<button 
 					id="start-next-match-btn"
-					class="px-10 py-4 text-white border-2 border-green-500 hover:bg-green-500/20 transition-colors font-bold text-lg">
+					class="px-10 py-4 text-white border-2 border-green-500 hover:bg-green-500/20 transition-colors font-bold text-lg" data-i18n="tournamentLocal.startMatch">
 					Commencer le match
 				</button>
 			</div>
@@ -332,13 +334,13 @@ export const TournamentLocal: Page = {
 	<!-- Modal match terminé -->
 	<div id="match-end-modal" class="fixed inset-0 backdrop-blur-lg bg-black/70 hidden items-center justify-center z-50">
 		<div class="backdrop-blur-2xs border border-gray-50 p-8 max-w-md w-full mx-4 text-center">
-			<h3 class="text-2xl text-gray-300 font-bold mb-2">Match terminé !</h3>
-			<p class="text-gray-400 text-sm mb-4">Vainqueur</p>
+			<h3 class="text-2xl text-gray-300 font-bold mb-2" data-i18n="tournamentLocal.matchFinished">Match terminé !</h3>
+			<p class="text-gray-400 text-sm mb-4" data-i18n="tournamentLocal.winner">Vainqueur</p>
 			<p id="match-winner-name" class="text-4xl text-green-400 font-bold mb-2"></p>
 			<p id="match-final-score" class="text-xl text-gray-400 mb-6"></p>
 			<button 
 				id="show-bracket-after-match-btn"
-				class="w-full py-4 text-white border-2 border-yellow-500 hover:bg-yellow-500/20 transition-colors font-bold text-lg">
+				class="w-full py-4 text-white border-2 border-yellow-500 hover:bg-yellow-500/20 transition-colors font-bold text-lg" data-i18n="tournamentLocal.viewBracket">
 				📊 Voir le bracket
 			</button>
 		</div>
@@ -347,23 +349,23 @@ export const TournamentLocal: Page = {
 	<!-- Modal tournoi terminé -->
 	<div id="tournament-end-modal" class="fixed inset-0 backdrop-blur-lg bg-black/70 hidden items-center justify-center z-50">
 		<div class="border border-yellow-500 bg-gray-900/90 p-8 max-w-md w-full mx-4 text-center">
-			<h3 class="text-3xl text-yellow-400 font-bold mb-6">TOURNOI TERMINÉ</h3>
-			<p class="text-gray-400 text-sm uppercase tracking-wider mb-2">Le champion est</p>
+			<h3 class="text-3xl text-yellow-400 font-bold mb-6" data-i18n="tournamentLocal.tournamentFinished">TOURNOI TERMINÉ</h3>
+			<p class="text-gray-400 text-sm uppercase tracking-wider mb-2" data-i18n="tournamentLocal.championIs">Le champion est</p>
 			<p id="tournament-champion" class="text-5xl text-green-400 font-bold mb-8 animate-pulse"></p>
 			<div class="space-y-3">
 				<button 
 					id="show-final-bracket-btn"
-					class="w-full py-3 text-white border border-gray-50 hover:bg-gray-700/50 transition-colors font-bold">
+					class="w-full py-3 text-white border border-gray-50 hover:bg-gray-700/50 transition-colors font-bold" data-i18n="tournamentLocal.viewFinalBracket">
 					📊 Voir le bracket final
 				</button>
 						<button
 							id="back-to-local-lobby-btn"
-							class="w-full py-3 text-white border border-gray-50 hover:bg-gray-700/50 transition-colors font-bold">
+							class="w-full py-3 text-white border border-gray-50 hover:bg-gray-700/50 transition-colors font-bold" data-i18n="tournamentLocal.backToLobby">
 							↩ Retour au lobby
 						</button>
 				<button 
 					id="new-tournament-btn"
-					class="w-full py-3 text-white border-2 border-green-500 hover:bg-green-500/20 transition-colors font-bold">
+					class="w-full py-3 text-white border-2 border-green-500 hover:bg-green-500/20 transition-colors font-bold" data-i18n="tournamentLocal.newTournament">
 					Nouveau tournoi
 				</button>
 			</div>
@@ -551,13 +553,13 @@ export const TournamentLocal: Page = {
 			const isValid = tournamentPlayers.length === 8;
 			
 			if (isValid) {
-				playerHint.textContent = '✓ Prêt à commencer !';
+				playerHint.textContent = t('tournamentLocal.readyToStart');
 				playerHint.className = 'text-sm text-green-400 text-center font-bold';
 			} else if (tournamentPlayers.length < 8) {
-				playerHint.textContent = `Ajoutez encore ${8 - tournamentPlayers.length} joueur(s)`;
+				playerHint.textContent = t('tournamentLocal.addMorePlayers', { count: (8 - tournamentPlayers.length).toString() });
 				playerHint.className = 'text-sm text-gray-500 text-center';
 			} else {
-				playerHint.textContent = 'Maximum 8 joueurs atteint';
+				playerHint.textContent = t('tournamentLocal.maxPlayersReached');
 				playerHint.className = 'text-sm text-gray-500 text-center';
 			}
 			
@@ -571,25 +573,25 @@ export const TournamentLocal: Page = {
 			const name = playerInput.value.trim();
 			
 			if (!name) {
-				Layout.showNotification('Veuillez entrer un nom', 'error');
+				Layout.showNotification(t('tournamentLocal.enterName'), 'error');
 				playerInput.focus();
 				return;
 			}
 			
 			if (!/^[a-zA-Z0-9]{3,12}$/.test(name)) {
-				Layout.showNotification('Le nom doit contenir 3-12 caractères alphanumériques', 'error');
+				Layout.showNotification(t('tournamentLocal.nameRequirements'), 'error');
 				playerInput.focus();
 				return;
 			}
 			
 			if (tournamentPlayers.map(p => p.toLowerCase()).includes(name.toLowerCase())) {
-				Layout.showNotification('Ce joueur est déjà inscrit', 'error');
+				Layout.showNotification(t('tournamentLocal.playerAlreadyRegistered'), 'error');
 				playerInput.focus();
 				return;
 			}
 			
 			if (tournamentPlayers.length >= 8) {
-				Layout.showNotification('Maximum 8 joueurs atteint', 'error');
+				Layout.showNotification(t('tournamentLocal.maxPlayersReached'), 'error');
 				return;
 			}
 			
@@ -614,7 +616,7 @@ export const TournamentLocal: Page = {
 			scoreEl.textContent = '0 - 0';
 			updateMatchInfo();
 			canStart = false;
-			playBtn.textContent = '▶ Jouer';
+			playBtn.textContent = t('tournamentLocal.playBtn');
 			playBtn.className = "px-8 py-3 font-bold text-lg transition border-2 border-green-500 backdrop-blur-2xs text-green-400 hover:bg-green-500/20";
 
 			// Destroy previous game
@@ -658,7 +660,7 @@ export const TournamentLocal: Page = {
 						} else {
 							// Show match end modal
 							matchWinnerName.textContent = winner;
-							matchFinalScore.textContent = `Score: ${p1} - ${p2}`;
+							matchFinalScore.textContent = t('game.scoreDisplay', { score1: p1.toString(), score2: p2.toString() });
 							setTimeout(() => {
 								matchEndModal.classList.remove('hidden');
 								matchEndModal.classList.add('flex');
@@ -730,7 +732,7 @@ export const TournamentLocal: Page = {
 			// If a game is currently running (canStart === true), prevent
 			// opening the bracket. Require the user to pause first.
 			if (currentGame && canStart) {
-				Layout.showNotification('Mettez le jeu en pause pour ouvrir le bracket', 'info');
+				Layout.showNotification(t('tournamentLocal.pauseToOpenBracket'), 'info');
 				return;
 			}
 			showBracket(false);
@@ -753,18 +755,18 @@ export const TournamentLocal: Page = {
 			canStart = !canStart;
 			
 					if (canStart) {
-						playBtn.textContent = '⏸ Pause';
+						playBtn.textContent = t('tournamentLocal.pauseBtn');
 						playBtn.className = "px-8 py-3 font-bold text-lg transition border-2 border-yellow-500 backdrop-blur-2xs text-yellow-400 hover:bg-yellow-500/20";
 						try {
 							await countdown.start(countdownModal, countdownText);
 						} catch (e: any) {
 							if (!(e && (e.name === 'AbortError' || e instanceof DOMException))) throw e;
 							canStart = false;
-							playBtn.textContent = '▶ Jouer';
+							playBtn.textContent = t('tournamentLocal.playBtn');
 							playBtn.className = "px-8 py-3 font-bold text-lg transition border-2 border-green-500 backdrop-blur-2xs text-green-400 hover:bg-green-500/20";
 						}
 					} else {
-						playBtn.textContent = '▶ Jouer';
+						playBtn.textContent = t('tournamentLocal.playBtn');
 						playBtn.className = "px-8 py-3 font-bold text-lg transition border-2 border-green-500 backdrop-blur-2xs text-green-400 hover:bg-green-500/20";
 						countdown.abort();
 					}
@@ -775,7 +777,7 @@ export const TournamentLocal: Page = {
 		});
 
 		quitBtn.addEventListener('click', () => {
-			if (confirm('Êtes-vous sûr de vouloir quitter le tournoi ? Toute progression sera perdue.')) {
+			if (confirm(t('tournamentMatch.confirmQuitProgress'))) {
 				resetTournament();
 				history.pushState(null, '', '/localLobby');
 				window.dispatchEvent(new PopStateEvent('popstate'));

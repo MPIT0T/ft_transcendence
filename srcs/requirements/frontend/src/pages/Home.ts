@@ -141,7 +141,8 @@ export const Home: Page = {
   <div class="flex justify-center gap-4 mb-8">
     <button 
       id="play-btn" 
-      class="px-12 py-7 backdrop-blur-2xs border border-gray-50 text-gray-50 text-4xl font-bold transform hover:bg-gray-700/50 duration-200">
+      class="px-12 py-7 backdrop-blur-2xs border border-gray-50 text-gray-50 text-4xl font-bold transform hover:bg-gray-700/50 duration-200"
+      data-i18n="play">
       Jouer maintenant
     </button>
   </div>
@@ -157,7 +158,7 @@ export const Home: Page = {
 <section class="min-h-screen flex flex-col lg:flex-row items-center justify-center gap-10">
   <!-- Game preview -->
   <div class="w-full h-full flex flex-col justify-center items-center">
-    <h3 id="preview-text" class="text-3xl font-bold text-center mb-6 text-gray-50 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]">
+    <h3 id="preview-text" class="text-3xl font-bold text-center mb-6 text-gray-50 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]" data-i18n="preview">
       Aperçu du Jeu
     </h3>
     <canvas 
@@ -170,37 +171,37 @@ export const Home: Page = {
   <div class="w-full backdrop-blur-2xs border-2 border-gray-300x h-full flex flex-col shadow-xl p-6">
     
     <!-- Rules -->
-    <h4 class="text-3xl font-semibold mb-4 w-full mx-auto mt-4 text-gray-50 drop-shadow-[0_0_6px_rgba(255,255,255,0.25)]">
+    <h4 class="text-3xl font-semibold mb-4 w-full mx-auto mt-4 text-gray-50 drop-shadow-[0_0_6px_rgba(255,255,255,0.25)]" data-i18n="home.rules">
       Règles :
     </h4>
     <ul class="text-lg lg:text-lg text-gray-400 space-y-2 leading-relaxed">
-      <li">• Utilisez votre raquette pour renvoyer la balle.</li>
-      <li>• Marquez un point quand la balle dépasse la raquette adverse.</li>
-      <li>• La balle rebondit sur les murs haut et bas.</li>
-      <li>• Premier à 5 points gagne la partie.</li>
+      <li data-i18n="home.rule1">• Utilisez votre raquette pour renvoyer la balle.</li>
+      <li data-i18n="home.rule2">• Marquez un point quand la balle dépasse la raquette adverse.</li>
+      <li data-i18n="home.rule3">• La balle rebondit sur les murs haut et bas.</li>
+      <li data-i18n="home.rule4">• Premier à 5 points gagne la partie.</li>
     </ul>
 
-    <!-- History -->
-    <h4 class="text-3xl font-semibold mb-4 w-full mx-auto mt-8 text-gray-50 drop-shadow-[0_0_6px_rgba(255,255,255,0.25)]">
+<!-- History -->
+    <h4 class="text-3xl font-semibold mb-4 w-full mx-auto mt-8 text-gray-50 drop-shadow-[0_0_6px_rgba(255,255,255,0.25)]" data-i18n="home.history">
       Histoire :
     </h4>
     <ul class="text-lg lg:text-lg text-gray-400 space-y-2 leading-relaxed">
-      <li>• Créé en 1972 par Allan Alcorn chez Atari, sur une idée de Nolan Bushnell.</li>
-      <li>• Inspiré du jeu de tennis de table du Magnavox Odyssey, la première console domestique.</li>
-      <li>• Le prototype rencontre un immense succès dès son installation dans un bar californien.</li>
-      <li>• Commercialisé ensuite comme borne d’arcade, il devient le premier grand succès du jeu vidéo.</li>
-      <li>• Malgré un conflit juridique avec Magnavox, Atari consolide sa place de pionnier du secteur.</li>
-      <li>• En 1975, une version domestique est lancée avec Sears, popularisant le jeu vidéo à la maison.</li>
+      <li data-i18n="home.history1">• Créé en 1972 par Allan Alcorn chez Atari, sur une idée de Nolan Bushnell.</li>
+      <li data-i18n="home.history2">• Inspiré du jeu de tennis de table du Magnavox Odyssey, la première console domestique.</li>
+      <li data-i18n="home.history3">• Le prototype rencontre un immense succès dès son installation dans un bar californien.</li>
+      <li data-i18n="home.history4">• Commercialisé ensuite comme borne d'arcade, il devient le premier grand succès du jeu vidéo.</li>
+      <li data-i18n="home.history5">• Malgré un conflit juridique avec Magnavox, Atari consolide sa place de pionnier du secteur.</li>
+      <li data-i18n="home.history6">• En 1975, une version domestique est lancée avec Sears, popularisant le jeu vidéo à la maison.</li>
     </ul>
 
-    <!-- Fun facts -->
-    <h4 class="text-3xl font-semibold mb-4 w-full mx-auto mt-8 text-gray-50 drop-shadow-[0_0_6px_rgba(255,255,255,0.25)]">
+<!-- Fun facts -->
+    <h4 class="text-3xl font-semibold mb-4 w-full mx-auto mt-8 text-gray-50 drop-shadow-[0_0_6px_rgba(255,255,255,0.25)]" data-i18n="home.funFacts">
       Le Saviez-vous ?
     </h4>
     <ul class="text-lg lg:text-lg text-gray-400 space-y-2 leading-relaxed">
-      <li>• Le premier prototype de Pong est tombé en panne car le réservoir de pièces était plein.</li>
-      <li>• Des dizaines de copies non autorisées ont envahi le marché dès 1973, lançant la “Pong mania”.</li>
-      <li>• Atari a vendu plus de 8 000 bornes d’arcade en un an, un record à l’époque.</li>
+      <li data-i18n="home.fact1">• Le premier prototype de Pong est tombé en panne car le réservoir de pièces était plein.</li>
+      <li data-i18n="home.fact2">• Des dizaines de copies non autorisées ont envahi le marché dès 1973, lançant la "Pong mania".</li>
+      <li data-i18n="home.fact3">• Atari a vendu plus de 8 000 bornes d'arcade en un an, un record à l'époque.</li>
     </ul>
 
   </div>

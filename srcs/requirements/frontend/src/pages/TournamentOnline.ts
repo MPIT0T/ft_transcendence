@@ -1,6 +1,7 @@
 import type { Page } from "../interface/gameInterface.js"
 import { ws } from "./TournamentRoom.js";
 import { Layout } from "./Layout";
+import { t } from "../utils/i18n.js";
 
 export const TournamentOnline: Page = {
   render() {
@@ -21,13 +22,13 @@ export const TournamentOnline: Page = {
 						<!-- Round 1: Quarter Finals -->
 						<div class="flex flex-col h-full min-w-xs gap-8">
 							<div class="text-center border border-gray-50 p-2 backdrop-blur-2xs">
-								<h3 class="text-2xl font-bold text-white">Quart de Finale</h3>
+								<h3 class="text-2xl font-bold text-white" data-i18n="tournamentOnline.quarterFinal">Quart de Finale</h3>
 							</div>
 							<div class="flex flex-col gap-8">
 								<!-- Match 1 -->
 								<div class="border border-gray-50 p-3 w-64 w-full backdrop-blur-2xs" data-match="quarter-1">
 									<div class="player-slot p-2 mb-1 border border-gray-50 backdrop-blur-2xs" data-slot="0">
-										<span class="player-name text-gray-400">En attente...</span>
+										<span class="player-name text-gray-400" data-i18n="tournamentOnline.waiting">En attente...</span>
 									</div>
 									<div class="text-center text-white text-lg my-1 flex items-center justify-center gap-3">
 										<span class="score-1 text-yellow-400 font-bold"></span>
@@ -35,14 +36,14 @@ export const TournamentOnline: Page = {
 										<span class="score-2 text-yellow-400 font-bold"></span>
 									</div>
 									<div class="player-slot p-2 border border-gray-50 backdrop-blur-2xs" data-slot="1">
-										<span class="player-name text-gray-400">En attente...</span>
+										<span class="player-name text-gray-400" data-i18n="tournamentOnline.waiting">En attente...</span>
 									</div>
 								</div>
 
 								<!-- Match 2 -->
 								<div class="border border-gray-50 p-3 w-64 w-full backdrop-blur-2xs" data-match="quarter-2">
 									<div class="player-slot p-2 mb-1 border border-gray-50 backdrop-blur-2xs" data-slot="2">
-										<span class="player-name text-gray-400">En attente...</span>
+										<span class="player-name text-gray-400" data-i18n="tournamentOnline.waiting">En attente...</span>
 									</div>
 									<div class="text-center text-white text-lg my-1 flex items-center justify-center gap-3">
 										<span class="score-1 text-yellow-400 font-bold"></span>
@@ -50,14 +51,14 @@ export const TournamentOnline: Page = {
 										<span class="score-2 text-yellow-400 font-bold"></span>
 									</div>
 									<div class="player-slot p-2 border border-gray-50 backdrop-blur-2xs" data-slot="3">
-										<span class="player-name text-gray-400">En attente...</span>
+										<span class="player-name text-gray-400" data-i18n="tournamentOnline.waiting">En attente...</span>
 									</div>
 								</div>
 
 								<!-- Match 3 -->
 								<div class="border border-gray-50 p-3 w-full w-64 backdrop-blur-2xs" data-match="quarter-3">
 									<div class="player-slot p-2 mb-1 border border-gray-50 backdrop-blur-2xs" data-slot="4">
-										<span class="player-name text-gray-400">En attente...</span>
+										<span class="player-name text-gray-400" data-i18n="tournamentOnline.waiting">En attente...</span>
 									</div>
 									<div class="text-center text-white text-lg my-1 flex items-center justify-center gap-3">
 										<span class="score-1 text-yellow-400 font-bold"></span>
@@ -65,14 +66,14 @@ export const TournamentOnline: Page = {
 										<span class="score-2 text-yellow-400 font-bold"></span>
 									</div>
 									<div class="player-slot p-2 border border-gray-50 backdrop-blur-2xs" data-slot="5">
-										<span class="player-name text-gray-400">En attente...</span>
+										<span class="player-name text-gray-400" data-i18n="tournamentOnline.waiting">En attente...</span>
 									</div>
 								</div>
 
 								<!-- Match 4 -->
 								<div class="border border-gray-50 p-3 w-full w-64 backdrop-blur-2xs" data-match="quarter-4">
 									<div class="player-slot p-2 mb-1 border border-gray-50 backdrop-blur-2xs" data-slot="6">
-										<span class="player-name text-gray-400">En attente...</span>
+										<span class="player-name text-gray-400" data-i18n="tournamentOnline.waiting">En attente...</span>
 									</div>
 									<div class="text-center text-white text-lg my-1 flex items-center justify-center gap-3">
 										<span class="score-1 text-yellow-400 font-bold"></span>
@@ -80,7 +81,7 @@ export const TournamentOnline: Page = {
 										<span class="score-2 text-yellow-400 font-bold"></span>
 									</div>
 									<div class="player-slot p-2 border border-gray-50 backdrop-blur-2xs" data-slot="7">
-										<span class="player-name text-gray-400">En attente...</span>
+										<span class="player-name text-gray-400" data-i18n="tournamentOnline.waiting">En attente...</span>
 									</div>
 								</div>
 							</div>
@@ -89,7 +90,7 @@ export const TournamentOnline: Page = {
 						<!-- Round 2: Semi Finals -->
 						<div class="flex flex-col min-w-xs gap-8">
 							<div class="text-center w-full border border-gray-50 p-2 backdrop-blur-2xs">
-								<h3 class="text-2xl font-bold text-white">Demi-Finale</h3>
+								<h3 class="text-2xl font-bold text-white" data-i18n="tournamentOnline.semiFinal">Demi-Finale</h3>
 							</div>
 							<div class="flex flex-col gap-32 mt-32">
 								<!-- Semi 1 -->
@@ -127,7 +128,7 @@ export const TournamentOnline: Page = {
 						<!-- Round 3: Final -->
 						<div class="flex flex-col min-w-xs gap-8">
 							<div class="text-center mb-4 w-full border border-gray-50 p-2 backdrop-blur-2xs">
-								<h3 class="text-2xl font-bold text-white">Finale</h3>
+								<h3 class="text-2xl font-bold text-white" data-i18n="tournamentOnline.final">Finale</h3>
 							</div>
 							<div class="flex flex-col justify-center mt-64">
 								<div class="border border-gray-50 w-full p-3 w-64 backdrop-blur-2xs" data-match="final">
@@ -149,7 +150,7 @@ export const TournamentOnline: Page = {
 						<!-- Winner -->
 						<div class="flex flex-col min-w-xs gap-8">
 							<div class="text-center mb-4 w-full border border-gray-50 p-2 backdrop-blur-2xs">
-								<h3 class="text-2xl font-bold text-white">Vainqueur</h3>
+								<h3 class="text-2xl font-bold text-white" data-i18n="tournamentOnline.winner">Vainqueur</h3>
 							</div>
 							<div class="flex flex-col justify-center mt-64">
 								<div class="border border-gray-50 p-4 text-center backdrop-blur-2xs w-full">
@@ -169,7 +170,7 @@ export const TournamentOnline: Page = {
 				<div class="text-center mt-8">
 					<button 
 						id="leave-tournament-btn"
-						class="px-8 py-3 text-gray-50 backdrop-blur-xs border border-gray-50 hover:bg-gray-700/50 hover:border-red-500 font-semibold transition-all transform"
+						class="px-8 py-3 text-gray-50 backdrop-blur-xs border border-gray-50 hover:bg-gray-700/50 hover:border-red-500 font-semibold transition-all transform" data-i18n="tournamentOnline.leaveTournament"
 					>
 						Leave Tournament
 					</button>
@@ -254,7 +255,7 @@ export const TournamentOnline: Page = {
               nameEl.classList.remove('text-gray-400');
               nameEl.classList.add('text-white');
             } else {
-              nameEl.textContent = 'En attente...';
+              nameEl.textContent = t('tournamentOnline.waiting');
               nameEl.classList.remove('text-white');
               nameEl.classList.add('text-gray-400');
               // retirer les éventuels styles de gagnant
@@ -283,7 +284,7 @@ export const TournamentOnline: Page = {
 
         if (response.method === "Start") {
           sessionStorage.setItem('gamestate', 'playing-game');
-          if (tournamentNameEl) tournamentNameEl.textContent = 'Quarts de Finale';
+          if (tournamentNameEl) tournamentNameEl.textContent = t('tournamentOnline.quarterFinal');
         }
 
         if (response.method === "tournamentState") {
@@ -444,7 +445,7 @@ export const TournamentOnline: Page = {
             sessionStorage.setItem('gamestate', 'finished');
 
             if (tournamentNameEl) {
-              tournamentNameEl.textContent = 'Tournoi terminé !';
+              tournamentNameEl.textContent = t('tournamentLocal.tournamentFinished');
             }
 
             const winnerProfilePicEl = root.querySelector('#winner-profile-pic');

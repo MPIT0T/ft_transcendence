@@ -3,6 +3,7 @@ import { GameComponentOnline } from "../components/GameComponentOnline.js";
 import { ws } from "./TournamentRoom.js";
 import {sleep} from "../utils/sleep";
 import {Layout} from "./Layout";
+import { t } from "../utils/i18n.js";
 
 let currentGame: GameComponentOnline | null = null;
 let timerInterval: number | null = null;
@@ -164,13 +165,15 @@ export const GameOnlineTournament: Page = {
         // Fin du match
         if (response.method === "gameEnd") {
           if (currentGame) {
+            let winnerName = '';
             if (response.winner === 1) {
-              matchTitleEl.textContent = `Winner: ${sessionStorage.getItem('player1Name')}`;
+              winnerName = sessionStorage.getItem('player1Name') || '';
             } else if (response.winner === 2) {
-              matchTitleEl.textContent = `Winner: ${sessionStorage.getItem('player2Name')}`;
+              winnerName = sessionStorage.getItem('player2Name') || '';
             } else {
-              matchTitleEl.textContent = `Winner: ${sessionStorage.getItem('username')}`;
+              winnerName = sessionStorage.getItem('username') || '';
             }
+            matchTitleEl.textContent = `${t('tournamentOnline.winner')}: ${winnerName}`;
 
             currentGame.destroy();
           }

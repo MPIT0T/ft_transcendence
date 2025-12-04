@@ -3,6 +3,7 @@ import { GameComponentOnline } from "../components/GameComponentOnline.js";
 import { ws } from "./GameRoom.js";
 import { sleep } from "../utils/sleep.js"
 import { Layout } from "./Layout";
+import { t } from "../utils/i18n.js";
 
 let currentGame: GameComponentOnline | null = null;
 let timerInterval: number | null = null;
@@ -32,8 +33,8 @@ export const GameOnline: Page = {
 <div id="waiting-modal" class="fixed inset-0 backdrop-blur-lg flex items-center justify-center z-50">
   <div class="bg-transparent border-gray-50 border p-8 max-w-md w-full mx-4">
     <div class="text-center">
-      <h2 class="text-3xl text-gray-50 font-bold mb-4">Attente...</h2>
-      <p class="text-xl text-gray-300 mb-6">En attente d'autres joueurs</p>
+      <h2 class="text-3xl text-gray-50 font-bold mb-4" data-i18n="gameOnline.waiting">Attente...</h2>
+      <p class="text-xl text-gray-300 mb-6" data-i18n="gameOnline.waitingPlayers">En attente d'autres joueurs</p>
       <div class="flex justify-center mb-4">
         <div class="h-16 flex items-center justify-center gap-3">
           <span class="h-2 w-2 bg-white animate-bounceHigh [animation-delay:0ms]"></span>
@@ -41,10 +42,10 @@ export const GameOnline: Page = {
           <span class="h-2 w-2 bg-white animate-bounceHigh [animation-delay:300ms]"></span>
         </div>
       </div>
-      <p class="text-gray-400 mb-5">Le jeu démarrera automatiquement quand tous les joueurs seront prêts</p>
+      <p class="text-gray-400 mb-5" data-i18n="gameOnline.autoStart">Le jeu démarrera automatiquement quand tous les joueurs seront prêts</p>
       <button
 					id="cancel-matchmaking"
-					class="w-full text-gray-50 py-3 px-6 border border-gray-50 hover:border-red-500 hover:bg-gray-700/50 transition-colors font-bold">
+					class="w-full text-gray-50 py-3 px-6 border border-gray-50 hover:border-red-500 hover:bg-gray-700/50 transition-colors font-bold" data-i18n="gameOnline.leaveMatchmaking">
         Quitter le matchmaking
 			</button>
     </div>
@@ -53,11 +54,11 @@ export const GameOnline: Page = {
 <div id="winner-modal" class="fixed inset-0 backdrop-blur-lg flex items-center justify-center z-50 hidden">
   <div class="bg-transparent border-gray-50 border p-8 max-w-md w-full mx-4">
     <div class="text-center">
-      <h2 id="winner-text" class="text-3xl text-gray-50 font-bold mb-4">Félicitations !</h2>
-      <p id="winner-subtext" class="text-xl text-gray-300 mb-6">Vous avez gagné la partie.</p>
+      <h2 id="winner-text" class="text-3xl text-gray-50 font-bold mb-4" data-i18n="gameOnline.congratulations">Félicitations !</h2>
+      <p id="winner-subtext" class="text-xl text-gray-300 mb-6" data-i18n="gameOnline.youWon">Vous avez gagné la partie.</p>
       <button 
           id="close-winner-modal"
-          class="w-full text-gray-50 py-3 px-6 border border-gray-50 hover:border-green-500 hover:bg-gray-700/50 transition-colors font-bold">
+          class="w-full text-gray-50 py-3 px-6 border border-gray-50 hover:border-green-500 hover:bg-gray-700/50 transition-colors font-bold" data-i18n="gameOnline.backToRoom">
         Retourner au salon
       </button>
     </div>
@@ -271,13 +272,13 @@ export const GameOnline: Page = {
                 dots.classList.add('hidden');
                 dots.style.display = 'none';
               }
-              if (title) title.textContent = 'Match annulé';
+              if (title) title.textContent = t('gameOnline.matchCancelled');
               if (paragraphs.length > 0) {
-                paragraphs[0].textContent = "L'autre joueur a refusé le match";
+                paragraphs[0].textContent = t('gameOnline.opponentRefused');
                 if (paragraphs[1]) paragraphs[1].textContent = '';
               }
               const cancelBtn = waitingModal.querySelector('#cancel-matchmaking') as HTMLButtonElement | null;
-              if (cancelBtn) cancelBtn.textContent = 'RETOUR';
+              if (cancelBtn) cancelBtn.textContent = t('gameOnline.return');
               waitingModal.classList.remove('hidden');
             }
           }
@@ -293,8 +294,8 @@ export const GameOnline: Page = {
             const winnerSubtext = root.querySelector('#winner-subtext') as HTMLElement;
             const closeWinnerModalBtn = root.querySelector('#close-winner-modal') as HTMLButtonElement;
 
-            if (winnerText) winnerText.textContent = "Partie terminée !";
-            if (winnerSubtext) winnerSubtext.textContent = `${winner} a gagné la partie.`;
+            if (winnerText) winnerText.textContent = t('gameOnline.matchEnded');
+            if (winnerSubtext) winnerSubtext.textContent = t('gameOnline.wonMatch', { winner: winner || '' });
 
             if (winnerModal) {
               winnerModal.classList.remove('hidden');

@@ -15,29 +15,29 @@ export const GameLobby: Page = {
     <div class="text-center mt-8">
       <div class="mb-4 text-7xl text-transparent bg-clip-text
           bg-gradient-to-r from-red-500 via-amber-400 to-green-500
-          bg-[length:300%_300%] animate-gradientShift">
+          bg-[length:300%_300%] animate-gradientShift" data-i18n="lobby.local">
         Local
       </div>
-      <p class="text-gray-400 mb-8 text-xl">
+      <p class="text-gray-400 mb-8 text-xl" data-i18n="lobby.localDesc">
         Jouez à deux sur le même ordinateur.
         Parfait pour défier un ami assis à côté de vous !
       </p>
     </div>
     <div class="space-y-2 mb-8">
       <div class="flex justify-between text-xl">
-        <span class="text-gray-300">Joueurs :</span>
+        <span class="text-gray-300" data-i18n="lobby.players">Joueurs :</span>
         <span class="font-semibold justify-between">
           <span class="text-lime-400">2</span>
           <span class="text-gray-50"> / </span>
           <span class="text-yellow-400">8</span>
-          <span class="text-gray-50">locaux</span>
+          <span class="text-gray-50" data-i18n="lobby.localPlayers">locaux</span>
         </span>
       </div>
       <div class="flex justify-between text-xl">
-        <span class="text-gray-300">Contrôles :</span>
+        <span class="text-gray-300" data-i18n="lobby.controls">Contrôles :</span>
         <span class="font-semibold justify-between">
           <span class="text-amber-400">W/S</span>
-          <span class="text-gray-50">vs</span>
+          <span class="text-gray-50" data-i18n="lobby.vs">vs</span>
           <span class="text-red-400">↑/↓</span>
         </span>
       </div>
@@ -45,7 +45,7 @@ export const GameLobby: Page = {
 
     <!-- Overlay text -->
     <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-      <span class="relative text-white text-2xl font-bold">Click to Join!</span>
+      <span class="relative text-white text-2xl font-bold" data-i18n="lobby.clickToJoin">Click to Join!</span>
     </div>
   </button>
 
@@ -55,24 +55,24 @@ export const GameLobby: Page = {
     <div class="text-center mt-8">
       <div class="mb-4 text-7xl text-transparent bg-clip-text
           bg-gradient-to-r from-blue-500 via-sky-500 to-purple-500
-          bg-[length:300%_300%] animate-gradientShift">
+          bg-[length:300%_300%] animate-gradientShift" data-i18n="lobby.online">
         En ligne
       </div>
-      <p class="text-gray-400 mb-6 text-xl">
+      <p class="text-gray-400 mb-6 text-xl" data-i18n="lobby.onlineDesc">
         Affrontez des joueurs du monde entier en temps réel.
         Système de matchmaking automatique !
       </p>
     </div>
     <div class="space-y-2 mb-8">
       <div class="flex justify-between text-xl">
-        <span class="text-gray-300">Joueurs :</span>
+        <span class="text-gray-300" data-i18n="lobby.players">Joueurs :</span>
         <span class="font-semibold justify-between">
           <span id="player" class="text-purple-400">?</span>
-          <span class="text-gray-50">en ligne</span>
+          <span class="text-gray-50" data-i18n="lobby.onlinePlayers">en ligne</span>
         </span>
       </div>
       <div class="flex justify-between text-xl">
-        <span class="text-gray-300">Latence :</span>
+        <span class="text-gray-300" data-i18n="lobby.latency">Latence :</span>
         <span class="font-semibold justify-between">
           <span id="ping" class="text-sky-400">?</span>
           <span class="text-gray-50">ms</span>
@@ -82,7 +82,7 @@ export const GameLobby: Page = {
 
     <!-- Overlay text -->
     <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-      <span class="relative text-white text-2xl font-bold">Click to Join!</span>
+      <span class="relative text-white text-2xl font-bold" data-i18n="lobby.clickToJoin">Click to Join!</span>
     </div>
   </button> 
 

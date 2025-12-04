@@ -76,15 +76,15 @@ export const TournamentRoom: Page = {
 
 		<div class="border border-gray-50 backdrop-blur-2xs p-8">
 			<div class="flex justify-center">
-				<h1 class="text-4xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-blue-500 to-green-500 bg-[length:400%_400%] animate-gradientShift mb-5">Tournament</h1>
+				<h1 class="text-4xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-blue-500 to-green-500 bg-[length:400%_400%] animate-gradientShift mb-5" data-i18n="tournament.title">Tournament</h1>
 			</div>
 			<div class="text-center mb-8">
 				<div class="flex justify-center space-x-4">
-					<button id="create-tournament-btn" class="px-8 py-3 font-bold text-2xl mb-5 border text-gray-50 border-gray-50 hover:bg-gray-700/50 transition-colors">
+					<button id="create-tournament-btn" class="px-8 py-3 font-bold text-2xl mb-5 border text-gray-50 border-gray-50 hover:bg-gray-700/50 transition-colors" data-i18n="tournament.createBtn">
 						Créer un tournoi
 					</button>
 				</div>
-				<p class="text-gray-200 text-lg">
+				<p class="text-gray-200 text-lg" data-i18n="tournament.desc">
 					Le mode <span class="font-bold">Tournament</span> vous permet de participer à des compétitions organisées entre plusieurs joueurs.<br>
 					Créez ou rejoignez un tournoi pour affronter d'autres participants dans une série de matchs à élimination ou en poule.<br>
 					C'est l'occasion idéale de tester vos compétences, de viser la victoire et de grimper dans le classement tout en profitant d'une ambiance compétitive et conviviale !
@@ -95,7 +95,7 @@ export const TournamentRoom: Page = {
 		<!-- Available Tournament Section -->
 		<div class="border border-gray-50 backdrop-blur-2xs p-6">
 			<div class="flex justify-between items-center mb-6">
-				<h2 class="text-2xl text-gray-50 font-bold">Available Tournament</h2>
+				<h2 class="text-2xl text-gray-50 font-bold" data-i18n="tournament.available">Available Tournament</h2>
 				
 			</div>
 			<div class="flex flex-wrap gap-4" id="tournaments-container"></div>
@@ -105,16 +105,17 @@ export const TournamentRoom: Page = {
 	<!-- Modal Create Tournament -->
 	<div id="create-tournament-modal" class="fixed inset-0 backdrop-blur-lg hidden items-center justify-center z-50">
 		<div class="border border-gray-50 p-8 max-w-md w-full mx-4">
-			<h3 class="text-2xl font-bold mb-6 text-gray-50 text-center">Create a Tournament</h3>
+			<h3 class="text-2xl font-bold mb-6 text-gray-50 text-center" data-i18n="tournament.createTitle">Create a Tournament</h3>
 			
 			<form id="create-tournament-form" class="space-y-4">
 				<div>
-					<label class="block text-sm font-bold mb-2 text-gray-200">Tournament Name:</label>
+					<label class="block text-sm font-bold mb-2 text-gray-200" data-i18n="tournament.nameLabel">Tournament Name:</label>
 					<input 
 						type="text" 
 						id="tournament-name" 
 						class="w-full px-3 py-2 border border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50"
 						placeholder="Enter Tournament name"
+						data-i18n-placeholder="tournament.namePlaceholder"
 						pattern="^[a-zA-Z0-9]{3,12}$"
                  		title="Le nom doit contenir uniquement des lettres et chiffres (3-12 caractères)"
 						required
@@ -122,7 +123,7 @@ export const TournamentRoom: Page = {
 				</div>
 
 				<div>
-					<label class="block text-sm font-bold mb-2 text-gray-200">Party Point(s):</label>
+					<label class="block text-sm font-bold mb-2 text-gray-200" data-i18n="tournament.pointsLabel">Party Point(s):</label>
 					<select id="game-point" class="w-full px-3 py-2 border border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50">
 						<option value="3">3</option>
 						<option value="5">5</option>
@@ -134,13 +135,13 @@ export const TournamentRoom: Page = {
 				<div class="flex space-x-4 mt-6">
 					<button 
 						type="submit" 
-						class="flex-1 text-white py-2 px-4 border border-gray-50 hover:bg-gray-700/50 hover:border-green-500 transition-colors font-bold">
+						class="flex-1 text-white py-2 px-4 border border-gray-50 hover:bg-gray-700/50 hover:border-green-500 transition-colors font-bold" data-i18n="room.create">
 						CRÉER
 					</button>
 					<button 
 						type="button" 
 						id="cancel-create" 
-						class="flex-1 text-white py-2 px-4 border border-gray-50 hover:bg-gray-700/50 hover:border-red-500 transition-colors font-bold">
+						class="flex-1 text-white py-2 px-4 border border-gray-50 hover:bg-gray-700/50 hover:border-red-500 transition-colors font-bold" data-i18n="room.cancel">
 						ANNULER
 					</button>
 				</div>

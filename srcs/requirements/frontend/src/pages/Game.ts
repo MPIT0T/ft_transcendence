@@ -1,13 +1,14 @@
 import type { Page } from "../interface/gameInterface.js"
 import { GameComponent } from "../components/GameComponent.js";
 import { createCountdown } from "../utils/countdown.js";
+import { t } from "../utils/i18n.js";
 
 let currentGame: GameComponent | null = null;
 
 		export const Game: Page = {
 		render() {
-			const player1Name = 'Joueur 1';
-			const player2Name = 'Joueur 2';
+			const player1Name = t('game.player1');
+			const player2Name = t('game.player2');
 			return `
 	<div class="mt-24">
 		<div class="relative overflow-hidden text-gray-50 text-lg border border-gray-50 backdrop-blur-2xs">
@@ -20,7 +21,7 @@ let currentGame: GameComponent | null = null;
 				</div>
 				<div class="flex items-center justify-between px-6 pb-2 text-md opacity-90">
 					<span>W/S</span>
-					<span id="winning-score-info">Premier à <span id="winning-score-display" class="text-yellow-400 font-bold">5</span></span>
+					<span id="winning-score-info" data-i18n="game.firstTo">Premier à <span id="winning-score-display" class="text-yellow-400 font-bold">5</span></span>
 					<span>↑/↓</span>
 				</div>
 			</div>
@@ -28,8 +29,8 @@ let currentGame: GameComponent | null = null;
 		<div class="flex-1 p-5 flex flex-col items-center justify-center bg-transparent">
 			<div id="game-container" class="mb-8"></div>
 			<div class="flex gap-4 items-center mb-8 z-100">
-				<button id="start-btn" class="px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-gray-700/50 hover:border-green-500">Jouer</button>
-				<button id="restart-btn" class="px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:border-blue-500 hover:bg-gray-700/50">Recommencer</button>
+				<button id="start-btn" class="px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-gray-700/50 hover:border-green-500" data-i18n="game.play">Jouer</button>
+				<button id="restart-btn" class="px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:border-blue-500 hover:bg-gray-700/50" data-i18n="game.restart">Recommencer</button>
 			</div>
 		</div>
 		<div id="start-modal" class="fixed inset-0 flex justify-center items-center z-75 hidden">
@@ -39,12 +40,12 @@ let currentGame: GameComponent | null = null;
 		<!-- Match end modal -->
 		<div id="match-end-modal" class="fixed inset-0 backdrop-blur-lg hidden items-center justify-center z-50">
 			<div class="border border-gray-50 p-8 max-w-md w-full mx-4 text-center">
-				<h3 class="text-2xl text-gray-300 font-bold mb-2">Match terminé !</h3>
+				<h3 class="text-2xl text-gray-300 font-bold mb-2" data-i18n="game.matchFinished">Match terminé !</h3>
 				<p id="match-winner-name" class="text-4xl text-green-400 font-bold mb-2"></p>
 				<p id="match-final-score" class="text-xl text-gray-400 mb-6"></p>
 				<div class="flex gap-3">
-					<button id="close-match-modal-btn" class="flex-1 py-3 text-white border border-gray-50 hover:bg-gray-700/50 hover:border-yellow-500 transition-colors font-bold">Fermer</button>
-					<button id="leave-to-lobby-btn" class="flex-1 py-3 text-white border border-gray-50 hover:bg-gray-700/50 hover:border-red-500 font-bold">Retour au lobby</button>
+					<button id="close-match-modal-btn" class="flex-1 py-3 text-white border border-gray-50 hover:bg-gray-700/50 hover:border-yellow-500 transition-colors font-bold" data-i18n="game.close">Fermer</button>
+					<button id="leave-to-lobby-btn" class="flex-1 py-3 text-white border border-gray-50 hover:bg-gray-700/50 hover:border-red-500 font-bold" data-i18n="game.backToLobby">Retour au lobby</button>
 				</div>
 			</div>
 		</div>
@@ -52,8 +53,8 @@ let currentGame: GameComponent | null = null;
 		<!-- Modal de sélection du nombre de points (local 1v1) -->
 		<div id="points-modal" class="fixed inset-0 flex justify-center items-center z-80 hidden backdrop-blur-lg">
 			<div class="border border-gray-50 p-6 max-w-md w-full mx-4 text-center">
-				<h3 class="text-2xl text-yellow-400 font-bold mb-4">Choisir le nombre de points</h3>
-				<p class="text-gray-300 mb-4">Sélectionnez le score cible pour gagner la partie</p>
+				<h3 class="text-2xl text-yellow-400 font-bold mb-4" data-i18n="game.choosePoints">Choisir le nombre de points</h3>
+				<p class="text-gray-300 mb-4" data-i18n="game.selectTarget">Sélectionnez le score cible pour gagner la partie</p>
 				<div class="flex gap-3 justify-center mb-6">
 					<button class="points-option px-5 py-2 border border-gray-600 text-gray-400 hover:border-gray-50 hover:text-gray-50 transition-colors" data-score="3">3</button>
 					<button class="points-option px-5 py-2 border border-gray-600 text-gray-400 hover:border-gray-50 hover:text-gray-50 transition-colors" data-score="5">5</button>
@@ -61,8 +62,8 @@ let currentGame: GameComponent | null = null;
 					<button class="points-option px-5 py-2 border border-gray-600 text-gray-400 hover:border-gray-50 hover:text-gray-50 transition-colors" data-score="15">15</button>
 				</div>
 				<div class="flex gap-3 justify-center">
-					<button id="confirm-points-btn" class="px-6 py-3 font-bold border border-gray-50 text-gray-50 disabled:opacity-40" disabled>Confirmer</button>
-					<button id="cancel-points-btn" class="px-6 py-3 font-bold border border-gray-50 text-gray-50 hover:bg-gray-700/50 hover:border-red-500">Exit</button>
+					<button id="confirm-points-btn" class="px-6 py-3 font-bold border border-gray-50 text-gray-50 disabled:opacity-40" disabled data-i18n="game.confirm">Confirmer</button>
+					<button id="cancel-points-btn" class="px-6 py-3 font-bold border border-gray-50 text-gray-50 hover:bg-gray-700/50 hover:border-red-500" data-i18n="game.exit">Exit</button>
 				</div>
 			</div>
 		</div>
@@ -189,7 +190,7 @@ let currentGame: GameComponent | null = null;
 								if (startBtn) {
 								startBtn.classList.remove('hidden');
 									startBtn.className = "px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-gray-700/50 hover:border-red-500";
-									startBtn.textContent = "Pause";
+									startBtn.textContent = t('game.pause');
 								}
 								// Hide restart during active match
 								if (restartBtn) restartBtn.classList.add('hidden');
@@ -200,7 +201,7 @@ let currentGame: GameComponent | null = null;
 								if (startBtn) {
 								startBtn.classList.remove('hidden');
 									startBtn.className = "px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-gray-700/50 hover:border-blue-500";
-									startBtn.textContent = "Jouer";
+									startBtn.textContent = t('game.play');
 								}
 							}
 						});
@@ -233,9 +234,9 @@ let currentGame: GameComponent | null = null;
 
 							if (currentGame) currentGame.setCanStart(false);
 
-							const winner = p1 >= winningScore ? 'Joueur 1' : 'Joueur 2';
+							const winner = p1 >= winningScore ? t('game.player1') : t('game.player2');
 							if (matchWinnerName) matchWinnerName.textContent = winner;
-							if (matchFinalScore) matchFinalScore.textContent = `Score: ${p1} - ${p2}`;
+							if (matchFinalScore) matchFinalScore.textContent = t('game.scoreDisplay', { score1: p1.toString(), score2: p2.toString() });
 						// Hide start/restart controls while the match-end modal is visible
 							if (matchEndModal) {
 							// startBtn.classList.add('hidden');
@@ -245,7 +246,7 @@ let currentGame: GameComponent | null = null;
 							}
 
 						startBtn.className = "px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-gray-700/50 hover:border-blue-500 hidden";
-							startBtn.textContent = "Jouer";
+							startBtn.textContent = t('game.play');
 						}
 					},
 					async (state: boolean) => {
@@ -291,7 +292,7 @@ let currentGame: GameComponent | null = null;
 			const quitTournamentBtn = root.querySelector('#quit-tournament-btn') as HTMLButtonElement;
 			if (quitTournamentBtn) {
 				quitTournamentBtn.addEventListener('click', () => {
-					if (confirm('Êtes-vous sûr de vouloir quitter le tournoi ?')) {
+					if (confirm(t('tournamentMatch.confirmQuit'))) {
 						sessionStorage.removeItem('localTournamentMatch');
 						history.pushState(null, '', '/gameLobby');
 						window.dispatchEvent(new PopStateEvent('popstate'));
@@ -327,7 +328,7 @@ let currentGame: GameComponent | null = null;
 				// Update button appearance and run countdown when starting
 				if (canStart) {
 					startBtn.className = "px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-gray-700/50 hover:border-red-500";
-					startBtn.textContent = "Pause";
+					startBtn.textContent = t('game.pause');
 					if (restartBtn) restartBtn.classList.add('hidden');
 					try {
 						await countdown.start(startModal, startModalText);
@@ -336,11 +337,11 @@ let currentGame: GameComponent | null = null;
 						// If aborted, revert the canStart/UI state back to paused
 						canStart = false;
 						startBtn.className = "px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-gray-700/50 hover:border-blue-500";
-						startBtn.textContent = "Jouer";
+						startBtn.textContent = t('game.play');
 					}
 				} else {
 					startBtn.className = "px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-gray-700/50 hover:border-blue-500";
-					startBtn.textContent = "Jouer";
+					startBtn.textContent = t('game.play');
 					// Cancel any ongoing start animation
 					countdown.abort();
 				}
@@ -370,7 +371,7 @@ let currentGame: GameComponent | null = null;
 
 						// Update START button visually to 'Pause' while countdown runs
 						startBtn.className = "px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-gray-700/50 hover:border-red-500";
-						startBtn.textContent = "Pause";
+						startBtn.textContent = t('game.pause');
 
 						// Run the countdown animation then actually resume the game (ensure ball not launched before)
 						try {
@@ -383,7 +384,7 @@ let currentGame: GameComponent | null = null;
 							canStart = false;
 							if (currentGame) currentGame.setCanStart(false);
 							startBtn.className = "px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-gray-700/50 hover:border-blue-500";
-							startBtn.textContent = "Jouer";
+							startBtn.textContent = t('game.play');
 						}
 					}
 				});

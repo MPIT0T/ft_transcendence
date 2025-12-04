@@ -126,16 +126,16 @@ export const GameRoom: Page = {
 
 		<div class="backdrop-blur-2xs border border-gray-50 p-8">
 			<div class="flex justify-center">
-				<h1 class="text-4xl z-10 text-transparent bg-clip-text bg-linear-to-r from-red-500 via-blue-500 to-green-500 bg-size-[400%_400%] animate-gradientShift font-bold text-center mb-5">Ranked Game</h1>
+				<h1 class="text-4xl z-10 text-transparent bg-clip-text bg-linear-to-r from-red-500 via-blue-500 to-green-500 bg-size-[400%_400%] animate-gradientShift font-bold text-center mb-5" data-i18n="room.rankedTitle">Ranked Game</h1>
 			</div>
 			<div class="text-center mb-8">
 				<div class="flex justify-center space-x-4">
 					
-					<button id="vs-btn" class="px-10 py-3 font-bold text-2xl border border-gray-50 text-gray-50 hover:bg-gray-700/50 transition-colors mb-5">
+					<button id="vs-btn" class="px-10 py-3 font-bold text-2xl border border-gray-50 text-gray-50 hover:bg-gray-700/50 transition-colors mb-5" data-i18n="room.play">
 						Jouer
 					</button>
 					</div>
-				<p class="text-gray-200 text-lg">
+				<p class="text-gray-200 text-lg" data-i18n="room.rankedDesc">
 					Le mode <span class="font-bold">Ranked</span> vous permet d'affronter un autre joueur dans une partie compétitive en 1 contre 1.<br>
 					Chaque victoire ou défaite affecte votre classement général.<br>
 					Relevez le défi pour grimper dans le classement et montrer vos compétences !
@@ -145,16 +145,16 @@ export const GameRoom: Page = {
 
 		<div class="backdrop-blur-2xs border border-gray-50 p-8">
 			<div class="flex justify-center">
-				<h1 class="text-4xl z-10 text-transparent bg-clip-text bg-linear-to-r from-red-500 via-blue-500 to-green-500 bg-size-[400%_400%] animate-gradientShift font-bold text-center mb-5">Friendly Game</h1>
+				<h1 class="text-4xl z-10 text-transparent bg-clip-text bg-linear-to-r from-red-500 via-blue-500 to-green-500 bg-size-[400%_400%] animate-gradientShift font-bold text-center mb-5" data-i18n="room.friendlyTitle">Friendly Game</h1>
 			</div>
 			<div class="text-center mb-8">
 				<div class="flex justify-center space-x-4">
 					
-					<button id="create-room-btn" class="px-10 py-3 text-2xl text-gray-50 border border-gray-50 hover:bg-gray-700/50 transition-colors mb-5">
+					<button id="create-room-btn" class="px-10 py-3 text-2xl text-gray-50 border border-gray-50 hover:bg-gray-700/50 transition-colors mb-5" data-i18n="room.createGame">
 						Créer une partie
 					</button>
 				</div>
-				<p class="text-lg text-gray-200">
+				<p class="text-lg text-gray-200" data-i18n="room.friendlyDesc">
 					Le mode <span class="font-bold">Friendly</span> vous permet de jouer des parties amicales sans impact sur votre classement.<br>
 					Créez une salle ou rejoignez celle d'un ami pour vous entraîner, tester de nouvelles stratégies ou simplement vous amuser sans pression.<br>
 					C'est l'endroit idéal pour défier vos amis ou rencontrer de nouveaux joueurs dans une ambiance détendue !
@@ -166,7 +166,7 @@ export const GameRoom: Page = {
 			<!-- Available Rooms Section -->
 			<div class="backdrop-blur-2xs border border-gray-50 p-6">
 				<div class="flex justify-between items-center mb-3">
-					<h2 class="text-xl text-gray-50 font-bold ">Available rooms</h2>
+					<h2 class="text-xl text-gray-50 font-bold " data-i18n="room.availableRooms">Available rooms</h2>
 				</div>
 				<!-- Fixed-height scrollable area (one row per room) -->
 				<div class="flex flex-col gap-3 overflow-y-auto max-h-56 p-2" id="rooms-container"></div>
@@ -174,7 +174,7 @@ export const GameRoom: Page = {
 			<!-- Available frends Section -->
 			<div class="backdrop-blur-2xs border border-gray-50 p-6">
 				<div class="flex justify-between items-center mb-3">
-					<h2 class="text-xl text-gray-50 font-bold">Available Friends</h2>
+					<h2 class="text-xl text-gray-50 font-bold" data-i18n="room.availableFriends">Available Friends</h2>
 				</div>
 				<!-- Fixed-height scrollable area -->
 				<div class="flex flex-col gap-3 overflow-y-auto max-h-56 p-2" id="friends-container"></div>
@@ -186,7 +186,7 @@ export const GameRoom: Page = {
 	<div id="matchmaking-modal" class="fixed inset-0 backdrop-blur-lg hidden items-center justify-center z-50">
 		<div class="border border-gray-50 p-8 max-w-md w-full mx-4">
 			<div class="text-center">
-				<h2 class="text-3xl text-gray-50 font-bold mb-4">Matchmaking en cours</h2>
+				<h2 class="text-3xl text-gray-50 font-bold mb-4" data-i18n="room.matchmakingTitle">Matchmaking en cours</h2>
 				<div class="flex justify-center mb-4">
 		  <div class="h-16 flex items-center justify-center gap-3">
 			<span class="h-2 w-2 bg-white animate-bounceHigh [animation-delay:0ms]"></span>
@@ -194,10 +194,10 @@ export const GameRoom: Page = {
 			<span class="h-2 w-2 bg-white animate-bounceHigh [animation-delay:300ms]"></span>
 		  </div>
 		</div>
-				<p class="text-gray-400 mb-6">Veuillez patienter pendant que nous cherchons un adversaire</p>
+				<p class="text-gray-400 mb-6" data-i18n="room.matchmakingWait">Veuillez patienter pendant que nous cherchons un adversaire</p>
 				<button 
 					id="cancel-matchmaking" 
-					class="w-full text-gray-50 py-3 px-6 border border-gray-50 hover:border-red-500 hover:bg-gray-700/50 transition-colors font-bold">
+					class="w-full text-gray-50 py-3 px-6 border border-gray-50 hover:border-red-500 hover:bg-gray-700/50 transition-colors font-bold" data-i18n="room.leaveMatchmaking">
 					QUITTER LE MATCHMAKING
 				</button>
 			</div>
@@ -207,25 +207,26 @@ export const GameRoom: Page = {
 	<!-- Modal Create Room -->
 	<div id="create-room-modal" class="fixed inset-0 backdrop-blur-lg hidden items-center justify-center z-50">
 		<div class="border border-gray-50 p-8 max-w-md w-full mx-4">
-			<h3 class="text-2xl text-gray-50 font-bold mb-6 text-center">Créer une partie</h3>
+			<h3 class="text-2xl text-gray-50 font-bold mb-6 text-center" data-i18n="room.createGame">Créer une partie</h3>
 			
 			<form id="create-room-form" class="space-y-4">
 				<div>
-					<label class="block text-sm font-bold mb-2 text-gray-200">Nom :</label>
+					<label class="block text-sm font-bold mb-2 text-gray-200" data-i18n="room.roomName">Nom :</label>
 					<input 
 						type="text" 
 						id="room-name" 
 						class="w-full px-3 py-2 border border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50"
 						placeholder="Enter room name"
+						data-i18n-placeholder="room.roomNamePlaceholder"
 						pattern="^[a-zA-Z0-9]{3,12}$"
                   		title="Le nom doit contenir uniquement des lettres et chiffres (3-12 caractères)"
 						required
 					>
-					<p id="room-name-error" class="text-red-500 text-sm mt-1 hidden">Le nom contient des caractères non autorisés</p>
+					<p id="room-name-error" class="text-red-500 text-sm mt-1 hidden" data-i18n="room.roomNameError">Le nom contient des caractères non autorisés</p>
 				</div>
 				
 				<div>
-					<label class="block text-sm font-bold mb-2 text-gray-200">Points maximum :</label>
+					<label class="block text-sm font-bold mb-2 text-gray-200" data-i18n="room.maxPoints">Points maximum :</label>
 					<select id="game-point" class="w-full px-3 py-2 border border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50">
 						<option value="3">3</option>
 						<option value="5">5</option>
@@ -237,13 +238,13 @@ export const GameRoom: Page = {
 				<div class="flex space-x-4 mt-6">
 					<button 
 						type="submit" 
-						class="flex-1 text-white py-2 px-4 border border-gray-50 hover:bg-gray-700/50 hover:border-green-500 transition-colors font-bold">
+						class="flex-1 text-white py-2 px-4 border border-gray-50 hover:bg-gray-700/50 hover:border-green-500 transition-colors font-bold" data-i18n="room.create">
 						CRÉER
 					</button>
 					<button 
 						type="button" 
 						id="cancel-create" 
-						class="flex-1 text-white py-2 px-4 border border-gray-50 hover:bg-gray-700/50 hover:border-red-500 transition-colors font-bold">
+						class="flex-1 text-white py-2 px-4 border border-gray-50 hover:bg-gray-700/50 hover:border-red-500 transition-colors font-bold" data-i18n="room.cancel">
 						ANNULER
 					</button>
 				</div>
@@ -254,9 +255,9 @@ export const GameRoom: Page = {
 	<!-- Modal Challenge Points -->
 	<div id="challenge-points-modal" class="fixed inset-0 backdrop-blur-lg hidden items-center justify-center z-50">
 		<div class="border border-gray-50 p-8 max-w-md w-full mx-4">
-			<h3 class="text-2xl text-gray-50 font-bold mb-6 text-center">Inviter <span id="challenge-friend-label" class="text-blue-400"></span></h3>
+			<h3 class="text-2xl text-gray-50 font-bold mb-6 text-center"><span data-i18n="room.invite">Inviter</span> <span id="challenge-friend-label" class="text-blue-400"></span></h3>
 			<div>
-				<label class="block text-sm font-bold mb-2 text-gray-200">Points maximum :</label>
+				<label class="block text-sm font-bold mb-2 text-gray-200" data-i18n="room.maxPoints">Points maximum :</label>
 				<select id="challenge-game-point" class="w-full px-3 py-2 border border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50">
 					<option value="3">3</option>
 					<option value="5">5</option>
@@ -268,12 +269,12 @@ export const GameRoom: Page = {
 			<div class="flex space-x-4 mt-6">
 				<button 
 					id="challenge-send" 
-					class="flex-1 text-white py-2 px-4 border border-gray-50 hover:bg-gray-700 hover:border-green-500 transition-colors font-bold">
+					class="flex-1 text-white py-2 px-4 border border-gray-50 hover:bg-gray-700 hover:border-green-500 transition-colors font-bold" data-i18n="room.sendInvite">
 					ENVOYER L'INVITATION
 				</button>
 				<button 
 					id="challenge-cancel" 
-					class="flex-1 text-white py-2 px-4 border border-gray-50 hover:bg-gray-700 hover:border-red-500 transition-colors font-bold">
+					class="flex-1 text-white py-2 px-4 border border-gray-50 hover:bg-gray-700 hover:border-red-500 transition-colors font-bold" data-i18n="room.cancel">
 					ANNULER
 				</button>
 			</div>
@@ -283,17 +284,17 @@ export const GameRoom: Page = {
 	<!-- Modal Challenge Received -->
 	<div id="challenge-modal" class="fixed inset-0 backdrop-blur-lg hidden items-center justify-center z-50">
 		<div class="border border-gray-50 p-8 max-w-md w-full mx-4">
-			<h3 class="text-2xl text-gray-50 font-bold mb-4 text-center">Défi reçu</h3>
-			<p id="challenge-text" class="text-gray-200 text-center mb-6">Un joueur vous invite à rejoindre une partie.</p>
+			<h3 class="text-2xl text-gray-50 font-bold mb-4 text-center" data-i18n="room.challengeReceived">Défi reçu</h3>
+			<p id="challenge-text" class="text-gray-200 text-center mb-6" data-i18n="room.challengeDesc">Un joueur vous invite à rejoindre une partie.</p>
 			<div class="flex space-x-4 mt-2">
 				<button 
 					id="challenge-accept" 
-					class="flex-1 text-white py-2 px-4 border border-gray-50 hover:bg-gray-700 hover:border-green-500 transition-colors font-bold">
+					class="flex-1 text-white py-2 px-4 border border-gray-50 hover:bg-gray-700 hover:border-green-500 transition-colors font-bold" data-i18n="room.accept">
 					ACCEPTER
 				</button>
 				<button 
 					id="challenge-decline" 
-					class="flex-1 text-white py-2 px-4 border border-gray-50 hover:bg-gray-700 hover:border-red-500 transition-colors font-bold">
+					class="flex-1 text-white py-2 px-4 border border-gray-50 hover:bg-gray-700 hover:border-red-500 transition-colors font-bold" data-i18n="room.decline">
 					REFUSER
 				</button>
 			</div>

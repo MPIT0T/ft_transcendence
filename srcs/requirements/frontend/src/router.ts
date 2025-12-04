@@ -12,6 +12,7 @@ import { GameRoom } from "./pages/GameRoom.js";
 import { TournamentRoom } from "./pages/TournamentRoom.js";
 import { TournamentOnline } from "./pages/TournamentOnline.js";
 import { TournamentLocal } from "./pages/TournamentLocal.js";
+import { applyTranslations, t } from "./utils/i18n.js";
 
 const routes: Record<string, Page> = {
   "/": Home,
@@ -47,10 +48,13 @@ export function startRouter(){
       Layout.mount(root);
       const pageContentElement = root.querySelector('#page-content') as HTMLElement;
       if (pageContentElement) page.mount(pageContentElement);
+      // Apply translations after page render
+      applyTranslations(root);
     } else {
-      const notFoundHTML = Layout.render('<h1 class="text-3xl text-red-500">404 - Page Not Found</h1>');
+      const notFoundHTML = Layout.render(`<h1 class="text-3xl text-red-500" data-i18n="layout.pageNotFound">404 - ${t('layout.pageNotFound')}</h1>`);
       root.innerHTML = notFoundHTML;
       Layout.mount(root);
+      applyTranslations(root);
     }
   }
 

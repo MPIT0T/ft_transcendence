@@ -1,3 +1,5 @@
+import { t } from '../utils/i18n.js';
+
 const initPastelBackground = () => {
   const canvas = document.getElementById('background-canvas') as HTMLCanvasElement;
   if (!canvas) return;
@@ -136,16 +138,17 @@ export const Layout = {
         <!-- Modal Login -->
         <div id="login-modal" class="fixed inset-0 hidden items-center justify-center backdrop-blur-lg z-50">
           <div class="border border-gray-50 p-8 max-w-md w-full mx-4">
-            <h3 class="text-2xl font-bold mb-6 text-center text-gray-50">Login</h3>
+            <h3 class="text-2xl font-bold mb-6 text-center text-gray-50" data-i18n="layout.loginTitle">Login</h3>
             
             <form id="login-form" class="space-y-4">
               <div>
-                <label class="block text-sm text-gray-50 font-bold mb-2">Username:</label>
+                <label class="block text-sm text-gray-50 font-bold mb-2" data-i18n="layout.username">Username:</label>
                 <input 
                   type="text" 
                   id="username" 
                   class="w-full px-3 py-2 border border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50"
                   placeholder="Enter your username"
+                  data-i18n-placeholder="layout.usernamePlaceholder"
                   pattern="^[a-zA-Z0-9]{3,12}$"
                   title="Le nom doit contenir uniquement des lettres et chiffres (3-12 caractères)"
                   required
@@ -153,12 +156,13 @@ export const Layout = {
               </div>
               
               <div>
-                <label class="block text-sm text-gray-500 font-bold mb-2">Password:</label>
+                <label class="block text-sm text-gray-500 font-bold mb-2" data-i18n="layout.password">Password:</label>
                 <input 
                   type="password" 
                   id="password" 
                   class="w-full px-3 py-2 border border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50"
                   placeholder="Enter your password"
+                  data-i18n-placeholder="layout.passwordPlaceholder"
                   pattern="^(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d]{6,18}$"
                   title="Le mot de passe doit contenir 6-18 caractères, au moins 1 majuscule et 1 chiffre"
                   required
@@ -178,19 +182,19 @@ export const Layout = {
               <div class="flex space-x-4 mt-6">
                 <button 
                   type="submit" 
-                  class="flex-1 text-white py-2 px-4 border border-gray-50 hover:border-blue-500 hover:bg-gray-700 transition-all font-bold">
+                  class="flex-1 text-white py-2 px-4 border border-gray-50 hover:border-blue-500 hover:bg-gray-700 transition-all font-bold" data-i18n="layout.login">
                   LOGIN
                 </button>
                 <button 
                   type="button" 
                   id="cancel-login" 
-                  class="flex-1 text-white py-2 px-4 border border-gray-50 hover:border-red-500 hover:bg-gray-700 transition-all font-bold">
+                  class="flex-1 text-white py-2 px-4 border border-gray-50 hover:border-red-500 hover:bg-gray-700 transition-all font-bold" data-i18n="layout.cancel">
                   CANCEL
                 </button>
               </div>
               
               <div class="text-center mt-4 pt-4 border-t border-gray-300">
-                <button type="button" id="signup-btn" class="py-2 text-gray-50 font-bold w-full flex items-center justify-center border border-gray-50 bg-transparent hover:bg-gray-700/50">
+                <button type="button" id="signup-btn" class="py-2 text-gray-50 font-bold w-full flex items-center justify-center border border-gray-50 bg-transparent hover:bg-gray-700/50" data-i18n="layout.signUpHere">
                   Sign up here
                 </button>
               </div>
@@ -198,7 +202,7 @@ export const Layout = {
               <div class="text-center mt-4 pt-4 border-t border-gray-300">
                 <button type="button" id="google-btn" class="py-2 text-gray-50 font-bold w-full flex items-center justify-center border border-gray-50 bg-transparent hover:bg-gray-700/50">
                   <img class="w-8 h-8 mr-3" src="google-logo.svg" alt="google-logo"/>
-                  Sign in with Google
+                  <span data-i18n="layout.signInGoogle">Sign in with Google</span>
                 </button>
               </div>
               
@@ -209,16 +213,17 @@ export const Layout = {
         <!-- Modal Register -->
         <div id="register-modal" class="fixed inset-0 hidden items-center justify-center z-50 backdrop-blur-lg">
           <div class="border border-white p-8 max-w-md w-full mx-4">
-            <h3 class="text-2xl text-gray-50 font-bold mb-6 text-center">Register</h3>
+            <h3 class="text-2xl text-gray-50 font-bold mb-6 text-center" data-i18n="layout.registerTitle">Register</h3>
             
             <form id="register-form" class="space-y-4">
               <div>
-                <label class="block text-sm text-gray-50 font-bold mb-2">Username:</label>
+                <label class="block text-sm text-gray-50 font-bold mb-2" data-i18n="layout.username">Username:</label>
                 <input 
                   type="text" 
                   id="reg-username" 
                   class="w-full px-3 py-2 border border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50"
                   placeholder="Choose a username"
+                  data-i18n-placeholder="layout.chooseUsername"
                   pattern="^[a-zA-Z0-9]{3,12}$"
                   title="Le nom doit contenir uniquement des lettres et chiffres (3-12 caractères)"
                   required
@@ -226,12 +231,13 @@ export const Layout = {
               </div>
               
               <div>
-                <label class="block text-sm text-gray-50 font-bold mb-2">Password:</label>
+                <label class="block text-sm text-gray-50 font-bold mb-2" data-i18n="layout.password">Password:</label>
                 <input 
                   type="password" 
                   id="reg-password" 
                   class="w-full px-3 py-2 border border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50"
                   placeholder="Create a password"
+                  data-i18n-placeholder="layout.createPassword"
                   pattern="^(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d]{6,18}$"
                   title="Le mot de passe doit contenir 6-18 caractères, au moins 1 majuscule et 1 chiffre"
                   required
@@ -239,12 +245,13 @@ export const Layout = {
               </div>
               
               <div>
-                <label class="block text-sm text-gray-50 font-bold mb-2">Confirm Password:</label>
+                <label class="block text-sm text-gray-50 font-bold mb-2" data-i18n="layout.confirmPassword">Confirm Password:</label>
                 <input 
                   type="password" 
                   id="reg-confirm-password" 
                   class="w-full px-3 py-2 border border-gray-400 text-gray-200 focus:outline-none focus:border-gray-50"
                   placeholder="Confirm your password"
+                  data-i18n-placeholder="layout.confirmYourPassword"
                   pattern="^(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d]{6,18}$"
                   title="Le mot de passe doit contenir 6-18 caractères, au moins 1 majuscule et 1 chiffre"
                   required
@@ -254,19 +261,19 @@ export const Layout = {
               <div class="flex space-x-4 mt-6">
                 <button 
                   type="submit" 
-                  class="flex-1 text-white py-2 px-4 border border-white hover:border-green-500 hover:bg-gray-700/50 transition-colors font-bold">
+                  class="flex-1 text-white py-2 px-4 border border-white hover:border-green-500 hover:bg-gray-700/50 transition-colors font-bold" data-i18n="layout.register">
                   REGISTER
                 </button>
                 <button 
                   type="button" 
                   id="cancel-register" 
-                  class="flex-1 text-white py-2 px-4 border border-white hover:border-red-500 hover:bg-gray-700/50 transition-colors font-bold">
+                  class="flex-1 text-white py-2 px-4 border border-white hover:border-red-500 hover:bg-gray-700/50 transition-colors font-bold" data-i18n="layout.cancel">
                   CANCEL
                 </button>
               </div>
               
               <div class="text-center mt-4 pt-4 border-t border-gray-300">
-                <button type="button" id="back-to-login" class="py-2 text-gray-50 font-bold w-full flex items-center justify-center border border-gray-50 bg-transparent hover:bg-gray-700/50">
+                <button type="button" id="back-to-login" class="py-2 text-gray-50 font-bold w-full flex items-center justify-center border border-gray-50 bg-transparent hover:bg-gray-700/50" data-i18n="layout.loginHere">
                   Login here
                 </button>
               </div>
@@ -274,7 +281,7 @@ export const Layout = {
               <div class="text-center mt-4 pt-4 border-t border-gray-300">
                 <button type="button" id="google-btn2" class="py-2 text-gray-50 font-bold w-full flex items-center justify-center border border-gray-50 bg-transparent hover:bg-gray-700/50">
                   <img class="w-8 h-8 mr-3" src="google-logo.svg" alt="google-logo"/>
-                  Sign in with Google
+                  <span data-i18n="layout.signInGoogle">Sign in with Google</span>
                 </button>
               </div>
               
@@ -298,14 +305,13 @@ export const Layout = {
       sessionStorage.setItem('token', data.token);
       sessionStorage.setItem('isLoggedIn', 'true');
       sessionStorage.setItem('username', userInfo.username);
-      this.showNotification(`Bienvenue ${userInfo.username} !`);
+      this.showNotification(t('notifications.welcome', { username: userInfo.username }));
       this.updateLoginButton(root, true);
       const loginModal = root.querySelector('#login-modal') as HTMLDivElement;
       this.closeModal(loginModal);
       (root.querySelector('#login-form') as HTMLFormElement).reset();
     }
   },
-
   mount(root: HTMLElement): void {
     // Navigation buttons
 
@@ -467,7 +473,7 @@ export const Layout = {
     if (!Layout.isLoggedIn()) {
       history.pushState(null, '', redirectTo);
       window.dispatchEvent(new PopStateEvent('popstate'));
-      if (triedTo) Layout.showNotification('Connectez-vous pour accéder à ce contenu', 'error');
+      if (triedTo) Layout.showNotification(t('layout.loginToAccess'), 'error');
     }
   },
 
@@ -612,13 +618,13 @@ export const Layout = {
         sessionStorage.setItem('token', data.token);
         sessionStorage.setItem('isLoggedIn', 'true');
         sessionStorage.setItem('username', username);
-        this.showNotification(`Bienvenue ${username} !`);
+        this.showNotification(t('notifications.welcome', { username }));
         this.updateLoginButton(root, true);
         const loginModal = root.querySelector('#login-modal') as HTMLDivElement;
         this.closeModal(loginModal);
         (root.querySelector('#login-form') as HTMLFormElement).reset();
       } else if (res.status === 401) {
-        this.showNotification('Nom d\'utilisateur ou mot de passe invalide', 'error');
+        this.showNotification(t('notifications.invalidCredentials'), 'error');
       }
     }
   },
@@ -647,7 +653,7 @@ export const Layout = {
     const confirmPassword = (root.querySelector('#reg-confirm-password') as HTMLInputElement).value;
 
     if (password !== confirmPassword) {
-      this.showNotification('Les mots de passe ne correspondent pas', 'error');
+      this.showNotification(t('notifications.passwordMismatch'), 'error');
       return;
     }
 
@@ -669,7 +675,7 @@ export const Layout = {
           sessionStorage.setItem('token', data.token);
           sessionStorage.setItem('isLoggedIn', 'true');
           sessionStorage.setItem('username', username);
-          this.showNotification(`Compte créé avec succès ! Bienvenue ${username} !`);
+          this.showNotification(t('notifications.accountCreated', { username }));
 
           this.updateLoginButton(root, true);
         }
@@ -680,11 +686,11 @@ export const Layout = {
           stayInModale = true;
         }
         else if (res.status === 401) {
-          this.showNotification("Nom d'utilisateur deja utilise", 'error');
+          this.showNotification(t('notifications.usernameAlreadyUsed'), 'error');
           stayInModale = true;
         }
       } catch (err) {
-        this.showNotification("Erreur de serveur, veuillez reessayer ulterieurement", 'error');
+        this.showNotification(t('notifications.serverError'), 'error');
       }
       if (!stayInModale) {
         const registerModal = root.querySelector('#register-modal') as HTMLDivElement;
@@ -705,24 +711,10 @@ export const Layout = {
   },
 
   async changeLanguage(root: HTMLElement, lang: string): Promise<void> {
-    sessionStorage.setItem("language", lang);
+    // Use the new i18n module
+    const { changeLanguage: i18nChangeLanguage } = await import("../utils/i18n.js");
+    await i18nChangeLanguage(lang as 'fr' | 'en' | 'es', root);
     this.setActiveLanguage(root, lang);
-
-    console.log(`Changed language to ${lang}`);
-
-    const res = await fetch("translations.json");
-    const translations = await res.json();
-
-    const t = translations[lang];
-    if (!t) return;
-
-    root.querySelectorAll<HTMLElement>("[data-i18n]").forEach(el => {
-      const key = el.dataset.i18n as keyof typeof t;
-
-      if (key === "login" && sessionStorage.getItem("isLoggedIn")) return;
-
-      if (t[key]) el.textContent = t[key];
-    });
   },
 
   setActiveLanguage(root: HTMLElement, lang: string): void {

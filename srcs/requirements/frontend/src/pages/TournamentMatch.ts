@@ -1,6 +1,7 @@
 import type { Page } from "../interface/gameInterface.js";
 import { GameComponent } from "../components/GameComponent.js";
 import { createCountdown } from "../utils/countdown.js";
+import { t } from "../utils/i18n.js";
 
 let currentGame: GameComponent | null = null;
 
@@ -22,7 +23,7 @@ export const TournamentMatch: Page = {
     return `
 <div class="mt-24">
   <div class="text-center mb-4">
-    <span class="text-2xl text-yellow-400 font-bold">Match Tournoi Local</span>
+    <span class="text-2xl text-yellow-400 font-bold" data-i18n="tournamentMatch.title">Match Tournoi Local</span>
   </div>
   <div class="relative overflow-hidden text-gray-50 text-lg border border-gray-50 backdrop-blur-2xs">
     <div class="absolute inset-0 bg-gradient-to-r from-red-500 to-blue-500 opacity-30"></div>
@@ -34,7 +35,7 @@ export const TournamentMatch: Page = {
       </div>
       <div class="flex items-center justify-between px-6 pb-2 text-md opacity-90">
         <span>W/S</span>
-        <span id="winning-score-info">Premier à <span id="winning-score-display" class="text-yellow-400 font-bold">5</span></span>
+        <span id="winning-score-info" data-i18n="game.firstTo">Premier à <span id="winning-score-display" class="text-yellow-400 font-bold">5</span></span>
         <span>↑/↓</span>
       </div>
     </div>
@@ -42,9 +43,9 @@ export const TournamentMatch: Page = {
   <div class="flex-1 p-5 flex flex-col items-center justify-center bg-transparent">
     <div id="game-container" class="mb-8"></div>
     <div class="flex gap-4 items-center mb-8 z-100">
-      <button id="start-btn" class="px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-gray-700/50 hover:border-green-500">Jouer</button>
-      <button id="restart-btn" class="px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:border-blue-500 hover:bg-gray-700/50 hidden">Recommencer</button>
-      <button id="quit-tournament-btn" class="px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:border-red-500 hover:bg-gray-700/50">Quitter le tournoi</button>
+      <button id="start-btn" class="px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-gray-700/50 hover:border-green-500" data-i18n="game.play">Jouer</button>
+      <button id="restart-btn" class="px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:border-blue-500 hover:bg-gray-700/50 hidden" data-i18n="game.restart">Recommencer</button>
+      <button id="quit-tournament-btn" class="px-6 py-3 font-bold text-lg transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:border-red-500 hover:bg-gray-700/50" data-i18n="tournamentMatch.quitTournament">Quitter le tournoi</button>
     </div>
   </div>
 
@@ -55,10 +56,10 @@ export const TournamentMatch: Page = {
   <div id="match-end-modal" class="fixed inset-0 backdrop-blur-lg bg-black/70 hidden items-center justify-center z-50">
     <div class="border border-gray-50 bg-gray-900/90 p-8 max-w-md w-full mx-4 text-center">
       <div class="text-6xl mb-4">🎉</div>
-      <h3 class="text-2xl text-gray-300 font-bold mb-2">Match terminé !</h3>
+      <h3 class="text-2xl text-gray-300 font-bold mb-2" data-i18n="tournamentLocal.matchFinished">Match terminé !</h3>
       <p id="match-winner-name" class="text-4xl text-green-400 font-bold mb-2"></p>
       <p id="match-final-score" class="text-xl text-gray-400 mb-6"></p>
-      <button id="show-bracket-after-match-btn" class="w-full py-4 text-white border-2 border-yellow-500 hover:bg-yellow-500/20 transition-colors font-bold text-lg">📊 Voir le bracket →</button>
+      <button id="show-bracket-after-match-btn" class="w-full py-4 text-white border-2 border-yellow-500 hover:bg-yellow-500/20 transition-colors font-bold text-lg" data-i18n="tournamentMatch.viewBracket">📊 Voir le bracket →</button>
     </div>
   </div>
 </div>
@@ -98,7 +99,7 @@ export const TournamentMatch: Page = {
           currentGame?.setCanStart(false);
           const winner = p1 >= winningScore ? data.player1 : data.player2;
           if (matchWinnerName) matchWinnerName.textContent = winner;
-          if (matchFinalScore) matchFinalScore.textContent = `Score: ${p1} - ${p2}`;
+          if (matchFinalScore) matchFinalScore.textContent = t('game.scoreDisplay', { score1: p1.toString(), score2: p2.toString() });
           if (matchEndModal) {
             matchEndModal.classList.remove('hidden');
             matchEndModal.classList.add('flex');
@@ -124,16 +125,16 @@ export const TournamentMatch: Page = {
     startBtn.addEventListener('click', async () => {
       canStart = !canStart;
       if (canStart) {
-        startBtn.textContent = 'Pause';
+        startBtn.textContent = t('game.pause');
         try {
           await countdown.start(startModal, startModalText);
         } catch (e: any) {
           if (!(e && (e.name === 'AbortError' || e instanceof DOMException))) throw e;
           canStart = false;
-          startBtn.textContent = 'Jouer';
+          startBtn.textContent = t('game.play');
         }
       } else {
-        startBtn.textContent = 'Jouer';
+        startBtn.textContent = t('game.play');
         countdown.abort();
       }
       currentGame?.setCanStart(canStart);
