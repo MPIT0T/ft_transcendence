@@ -110,11 +110,11 @@ export const TournamentRoom: Page = {
 
 		<div class="border border-gray-50 backdrop-blur-2xs p-8">
 			<div class="flex justify-center">
-				<h1 class="text-4xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-blue-500 to-green-500 bg-[length:400%_400%] animate-gradientShift mb-5" data-i18n="tournament.title">Tournament</h1>
+				<h1 class="text-4xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 bg-[length:400%_400%] animate-gradientShift mb-5" data-i18n="tournament.title">Tournament</h1>
 			</div>
 			<div class="text-center mb-8">
 				<div class="flex justify-center space-x-4">
-					<button id="create-tournament-btn" class="px-8 py-3 font-bold text-2xl mb-5 border text-gray-50 border-gray-50 hover:bg-gray-700/50 transition-colors" data-i18n="tournament.createBtn">
+					<button id="create-tournament-btn" class="px-8 py-3 font-bold text-2xl mb-5 border text-gray-50 border-gray-50 hover:bg-gray-700/50 hover:border-purple-500 transition-colors" data-i18n="tournament.createBtn">
 						Créer un tournoi
 					</button>
 				</div>

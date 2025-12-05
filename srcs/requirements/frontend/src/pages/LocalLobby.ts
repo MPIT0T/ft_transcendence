@@ -27,7 +27,7 @@ export const LocalLobby: Page = {
   <!-- 1v1 Mode -->
   <button id="game-local-btn" class="relative group w-full backdrop-blur-2xs border border-gray-50 p-6 transition-all duration-300 hover:bg-gray-700/50 hover:border-amber-500 text-left">
     <div class="text-center mt-8">
-      <div class="mb-4 text-7xl text-amber-500" data-i18n="local.1v1">
+      <div class="mb-4 text-7xl text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-rose-400 to-amber-400 bg-[length:400%_400%] animate-gradientShift" data-i18n="local.1v1">
         1vs1
       </div>
       <p class="text-gray-400 mb-8 text-xl" data-i18n="local.1v1Desc">
@@ -61,7 +61,7 @@ export const LocalLobby: Page = {
   <!-- Tournament mode -->
   <button id="tournament-local-btn" class="relative group w-full backdrop-blur-2xs border border-gray-50 p-6 transition-all duration-300 hover:bg-gray-700/50 hover:border-green-500 text-left">
     <div class="text-center mt-8">
-      <div id="mode-online-title" class="mb-4 text-7xl text-green-500" data-i18n="local.tournament">
+      <div id="mode-online-title" class="mb-4 text-7xl text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-lime-500 to-green-500 bg-[length:400%_400%] animate-gradientShift" data-i18n="local.tournament">
         tournoi
       </div>
       <p class="text-gray-400 mb-6 text-xl" data-i18n="local.tournamentDesc">
@@ -73,7 +73,7 @@ export const LocalLobby: Page = {
       <div class="flex justify-between text-xl">
         <span class="text-gray-300" data-i18n="lobby.players">Joueurs :</span>
         <span class="font-semibold justify-between">
-          <span class="text-lime-400">8</span>
+          <span class="text-yellow-400">8</span>
           <span class="text-gray-50" data-i18n="lobby.localPlayers">locaux</span>
         </span>
       </div>

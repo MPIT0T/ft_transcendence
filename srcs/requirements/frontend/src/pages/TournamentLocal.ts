@@ -220,7 +220,7 @@ function resetTournament() {
 	tournamentBracket = [];
 	currentMatchIndex = 0;
 	currentRound = 0;
-	winningScore = 5;
+	winningScore = 0;
 	currentScore1 = 0;
 	currentScore2 = 0;
 	if (currentGame) {
@@ -250,7 +250,7 @@ export const TournamentLocal: Page = {
 	<!-- Phase d'inscription -->
 	<div id="registration-phase" class="backdrop-blur-2xs border border-gray-50 p-8 w-[420px] mx-4">
 		<div class="text-center mb-6">
-			<h1 class="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 mb-2" data-i18n="tournamentLocal.title">
+			<h1 class="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-lime-500 to-green-500 bg-[length:400%_400%] animate-gradientShift mb-2" data-i18n="tournamentLocal.title">
 				Tournoi Local
 			</h1>
 			<p class="text-gray-400" data-i18n="tournamentLocal.subtitle">Élimination directe - 8 joueurs</p>
@@ -270,7 +270,7 @@ export const TournamentLocal: Page = {
 				>
 				<button 
 					id="add-player-btn"
-					class="px-4 py-2 border border-gray-50 text-gray-50 hover:bg-green-500/20 hover:border-green-500 transition-colors" data-i18n="tournamentLocal.addPlayer">
+					class="px-4 py-2 border border-gray-50 text-gray-50 hover:bg-gray-700/50 hover:border-green-500 transition-colors" data-i18n="tournamentLocal.addPlayer">
 					Ajouter
 				</button>
 			</div>
@@ -292,7 +292,7 @@ export const TournamentLocal: Page = {
 			<label class="text-gray-400 block mb-3 text-center" data-i18n="tournamentLocal.pointsToWin">Points pour gagner un match :</label>
 			<div class="flex gap-2 justify-center">
 				<button class="score-option px-5 py-2 border border-gray-600 text-gray-400 hover:border-gray-50 hover:text-gray-50 transition-colors" data-score="3">3</button>
-				<button class="score-option px-5 py-2 border border-yellow-500 text-yellow-400 bg-yellow-500/20" data-score="5">5</button>
+				<button class="score-option px-5 py-2 border border-gray-600 text-gray-400 hover:border-gray-50 hover:text-gray-50 transition-colors" data-score="5">5</button>
 				<button class="score-option px-5 py-2 border border-gray-600 text-gray-400 hover:border-gray-50 hover:text-gray-50 transition-colors" data-score="10">10</button>
 				<button class="score-option px-5 py-2 border border-gray-600 text-gray-400 hover:border-gray-50 hover:text-gray-50 transition-colors" data-score="15">15</button>
 			</div>
@@ -301,7 +301,7 @@ export const TournamentLocal: Page = {
 		<div class="flex gap-4">
 			<button 
 				id="start-tournament-btn"
-				class="flex-1 py-3 font-bold text-xl border border-gray-50 text-gray-50 hover:bg-green-500/20 hover:border-green-500 transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:border-gray-50"
+				class="flex-1 py-3 font-bold text-xl border border-gray-50 text-gray-50 hover:bg-lime-700/20 hover:border-lime-500 transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:border-gray-50"
 				disabled data-i18n="tournamentLocal.startTournament">
 				Lancer le tournoi
 			</button>
@@ -316,13 +316,13 @@ export const TournamentLocal: Page = {
 	<!-- Phase de jeu (hidden par défaut) -->
 	<div id="game-phase" class="hidden flex flex-col items-center w-full px-4 pt-16">
 		<!-- Titre du match -->
-		<div id="match-title" class="text-5xl text-center mb-4 text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-blue-500 to-green-500 bg-[length:400%_400%] animate-gradientShift">
+		<div id="match-title" class="text-5xl text-center mb-4 text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-lime-500 to-green-500 bg-[length:400%_400%] animate-gradientShift">
 			Demi-finale 1
 		</div>
 		
 		<!-- Header du match -->
 		<div class="relative overflow-hidden text-gray-50 text-lg border border-gray-50 mb-4 w-full max-w-[900px]">
-			<div class="absolute inset-0 bg-gradient-to-r from-red-500 to-blue-500 opacity-30"></div>
+			<div class="absolute inset-0 bg-gradient-to-r from-amber-400 via-lime-500 to-green-500 bg-[length:400%_400%] animate-gradientShift opacity-30"></div>
 			<div class="relative z-10">
 				<div class="flex items-center px-6 pt-2">
 					<span id="player1-name" class="font-semibold text-4xl flex-1 text-left text-white">Joueur 1</span>
@@ -331,7 +331,10 @@ export const TournamentLocal: Page = {
 				</div>
 				<div class="flex items-center justify-between px-6 pb-2 text-sm opacity-90">
 					<span class="flex-1 text-left text-gray-400">W / S</span>
-					<span id="winning-score-info" class="text-gray-400">Premier à <span id="winning-score-display" class="text-yellow-400 font-bold">5</span></span>
+					<span>
+            <span id="winning-score-info" class="text-gray-400">Premier à</span>
+            <span id="winning-score-display" class="text-yellow-400 font-bold">5</span>
+          </span>
 					<span class="flex-1 text-right text-gray-400">↑ / ↓</span>
 				</div>
 			</div>
@@ -345,17 +348,17 @@ export const TournamentLocal: Page = {
 			<button
 				id="show-bracket-btn"
 				class="px-4 py-2 font-bold text-sm transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-yellow-500/20 hover:border-yellow-500">
-				📊 Bracket
+				Bracket
 			</button>
 			<button
 				id="play-btn"
-				class="px-8 py-3 font-bold text-lg transition border-2 border-green-500 backdrop-blur-2xs text-green-400 hover:bg-green-500/20">
-				▶ Jouer
+				class="px-8 py-3 font-bold text-lg transition border border-green-500 backdrop-blur-2xs text-green-400 hover:bg-green-500/20">
+				Jouer
 			</button>
 			<button
 				id="quit-tournament-btn"
 				class="px-4 py-2 font-bold text-sm transition border border-gray-50 backdrop-blur-2xs text-gray-50 hover:bg-red-500/20 hover:border-red-500">
-				✕ Quitter
+				Quitter
 			</button>
 		</div>
 	</div>
@@ -371,7 +374,7 @@ export const TournamentLocal: Page = {
 	<div id="bracket-modal" class="fixed inset-0 backdrop-blur-lg hidden items-center justify-center z-50">
 		<div class="backdrop-blur-lg border border-gray-50 p-6 max-w-5xl w-full mx-4 max-h-[90vh] overflow-hidden">
 			<div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-4">
-				<h3 class="text-2xl text-yellow-400 font-bold" data-i18n="tournamentLocal.bracketTitle">📊 Bracket du tournoi</h3>
+				<h3 class="text-2xl text-lime-400 font-bold" data-i18n="tournamentLocal.bracketTitle">Bracket du tournoi</h3>
 				<button id="close-bracket-btn" class="text-gray-400 hover:text-white text-3xl transition-colors">&times;</button>
 			</div>
 			<div id="bracket-modal-content" class="mb-6"></div>
@@ -384,7 +387,7 @@ export const TournamentLocal: Page = {
 				</div>
 				<button 
 					id="start-next-match-btn"
-					class="px-10 py-4 text-white border-2 border-green-500 hover:bg-green-500/20 transition-colors font-bold text-lg" data-i18n="tournamentLocal.startMatch">
+					class="px-10 py-4 text-white border border-green-500 hover:bg-green-500/20 transition-colors font-bold text-lg" data-i18n="tournamentLocal.startMatch">
 					Commencer le match
 				</button>
 			</div>
@@ -400,8 +403,8 @@ export const TournamentLocal: Page = {
 			<p id="match-final-score" class="text-xl text-gray-400 mb-6"></p>
 			<button 
 				id="show-bracket-after-match-btn"
-				class="w-full py-4 text-white border-2 border-yellow-500 hover:bg-yellow-500/20 transition-colors font-bold text-lg" data-i18n="tournamentLocal.viewBracket">
-				📊 Voir le bracket
+				class="w-full py-4 text-white border border-yellow-500 hover:bg-yellow-500/20 transition-colors font-bold text-lg" data-i18n="tournamentLocal.viewBracket">
+				Voir le bracket
 			</button>
 		</div>
 	</div>
@@ -416,16 +419,16 @@ export const TournamentLocal: Page = {
 				<button 
 					id="show-final-bracket-btn"
 					class="w-full py-3 text-white border border-gray-50 hover:bg-gray-700/50 transition-colors font-bold" data-i18n="tournamentLocal.viewFinalBracket">
-					📊 Voir le bracket final
+					Voir le bracket final
 				</button>
 						<button
 							id="back-to-local-lobby-btn"
 							class="w-full py-3 text-white border border-gray-50 hover:bg-gray-700/50 transition-colors font-bold" data-i18n="tournamentLocal.backToLobby">
-							↩ Retour au lobby
+							Retour au lobby
 						</button>
 				<button 
 					id="new-tournament-btn"
-					class="w-full py-3 text-white border-2 border-green-500 hover:bg-green-500/20 transition-colors font-bold" data-i18n="tournamentLocal.newTournament">
+					class="w-full py-3 text-white border border-green-500 hover:bg-green-500/20 transition-colors font-bold" data-i18n="tournamentLocal.newTournament">
 					Nouveau tournoi
 				</button>
 			</div>
@@ -518,12 +521,13 @@ export const TournamentLocal: Page = {
 		scoreOptions.forEach(btn => {
 			btn.addEventListener('click', () => {
 				scoreOptions.forEach(b => {
-					b.classList.remove('border-yellow-500', 'text-yellow-400', 'bg-yellow-500/20');
+					b.classList.remove('border-lime-500', 'text-lime-400', 'bg-lime-700/20');
 					b.classList.add('border-gray-600', 'text-gray-400');
 				});
 				btn.classList.remove('border-gray-600', 'text-gray-400');
-				btn.classList.add('border-yellow-500', 'text-yellow-400', 'bg-yellow-500/20');
+				btn.classList.add('border-lime-500', 'text-lime-400', 'bg-lime-700/20');
 				winningScore = parseInt((btn as HTMLButtonElement).dataset.score || '5');
+				updatePlayersList(); // Re-check if tournament can start
 			});
 		});
 
@@ -615,7 +619,7 @@ export const TournamentLocal: Page = {
 
 			playerCount.textContent = `${tournamentPlayers.length}/8`;
 
-			const isValid = tournamentPlayers.length === 8;
+			const isValid = tournamentPlayers.length === 8 && winningScore !== 0;
 			
 			if (isValid) {
 				playerHint.textContent = t('tournamentLocal.readyToStart');
@@ -682,7 +686,7 @@ export const TournamentLocal: Page = {
 			updateMatchInfo();
 			canStart = false;
 			playBtn.textContent = t('tournamentLocal.playBtn');
-			playBtn.className = "px-8 py-3 font-bold text-lg transition border-2 border-green-500 backdrop-blur-2xs text-green-400 hover:bg-green-500/20";
+			playBtn.className = "px-8 py-3 font-bold text-lg transition border border-green-500 backdrop-blur-2xs text-green-400 hover:bg-green-500/20";
 
 			// Destroy previous game
 			if (currentGame) {
@@ -821,18 +825,18 @@ export const TournamentLocal: Page = {
 			
 					if (canStart) {
 						playBtn.textContent = t('tournamentLocal.pauseBtn');
-						playBtn.className = "px-8 py-3 font-bold text-lg transition border-2 border-yellow-500 backdrop-blur-2xs text-yellow-400 hover:bg-yellow-500/20";
+						playBtn.className = "px-8 py-3 font-bold text-lg transition border border-yellow-500 backdrop-blur-2xs text-yellow-400 hover:bg-yellow-500/20";
 						try {
 							await countdown.start(countdownModal, countdownText);
 						} catch (e: any) {
 							if (!(e && (e.name === 'AbortError' || e instanceof DOMException))) throw e;
 							canStart = false;
 							playBtn.textContent = t('tournamentLocal.playBtn');
-							playBtn.className = "px-8 py-3 font-bold text-lg transition border-2 border-green-500 backdrop-blur-2xs text-green-400 hover:bg-green-500/20";
+							playBtn.className = "px-8 py-3 font-bold text-lg transition border border-green-500 backdrop-blur-2xs text-green-400 hover:bg-green-500/20";
 						}
 					} else {
 						playBtn.textContent = t('tournamentLocal.playBtn');
-						playBtn.className = "px-8 py-3 font-bold text-lg transition border-2 border-green-500 backdrop-blur-2xs text-green-400 hover:bg-green-500/20";
+						playBtn.className = "px-8 py-3 font-bold text-lg transition border border-green-500 backdrop-blur-2xs text-green-400 hover:bg-green-500/20";
 						countdown.abort();
 					}
 

@@ -26,7 +26,7 @@ let currentGame: GameComponent | null = null;
 			return `
 	<div class="mt-24">
 		<div class="relative overflow-hidden text-gray-50 text-lg border border-gray-50 backdrop-blur-2xs">
-			<div class="absolute inset-0 bg-gradient-to-r from-red-500 via-amber-400 to-green-500 animate-gradientShift bg-[length:150%_150%] opacity-30"></div>
+			<div class="absolute inset-0 bg-gradient-to-r from-red-500 via-rose-400 to-amber-400 animate-gradientShift bg-[length:150%_150%] opacity-30"></div>
 			<div class="relative z-10">
 				<div class="flex items-center justify-between px-6 pt-2">
 					<span id="player1-name" class="font-semibold text-5xl text-gray-50">${player1Name}</span>
@@ -35,7 +35,10 @@ let currentGame: GameComponent | null = null;
 				</div>
 				<div class="flex items-center justify-between px-6 pb-2 text-md opacity-90">
 					<span>W/S</span>
-					<span id="winning-score-info" data-i18n="game.firstTo">Premier à <span id="winning-score-display" class="text-yellow-400 font-bold">5</span></span>
+					<span>
+            <span id="winning-score-info" data-i18n="game.firstTo">Premier à</span>
+            <span id="winning-score-display" class="text-yellow-400 font-bold">5</span>
+          </span>
 					<span>↑/↓</span>
 				</div>
 			</div>
@@ -134,7 +137,6 @@ let currentGame: GameComponent | null = null;
 		const closeMatchModalBtn = root.querySelector('#close-match-modal-btn') as HTMLButtonElement | null;
 		const leaveToLobbyBtn = root.querySelector('#leave-to-lobby-btn') as HTMLButtonElement | null;
 
-		
 
 		const countdown = createCountdown();
 
@@ -189,8 +191,8 @@ let currentGame: GameComponent | null = null;
 						confirmPointsBtn.addEventListener('click', async () => {
 							if (selectedScore) {
 								winningScore = selectedScore;
-								const wsEl = root.querySelector('#winning-score-display') as HTMLElement | null;
-								if (wsEl) wsEl.textContent = String(winningScore);
+                const wsEl = root.querySelector('#winning-score-display') as HTMLElement | null;
+                if (wsEl) wsEl.textContent = String(winningScore);
 							}
 							if (pointsModal) {
 								pointsModal.classList.add('hidden');

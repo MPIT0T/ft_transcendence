@@ -3,10 +3,13 @@
  */
 
 import { t } from '../utils/i18n.js';
+import type { Particle } from '../interface/layoutInterface.js';
+import '../interface/layoutInterface.js'; // Import to apply global Window extensions
 
 /**
  * Initializes the animated pastel particle background
  * Creates floating particles with random colors on a black canvas
+ * Particles are stored globally to persist across page navigations
  */
 const initPastelBackground = () => {
   const canvas = document.getElementById('background-canvas') as HTMLCanvasElement;
@@ -15,12 +18,27 @@ const initPastelBackground = () => {
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
 
+  // Cancel previous animation loop if it exists (DOM was recreated)
+  if (window.backgroundAnimationId) {
+    cancelAnimationFrame(window.backgroundAnimationId);
+    window.backgroundAnimationId = undefined;
+  }
+
   // Resize canvas to full screen
   const resize = () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    const newCanvas = document.getElementById('background-canvas') as HTMLCanvasElement;
+    if (newCanvas) {
+      newCanvas.width = window.innerWidth;
+      newCanvas.height = window.innerHeight;
+    }
   };
   resize();
+
+  // Remove old resize listener and add new one
+  if (window.backgroundResizeHandler) {
+    window.removeEventListener('resize', window.backgroundResizeHandler);
+  }
+  window.backgroundResizeHandler = resize;
   window.addEventListener('resize', resize);
 
   // Generate random pastel colors
@@ -31,47 +49,60 @@ const initPastelBackground = () => {
     return `rgba(${r},${g},${b},0.8)`;
   };
 
-  // Create floating particles
-  const particles = Array.from({ length: 150 }, () => ({
-    x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height,
-    size: Math.random() * 3 + 2,
-    color: pastelColor(),
-    velX: (Math.random() - 0.5) * 0.3,
-    velY: (Math.random() - 0.5) * 0.3,
-  }));
+  // Only create particles once - reuse them across page navigations
+  if (!window.backgroundParticles) {
+    window.backgroundParticles = Array.from({ length: 150 }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      size: Math.random() * 3 + 2,
+      color: pastelColor(),
+      velX: (Math.random() - 0.5) * 0.3,
+      velY: (Math.random() - 0.5) * 0.3,
+    }));
+  }
+
+  const particles = window.backgroundParticles;
 
   const loop = () => {
+    // Get fresh references in case DOM was recreated
+    const currentCanvas = document.getElementById('background-canvas') as HTMLCanvasElement;
+    if (!currentCanvas) {
+      // Canvas was removed, stop animation
+      if (window.backgroundAnimationId) {
+        cancelAnimationFrame(window.backgroundAnimationId);
+        window.backgroundAnimationId = undefined;
+      }
+      return;
+    }
+
+    const currentCtx = currentCanvas.getContext('2d');
+    if (!currentCtx) return;
+
     // Black background
-    ctx.fillStyle = '#000000';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    currentCtx.fillStyle = '#000000';
+    currentCtx.fillRect(0, 0, currentCanvas.width, currentCanvas.height);
 
     // Draw particles
     for (const p of particles) {
-      ctx.fillStyle = p.color;
-      ctx.fillRect(p.x, p.y, p.size, p.size);
+      currentCtx.fillStyle = p.color;
+      currentCtx.fillRect(p.x, p.y, p.size, p.size);
 
       p.x += p.velX;
       p.y += p.velY;
 
       // Wrap around
-      if (p.x < 0) p.x = canvas.width;
-      if (p.x > canvas.width) p.x = 0;
-      if (p.y < 0) p.y = canvas.height;
-      if (p.y > canvas.height) p.y = 0;
+      if (p.x < 0) p.x = currentCanvas.width;
+      if (p.x > currentCanvas.width) p.x = 0;
+      if (p.y < 0) p.y = currentCanvas.height;
+      if (p.y > currentCanvas.height) p.y = 0;
     }
 
-    requestAnimationFrame(loop);
+    window.backgroundAnimationId = requestAnimationFrame(loop);
   };
 
   loop();
 };
 
-declare global {
-  interface Window {
-    googleAuthListenerAdded?: boolean;
-  }
-}
 
 /**
  * Main layout component containing navigation, modals, and page wrapper

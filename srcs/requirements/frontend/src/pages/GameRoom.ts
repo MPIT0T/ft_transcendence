@@ -175,12 +175,12 @@ export const GameRoom: Page = {
 
 		<div class="backdrop-blur-2xs border border-gray-50 p-8">
 			<div class="flex justify-center">
-				<h1 class="text-4xl z-10 text-transparent bg-clip-text bg-linear-to-r from-red-500 via-blue-500 to-green-500 bg-size-[400%_400%] animate-gradientShift font-bold text-center mb-5" data-i18n="room.rankedTitle">Ranked Game</h1>
+				<h1 class="text-4xl z-10 text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-sky-400 to-indigo-500 bg-size-[400%_400%] animate-gradientShift font-bold text-center mb-5" data-i18n="room.rankedTitle">Ranked Game</h1>
 			</div>
 			<div class="text-center mb-8">
 				<div class="flex justify-center space-x-4">
 					
-					<button id="vs-btn" class="px-10 py-3 font-bold text-2xl border border-gray-50 text-gray-50 hover:bg-gray-700/50 transition-colors mb-5" data-i18n="room.play">
+					<button id="vs-btn" class="px-10 py-3 font-bold text-2xl border border-gray-50 text-gray-50 hover:bg-gray-700/50 hover:border-sky-500 transition-colors mb-5" data-i18n="room.play">
 						Jouer
 					</button>
 					</div>
@@ -194,12 +194,12 @@ export const GameRoom: Page = {
 
 		<div class="backdrop-blur-2xs border border-gray-50 p-8">
 			<div class="flex justify-center">
-				<h1 class="text-4xl z-10 text-transparent bg-clip-text bg-linear-to-r from-red-500 via-blue-500 to-green-500 bg-size-[400%_400%] animate-gradientShift font-bold text-center mb-5" data-i18n="room.friendlyTitle">Friendly Game</h1>
+				<h1 class="text-4xl z-10 text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-sky-400 to-indigo-500 bg-size-[400%_400%] animate-gradientShift font-bold text-center mb-5" data-i18n="room.friendlyTitle">Friendly Game</h1>
 			</div>
 			<div class="text-center mb-8">
 				<div class="flex justify-center space-x-4">
 					
-					<button id="create-room-btn" class="px-10 py-3 text-2xl text-gray-50 border border-gray-50 hover:bg-gray-700/50 transition-colors mb-5" data-i18n="room.createGame">
+					<button id="create-room-btn" class="px-10 py-3 text-2xl text-gray-50 border border-gray-50 hover:bg-gray-700/50 hover:border-sky-500 transition-colors mb-5" data-i18n="room.createGame">
 						Créer une partie
 					</button>
 				</div>
@@ -287,7 +287,7 @@ export const GameRoom: Page = {
 				<div class="flex space-x-4 mt-6">
 					<button 
 						type="submit" 
-						class="flex-1 text-white py-2 px-4 border border-gray-50 hover:bg-gray-700/50 hover:border-green-500 transition-colors font-bold" data-i18n="room.create">
+						class="flex-1 text-white py-2 px-4 border border-gray-50 hover:bg-gray-700/50 hover:border-sky-500 transition-colors font-bold" data-i18n="room.create">
 						CRÉER
 					</button>
 					<button 

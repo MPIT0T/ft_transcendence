@@ -28,7 +28,7 @@ export const OnlineLobby: Page = {
   <!-- 1v1 Mode -->
   <button id="online-game-btn" class="relative group w-full backdrop-blur-2xs border border-gray-50 p-6 transition-all duration-300 hover:bg-gray-700/50 hover:border-sky-400 text-left">
     <div class="text-center mt-8">
-      <div class="mb-4 text-7xl text-sky-400" data-i18n="online.1v1">
+      <div class="mb-4 text-7xl text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-sky-400 to-indigo-500 bg-[length:400%_400%] animate-gradientShift" data-i18n="online.1v1">
         1vs1
       </div>
       <p class="text-gray-400 mb-8 text-xl" data-i18n="online.1v1Desc">
@@ -62,7 +62,7 @@ export const OnlineLobby: Page = {
   <!-- Tournament mode -->
   <button id="online-tournament-btn" class="relative group w-full backdrop-blur-2xs border border-gray-50 p-6 transition-all duration-300 hover:bg-gray-700/50 hover:border-purple-500 text-left">
     <div class="text-center mt-8">
-      <div id="mode-online-title" class="mb-4 text-7xl text-purple-400" data-i18n="online.tournament">
+      <div class="mb-4 text-7xl text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 bg-[length:400%_400%] animate-gradientShift" data-i18n="online.tournament">
         tournoi
       </div>
       <p class="text-gray-400 mb-6 text-xl" data-i18n="online.tournamentDesc">
