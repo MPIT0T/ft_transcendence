@@ -3,7 +3,7 @@
  * Provides navigation to different local game modes played on the same device.
  */
 
-import type { Page } from "../interface/gameInterface.js"
+import type { Page } from "../../interface/gameInterface"
 
 /**
  * Local lobby page component allowing players to select between 1v1 local games

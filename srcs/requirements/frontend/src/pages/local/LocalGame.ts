@@ -3,10 +3,10 @@
  * Handles game setup, countdown, scoring, and match end logic
  */
 
-import type { Page } from "../interface/gameInterface.js"
-import { GameComponent } from "../components/GameComponent.js";
-import { createCountdown } from "../utils/countdown.js";
-import { t } from "../utils/i18n.js";
+import type { Page } from "../../interface/gameInterface"
+import { GameComponent } from "../../components/GameComponent";
+import { createCountdown } from "../../utils/countdown";
+import { t } from "../../utils/i18n";
 
 /** Current game instance */
 let currentGame: GameComponent | null = null;
@@ -15,7 +15,7 @@ let currentGame: GameComponent | null = null;
  * Local game page component
  * Provides UI for playing a 2-player Pong match on the same device
  */
-		export const Game: Page = {
+		export const LocalGame: Page = {
 		/**
 		 * Renders the game page HTML
 		 * @returns HTML string for the game page

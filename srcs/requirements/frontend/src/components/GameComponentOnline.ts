@@ -102,7 +102,7 @@ export class GameComponentOnline {
 
 	/**
 	 * Updates the local game state from server data
-	 * @param game - Game state object from server containing player positions, ball, and scores
+	 * @param game - LocalGame state object from server containing player positions, ball, and scores
 	 */
 	updateGameState(game: any){
 		if (!game) {

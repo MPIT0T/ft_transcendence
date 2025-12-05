@@ -3,11 +3,11 @@
  * Manages player registration, bracket generation, match gameplay, and tournament progression.
  */
 
-import type { Page } from "../interface/gameInterface.js"
-import { Layout } from "./Layout";
-import { GameComponent } from "../components/GameComponent.js";
-import { createCountdown } from "../utils/countdown.js"
-import { t } from "../utils/i18n.js";
+import type { Page } from "../../interface/gameInterface"
+import { Layout } from "../Layout";
+import { GameComponent } from "../../components/GameComponent";
+import { createCountdown } from "../../utils/countdown"
+import { t } from "../../utils/i18n";
 
 // ============================================
 // Tournament State
@@ -239,7 +239,7 @@ function resetTournament() {
  * Local tournament page component for 8-player elimination tournaments.
  * Includes player registration, bracket display, and match gameplay phases.
  */
-export const TournamentLocal: Page = {
+export const LocalTournament: Page = {
 	/**
 	 * Renders the tournament HTML with registration and game phases.
 	 * @returns HTML string containing registration form, game area, and modals
@@ -795,7 +795,7 @@ export const TournamentLocal: Page = {
 		});
 
 		// ============================================
-		// Event Listeners - Game Phase
+		// Event Listeners - LocalGame Phase
 		// ============================================
 		showBracketBtn.addEventListener('click', () => {
 			// If a game is currently running (canStart === true), prevent

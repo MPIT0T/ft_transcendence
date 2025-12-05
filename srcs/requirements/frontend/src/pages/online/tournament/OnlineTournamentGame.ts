@@ -3,12 +3,12 @@
  * Handles tournament-specific WebSocket communication and match progression.
  */
 
-import type { Page } from "../interface/gameInterface.js"
-import { GameComponentOnline } from "../components/GameComponentOnline.js";
-import { ws } from "./TournamentRoom.js";
-import {sleep} from "../utils/sleep";
-import {Layout} from "./Layout";
-import { t } from "../utils/i18n.js";
+import type { Page } from "../../../interface/gameInterface"
+import { GameComponentOnline } from "../../../components/GameComponentOnline";
+import { ws } from "./OnlineTournamentRoom";
+import {sleep} from "../../../utils/sleep";
+import {Layout} from "../../Layout";
+import { t } from "../../../utils/i18n";
 
 /** Current game component instance for tournament match */
 let currentGame: GameComponentOnline | null = null;
@@ -23,7 +23,7 @@ let elapsedSeconds: number = 0;
  * Online tournament game page component for playing tournament matches.
  * Displays match round info, player names, scores, and handles tournament progression.
  */
-export const GameOnlineTournament: Page = {
+export const OnlineTournamentGame: Page = {
   /**
    * Renders the tournament match HTML with round title, player info, and game canvas.
    * @returns HTML string containing the tournament match interface

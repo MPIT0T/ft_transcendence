@@ -5,34 +5,34 @@
 
 import type { Page } from "./interface/gameInterface.js";
 import { Home } from      "./pages/Home.js";
-import { Game } from      "./pages/Game.js";
+import { LocalGame } from "./pages/local/LocalGame";
 import { Layout } from    "./pages/Layout.js";
-import Stats from     "./pages/Stats.js";
-import { GameLobby } from  "./pages/GameLobby.js";
-import { OnlineLobby } from  "./pages/OnlineLobby.js";
-import { LocalLobby } from  "./pages/LocalLobby.js";
-import { GameOnline } from "./pages/GameOnline.js";
-import { GameOnlineTournament } from "./pages/GameOnlineTournament.js";
-import { GameRoom } from "./pages/GameRoom.js";
-import { TournamentRoom } from "./pages/TournamentRoom.js";
-import { TournamentOnline } from "./pages/TournamentOnline.js";
-import { TournamentLocal } from "./pages/TournamentLocal.js";
+import Stats from     "./pages/profile/Stats.js";
+import { Lobby } from "./pages/lobbies/Lobby";
+import { OnlineLobby } from "./pages/lobbies/OnlineLobby";
+import { LocalLobby } from "./pages/lobbies/LocalLobby";
+import { GameOnline } from "./pages/online/game/GameOnline";
+import { OnlineTournamentGame } from "./pages/online/tournament/OnlineTournamentGame";
+import { GameRoom } from "./pages/online/game/GameRoom";
+import { OnlineTournamentRoom } from "./pages/online/tournament/OnlineTournamentRoom";
+import { OnlineTournamentBracket } from "./pages/online/tournament/OnlineTournamentBracket";
+import { LocalTournament } from "./pages/local/LocalTournament";
 import { applyTranslations, t } from "./utils/i18n.js";
 
 /** Route table - maps URL paths to page components */
 const routes: Record<string, Page> = {
   "/": Home,
   "/stats": Stats,
-  "/gameLobby": GameLobby,
+  "/gameLobby": Lobby,
   "/onlineLobby": OnlineLobby,
   "/localLobby": LocalLobby,
   "/gameOnline": GameOnline,
-  "/gameOnlineTournament": GameOnlineTournament,
+  "/gameOnlineTournament": OnlineTournamentGame,
   "/gameRoom": GameRoom,
-  "/tournamentRoom": TournamentRoom,
-  "/tournamentOnline": TournamentOnline,
-  "/tournamentLocal": TournamentLocal,
-  "/game": Game,
+  "/tournamentRoom": OnlineTournamentRoom,
+  "/tournamentOnline": OnlineTournamentBracket,
+  "/tournamentLocal": LocalTournament,
+  "/game": LocalGame,
 }
 
 /**

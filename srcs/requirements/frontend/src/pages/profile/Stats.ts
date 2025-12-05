@@ -3,9 +3,9 @@
  * Provides profile editing, statistics visualization, and language settings.
  */
 
-import type { StatsPage } from "../interface/gameInterface.js"
-import { Layout } from "./Layout";
-import { changeLanguage, applyTranslations, loadTranslations, getCurrentLang, t } from "../utils/i18n.js";
+import type { StatsPage } from "../../interface/gameInterface"
+import { Layout } from "../Layout";
+import { changeLanguage, applyTranslations, loadTranslations, getCurrentLang, t } from "../../utils/i18n";
 
 /**
  * Draws a pie chart in an SVG element.

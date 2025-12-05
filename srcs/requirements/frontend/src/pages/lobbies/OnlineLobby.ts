@@ -3,8 +3,8 @@
  * Requires user authentication and provides navigation to different online game modes.
  */
 
-import type { Page } from "../interface/gameInterface.js"
-import { Layout } from "./Layout";
+import type { Page } from "../../interface/gameInterface"
+import { Layout } from "../Layout";
 
 /**
  * Online lobby page component allowing authenticated players to select between

@@ -7,7 +7,7 @@ import { Player } from './Player';
 import { Ball } from './Ball';
 
 /**
- * Game component for local 2-player Pong
+ * LocalGame component for local 2-player Pong
  * Manages game loop, physics, rendering, and input handling
  */
 export class GameComponent {
@@ -42,7 +42,7 @@ export class GameComponent {
   private p1: Player = new Player(1);
   /** Player 2 paddle (right side) */
   private p2: Player = new Player(2);
-  /** Game ball */
+  /** LocalGame ball */
   private ball: Ball = new Ball();
 
   /** Player 1 score */

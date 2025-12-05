@@ -1,15 +1,15 @@
 /**
- * @fileoverview Game lobby page component that allows users to choose between local and online game modes.
+ * @fileoverview LocalGame lobby page component that allows users to choose between local and online game modes.
  * Displays real-time server status including latency and online player count.
  */
 
-import type { Page } from "../interface/gameInterface.js"
+import type { Page } from "../../interface/gameInterface"
 
 /**
- * Game lobby page component providing navigation to local or online game modes.
+ * LocalGame lobby page component providing navigation to local or online game modes.
  * Features real-time server ping monitoring and online player count display.
  */
-export const GameLobby: Page = {
+export const Lobby: Page = {
 	/**
 	 * Renders the game lobby HTML with local and online mode selection buttons.
 	 * @returns HTML string containing the lobby interface with mode cards

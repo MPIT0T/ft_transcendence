@@ -3,8 +3,8 @@
  * Handles WebSocket connections for tournament lobby management.
  */
 
-import type { Page } from "../interface/gameInterface.js"
-import { Layout } from "./Layout";
+import type { Page } from "../../../interface/gameInterface"
+import { Layout } from "../../Layout";
 
 /** WebSocket connection for real-time tournament communication */
 export let ws: WebSocket | undefined;
@@ -99,7 +99,7 @@ const joinTournament = function (tournamentId: string) {
  * Tournament room page component for creating and joining online tournaments.
  * Manages WebSocket connections and provides tournament lobby functionality.
  */
-export const TournamentRoom: Page = {
+export const OnlineTournamentRoom: Page = {
 	/**
 	 * Renders the tournament room HTML with creation button and available tournaments list.
 	 * @returns HTML string containing the tournament room interface with creation modal

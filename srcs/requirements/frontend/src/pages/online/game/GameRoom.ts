@@ -1,10 +1,10 @@
 /**
- * @fileoverview Game room page component for online matchmaking and room management.
+ * @fileoverview LocalGame room page component for online matchmaking and room management.
  * Handles WebSocket connections, room creation/joining, friend challenges, and ranked/friendly matches.
  */
 
-import type { Page } from "../interface/gameInterface.js"
-import { Layout } from "./Layout";
+import type { Page } from "../../../interface/gameInterface"
+import { Layout } from "../../Layout";
 
 /** WebSocket connection for real-time game communication */
 export let ws: WebSocket | undefined;
@@ -161,7 +161,7 @@ const joinRoom = function (roomId: string) {
 }
 
 /**
- * Game room page component for online matchmaking, room creation, and friend challenges.
+ * LocalGame room page component for online matchmaking, room creation, and friend challenges.
  * Manages WebSocket connections and provides ranked and friendly game modes.
  */
 export const GameRoom: Page = {

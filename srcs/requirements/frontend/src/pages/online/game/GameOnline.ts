@@ -3,12 +3,12 @@
  * Handles WebSocket game state updates, countdown animations, and match results.
  */
 
-import type { Page } from "../interface/gameInterface.js"
-import { GameComponentOnline } from "../components/GameComponentOnline.js";
-import { ws } from "./GameRoom.js";
-import { sleep } from "../utils/sleep.js"
-import { Layout } from "./Layout";
-import { t } from "../utils/i18n.js";
+import type { Page } from "../../../interface/gameInterface"
+import { GameComponentOnline } from "../../../components/GameComponentOnline";
+import { ws } from "./GameRoom";
+import { sleep } from "../../../utils/sleep"
+import { Layout } from "../../Layout";
+import { t } from "../../../utils/i18n";
 
 /** Current game component instance */
 let currentGame: GameComponentOnline | null = null;

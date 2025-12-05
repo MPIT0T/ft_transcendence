@@ -3,16 +3,16 @@
  * Shows real-time bracket updates, match results, and handles tournament navigation.
  */
 
-import type { Page } from "../interface/gameInterface.js"
-import { ws } from "./TournamentRoom.js";
-import { Layout } from "./Layout";
-import { t } from "../utils/i18n.js";
+import type { Page } from "../../../interface/gameInterface"
+import { ws } from "./OnlineTournamentRoom";
+import { Layout } from "../../Layout";
+import { t } from "../../../utils/i18n";
 
 /**
  * Online tournament bracket page component displaying the tournament bracket.
  * Shows quarter-finals, semi-finals, final, and winner with real-time updates.
  */
-export const TournamentOnline: Page = {
+export const OnlineTournamentBracket: Page = {
   /**
    * Renders the tournament bracket HTML with all rounds and player slots.
    * @returns HTML string containing the bracket interface with leave button
@@ -225,7 +225,7 @@ export const TournamentOnline: Page = {
 
     const popstateHandler = (event: PopStateEvent) => {
       const path = window.location.pathname.toLowerCase();
-      // If we're still on a tournament-related page (Tournament Online or Game Online), don't notify server about leaving
+      // If we're still on a tournament-related page (Tournament Online or LocalGame Online), don't notify server about leaving
       if (path.includes('tournamentonline') || path.includes('gameonlinetournament')) {
         return;
       }
