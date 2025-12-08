@@ -624,7 +624,8 @@ export const GameRoom: Page = {
 		}, 1000);
 
 		const popstateHandler = (event: PopStateEvent) => {
-			if (path.includes('gameOnline')) {
+			const path = window.location.pathname;
+			if (path === '/online-game' || path === '/game-room') {
 				return;
 			}
 			window.clearInterval(statusRoom);

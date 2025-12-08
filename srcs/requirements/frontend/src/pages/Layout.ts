@@ -590,7 +590,6 @@ export const Layout = {
     // google registration
     const clientId = "646709615614-o4v2kdnbn5mhjkncnme6mdqhbd0j3lt5.apps.googleusercontent.com";
     const redirectUri = window.location.origin + "/oauth-callback.html";
-    console.log(redirectUri);
 
     if (googleBtn) {
       googleBtn.addEventListener('click', () => {
@@ -938,7 +937,6 @@ export const Layout = {
    * @returns Full avatar URL path
    */
   getAvatarPath(avatar: string): string {
-    console.log(avatar);
     if (avatar.startsWith('/') || avatar.startsWith('http://') || avatar.startsWith('https://')) {
       return avatar;
     }

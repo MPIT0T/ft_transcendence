@@ -154,7 +154,8 @@ export const OnlineLobby: Page = {
           playerGame.textContent = `${countP}`;
           playerTournament.textContent = `${countT}`;
         } catch (error) {
-          player.textContent = `?`;
+          playerGame.textContent = `?`;
+          playerTournament.textContent = `?`;
         }
       }, 5000);
     }

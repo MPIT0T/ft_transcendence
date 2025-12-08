@@ -88,11 +88,24 @@ export const OnlineTournamentGame: Page = {
       }
     };
 
-    const popstateHandler1 = (_event: PopStateEvent) => {
-      _restoreLoginBtn();
-      window.removeEventListener('popstate', popstateHandler1);
+    const popstateHandler = (event: PopStateEvent) => {
+      const path = window.location.pathname;
+      if (path.includes('online-game')) {
+        return;
+      }
+      const payLoad = {
+        "method": "leave",
+        "clientId": clientId
+      }
+      if (ws)
+        ws.send(JSON.stringify(payLoad));
+
+      // Nettoyer les infos du match
+      sessionStorage.removeItem('matchRound');
+
+      window.removeEventListener('popstate', popstateHandler);
     };
-    window.addEventListener('popstate', popstateHandler1);
+    window.addEventListener('popstate', popstateHandler);
 
     Layout.redirectIfNotLoggedIn('/', true);
 
@@ -225,7 +238,6 @@ export const OnlineTournamentGame: Page = {
 
         // Début du match
         if (response.method === "Start") {
-          console.log("BOBO");
           waiting = false;
           canStart = true;
           if (currentGame) {
@@ -304,20 +316,6 @@ export const OnlineTournamentGame: Page = {
     }
 
   // Handler pour le popstate (si le joueur quitte manuellement)
-  const popstateHandler = (event: PopStateEvent) => {
-      
-      const payLoad = {
-        "method": "leave",
-        "clientId": clientId
-      }
-      if (ws)
-        ws.send(JSON.stringify(payLoad));
-
-      // Nettoyer les infos du match
-      sessionStorage.removeItem('matchRound');
-
-      window.removeEventListener('popstate', popstateHandler);
-    };
 
     window.addEventListener('popstate', popstateHandler);
   }

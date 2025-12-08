@@ -103,7 +103,6 @@ export const GameOnline: Page = {
    * @param root - Root element containing the rendered game page
    */
   mount(root) {
-
     const layoutLoginBtn = document.querySelector('#login-btn') as HTMLButtonElement | null;
     let _prevLoginBtnClass: string | null = null;
     let _prevLoginBtnDisabled: boolean | null = null;
@@ -121,11 +120,24 @@ export const GameOnline: Page = {
       }
     };
 
-    const popstateHandler1 = (_event: PopStateEvent) => {
+    const popstateHandler = (event: PopStateEvent) => {
       _restoreLoginBtn();
-      window.removeEventListener('popstate', popstateHandler1);
+      const path = window.location.pathname.toLowerCase();
+      console.log(path);
+      const payLoad = {
+        "method": "leave",
+        "clientId": clientId
+      }
+      if (ws)
+        ws.send(JSON.stringify(payLoad));
+      sessionStorage.removeItem('roomId');
+      if (path !== '/online-game' && path !== '/game-room') {
+        if (ws)
+          ws.close();
+      }
+      window.removeEventListener('popstate', popstateHandler);
     };
-    window.addEventListener('popstate', popstateHandler1);
+    window.addEventListener('popstate', popstateHandler);
 
     // Cleanup previous game if exists
     if (currentGame) {
@@ -161,29 +173,6 @@ export const GameOnline: Page = {
     const cancelMatchmakingBtn = root.querySelector('#cancel-matchmaking') as HTMLButtonElement;
     const startModal = root.querySelector('#start-modal') as HTMLElement;
     const startModalText = root.querySelector('#start-modal-text') as HTMLElement;
-
-    const popstateHandler = (event: PopStateEvent) => {
-
-      const path = window.location.pathname.toLowerCase();
-
-      const payLoad = {
-        "method": "leave",
-        "clientId": clientId
-      }
-
-      if (ws)
-        ws.send(JSON.stringify(payLoad));
-
-      sessionStorage.removeItem('roomId');
-
-      if (!path.includes('gameroom') && !path.includes('gameonline')) {
-        if (ws)
-          ws.close();
-      }
-
-
-      window.removeEventListener('popstate', popstateHandler);
-    };
 
     const formatTime = (s: number) => {
       const hours = Math.floor(s / 3600);
@@ -404,7 +393,7 @@ export const GameOnline: Page = {
                 }
 
                 sessionStorage.removeItem('roomId');
-                const p = '/';
+                const p = '/game-room';
                 history.replaceState(null, '', p);
                 window.dispatchEvent(new PopStateEvent('popstate'));
               });
