@@ -5,7 +5,7 @@ function sleep(ms) {
 }
 
 class Tournament {
-	constructor(tournamentId, gameMode, gamePoint, tournamentName) {
+	constructor(tournamentId, gameMode, gamePoint, tournamentName, onTournamentEnd = null) {
 		this.tournamentId = tournamentId;
 		this.gameMode = gameMode;
 		this.gamePoint = gamePoint;
@@ -15,6 +15,7 @@ class Tournament {
 		this.playerR = 0;
 		this.state = "waiting";
 		this.allTournamentRooms = [];
+		this.onTournamentEnd = onTournamentEnd;
 	}
 
 	generateAllTournamentRooms() {
@@ -675,11 +676,23 @@ class Tournament {
 			});
 			console.log(`🏆 Tournament Champion: ${champion._name}`);
 			this.state = "finished";
-
-
+			if (this.onTournamentEnd) {
+				this.onTournamentEnd(this.tournamentId);
+			}
 		}
 
 	}
+
+	disconnect(clientId) {
+		const idx = this.clients.findIndex(c => c._clientId === clientId);
+		if (idx !== -1) {
+			const disconnectedClient = this.clients[idx];
+			disconnectedClient.isActive = false;
+			return true;
+		}
+		return false;
+	}
+
 
 	leave(clientId) {
 		const idx = this.clients.findIndex(c => c._clientId === clientId);

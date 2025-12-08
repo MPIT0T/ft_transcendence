@@ -358,136 +358,142 @@ export const GameRoom: Page = {
 	 * @param root - Root element containing the rendered room page
 	 */
 	mount(root: HTMLElement): void {
-    Layout.redirectIfNotLoggedIn('/', true);
+		Layout.redirectIfNotLoggedIn('/', true);
 		let roomId;
 		let currentPage = true;
 
-    Layout.redirectIfNotLoggedIn('/', true);
+		Layout.redirectIfNotLoggedIn('/', true);
 
 		if (ws === undefined || ws.readyState === WebSocket.CLOSED) {
 			const host = window.location.host;
 			ws = new WebSocket(`wss://${host}/pong/ws`);
 			ws.onclose = () => { ws = undefined; };
 		}
+		if (ws) {
+			ws.onmessage = message => {
+				const response = JSON.parse(message.data);
 
-		ws.onmessage = message => {
-			const response = JSON.parse(message.data);
-
-			if (response.method === "connect") {
-				clientId = response.clientId;
-				if (clientId !== undefined) {
-					sessionStorage.setItem('clientId', clientId);
+				if (response.method === "connect") {
+					clientId = response.clientId;
+					if (clientId !== undefined) {
+						sessionStorage.setItem('clientId', clientId);
+					}
+					const payLoad = {
+						"method": "user",
+						"clientId": clientId,
+						"token": sessionStorage.getItem('token'),
+						"username": sessionStorage.getItem('username'),
+					}
+					if (ws)
+						ws.send(JSON.stringify(payLoad));
 				}
-				const payLoad = {
-					"method": "user",
-					"clientId": clientId,
-					"token": sessionStorage.getItem('token'),
-					"username": sessionStorage.getItem('username'),
-				}
-				if (ws)
-					ws.send(JSON.stringify(payLoad));
-			}
-			if (response.method === "create") {
-				roomId = response.room.roomId;
-				joinRoom(roomId)
-			}
-
-			if (response.method === "join") {
-				if (response.status === "success") {
-
+				if (response.method === "create") {
 					roomId = response.room.roomId;
-					if (roomId !== undefined) {
-						sessionStorage.setItem('roomId', roomId);
-					}
-
-					const matchmakingModal = root.querySelector('#matchmaking-modal') as HTMLDivElement;
-					if (matchmakingModal) {
-						matchmakingModal.classList.add('hidden');
-						matchmakingModal.classList.remove('flex');
-					}
-
-					const p = response.url;
-					history.pushState(null, '', p);
-					window.dispatchEvent(new PopStateEvent('popstate'));
-				} else {
-					const matchmakingModal = root.querySelector('#matchmaking-modal') as HTMLDivElement;
-					if (matchmakingModal) {
-						matchmakingModal.classList.add('hidden');
-						matchmakingModal.classList.remove('flex');
-					}
-					alert(response.message);
-				}
-			}
-
-			if (response.method === "rooms") {
-				displayRooms(root, response.rooms);
-			}
-
-			if (response.method === "friends") {
-				displayFriends(root, response.friends);
-			}
-
-			// Afficher un modal de challenge avec Accept/Refuse
-			if (response.method === "challenge") {
-				const challengeModal = root.querySelector('#challenge-modal') as HTMLDivElement;
-				const challengeText = root.querySelector('#challenge-text') as HTMLParagraphElement;
-				const acceptBtn = root.querySelector('#challenge-accept') as HTMLButtonElement;
-				const declineBtn = root.querySelector('#challenge-decline') as HTMLButtonElement;
-
-				// Renseigner le texte et stocker le roomId sur le modal
-				const challenger = response.from || 'Un joueur';
-				const roomIdFromServer = response.roomId;
-				if (challengeText) challengeText.textContent = `${challenger} vous défie ! Voulez-vous accepter ?`;
-				if (challengeModal && roomIdFromServer) (challengeModal as any).dataset.roomId = roomIdFromServer;
-
-				// Afficher le modal
-				if (challengeModal) {
-					challengeModal.classList.remove('hidden');
-					challengeModal.classList.add('flex');
+					joinRoom(roomId)
 				}
 
-				// Handler Accept: renvoyer un payload 'invite' avec roomId
-				const onAccept = () => {
-					const rid = (challengeModal as any)?.dataset?.roomId || roomIdFromServer;
-					const payLoad = {
-						method: 'invite',
-						clientId: clientId,
-						roomId: rid,
-						to: challenger,
-						response: 'yes'
+				if (response.method === "join") {
+					if (response.status === "success") {
+
+						roomId = response.room.roomId;
+						if (roomId !== undefined) {
+							sessionStorage.setItem('roomId', roomId);
+						}
+
+						const matchmakingModal = root.querySelector('#matchmaking-modal') as HTMLDivElement;
+						if (matchmakingModal) {
+							matchmakingModal.classList.add('hidden');
+							matchmakingModal.classList.remove('flex');
+						}
+
+						const p = response.url;
+						history.pushState(null, '', p);
+						window.dispatchEvent(new PopStateEvent('popstate'));
+					} else {
+						const matchmakingModal = root.querySelector('#matchmaking-modal') as HTMLDivElement;
+						if (matchmakingModal) {
+							matchmakingModal.classList.add('hidden');
+							matchmakingModal.classList.remove('flex');
+						}
+						alert(response.message);
+					}
+				}
+
+				if (response.method === "rooms") {
+					displayRooms(root, response.rooms);
+				}
+
+				if (response.method === "friends") {
+					displayFriends(root, response.friends);
+				}
+
+				// Afficher un modal de challenge avec Accept/Refuse
+				if (response.method === "challenge") {
+					const challengeModal = root.querySelector('#challenge-modal') as HTMLDivElement;
+					const challengeText = root.querySelector('#challenge-text') as HTMLParagraphElement;
+					const acceptBtn = root.querySelector('#challenge-accept') as HTMLButtonElement;
+					const declineBtn = root.querySelector('#challenge-decline') as HTMLButtonElement;
+
+					// Renseigner le texte et stocker le roomId sur le modal
+					const challenger = response.from || 'Un joueur';
+					const roomIdFromServer = response.roomId;
+					if (challengeText) challengeText.textContent = `${challenger} vous défie ! Voulez-vous accepter ?`;
+					if (challengeModal && roomIdFromServer) (challengeModal as any).dataset.roomId = roomIdFromServer;
+
+					// Afficher le modal
+					if (challengeModal) {
+						challengeModal.classList.remove('hidden');
+						challengeModal.classList.add('flex');
+					}
+
+					// Handler Accept: renvoyer un payload 'invite' avec roomId
+					const onAccept = () => {
+						const rid = (challengeModal as any)?.dataset?.roomId || roomIdFromServer;
+						const payLoad = {
+							method: 'invite',
+							clientId: clientId,
+							roomId: rid,
+							to: challenger,
+							response: 'yes'
+						};
+						if (ws) ws.send(JSON.stringify(payLoad));
+
+						// Fermer le modal
+						challengeModal.classList.add('hidden');
+						challengeModal.classList.remove('flex');
+
+						// Nettoyer les handlers
+						acceptBtn?.removeEventListener('click', onAccept);
+						declineBtn?.removeEventListener('click', onDecline);
 					};
-					if (ws) ws.send(JSON.stringify(payLoad));
 
-					// Fermer le modal
-					challengeModal.classList.add('hidden');
-					challengeModal.classList.remove('flex');
+					// Handler Refuse: juste fermer le modal
+					const onDecline = () => {
+						challengeModal.classList.add('hidden');
+						challengeModal.classList.remove('flex');
+						acceptBtn?.removeEventListener('click', onAccept);
+						declineBtn?.removeEventListener('click', onDecline);
 
-					// Nettoyer les handlers
-					acceptBtn?.removeEventListener('click', onAccept);
-					declineBtn?.removeEventListener('click', onDecline);
-				};
-
-				// Handler Refuse: juste fermer le modal
-				const onDecline = () => {
-					challengeModal.classList.add('hidden');
-					challengeModal.classList.remove('flex');
-					acceptBtn?.removeEventListener('click', onAccept);
-					declineBtn?.removeEventListener('click', onDecline);
-
-					const rid = (challengeModal as any)?.dataset?.roomId || roomIdFromServer;
-					const payLoad = {
-						method: 'invite',
-						clientId: clientId,
-						roomId: rid,
-						to: challenger,
-						response: 'no'
+						const rid = (challengeModal as any)?.dataset?.roomId || roomIdFromServer;
+						const payLoad = {
+							method: 'invite',
+							clientId: clientId,
+							roomId: rid,
+							to: challenger,
+							response: 'no'
+						};
+						if (ws) ws.send(JSON.stringify(payLoad));
 					};
-					if (ws) ws.send(JSON.stringify(payLoad));
-				};
 
-				acceptBtn?.addEventListener('click', onAccept);
-				declineBtn?.addEventListener('click', onDecline);
+					acceptBtn?.addEventListener('click', onAccept);
+					declineBtn?.addEventListener('click', onDecline);
+				}
 			}
+		} else {
+			const p = '/';
+			history.replaceState(null, '', p);
+			window.dispatchEvent(new PopStateEvent('popstate'));
+			sessionStorage.removeItem('roomId');
 		}
 
 		// page buttons

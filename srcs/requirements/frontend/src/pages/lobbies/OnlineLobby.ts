@@ -128,10 +128,10 @@ export const OnlineLobby: Page = {
       status = setInterval(async () => {
         try {
           const startPong = Date.now();
-          const responseP = await fetch("/pong/status");
+          await fetch("/pong/status");
           const endPong = Date.now();
           const startTournament = Date.now();
-          const responseT = await fetch("/tournament/status");
+          await fetch("/tournament/status");
           const endTournament = Date.now();
           const latencyAvg = (endPong - startPong + endTournament - startTournament) / 2;
           ping.textContent = `${latencyAvg}`;
@@ -159,6 +159,11 @@ export const OnlineLobby: Page = {
         }
       }, 5000);
     }
-
+    const popstateHandler = (event: PopStateEvent) => {
+				window.clearInterval(status);
+				window.clearInterval(statusPlayer);
+			window.removeEventListener('popstate', popstateHandler);
+		};
+		window.addEventListener('popstate', popstateHandler);
   }
 }

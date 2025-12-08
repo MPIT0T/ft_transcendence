@@ -306,7 +306,7 @@ export const OnlineTournamentGame: Page = {
       }
     } else {
       window.removeEventListener('popstate', popstateHandler);
-      const p = '/tournamentRoom';
+      const p = '/';
       history.replaceState(null, '', p);
       window.dispatchEvent(new PopStateEvent('popstate'));
     }

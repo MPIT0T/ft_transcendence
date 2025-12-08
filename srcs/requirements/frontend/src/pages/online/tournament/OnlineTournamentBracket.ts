@@ -247,6 +247,7 @@ export const OnlineTournamentBracket: Page = {
         return;
       }
       _restoreLoginBtn();
+      
       const payLoad = {
         "method": "leave",
         "clientId": clientId
@@ -535,7 +536,7 @@ export const OnlineTournamentBracket: Page = {
       }
     } else {
       window.removeEventListener('popstate', popstateHandler);
-      const p = '/tournament-room';
+      const p = '/';
       history.replaceState(null, '', p);
       window.dispatchEvent(new PopStateEvent('popstate'));
     }

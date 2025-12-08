@@ -6,7 +6,10 @@ class Tournaments {
 	}
 
 	createTournament(tournamentId, gameMode, gamePoint, tournamentName) {
-		const tournament = new Tournament(tournamentId, gameMode, gamePoint, tournamentName);
+		const onTournamentEnd = (id) => {
+			this.remove(id);
+		};
+		const tournament = new Tournament(tournamentId, gameMode, gamePoint, tournamentName, onTournamentEnd);
 		this._tournaments[tournamentId] = tournament;
 	}
 
@@ -42,9 +45,11 @@ class Tournaments {
 					}
 				}
 			}
-			// Si le tournoi est déjà lancé (playing-game), ne rien faire
-			else if (tournament.state === "playing-game") {
+			// Si le tournoi est déjà lancé (playing-tournament), ne rien faire
+			else if (tournament.state === "playing-tournament") {
+				tournament.disconnect(clientId);
 				console.log(`Client ${clientId} ne peut pas être retiré du tournoi ${tournamentId} (partie en cours)`);
+				
 			}
 			else if (tournament.state === "finished") {
 				const removed = tournament.remove(clientId);
