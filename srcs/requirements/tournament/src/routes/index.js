@@ -117,7 +117,7 @@ function isClientInAnyRoom(clientId) {
 	const tournaments = Object.values(g_Games._tournaments._tournaments);
 	const joiningClient = g_Games.findClient(clientId);
 	for (const tournament of tournaments) {
-		if (tournament.clients.some(c => c._clientId === clientId) || tournament.clients.some(c => c._dbId === joiningClient?._dbId)) {
+		if ((tournament.clients.some(c => c._clientId === clientId) && tournament.clients.some(c => c.isActive === true)) || (tournament.clients.some(c => c._dbId === joiningClient?._dbId) && tournament.clients.some(c => c.isActive === true))) {
 			return true;
 		}
 	}

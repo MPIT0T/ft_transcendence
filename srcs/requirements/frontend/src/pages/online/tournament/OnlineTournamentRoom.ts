@@ -191,7 +191,7 @@ export const OnlineTournamentRoom: Page = {
 	 * @param root - Root element containing the rendered tournament room page
 	 */
 	mount(root: HTMLElement): void {
-    Layout.redirectIfNotLoggedIn('/', true);
+		Layout.redirectIfNotLoggedIn('/', true);
 
 		let tournamentId;
 		if (ws === undefined || ws.readyState === WebSocket.CLOSED) {
@@ -199,53 +199,59 @@ export const OnlineTournamentRoom: Page = {
 			ws = new WebSocket(`wss://${host}/tournament/ws`);
 			ws.onclose = () => { ws = undefined; };
 		}
+		if (ws) {
+			ws.onmessage = message => {
+				const response = JSON.parse(message.data);
 
-		ws.onmessage = message => {
-			const response = JSON.parse(message.data);
-
-			if (response.method === "connect") {
-				clientId = response.clientId;
-				if (clientId !== undefined) {
-					sessionStorage.setItem('clientId', clientId);
-				}
-				const payLoad = {
-					"method": "user",
-					"clientId": clientId,
-					"token": sessionStorage.getItem('token'),
-					"username": sessionStorage.getItem('username'),
-				}
-				if (ws)
-					ws.send(JSON.stringify(payLoad));
-			}
-
-			if (response.method === "create") {
-				tournamentId = response.tournament.tournamentId;
-				joinTournament(tournamentId);
-			}
-
-			if (response.method === "joinT") {
-				if (response.status === "success") {
-
-					tournamentId = response.tournamentId;
-					if (tournamentId !== undefined) {
-						sessionStorage.setItem('tournamentId', tournamentId);
+				if (response.method === "connect") {
+					clientId = response.clientId;
+					if (clientId !== undefined) {
+						sessionStorage.setItem('clientId', clientId);
 					}
-
-					const tournamentName = response.tournamentName;
-					if (tournamentName !== undefined) {
-						sessionStorage.setItem('tournamentName', tournamentName);
+					const payLoad = {
+						"method": "user",
+						"clientId": clientId,
+						"token": sessionStorage.getItem('token'),
+						"username": sessionStorage.getItem('username'),
 					}
-					const p = response.url;
-					history.pushState(null, '', p);
-					window.dispatchEvent(new PopStateEvent('popstate'));
-				} else {
-					alert(response.message);
+					if (ws)
+						ws.send(JSON.stringify(payLoad));
+				}
+
+				if (response.method === "create") {
+					tournamentId = response.tournament.tournamentId;
+					joinTournament(tournamentId);
+				}
+
+				if (response.method === "joinT") {
+					if (response.status === "success") {
+
+						tournamentId = response.tournamentId;
+						if (tournamentId !== undefined) {
+							sessionStorage.setItem('tournamentId', tournamentId);
+						}
+
+						const tournamentName = response.tournamentName;
+						if (tournamentName !== undefined) {
+							sessionStorage.setItem('tournamentName', tournamentName);
+						}
+						const p = response.url;
+						history.pushState(null, '', p);
+						window.dispatchEvent(new PopStateEvent('popstate'));
+					} else {
+						alert(response.message);
+					}
+				}
+
+				if (response.method === "tournaments") {
+					displayTournament(root, response.tournaments);
 				}
 			}
-
-			if (response.method === "tournaments") {
-				displayTournament(root, response.tournaments);
-			}
+		} else {
+			const p = '/';
+			history.replaceState(null, '', p);
+			window.dispatchEvent(new PopStateEvent('popstate'));
+			sessionStorage.removeItem('roomId');
 		}
 
 		// page buttons
@@ -292,11 +298,11 @@ export const OnlineTournamentRoom: Page = {
 		}, 1000);
 
 		const popstateHandler = (event: PopStateEvent) => {
-      const path = window.location.pathname;
-      if (path !== '/online-tournament-game' && path !== '/online-tournament' && path !== '/tournament-room') {
-        if (ws)
-          ws.close();
-      }
+			const path = window.location.pathname;
+			if (path !== '/online-tournament-game' && path !== '/online-tournament' && path !== '/tournament-room') {
+				if (ws)
+					ws.close();
+			}
 			window.clearInterval(statusTournament);
 			window.removeEventListener('popstate', popstateHandler);
 		};

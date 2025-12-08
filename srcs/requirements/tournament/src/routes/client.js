@@ -7,6 +7,7 @@ class Client {
 		this._elo = 1000;
 		this._conection = socket;
 		this._token = undefined;
+		this.isActive = true;
 		this.isReady = false; // Initialiser le statut ready à false
 	}
 
