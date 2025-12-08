@@ -699,6 +699,7 @@ const Stats: StatsPage = {
         sessionStorage.removeItem('username');
         Layout.updateLoginButton(document.body, false);
         clearInterval((globalThis as any).loginIntervalId);
+        (globalThis as any).loginIntervalId = null;
         const p = '/';
         history.pushState(null, '', p);
         window.dispatchEvent(new PopStateEvent('popstate'));
