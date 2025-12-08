@@ -781,7 +781,7 @@ export const LocalTournament: Page = {
 		});
 
 		backBtn.addEventListener('click', () => {
-			history.pushState(null, '', '/localLobby');
+			history.pushState(null, '', '/local-lobby');
 			window.dispatchEvent(new PopStateEvent('popstate'));
 		});
 
@@ -848,7 +848,7 @@ export const LocalTournament: Page = {
 		quitBtn.addEventListener('click', () => {
 			if (confirm(t('tournamentMatch.confirmQuitProgress'))) {
 				resetTournament();
-				history.pushState(null, '', '/localLobby');
+				history.pushState(null, '', '/local-lobby');
 				window.dispatchEvent(new PopStateEvent('popstate'));
 			}
 		});
@@ -901,7 +901,7 @@ export const LocalTournament: Page = {
 					tournamentEndModal.classList.add('hidden');
 					tournamentEndModal.classList.remove('flex');
 				}
-				history.pushState(null, '', '/localLobby');
+				history.pushState(null, '', '/local-lobby');
 				window.dispatchEvent(new PopStateEvent('popstate'));
 			});
 		}

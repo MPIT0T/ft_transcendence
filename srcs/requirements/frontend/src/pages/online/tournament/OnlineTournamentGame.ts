@@ -37,12 +37,18 @@ export const OnlineTournamentGame: Page = {
   <div class="absolute inset-0 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 bg-[length:150%_150%] animate-gradientShift opacity-30"></div>
   <div class="relative z-10">
     <div class="flex items-center px-6 pt-2">
+      <span>
+        <img id="player-1-avatar" class="h-10 w-10 rounded-full border border-gray-50 mr-2" src="" alt="player 1 avatar">
+      </span>
       <span id="player-1-name" class="font-semibold text-5xl flex-1 text-left">???</span>
       <span id="score" class="text-5xl font-extrabold tracking-wide"></span>
       <span id="player-2-name" class="font-semibold text-5xl flex-1 text-right">???</span>
+      <span>
+        <img id="player-2-avatar" class="h-10 w-10 rounded-full border border-gray-50" src="" alt="player 2 avatar">
+      </span>
     </div>
     <div class="flex items-center justify-between px-6 pb-2 text-md opacity-90">
-      <span id="player-1-elo" class="flex-1 text-left"></span>
+      <span id="player-1-elo" class="flex-1 text-left ml-1"></span>
       <span id="timer">00:00</span>
       <span id="player-2-elo" class="flex-1 text-right"></span>
     </div>
@@ -65,6 +71,28 @@ export const OnlineTournamentGame: Page = {
    * @param root - Root element containing the rendered game page
    */
   mount(root) {
+    const layoutLoginBtn = document.querySelector('#login-btn') as HTMLButtonElement | null;
+    let _prevLoginBtnClass: string | null = null;
+    let _prevLoginBtnDisabled: boolean | null = null;
+    if (layoutLoginBtn) {
+      _prevLoginBtnClass = layoutLoginBtn.className;
+      _prevLoginBtnDisabled = layoutLoginBtn.disabled;
+      layoutLoginBtn.disabled = true;
+      layoutLoginBtn.className = `${layoutLoginBtn.className} opacity-50 pointer-events-none`;
+    }
+
+    const _restoreLoginBtn = () => {
+      if (layoutLoginBtn) {
+        if (_prevLoginBtnClass !== null) layoutLoginBtn.className = _prevLoginBtnClass;
+        if (_prevLoginBtnDisabled !== null) layoutLoginBtn.disabled = _prevLoginBtnDisabled;
+      }
+    };
+
+    const popstateHandler1 = (_event: PopStateEvent) => {
+      _restoreLoginBtn();
+      window.removeEventListener('popstate', popstateHandler1);
+    };
+    window.addEventListener('popstate', popstateHandler1);
 
     Layout.redirectIfNotLoggedIn('/', true);
 
@@ -77,6 +105,8 @@ export const OnlineTournamentGame: Page = {
     const matchTitleEl = root.querySelector('#tournament-match-title') as HTMLElement;
     const player1NameEl = root.querySelector('#player-1-name') as HTMLElement;
     const player2NameEl = root.querySelector('#player-2-name') as HTMLElement;
+    const player1AvatarEl = root.querySelector('#player-1-avatar') as HTMLImageElement;
+    const player2AvatarEl = root.querySelector('#player-2-avatar') as HTMLImageElement;
     const score = root.querySelector('#score') as HTMLElement;
     const timerEl = root.querySelector('#timer') as HTMLElement;
     const startModal = root.querySelector('#start-modal') as HTMLElement;
@@ -135,7 +165,42 @@ export const OnlineTournamentGame: Page = {
 
     player1NameEl.textContent = sessionStorage.getItem('player1Name');
     player2NameEl.textContent = sessionStorage.getItem('player2Name');
-
+    fetch('/user/api/get-avatar', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username: sessionStorage.getItem('player1Name')})
+    })
+      .then(res => {
+        if (!res.ok) return res.json().then(data => Promise.reject(data));
+        return res.json();
+      })
+      .then((data: { avatar: string }) => {
+        player1AvatarEl.src = data.avatar || 'anonymous.png';
+      })
+      .catch(err => {
+        const msg = err?.error || 'Impossible de recevoir l\'avatar du joueur';
+        Layout.showNotification(msg, 'error');
+      });
+    fetch('/user/api/get-avatar', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username: sessionStorage.getItem('player2Name')})
+    })
+      .then(res => {
+        if (!res.ok) return res.json().then(data => Promise.reject(data));
+        return res.json();
+      })
+      .then((data: { avatar: string }) => {
+        player2AvatarEl.src = data.avatar || 'anonymous.png';
+      })
+      .catch(err => {
+        const msg = err?.error || 'Impossible de recevoir l\'avatar du joueur';
+        Layout.showNotification(msg, 'error');
+      });
     currentGame = new GameComponentOnline(
       gameContainer,
       canStart,
@@ -220,7 +285,7 @@ export const OnlineTournamentGame: Page = {
           
           // Rediriger vers la page du tournoi après un délai (History API)
           setTimeout(() => {
-            const p = '/tournamentOnline';
+            const p = '/online-tournament';
             history.replaceState(null, '', p);
             window.dispatchEvent(new PopStateEvent('popstate'));
           }, 2000);

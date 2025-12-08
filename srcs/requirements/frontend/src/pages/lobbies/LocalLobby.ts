@@ -114,7 +114,7 @@ export const LocalLobby: Page = {
     const tournamentLocalBtn = root.querySelector('#tournament-local-btn');
     if (tournamentLocalBtn) {
       tournamentLocalBtn.addEventListener('click', (e) => {
-        const p = '/tournamentLocal';
+        const p = '/local-tournament';
         history.pushState(null, '', p);
         window.dispatchEvent(new PopStateEvent('popstate'));
       });

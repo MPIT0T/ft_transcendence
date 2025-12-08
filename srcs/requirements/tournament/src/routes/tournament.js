@@ -118,8 +118,8 @@ class Tournament {
 
 		this.clients.push(client);
 
-		// const tournamentUrl = `/tournamentOnline?gameId=${this.tournamentId}`;
-		const tournamentUrl = `/tournamentOnline`;
+		// const tournamentUrl = `/online-tournament?gameId=${this.tournamentId}`;
+		const tournamentUrl = `/online-tournament`;
 
 		socket.send(JSON.stringify({
 			method: 'joinT',
@@ -307,8 +307,8 @@ class Tournament {
 
 			// Les deux sont connectés, envoyer les messages de début de match
 			if (p1Connected) {
-				// const roomUrl = `/gameOnlineTournament?gameId=${roomData.roomId}`;
-				const roomUrl = `/gameOnlineTournament`;
+				// const roomUrl = `/online-tournament-game?gameId=${roomData.roomId}`;
+				const roomUrl = `/online-tournament-game`;
 				roomData.player1._conection.send(JSON.stringify({
 					method: "startMatch",
 					roomId: roomData.roomId,
@@ -319,8 +319,8 @@ class Tournament {
 				}));
 			}
 			if (p2Connected) {
-				// const roomUrl = `/gameOnlineTournament?gameId=${roomData.roomId}`;
-				const roomUrl = `/gameOnlineTournament`;
+				// const roomUrl = `/online-tournament-game?gameId=${roomData.roomId}`;
+				const roomUrl = `/online-tournament-game`;
 				roomData.player2._conection.send(JSON.stringify({
 					method: "startMatch",
 					roomId: roomData.roomId,
@@ -454,8 +454,8 @@ class Tournament {
 
 			// Les deux sont connectés, envoyer les messages de début de match
 			if (p1Connected) {
-				// const roomUrl = `/gameOnlineTournament?gameId=${roomData.roomId}`;
-				const roomUrl = `/gameOnlineTournament`;
+				// const roomUrl = `/online-tournament-game?gameId=${roomData.roomId}`;
+				const roomUrl = `/online-tournament-game`;
 				roomData.player1._conection.send(JSON.stringify({
 					method: "startMatch",
 					roomId: roomData.roomId,
@@ -466,8 +466,8 @@ class Tournament {
 				}));
 			}
 			if (p2Connected) {
-				// const roomUrl = `/gameOnlineTournament?gameId=${roomData.roomId}`;
-				const roomUrl = `/gameOnlineTournament`;
+				// const roomUrl = `/online-tournament-game?gameId=${roomData.roomId}`;
+				const roomUrl = `/online-tournament-game`;
 				roomData.player2._conection.send(JSON.stringify({
 					method: "startMatch",
 					roomId: roomData.roomId,
@@ -587,8 +587,8 @@ class Tournament {
 			// Les deux sont connectés, jouer le match normalement
 			else {
 				if (p1Connected) {
-					// const roomUrl = `/gameOnlineTournament?gameId=${finalRoomData.roomId}`;
-					const roomUrl = `/gameOnlineTournament`;
+					// const roomUrl = `/online-tournament-game?gameId=${finalRoomData.roomId}`;
+					const roomUrl = `/online-tournament-game`;
 					finalRoomData.player1._conection.send(JSON.stringify({
 						method: "startMatch",
 						roomId: finalRoomData.roomId,
@@ -599,8 +599,8 @@ class Tournament {
 					}));
 				}
 				if (p2Connected) {
-					// const roomUrl = `/gameOnlineTournament?gameId=${finalRoomData.roomId}`;
-					const roomUrl = `/gameOnlineTournament`;
+					// const roomUrl = `/online-tournament-game?gameId=${finalRoomData.roomId}`;
+					const roomUrl = `/online-tournament-game`;
 					finalRoomData.player2._conection.send(JSON.stringify({
 						method: "startMatch",
 						roomId: finalRoomData.roomId,

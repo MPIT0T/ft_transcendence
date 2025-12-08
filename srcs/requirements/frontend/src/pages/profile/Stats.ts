@@ -489,30 +489,6 @@ const Stats: StatsPage = {
       if (el) el.textContent = count.toString();
     }
 
-    // for (let index = 0; index < 15; index++) {
-
-    //   const usernames = [];
-    //   usernames.push(sessionStorage.getItem("username"));
-    //   usernames.push(sessionStorage.getItem("username"));
-    //   const scores = {
-    //     player1: 12,
-    //     player2: 2,
-    //   };
-    //   const tokens = [];
-    //   tokens.push(sessionStorage.getItem("token"));
-    //   tokens.push(sessionStorage.getItem("token"));
-    //   fetch('/user/upload/post-match', {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //       'Authorization': `Bearer ${sessionStorage.getItem('token')}`
-    //     },
-    //     body: JSON.stringify({
-    //       usernames: usernames, winner: 1, scores, gameMode: 'challenge', tokens: tokens
-    //     })
-    //   })
-    // }
-
     const profileTab = root.querySelector('#profile-tab') as HTMLButtonElement;
     const historyTab = root.querySelector('#history-tab') as HTMLButtonElement;
     const contentContainer = root.querySelector('#content-container') as HTMLDivElement;
@@ -538,6 +514,7 @@ const Stats: StatsPage = {
       activeTab = 'profile';
       updateIndicator();
       renderContent();
+      applyTranslations(contentContainer);
     };
 
     const switchToHistory = () => {
@@ -546,6 +523,7 @@ const Stats: StatsPage = {
       updateIndicator();
       renderContent();
       this.updateContentHistory();
+      applyTranslations(contentContainer);
     };
 
     if (profileTab) {

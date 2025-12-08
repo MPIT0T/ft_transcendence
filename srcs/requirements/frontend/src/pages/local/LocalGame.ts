@@ -231,7 +231,7 @@ let currentGame: GameComponent | null = null;
 					if (cancelPointsBtn) {
 						cancelPointsBtn.addEventListener('click', () => {
 							// Exit to lobby
-							history.pushState(null, '', '/localLobby');
+							history.pushState(null, '', '/local-lobby');
 							window.dispatchEvent(new PopStateEvent('popstate'));
 						});
 					}
@@ -304,7 +304,7 @@ let currentGame: GameComponent | null = null;
 			if (finishTournamentBtn) {
 				finishTournamentBtn.addEventListener('click', () => {
 					sessionStorage.removeItem('localTournamentMatch');
-					history.pushState(null, '', '/gameLobby');
+					history.pushState(null, '', '/game-lobby');
 					window.dispatchEvent(new PopStateEvent('popstate'));
 				});
 			}
@@ -315,7 +315,7 @@ let currentGame: GameComponent | null = null;
 				quitTournamentBtn.addEventListener('click', () => {
 					if (confirm(t('tournamentMatch.confirmQuit'))) {
 						sessionStorage.removeItem('localTournamentMatch');
-						history.pushState(null, '', '/gameLobby');
+						history.pushState(null, '', '/game-lobby');
 						window.dispatchEvent(new PopStateEvent('popstate'));
 					}
 				});
@@ -426,7 +426,7 @@ let currentGame: GameComponent | null = null;
 			if (leaveToLobbyBtn) {
 				leaveToLobbyBtn.addEventListener('click', () => {
 					sessionStorage.removeItem('localTournamentMatch');
-					history.pushState(null, '', '/localLobby');
+					history.pushState(null, '', '/local-lobby');
 					window.dispatchEvent(new PopStateEvent('popstate'));
 				});
 			}

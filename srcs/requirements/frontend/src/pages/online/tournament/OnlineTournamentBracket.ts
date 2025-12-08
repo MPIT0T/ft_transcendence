@@ -226,7 +226,7 @@ export const OnlineTournamentBracket: Page = {
     const popstateHandler = (event: PopStateEvent) => {
       const path = window.location.pathname.toLowerCase();
       // If we're still on a tournament-related page (Tournament Online or LocalGame Online), don't notify server about leaving
-      if (path.includes('tournamentonline') || path.includes('gameonlinetournament')) {
+      if (path.includes('online-tournament') || path.includes('online-tournament-game')) {
         return;
       }
       const payLoad = {
@@ -453,7 +453,7 @@ export const OnlineTournamentBracket: Page = {
           }, 1000);
           if (response.method === "returnToBracket") {
             setTimeout(() => {
-              const p = '/tournamentOnline';
+              const p = '/online-tournament';
               history.replaceState(null, '', p);
               window.dispatchEvent(new PopStateEvent('popstate'));
             }, 2000);
@@ -499,7 +499,7 @@ export const OnlineTournamentBracket: Page = {
       }
     } else {
       window.removeEventListener('popstate', popstateHandler);
-      const p = '/tournamentRoom';
+      const p = '/tournament-room';
       history.replaceState(null, '', p);
       window.dispatchEvent(new PopStateEvent('popstate'));
     }
@@ -531,7 +531,7 @@ export const OnlineTournamentBracket: Page = {
         sessionStorage.removeItem('roomId');
 
         window.removeEventListener('popstate', popstateHandler);
-        const p = '/tournamentRoom';
+        const p = '/tournament-room';
         history.replaceState(null, '', p);
         window.dispatchEvent(new PopStateEvent('popstate'));
       });

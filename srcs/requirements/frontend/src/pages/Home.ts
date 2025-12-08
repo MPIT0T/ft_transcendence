@@ -234,7 +234,7 @@ export const Home: Page = {
 		const gameBtn = root.querySelector('#play-btn') as HTMLButtonElement;
 		if (gameBtn) {
 			gameBtn.addEventListener('click', () => {
-				const p = '/gameLobby';
+				const p = '/game-lobby';
 				history.pushState(null, '', p);
 				window.dispatchEvent(new PopStateEvent('popstate'));
 			})
