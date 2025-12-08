@@ -202,12 +202,12 @@ export const Home: Page = {
       Histoire :
     </h4>
     <ul class="text-lg lg:text-lg text-gray-400 space-y-2 leading-relaxed">
-      <li data-i18n="home.history1">• Créé en 1972 par Allan Alcorn chez Atari, sur une idée de Nolan Bushnell.</li>
-      <li data-i18n="home.history2">• Inspiré du jeu de tennis de table du Magnavox Odyssey, la première console domestique.</li>
-      <li data-i18n="home.history3">• Le prototype rencontre un immense succès dès son installation dans un bar californien.</li>
-      <li data-i18n="home.history4">• Commercialisé ensuite comme borne d'arcade, il devient le premier grand succès du jeu vidéo.</li>
-      <li data-i18n="home.history5">• Malgré un conflit juridique avec Magnavox, Atari consolide sa place de pionnier du secteur.</li>
-      <li data-i18n="home.history6">• En 1975, une version domestique est lancée avec Sears, popularisant le jeu vidéo à la maison.</li>
+      <li data-i18n="home.history1">  Créé en 1972 par Allan Alcorn chez Atari, sur une idée de Nolan Bushnell.</li>
+      <li data-i18n="home.history2">  Inspiré du jeu de tennis de table du Magnavox Odyssey, la première console domestique.</li>
+      <li data-i18n="home.history3">  Le prototype rencontre un immense succès dès son installation dans un bar californien.</li>
+      <li data-i18n="home.history4">  Commercialisé ensuite comme borne d'arcade, il devient le premier grand succès du jeu vidéo.</li>
+      <li data-i18n="home.history5">  Malgré un conflit juridique avec Magnavox, Atari consolide sa place de pionnier du secteur.</li>
+      <li data-i18n="home.history6">  En 1975, une version domestique est lancée avec Sears, popularisant le jeu vidéo à la maison.</li>
     </ul>
 
 <!-- Fun facts -->
