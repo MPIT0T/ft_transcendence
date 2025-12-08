@@ -109,7 +109,7 @@ export const OnlineTournamentBracket: Page = {
 								<!-- Semi 1 -->
 								<div class="border border-gray-50 w-full p-3 w-64 backdrop-blur-2xs" data-match="semi-1">
 									<div class="p-2 mb-1 border border-gray-50 backdrop-blur-2xs" data-player="1">
-										<span class="player-name text-gray-400">AC...</span>
+										<span class="player-name text-gray-400">???</span>
 									</div>
 									<div class="text-center text-white text-lg my-1 flex items-center justify-center gap-3">
 										<span class="score-1 text-yellow-400 font-bold"></span>
@@ -117,14 +117,14 @@ export const OnlineTournamentBracket: Page = {
 										<span class="score-2 text-yellow-400 font-bold"></span>
 									</div>
 									<div class="p-2 border border-gray-50 backdrop-blur-2xs" data-player="2">
-										<span class="player-name text-gray-400">AC...</span>
+										<span class="player-name text-gray-400">???</span>
 									</div>
 								</div>
 
 								<!-- Semi 2 -->
 								<div class="border border-gray-50 p-3 w-full w-64 backdrop-blur-2xs" data-match="semi-2">
 									<div class="p-2 mb-1 border border-gray-50 backdrop-blur-2xs" data-player="1">
-										<span class="player-name text-gray-400">AC...</span>
+										<span class="player-name text-gray-400">???</span>
 									</div>
 									<div class="text-center text-white text-lg my-1 flex items-center justify-center gap-3">
 										<span class="score-1 text-yellow-400 font-bold"></span>
@@ -132,7 +132,7 @@ export const OnlineTournamentBracket: Page = {
 										<span class="score-2 text-yellow-400 font-bold"></span>
 									</div>
 									<div class="p-2 border border-gray-50 backdrop-blur-2xs" data-player="2">
-										<span class="player-name text-gray-400">AC...</span>
+										<span class="player-name text-gray-400">???</span>
 									</div>
 								</div>
 							</div>
@@ -146,7 +146,7 @@ export const OnlineTournamentBracket: Page = {
 							<div class="flex flex-col justify-center mt-64">
 								<div class="border border-gray-50 w-full p-3 w-64 backdrop-blur-2xs" data-match="final">
 									<div class="p-2 mb-1 border border-gray-50 backdrop-blur-2xs" data-player="1">
-										<span class="player-name text-gray-400">AC...</span>
+										<span class="player-name text-gray-400">???</span>
 									</div>
 									<div class="text-center text-white text-lg my-1 flex items-center justify-center gap-3">
 										<span class="score-1 text-yellow-400 font-bold"></span>
@@ -154,7 +154,7 @@ export const OnlineTournamentBracket: Page = {
 										<span class="score-2 text-yellow-400 font-bold"></span>
 									</div>
 									<div class="p-2 border border-gray-50 backdrop-blur-2xs" data-player="2">
-										<span class="player-name text-gray-400">AC...</span>
+										<span class="player-name text-gray-400">???</span>
 									</div>
 								</div>
 							</div>
@@ -171,7 +171,7 @@ export const OnlineTournamentBracket: Page = {
 								    <div class="w-16 h-16">
 								      <img id="winner-profile-pic" class="w-16 h-16 object-cover mx-auto block" src="anonymous.png" alt="profile picture"/>
 								    </div>
-								    <div id="winner-name" class="text-gray-400 text-lg wrap-break-word overflow-hidden">AC...</div>
+								    <div id="winner-name" class="text-gray-400 text-lg wrap-break-word overflow-hidden">???</div>
 								  </div>
 								</div>
 							</div>
@@ -451,50 +451,50 @@ export const OnlineTournamentBracket: Page = {
             history.replaceState(null, '', p);
             window.dispatchEvent(new PopStateEvent('popstate'));
           }, 1000);
-          if (response.method === "returnToBracket") {
-            setTimeout(() => {
-              const p = '/online-tournament';
-              history.replaceState(null, '', p);
-              window.dispatchEvent(new PopStateEvent('popstate'));
-            }, 2000);
+        }
+
+        if (response.method === "returnToBracket") {
+          setTimeout(() => {
+            const p = '/online-tournament';
+            history.replaceState(null, '', p);
+            window.dispatchEvent(new PopStateEvent('popstate'));
+          }, 2000);
+        }
+
+        if (response.method === "tournamentWinner") {
+          sessionStorage.setItem('gamestate', 'finished');
+
+          if (tournamentNameEl) {
+            tournamentNameEl.textContent = t('tournamentLocal.tournamentFinished');
           }
 
-          if (response.method === "tournamentWinner") {
-            sessionStorage.setItem('gamestate', 'finished');
-
-            if (tournamentNameEl) {
-              tournamentNameEl.textContent = t('tournamentLocal.tournamentFinished');
+          const winnerProfilePicEl = root.querySelector('#winner-profile-pic') as HTMLImageElement;
+          const winnerNameEl = root.querySelector('#winner-name');
+          let avatar: string = 'anonymous.png';
+          fetch('/user/api/get-avatar', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({username: response.winner}),
+          }).then(res => {
+            if (!res.ok) {
+              return res.json().then(data => Promise.reject(data));
             }
+            return res.json();
+          }).then((data: { avatar: string }) => {
+            avatar = data.avatar;
+            if (winnerProfilePicEl) winnerProfilePicEl.src = avatar;
+          }).catch(err => {
+            const msg = err?.error || 'Impossible de recevoir l\'avatar du joueur';
+            Layout.showNotification(msg, 'error');
+          });
 
-            const winnerProfilePicEl = root.querySelector('#winner-profile-pic');
-            const winnerNameEl = root.querySelector('#winner-name');
-            let avatar: string = 'anonymous.png';
-            fetch('/user/api/get-avatar', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({ username: response.winner }),
-            }).then(res => {
-              if (!res.ok) {
-                return res.json().then(data => Promise.reject(data));
-              }
-              return res.json();
-            }).then((data: { avatar: string }) => {
-              avatar = data.avatar;
-              if (winnerProfilePicEl) winnerProfilePicEl.setAttribute('src', avatar);
-            }).catch(err => {
-              const msg = err?.error || 'Impossible de recevoir l\'avatar du joueur';
-              Layout.showNotification(msg, 'error');
-            });
-
-            if (winnerNameEl) {
-              winnerNameEl.textContent = response.winner;
-              winnerNameEl.classList.remove('text-gray-400', 'text-sm');
-              winnerNameEl.classList.add('text-white', 'text-lg', 'font-bold', 'break-words');
-            }
+          if (winnerNameEl) {
+            winnerNameEl.textContent = response.winner;
+            winnerNameEl.classList.remove('text-gray-400', 'text-sm');
+            winnerNameEl.classList.add('text-white', 'text-lg', 'font-bold', 'break-words');
           }
-
         }
       }
     } else {
