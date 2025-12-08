@@ -247,6 +247,7 @@ export const OnlineTournamentBracket: Page = {
         return;
       }
       _restoreLoginBtn();
+      
       const payLoad = {
         "method": "leave",
         "clientId": clientId
