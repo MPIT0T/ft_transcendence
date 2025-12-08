@@ -226,7 +226,7 @@ export const OnlineTournamentBracket: Page = {
     const popstateHandler = (event: PopStateEvent) => {
       const path = window.location.pathname.toLowerCase();
       // If we're still on a tournament-related page (Tournament Online or LocalGame Online), don't notify server about leaving
-      if (path.includes('tournamentonline') || path.includes('gameonlinetournament')) {
+      if (path.includes('online-tournament') || path.includes('online-tournament-game')) {
         return;
       }
       const payLoad = {
