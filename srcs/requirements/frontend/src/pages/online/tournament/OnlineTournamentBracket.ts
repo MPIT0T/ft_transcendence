@@ -372,7 +372,13 @@ export const OnlineTournamentBracket: Page = {
 
                   if (match.winner === match.player1) {
                     slots[0]?.classList.add('bg-purple-900/30', 'border-purple-400');
+                    slots[1]?.classList.add('border-gray-400/40');
+                    name2?.classList.remove('text-white');
+                    name2?.classList.add('text-gray-400');
                   } else {
+                    slots[0]?.classList.add('border-gray-400/40');
+                    name1?.classList.remove('text-white');
+                    name1?.classList.add('text-gray-400');
                     slots[1]?.classList.add('bg-purple-900/30', 'border-purple-400');
                   }
                 }
@@ -407,7 +413,13 @@ export const OnlineTournamentBracket: Page = {
 
                   if (match.winner === match.player1) {
                     player1Slot?.classList.add('bg-purple-900/30', 'border-purple-400');
+                    player2Slot?.classList.add('border-gray-400/40');
+                    name2?.classList.remove('text-white');
+                    name2?.classList.add('text-gray-400');
                   } else {
+                    player1Slot?.classList.add('border-gray-400/40');
+                    name1?.classList.remove('text-white');
+                    name1?.classList.add('text-gray-400');
                     player2Slot?.classList.add('bg-purple-900/30', 'border-purple-400');
                   }
                 }
@@ -441,7 +453,13 @@ export const OnlineTournamentBracket: Page = {
 
                   if (match.winner === match.player1) {
                     player1Slot?.classList.add('bg-purple-900/30', 'border-purple-400');
+                    player2Slot?.classList.add('border-gray-400/40', 'text-gray-400');
+                    name2?.classList.remove('text-white');
+                    name2?.classList.add('text-gray-400');
                   } else {
+                    player1Slot?.classList.add('border-gray-400/40');
+                    name1?.classList.remove('text-white');
+                    name1?.classList.add('text-gray-400');
                     player2Slot?.classList.add('bg-purple-900/30', 'border-purple-400');
                   }
 
