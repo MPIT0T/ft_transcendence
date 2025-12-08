@@ -624,14 +624,21 @@ export const GameRoom: Page = {
 		}, 1000);
 
 		const popstateHandler = (event: PopStateEvent) => {
+			if (path.includes('gameOnline')) {
+				return;
+			}
 			window.clearInterval(statusRoom);
 			const payLoad = {
 				"method": "page",
 				"clientId": clientId,
 				"currentPage": "null"
 			}
-			if (ws)
+			if (ws) {
 				ws.send(JSON.stringify(payLoad));
+				ws.close();
+			}
+			sessionStorage.removeItem('clientId');
+			sessionStorage.removeItem('roomId');
 			window.removeEventListener('popstate', popstateHandler);
 		};
 		window.addEventListener('popstate', popstateHandler);
