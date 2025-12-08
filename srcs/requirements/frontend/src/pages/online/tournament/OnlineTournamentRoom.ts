@@ -292,6 +292,11 @@ export const OnlineTournamentRoom: Page = {
 		}, 1000);
 
 		const popstateHandler = (event: PopStateEvent) => {
+      const path = window.location.pathname;
+      if (path !== '/online-tournament-game' && path !== '/online-tournament' && path !== '/tournament-room') {
+        if (ws)
+          ws.close();
+      }
 			window.clearInterval(statusTournament);
 			window.removeEventListener('popstate', popstateHandler);
 		};

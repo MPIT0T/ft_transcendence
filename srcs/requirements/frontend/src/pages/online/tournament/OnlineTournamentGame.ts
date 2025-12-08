@@ -93,6 +93,7 @@ export const OnlineTournamentGame: Page = {
       if (path.includes('online-game')) {
         return;
       }
+      _restoreLoginBtn();
       const payLoad = {
         "method": "leave",
         "clientId": clientId

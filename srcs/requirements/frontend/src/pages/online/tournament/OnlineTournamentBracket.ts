@@ -200,6 +200,23 @@ export const OnlineTournamentBracket: Page = {
    */
   mount(root: HTMLElement): void {
 
+    const layoutLoginBtn = document.querySelector('#login-btn') as HTMLButtonElement | null;
+    let _prevLoginBtnClass: string | null = null;
+    let _prevLoginBtnDisabled: boolean | null = null;
+    if (layoutLoginBtn) {
+      _prevLoginBtnClass = layoutLoginBtn.className;
+      _prevLoginBtnDisabled = layoutLoginBtn.disabled;
+      layoutLoginBtn.disabled = true;
+      layoutLoginBtn.className = `${layoutLoginBtn.className} opacity-50 pointer-events-none`;
+    }
+
+    const _restoreLoginBtn = () => {
+      if (layoutLoginBtn) {
+        if (_prevLoginBtnClass !== null) layoutLoginBtn.className = _prevLoginBtnClass;
+        if (_prevLoginBtnDisabled !== null) layoutLoginBtn.disabled = _prevLoginBtnDisabled;
+      }
+    };
+
     Layout.redirectIfNotLoggedIn('/', true);
 
     const tournamentId = sessionStorage.getItem('tournamentId');
@@ -229,6 +246,7 @@ export const OnlineTournamentBracket: Page = {
       if (path.includes('online-tournament') || path.includes('online-tournament-game')) {
         return;
       }
+      _restoreLoginBtn();
       const payLoad = {
         "method": "leave",
         "clientId": clientId
