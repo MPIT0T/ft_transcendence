@@ -4,8 +4,6 @@ const { SERVER_SECRET } = require('./config.js');
 
 const g_Games = new Games();
 
-
-
 module.exports = async function (fastify, opts) {
 	// Route WebSocket pour le jeu Pong
 
@@ -81,7 +79,6 @@ module.exports = async function (fastify, opts) {
 				console.log('Client disconnected:', clientId);
 			});
 		});
-
 		fastify.get('/status', function handler(request, reply) {
 			reply.code(200).header('Content-Type', 'text/plain').send('OK');
 		});

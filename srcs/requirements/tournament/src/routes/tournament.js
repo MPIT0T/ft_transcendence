@@ -673,7 +673,7 @@ class Tournament {
 					}));
 				}
 			});
-
+			console.log(`🏆 Tournament Champion: ${champion._name}`);
 			this.state = "finished";
 
 

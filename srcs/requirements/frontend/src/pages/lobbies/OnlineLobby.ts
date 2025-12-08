@@ -40,7 +40,7 @@ export const OnlineLobby: Page = {
       <div class="flex justify-between text-xl">
         <span class="text-gray-300" data-i18n="lobby.players">Joueurs :</span>
         <span class="font-semibold justify-between">
-          <span id="players-online" class="text-blue-400">?</span>
+          <span id="players-online-game" class="text-blue-400">?</span>
           <span class="text-gray-50" data-i18n="lobby.online">en ligne</span>
         </span>
       </div>
@@ -74,7 +74,7 @@ export const OnlineLobby: Page = {
       <div class="flex justify-between text-xl">
         <span class="text-gray-300" data-i18n="lobby.players">Joueurs :</span>
         <span class="font-semibold justify-between">
-          <span id="player" class="text-purple-400">?</span>
+          <span id="players-online-tournament" class="text-purple-400">?</span>
           <span class="text-gray-50" data-i18n="lobby.online">en ligne</span>
         </span>
       </div>
@@ -120,6 +120,43 @@ export const OnlineLobby: Page = {
         history.pushState(null, '', p);
         window.dispatchEvent(new PopStateEvent('popstate'));
       });
+    }
+
+    let status: ReturnType<typeof setInterval> | undefined;
+    const ping = root.querySelector('#ping') as HTMLButtonElement;
+    if(ping){
+      status = setInterval(async () => {
+        try {
+          const startPong = Date.now();
+          const responseP = await fetch("/pong/status");
+          const endPong = Date.now();
+          const startTournament = Date.now();
+          const responseT = await fetch("/tournament/status");
+          const endTournament = Date.now();
+          const latencyAvg = (endPong - startPong + endTournament - startTournament) / 2;
+          ping.textContent = `${latencyAvg}`;
+        } catch (error) {
+          ping.textContent = `?`;
+        }
+      }, 5000);
+    }
+
+    let statusPlayer: ReturnType<typeof setInterval> | undefined;
+    const playerGame = root.querySelector('#players-online-game') as HTMLButtonElement;
+    const playerTournament = root.querySelector('#players-online-tournament') as HTMLButtonElement;
+    if (playerGame && playerTournament) {
+      statusPlayer = setInterval(async () => {
+        try {
+          const responsePong = await fetch("/pong/statusPlayer");
+          const responseTournament = await fetch("/tournament/statusPlayer");
+          const countP = await responsePong.text();
+          const countT = await responseTournament.text();
+          playerGame.textContent = `${countP}`;
+          playerTournament.textContent = `${countT}`;
+        } catch (error) {
+          player.textContent = `?`;
+        }
+      }, 5000);
     }
 
   }

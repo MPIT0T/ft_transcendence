@@ -322,7 +322,7 @@ export const LocalTournament: Page = {
 		
 		<!-- Header du match -->
 		<div class="relative overflow-hidden text-gray-50 text-lg border border-gray-50 mb-4 w-full max-w-[900px]">
-			<div class="absolute inset-0 bg-gradient-to-r from-amber-400 via-lime-500 to-green-500 bg-[length:400%_400%] animate-gradientShift opacity-30"></div>
+			<div class="absolute inset-0 bg-gradient-to-r from-amber-400 via-lime-500 to-green-500 bg-[length:150%_150%] animate-gradientShift opacity-30"></div>
 			<div class="relative z-10">
 				<div class="flex items-center px-6 pt-2">
 					<span id="player1-name" class="font-semibold text-4xl flex-1 text-left text-white">Joueur 1</span>

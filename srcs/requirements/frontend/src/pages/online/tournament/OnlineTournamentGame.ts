@@ -30,11 +30,11 @@ export const OnlineTournamentGame: Page = {
    */
   render() {
     return `
-<div id="tournament-match-title" class="text-7xl text-center mb-5 text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-blue-500 to-green-500 bg-[length:400%_400%] animate-gradientShift">
+<div id="tournament-match-title" class="text-7xl text-center mb-5 text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 bg-[length:400%_400%] animate-gradientShift">
   tournament name
 </div>
 <div class="relative overflow-hidden text-gray-50 text-lg border border-gray-50 backdrop-blur-2xs">
-  <div class="absolute inset-0 bg-gradient-to-r from-red-500 to-blue-500 opacity-30"></div>
+  <div class="absolute inset-0 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 bg-[length:150%_150%] animate-gradientShift opacity-30"></div>
   <div class="relative z-10">
     <div class="flex items-center px-6 pt-2">
       <span id="player-1-name" class="font-semibold text-5xl flex-1 text-left">???</span>
@@ -226,6 +226,11 @@ export const OnlineTournamentGame: Page = {
           }, 2000);
         }
       }
+    } else {
+      window.removeEventListener('popstate', popstateHandler);
+      const p = '/tournamentRoom';
+      history.replaceState(null, '', p);
+      window.dispatchEvent(new PopStateEvent('popstate'));
     }
 
     // Cleanup du jeu précédent s'il existe

@@ -67,8 +67,17 @@ module.exports = async function (fastify, opts) {
 				console.log('Client disconnected:', clientId);
 			});
 		});
-
+		fastify.get('/status', function handler(request, reply) {
+			reply.code(200).header('Content-Type', 'text/plain').send('OK');
+		});
+		fastify.get('/statusPlayer', function handler(request, reply) {
+			reply.code(200).header('Content-Type', 'text/plain').send(getPlayer());
+		});
 	});
+}
+
+function getPlayer() {
+	return Object.keys(g_Games._clients._clients).length.toString();
 }
 
 function removeClient(clientId) {

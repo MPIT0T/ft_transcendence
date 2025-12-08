@@ -135,32 +135,36 @@ export const Lobby: Page = {
 		const ping = root.querySelector('#ping') as HTMLButtonElement;
 		if(ping){
 			status = setInterval(async () => {
-				const start = Date.now();
-
 				try {
-					const response = await fetch("/pong/status");
-					const end = Date.now();
-					const latency = end - start;
-					ping.textContent = `${latency}`;
+					const startPong = Date.now();
+					const responseP = await fetch("/pong/status");
+					const endPong = Date.now();
+					const startTournament = Date.now();
+					const responseT = await fetch("/tournament/status");
+					const endTournament = Date.now();
+					const latencyAvg = (endPong - startPong + endTournament - startTournament) / 2;
+					ping.textContent = `${latencyAvg}`;
 				} catch (error) {
 					ping.textContent = `?`;
 				}
-			}, 10000);
+			}, 5000);
 		}
 
 		let statusPlayer: ReturnType<typeof setInterval> | undefined;
-
 		const player = root.querySelector('#player') as HTMLButtonElement;
 		if (player) {
 			statusPlayer = setInterval(async () => {
 				try {
-					const response = await fetch("/pong/statusPlayer"); //TODO ajouter le nombre de joueurs tournoi
-					const count = await response.text();
-					player.textContent = `${count}`;
+					const responsePong = await fetch("/pong/statusPlayer");
+					const responseTournament = await fetch("/tournament/statusPlayer");
+					const countP = await responsePong.text();
+					const countT = await responseTournament.text();
+					const count: number = parseInt(countP) + parseInt(countT);
+					player.textContent = `${count.toString()}`;
 				} catch (error) {
 					player.textContent = `?`;
 				}
-			}, 10000);
+			}, 5000);
 		}
 
 		const popstateHandler = (event: PopStateEvent) => {

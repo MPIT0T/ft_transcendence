@@ -24,7 +24,7 @@ export const OnlineTournamentBracket: Page = {
 			<div class="flex-1">
 				<!-- Header avec style arcade -->
         <div class="w-full mb-12 flex items-center justify-center mb-4 border border-gray-50 p-4 backdrop-blur-2xs">
-          <h1 id="tournament-name" class="text-5xl font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-blue-500 to-green-500 bg-[length:400%_400%] animate-gradientShift">
+          <h1 id="tournament-name" class="text-5xl font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 bg-[length:400%_400%] animate-gradientShift">
             ft_tournoi
           </h1>
         </div>
@@ -183,7 +183,7 @@ export const OnlineTournamentBracket: Page = {
 				<div class="text-center mt-8">
 					<button 
 						id="leave-tournament-btn"
-						class="px-8 py-3 text-gray-50 backdrop-blur-xs border border-gray-50 hover:bg-gray-700/50 hover:border-red-500 font-semibold transition-all transform" data-i18n="tournamentOnline.leaveTournament"
+						class="px-8 py-3 text-gray-50 backdrop-blur-xs border border-gray-50 hover:bg-gray-700/50 hover:border-purple-500 font-semibold transition-all transform" data-i18n="tournamentOnline.leaveTournament"
 					>
 						Leave Tournament
 					</button>
@@ -277,7 +277,7 @@ export const OnlineTournamentBracket: Page = {
               nameEl.classList.remove('text-white');
               nameEl.classList.add('text-gray-400');
               // retirer les éventuels styles de gagnant
-              slot.classList.remove('bg-green-900', 'border-green-400');
+              slot.classList.remove('bg-purple-900/30', 'border-purple-400');
             }
           });
         }
@@ -353,9 +353,9 @@ export const OnlineTournamentBracket: Page = {
                   if (score2El) score2El.textContent = match.score2;
 
                   if (match.winner === match.player1) {
-                    slots[0]?.classList.add('bg-green-900', 'border-green-400');
+                    slots[0]?.classList.add('bg-purple-900/30', 'border-purple-400');
                   } else {
-                    slots[1]?.classList.add('bg-green-900', 'border-green-400');
+                    slots[1]?.classList.add('bg-purple-900/30', 'border-purple-400');
                   }
                 }
               }
@@ -388,9 +388,9 @@ export const OnlineTournamentBracket: Page = {
                   if (score2El) score2El.textContent = match.score2;
 
                   if (match.winner === match.player1) {
-                    player1Slot?.classList.add('bg-green-900', 'border-green-400');
+                    player1Slot?.classList.add('bg-purple-900/30', 'border-purple-400');
                   } else {
-                    player2Slot?.classList.add('bg-green-900', 'border-green-400');
+                    player2Slot?.classList.add('bg-purple-900/30', 'border-purple-400');
                   }
                 }
               }
@@ -422,9 +422,9 @@ export const OnlineTournamentBracket: Page = {
                   if (score2El) score2El.textContent = match.score2;
 
                   if (match.winner === match.player1) {
-                    player1Slot?.classList.add('bg-green-900', 'border-green-400');
+                    player1Slot?.classList.add('bg-purple-900/30', 'border-purple-400');
                   } else {
-                    player2Slot?.classList.add('bg-green-900', 'border-green-400');
+                    player2Slot?.classList.add('bg-purple-900/30', 'border-purple-400');
                   }
 
                   const winnerBox = root.querySelector('.winner-box');
@@ -488,7 +488,7 @@ export const OnlineTournamentBracket: Page = {
               Layout.showNotification(msg, 'error');
             });
 
-            if (winnerNameEl && winnerProfilePicEl) {
+            if (winnerNameEl) {
               winnerNameEl.textContent = response.winner;
               winnerNameEl.classList.remove('text-gray-400', 'text-sm');
               winnerNameEl.classList.add('text-white', 'text-lg', 'font-bold', 'break-words');
