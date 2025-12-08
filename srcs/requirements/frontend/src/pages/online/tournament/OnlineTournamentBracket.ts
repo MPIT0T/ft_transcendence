@@ -44,9 +44,9 @@ export const OnlineTournamentBracket: Page = {
 										<span class="player-name text-gray-400" data-i18n="tournamentOnline.waiting">En attente...</span>
 									</div>
 									<div class="text-center text-white text-lg my-1 flex items-center justify-center gap-3">
-										<span class="score-1 text-yellow-400 font-bold"></span>
+										<span class="score-1 text-indigo-400 font-bold"></span>
 										<span>- VS -</span>
-										<span class="score-2 text-yellow-400 font-bold"></span>
+										<span class="score-2 text-indigo-400 font-bold"></span>
 									</div>
 									<div class="player-slot p-2 border border-gray-50 backdrop-blur-2xs" data-slot="1">
 										<span class="player-name text-gray-400" data-i18n="tournamentOnline.waiting">En attente...</span>
@@ -59,9 +59,9 @@ export const OnlineTournamentBracket: Page = {
 										<span class="player-name text-gray-400" data-i18n="tournamentOnline.waiting">En attente...</span>
 									</div>
 									<div class="text-center text-white text-lg my-1 flex items-center justify-center gap-3">
-										<span class="score-1 text-yellow-400 font-bold"></span>
+										<span class="score-1 text-indigo-400 font-bold"></span>
 										<span>- VS -</span>
-										<span class="score-2 text-yellow-400 font-bold"></span>
+										<span class="score-2 text-indigo-400 font-bold"></span>
 									</div>
 									<div class="player-slot p-2 border border-gray-50 backdrop-blur-2xs" data-slot="3">
 										<span class="player-name text-gray-400" data-i18n="tournamentOnline.waiting">En attente...</span>
@@ -74,9 +74,9 @@ export const OnlineTournamentBracket: Page = {
 										<span class="player-name text-gray-400" data-i18n="tournamentOnline.waiting">En attente...</span>
 									</div>
 									<div class="text-center text-white text-lg my-1 flex items-center justify-center gap-3">
-										<span class="score-1 text-yellow-400 font-bold"></span>
+										<span class="score-1 text-indigo-400 font-bold"></span>
 										<span>- VS -</span>
-										<span class="score-2 text-yellow-400 font-bold"></span>
+										<span class="score-2 text-indigo-400 font-bold"></span>
 									</div>
 									<div class="player-slot p-2 border border-gray-50 backdrop-blur-2xs" data-slot="5">
 										<span class="player-name text-gray-400" data-i18n="tournamentOnline.waiting">En attente...</span>
@@ -89,9 +89,9 @@ export const OnlineTournamentBracket: Page = {
 										<span class="player-name text-gray-400" data-i18n="tournamentOnline.waiting">En attente...</span>
 									</div>
 									<div class="text-center text-white text-lg my-1 flex items-center justify-center gap-3">
-										<span class="score-1 text-yellow-400 font-bold"></span>
+										<span class="score-1 text-indigo-400 font-bold"></span>
 										<span>- VS -</span>
-										<span class="score-2 text-yellow-400 font-bold"></span>
+										<span class="score-2 text-indigo-400 font-bold"></span>
 									</div>
 									<div class="player-slot p-2 border border-gray-50 backdrop-blur-2xs" data-slot="7">
 										<span class="player-name text-gray-400" data-i18n="tournamentOnline.waiting">En attente...</span>
@@ -112,9 +112,9 @@ export const OnlineTournamentBracket: Page = {
 										<span class="player-name text-gray-400">???</span>
 									</div>
 									<div class="text-center text-white text-lg my-1 flex items-center justify-center gap-3">
-										<span class="score-1 text-yellow-400 font-bold"></span>
+										<span class="score-1 text-indigo-400 font-bold"></span>
 										<span>- VS -</span>
-										<span class="score-2 text-yellow-400 font-bold"></span>
+										<span class="score-2 text-indigo-400 font-bold"></span>
 									</div>
 									<div class="p-2 border border-gray-50 backdrop-blur-2xs" data-player="2">
 										<span class="player-name text-gray-400">???</span>
@@ -127,9 +127,9 @@ export const OnlineTournamentBracket: Page = {
 										<span class="player-name text-gray-400">???</span>
 									</div>
 									<div class="text-center text-white text-lg my-1 flex items-center justify-center gap-3">
-										<span class="score-1 text-yellow-400 font-bold"></span>
+										<span class="score-1 text-indigo-400 font-bold"></span>
 										<span>- VS -</span>
-										<span class="score-2 text-yellow-400 font-bold"></span>
+										<span class="score-2 text-indigo-400 font-bold"></span>
 									</div>
 									<div class="p-2 border border-gray-50 backdrop-blur-2xs" data-player="2">
 										<span class="player-name text-gray-400">???</span>
@@ -149,9 +149,9 @@ export const OnlineTournamentBracket: Page = {
 										<span class="player-name text-gray-400">???</span>
 									</div>
 									<div class="text-center text-white text-lg my-1 flex items-center justify-center gap-3">
-										<span class="score-1 text-yellow-400 font-bold"></span>
+										<span class="score-1 text-indigo-400 font-bold"></span>
 										<span>- VS -</span>
-										<span class="score-2 text-yellow-400 font-bold"></span>
+										<span class="score-2 text-indigo-400 font-bold"></span>
 									</div>
 									<div class="p-2 border border-gray-50 backdrop-blur-2xs" data-player="2">
 										<span class="player-name text-gray-400">???</span>
@@ -169,7 +169,7 @@ export const OnlineTournamentBracket: Page = {
 								<div class="border border-gray-50 p-4 text-center backdrop-blur-2xs w-full">
 								  <div class="flex flex-col items-center gap-3">
 								    <div class="w-16 h-16">
-								      <img id="winner-profile-pic" class="w-16 h-16 object-cover mx-auto block" src="anonymous.png" alt="profile picture"/>
+								      <img id="winner-profile-pic" class="w-16 h-16 object-cover rounded-full border border-gray-50 mx-auto block" src="anonymous.png" alt="profile picture"/>
 								    </div>
 								    <div id="winner-name" class="text-gray-400 text-lg wrap-break-word overflow-hidden">???</div>
 								  </div>

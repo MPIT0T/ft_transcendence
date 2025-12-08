@@ -325,13 +325,6 @@ export const Layout = {
                 </button>
               </div>
               
-              <div class="text-center mt-4 pt-4 border-t border-gray-300">
-                <button type="button" id="google-btn2" class="py-2 text-gray-50 font-bold w-full flex items-center justify-center border border-gray-50 bg-transparent hover:bg-gray-700/50">
-                  <img class="w-8 h-8 mr-3" src="google-logo.svg" alt="google-logo"/>
-                  <span data-i18n="layout.signInGoogle">Sign in with Google</span>
-                </button>
-              </div>
-              
             </form>
           </div>
         </div>
@@ -556,7 +549,6 @@ export const Layout = {
     const registerForm = root.querySelector('#register-form') as HTMLFormElement;
     const backToLoginBtn = root.querySelector('#back-to-login') as HTMLButtonElement;
     const googleBtn = root.querySelector('#google-btn') as HTMLButtonElement;
-    const googleBtn2 = root.querySelector('#google-btn2') as HTMLButtonElement;
 
     window.googleAuthListenerAdded = window.googleAuthListenerAdded || false;
 
@@ -614,31 +606,6 @@ export const Layout = {
         );
       });
     }
-
-    if (googleBtn2) {
-      googleBtn2.addEventListener('click', () => {
-        const width = 600;
-        const height = 700;
-        const left = window.screen.width / 2 - width / 2;
-        const top = window.screen.height / 2 - height / 2;
-
-        const googleAuthUrl =
-          `https://accounts.google.com/o/oauth2/v2/auth?` +
-          `client_id=${clientId}` +
-          `&redirect_uri=${redirectUri}` +
-          `&response_type=code` +
-          `&scope=openid%20email%20profile` +
-          `&access_type=online` +
-          `&prompt=consent`;
-
-        const googleWindow = window.open(
-          googleAuthUrl,
-          'Google OAuth',
-          `width=${width},height=${height},top=${top},left=${left}`
-        );
-      });
-    }
-
 
     // Register form submission
     if (registerForm) {

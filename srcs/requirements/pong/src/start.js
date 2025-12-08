@@ -23,7 +23,7 @@ try {
 
 const fastify = fastifyFactory({
   https: { cert, key, allowHTTP1: true },
-  logger: { level: 'info' }
+  logger: { level: 'warn' }
 });
 
 process.on("SIGTERM", () => {

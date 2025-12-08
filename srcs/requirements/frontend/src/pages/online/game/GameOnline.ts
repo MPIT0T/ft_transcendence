@@ -9,6 +9,7 @@ import { ws } from "./GameRoom";
 import { sleep } from "../../../utils/sleep"
 import { Layout } from "../../Layout";
 import { t } from "../../../utils/i18n";
+import {createCountdown} from "../../../utils/countdown";
 
 /** Current game component instance */
 let currentGame: GameComponentOnline | null = null;
@@ -68,10 +69,10 @@ export const GameOnline: Page = {
       </div>
       <p class="text-gray-400 mb-5" data-i18n="gameOnline.autoStart">Le jeu démarrera automatiquement quand tous les joueurs seront prêts</p>
       <button
-					id="cancel-matchmaking"
-					class="w-full text-gray-50 py-3 px-6 border border-gray-50 hover:border-red-500 hover:bg-gray-700/50 transition-colors font-bold" data-i18n="gameOnline.leaveMatchmaking">
+          id="cancel-matchmaking"
+          class="w-full text-gray-50 py-3 px-6 border border-gray-50 hover:border-red-500 hover:bg-gray-700/50 transition-colors font-bold" data-i18n="gameOnline.leaveMatchmaking">
         Quitter le matchmaking
-			</button>
+      </button>
     </div>
   </div>
 </div>
@@ -120,6 +121,8 @@ export const GameOnline: Page = {
       }
     };
 
+    const countdown = createCountdown();
+
     const popstateHandler = (event: PopStateEvent) => {
       _restoreLoginBtn();
       const path = window.location.pathname.toLowerCase();
@@ -135,9 +138,9 @@ export const GameOnline: Page = {
         if (ws)
           ws.close();
       }
+      countdown.abort();
       window.removeEventListener('popstate', popstateHandler);
     };
-    window.addEventListener('popstate', popstateHandler);
 
     // Cleanup previous game if exists
     if (currentGame) {
@@ -201,7 +204,7 @@ export const GameOnline: Page = {
           ws.send(JSON.stringify(payLoad));
         }
         window.removeEventListener('popstate', popstateHandler);
-        const p = '/';
+        const p = '/game-room';
         history.replaceState(null, '', p);
         window.dispatchEvent(new PopStateEvent('popstate'));
 
@@ -222,26 +225,6 @@ export const GameOnline: Page = {
         timerInterval = null;
       }
     };
-
-    const startAnimation = async () => {
-      startModal.classList.remove("hidden");
-      await sleep(850);
-      startModalText.classList.add('opacity-0');
-      await sleep(150);
-      startModalText.classList.remove("opacity-0");
-      startModalText.textContent = "- 2 -";
-      await sleep(850);
-      startModalText.classList.add('opacity-0');
-      await sleep(150);
-      startModalText.classList.remove("opacity-0");
-      startModalText.textContent = "- 1 -";
-  await sleep(850);
-      startModalText.classList.add('opacity-0');
-      await sleep(150);
-      startModalText.classList.remove("opacity-0");
-      startModal.classList.add('hidden');
-      startModalText.textContent = "- 3 -";
-    }
 
     currentGame = new GameComponentOnline(
       gameContainer,
@@ -267,7 +250,9 @@ export const GameOnline: Page = {
     // Récupérer le modal
 
     if (ws) {
-  ws.onmessage = async (message: MessageEvent) => {
+      window.addEventListener('popstate', popstateHandler);
+
+        ws.onmessage = async (message: MessageEvent) => {
 
         const response = JSON.parse(message.data);
         //connect
@@ -321,7 +306,9 @@ export const GameOnline: Page = {
             });
             player1EloEl.textContent = response.room.clients[0].elo;
             player2EloEl.textContent = response.room.clients[1].elo;
-            await startAnimation();
+
+            await countdown.start(startModal, startModalText);
+
             startTimer();
           }
         }
@@ -333,7 +320,7 @@ export const GameOnline: Page = {
             if (response.isGoal) {
               stopTimer();
               if (response.isLastGoal === undefined) {
-                await startAnimation();
+                await countdown.start(startModal, startModalText);
                 startTimer();
               }
             }
@@ -368,6 +355,11 @@ export const GameOnline: Page = {
             const winner = currentGame.getScores().p1Score > currentGame.getScores().p2Score ? player1NameEl.textContent : currentGame.getScores().p1Score < currentGame.getScores().p2Score ? player2NameEl.textContent : `${username}`;
             currentGame.destroy();
             stopTimer();
+            try {
+              countdown.abort();
+            } catch (e: any) {
+              console.log(e.message);
+            }
             const winnerModal = root.querySelector('#winner-modal') as HTMLElement;
             const winnerText = root.querySelector('#winner-text') as HTMLElement;
             const winnerSubtext = root.querySelector('#winner-subtext') as HTMLElement;
@@ -391,7 +383,6 @@ export const GameOnline: Page = {
                 if (ws) {
                   ws.send(JSON.stringify(payLoad));
                 }
-
                 sessionStorage.removeItem('roomId');
                 const p = '/game-room';
                 history.replaceState(null, '', p);
@@ -402,13 +393,14 @@ export const GameOnline: Page = {
         }
       }
     } else {
-      window.removeEventListener('popstate', popstateHandler);
-      const p = '/';
+      // countdown.abort();
+      // window.removeEventListener('popstate', popstateHandler);
+      const p = '/game-room';
       history.replaceState(null, '', p);
       window.dispatchEvent(new PopStateEvent('popstate'));
       sessionStorage.removeItem('roomId');
     }
 
-    window.addEventListener('popstate', popstateHandler);
+    // window.addEventListener('popstate', popstateHandler);
   }
 }

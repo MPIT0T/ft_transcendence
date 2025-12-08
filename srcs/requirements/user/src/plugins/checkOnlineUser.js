@@ -7,7 +7,7 @@ module.exports = async function (fastify, opts) {
 
     setInterval(async () => {
         try {
-            await checkUsersOnline();
+            await checkUsersOnline(fastify, opts);
 
             fastify.log.info("✔️ Users online check executed")
         } catch (err) {
@@ -16,8 +16,8 @@ module.exports = async function (fastify, opts) {
     }, 5000)
 }
 
-async function checkUsersOnline() {
-    console.log("Checking users…")
+async function checkUsersOnline(fastify, opts) {
+    fastify.log.info("Checking users…")
 
     const users = db.prepare("SELECT id, last_ping FROM users").all();
     const now = Date.now();

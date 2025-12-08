@@ -631,10 +631,10 @@ export const GameRoom: Page = {
 
 		const popstateHandler = (event: PopStateEvent) => {
 			const path = window.location.pathname;
+			window.clearInterval(statusRoom);
 			if (path === '/online-game' || path === '/game-room') {
 				return;
 			}
-			window.clearInterval(statusRoom);
 			const payLoad = {
 				"method": "page",
 				"clientId": clientId,

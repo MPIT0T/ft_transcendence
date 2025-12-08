@@ -106,7 +106,6 @@ export const OnlineTournamentGame: Page = {
 
       window.removeEventListener('popstate', popstateHandler);
     };
-    window.addEventListener('popstate', popstateHandler);
 
     Layout.redirectIfNotLoggedIn('/', true);
 
@@ -234,6 +233,7 @@ export const OnlineTournamentGame: Page = {
     // Pas besoin d'envoyer "ready", on attend juste les messages du serveur
 
     if (ws) {
+      window.addEventListener('popstate', popstateHandler);
       ws.onmessage = async message => {
         const response = JSON.parse(message.data);
 
@@ -305,8 +305,8 @@ export const OnlineTournamentGame: Page = {
         }
       }
     } else {
-      window.removeEventListener('popstate', popstateHandler);
-      const p = '/';
+      // window.removeEventListener('popstate', popstateHandler);
+      const p = '/tournament-room';
       history.replaceState(null, '', p);
       window.dispatchEvent(new PopStateEvent('popstate'));
     }
@@ -318,6 +318,5 @@ export const OnlineTournamentGame: Page = {
 
   // Handler pour le popstate (si le joueur quitte manuellement)
 
-    window.addEventListener('popstate', popstateHandler);
   }
 }
