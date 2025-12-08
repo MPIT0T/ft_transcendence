@@ -65,6 +65,28 @@ export const OnlineTournamentGame: Page = {
    * @param root - Root element containing the rendered game page
    */
   mount(root) {
+    const layoutLoginBtn = document.querySelector('#login-btn') as HTMLButtonElement | null;
+    let _prevLoginBtnClass: string | null = null;
+    let _prevLoginBtnDisabled: boolean | null = null;
+    if (layoutLoginBtn) {
+      _prevLoginBtnClass = layoutLoginBtn.className;
+      _prevLoginBtnDisabled = layoutLoginBtn.disabled;
+      layoutLoginBtn.disabled = true;
+      layoutLoginBtn.className = `${layoutLoginBtn.className} opacity-50 pointer-events-none`;
+    }
+
+    const _restoreLoginBtn = () => {
+      if (layoutLoginBtn) {
+        if (_prevLoginBtnClass !== null) layoutLoginBtn.className = _prevLoginBtnClass;
+        if (_prevLoginBtnDisabled !== null) layoutLoginBtn.disabled = _prevLoginBtnDisabled;
+      }
+    };
+
+    const popstateHandler1 = (_event: PopStateEvent) => {
+      _restoreLoginBtn();
+      window.removeEventListener('popstate', popstateHandler1);
+    };
+    window.addEventListener('popstate', popstateHandler1);
 
     Layout.redirectIfNotLoggedIn('/', true);
 

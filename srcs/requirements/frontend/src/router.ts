@@ -55,6 +55,7 @@ export function startRouter(){
   const root = document.getElementById("root")!;
 
   const render = () => {
+    applyTranslations(root);
     const path = getPath();
     const page = routes[path];
     if (page) {

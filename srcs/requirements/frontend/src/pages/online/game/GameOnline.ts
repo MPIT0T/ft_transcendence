@@ -34,12 +34,18 @@ export const GameOnline: Page = {
   <div class="absolute inset-0 bg-gradient-to-r from-red-500 to-blue-500 opacity-30"></div>
   <div class="relative z-10">
     <div class="flex items-center px-6 pt-2">
-      <span id="player-1-name" class="font-semibold text-5xl flex-1 text-left">???</span>
+        <span>
+        <img id="player-1-avatar" class="h-10 w-10 rounded-full border border-gray-50 mr-2" src="" alt="player 1 avatar">
+        </span>
+        <span id="player-1-name" class="font-semibold text-5xl flex-1 text-left">???</span>
       <span id="score" class="text-5xl font-extrabold tracking-wide"></span>
-      <span id="player-2-name" class="font-semibold text-5xl flex-1 text-right">???</span>
+        <span id="player-2-name" class="font-semibold text-5xl flex-1 text-right">???</span>
+        <span>
+        <img id="player-2-avatar" class="h-10 w-10 rounded-full border border-gray-50" src="" alt="player 2 avatar">
+        </span>
     </div>
     <div class="flex items-center px-6 pb-2 text-md opacity-90">
-      <span id="player-1-elo" class="flex-1 text-left"></span>
+      <span id="player-1-elo" class="flex-1 text-left ml-1"></span>
       <span id="timer">00:00</span>
       <span id="player-2-elo" class="flex-1 text-right"></span>
     </div>
@@ -98,6 +104,29 @@ export const GameOnline: Page = {
    */
   mount(root) {
 
+    const layoutLoginBtn = document.querySelector('#login-btn') as HTMLButtonElement | null;
+    let _prevLoginBtnClass: string | null = null;
+    let _prevLoginBtnDisabled: boolean | null = null;
+    if (layoutLoginBtn) {
+      _prevLoginBtnClass = layoutLoginBtn.className;
+      _prevLoginBtnDisabled = layoutLoginBtn.disabled;
+      layoutLoginBtn.disabled = true;
+      layoutLoginBtn.className = `${layoutLoginBtn.className} opacity-50 pointer-events-none`;
+    }
+
+    const _restoreLoginBtn = () => {
+      if (layoutLoginBtn) {
+        if (_prevLoginBtnClass !== null) layoutLoginBtn.className = _prevLoginBtnClass;
+        if (_prevLoginBtnDisabled !== null) layoutLoginBtn.disabled = _prevLoginBtnDisabled;
+      }
+    };
+
+    const popstateHandler1 = (_event: PopStateEvent) => {
+      _restoreLoginBtn();
+      window.removeEventListener('popstate', popstateHandler1);
+    };
+    window.addEventListener('popstate', popstateHandler1);
+
     // Cleanup previous game if exists
     if (currentGame) {
       currentGame.destroy();
@@ -123,6 +152,8 @@ export const GameOnline: Page = {
     const score = root.querySelector('#score') as HTMLElement;
     const timerEl = root.querySelector('#timer') as HTMLElement;
     const player1NameEl = root.querySelector('#player-1-name') as HTMLElement;
+    const player1AvatarEl = root.querySelector('#player-1-avatar') as HTMLImageElement;
+    const player2AvatarEl = root.querySelector('#player-2-avatar') as HTMLImageElement;
     const player1EloEl = root.querySelector('#player-1-elo') as HTMLElement;
     const player2NameEl = root.querySelector('#player-2-name') as HTMLElement;
     const player2EloEl = root.querySelector('#player-2-elo') as HTMLElement;
@@ -254,7 +285,7 @@ export const GameOnline: Page = {
         if (response.method === "Start") {
           waiting = false;
           canStart = true;
-          // Masquer le modal d'attente
+          // Masquer le modal d'attenteplayer1NameEl
           if (waitingModal) {
             waitingModal.classList.add('hidden');
           }
@@ -263,6 +294,42 @@ export const GameOnline: Page = {
             currentGame.setCanStart(canStart);
             player1NameEl.textContent = response.room.clients[0].name;
             player2NameEl.textContent = response.room.clients[1].name;
+            fetch('/user/api/get-avatar', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ username: response.room.clients[0].name})
+            })
+            .then(res => {
+              if (!res.ok) return res.json().then(data => Promise.reject(data));
+              return res.json();
+            })
+            .then((data: { avatar: string }) => {
+              player1AvatarEl.src = data.avatar || 'anonymous.png';
+            })
+            .catch(err => {
+              const msg = err?.error || 'Impossible de recevoir l\'avatar du joueur';
+              Layout.showNotification(msg, 'error');
+            });
+            fetch('/user/api/get-avatar', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ username: response.room.clients[1].name})
+            })
+            .then(res => {
+              if (!res.ok) return res.json().then(data => Promise.reject(data));
+              return res.json();
+            })
+            .then((data: { avatar: string }) => {
+              player2AvatarEl.src = data.avatar || 'anonymous.png';
+            })
+            .catch(err => {
+              const msg = err?.error || 'Impossible de recevoir l\'avatar du joueur';
+              Layout.showNotification(msg, 'error');
+            });
             player1EloEl.textContent = response.room.clients[0].elo;
             player2EloEl.textContent = response.room.clients[1].elo;
             await startAnimation();
