@@ -115,7 +115,7 @@ export const Lobby: Page = {
 		const localBtn = root.querySelector('#local-mode') as HTMLButtonElement;
 		if (localBtn) {
 			localBtn.addEventListener('click', () => {
-				const p = '/localLobby';
+				const p = '/local-lobby';
 				history.pushState(null, '', p);
 				window.dispatchEvent(new PopStateEvent('popstate'));
 			});
@@ -125,7 +125,7 @@ export const Lobby: Page = {
 		const onlineBtn = root.querySelector('#online-mode') as HTMLButtonElement;
 		if (onlineBtn) {
 			onlineBtn.addEventListener('click', () => {
-				const p = '/onlineLobby';
+				const p = '/online-lobby';
 				history.pushState(null, '', p);
 				window.dispatchEvent(new PopStateEvent('popstate'));
 			});

@@ -102,12 +102,12 @@ export const OnlineLobby: Page = {
    */
   mount(root: HTMLElement): void {
 
-    Layout.redirectIfNotLoggedIn('/gameLobby', true);
+    Layout.redirectIfNotLoggedIn('/game-lobby', true);
 
     const gameOnlineBtn = document.querySelector('#online-game-btn');
     if (gameOnlineBtn) {
       gameOnlineBtn.addEventListener('click', (e) => {
-        const p = '/gameRoom';
+        const p = '/game-room';
         history.pushState(null, '', p);
         window.dispatchEvent(new PopStateEvent('popstate'));
       });
@@ -116,7 +116,7 @@ export const OnlineLobby: Page = {
     const tournamentOnlineBtn = root.querySelector('#online-tournament-btn');
     if (tournamentOnlineBtn) {
       tournamentOnlineBtn.addEventListener('click', (e) => {
-        const p = '/tournamentRoom';
+        const p = '/tournament-room';
         history.pushState(null, '', p);
         window.dispatchEvent(new PopStateEvent('popstate'));
       });

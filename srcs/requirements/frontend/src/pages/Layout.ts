@@ -424,7 +424,7 @@ export const Layout = {
     const gameBtn = root.querySelector('#game-btn') as HTMLButtonElement;
     if (gameBtn) {
       gameBtn.addEventListener('click', () => {
-        const p = '/gameLobby';
+        const p = '/game-lobby';
         history.pushState(null, '', p);
         window.dispatchEvent(new PopStateEvent('popstate'));
       });

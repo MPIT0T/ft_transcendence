@@ -220,7 +220,7 @@ export const OnlineTournamentGame: Page = {
           
           // Rediriger vers la page du tournoi après un délai (History API)
           setTimeout(() => {
-            const p = '/tournamentOnline';
+            const p = '/online-tournament';
             history.replaceState(null, '', p);
             window.dispatchEvent(new PopStateEvent('popstate'));
           }, 2000);

@@ -453,7 +453,7 @@ export const OnlineTournamentBracket: Page = {
           }, 1000);
           if (response.method === "returnToBracket") {
             setTimeout(() => {
-              const p = '/tournamentOnline';
+              const p = '/online-tournament';
               history.replaceState(null, '', p);
               window.dispatchEvent(new PopStateEvent('popstate'));
             }, 2000);
@@ -499,7 +499,7 @@ export const OnlineTournamentBracket: Page = {
       }
     } else {
       window.removeEventListener('popstate', popstateHandler);
-      const p = '/tournamentRoom';
+      const p = '/tournament-room';
       history.replaceState(null, '', p);
       window.dispatchEvent(new PopStateEvent('popstate'));
     }
@@ -531,7 +531,7 @@ export const OnlineTournamentBracket: Page = {
         sessionStorage.removeItem('roomId');
 
         window.removeEventListener('popstate', popstateHandler);
-        const p = '/tournamentRoom';
+        const p = '/tournament-room';
         history.replaceState(null, '', p);
         window.dispatchEvent(new PopStateEvent('popstate'));
       });

@@ -185,7 +185,7 @@ export const GameOnline: Page = {
         history.replaceState(null, '', p);
         window.dispatchEvent(new PopStateEvent('popstate'));
 
-      });
+  });
     }
 
     const startTimer = () => {
@@ -215,7 +215,7 @@ export const GameOnline: Page = {
       await sleep(150);
       startModalText.classList.remove("opacity-0");
       startModalText.textContent = "- 1 -";
-      await sleep(850);
+  await sleep(850);
       startModalText.classList.add('opacity-0');
       await sleep(150);
       startModalText.classList.remove("opacity-0");
@@ -247,7 +247,7 @@ export const GameOnline: Page = {
     // Récupérer le modal
 
     if (ws) {
-      ws.onmessage = async message => {
+  ws.onmessage = async (message: MessageEvent) => {
 
         const response = JSON.parse(message.data);
         //connect
