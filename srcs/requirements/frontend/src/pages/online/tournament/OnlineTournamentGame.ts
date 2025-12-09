@@ -233,7 +233,7 @@ export const OnlineTournamentGame: Page = {
     // Pas besoin d'envoyer "ready", on attend juste les messages du serveur
 
     if (ws) {
-      window.addEventListener('popstate', popstateHandler);
+      // window.addEventListener('popstate', popstateHandler);
       ws.onmessage = async message => {
         const response = JSON.parse(message.data);
 

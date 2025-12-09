@@ -289,6 +289,7 @@ async function handleReadyTournament(socket, data) {
 
 	if (state === 1) {
 		client.isReady = true;
+		client.isActive = true;
 	} else {
 		client.isReady = false;
 	}

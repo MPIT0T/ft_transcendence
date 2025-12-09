@@ -241,29 +241,35 @@ export const OnlineTournamentBracket: Page = {
       ws.send(JSON.stringify(payLoad));
 
     const popstateHandler = (event: PopStateEvent) => {
-      const path = window.location.pathname.toLowerCase();
-      // If we're still on a tournament-related page (Tournament Online or LocalGame Online), don't notify server about leaving
-      if (path.includes('online-tournament') || path.includes('online-tournament-game')) {
-        return;
+      const path = window.location.pathname;
+      if (path !== '/online-tournament-game' && path !== '/online-tournament' && path !== '/tournament-room') {
+        if (ws)
+          ws.close();
+        sessionStorage.removeItem('tournamentName');
+        sessionStorage.removeItem('tournamentId');
+        sessionStorage.removeItem('gamestate');
+        sessionStorage.removeItem('player1Name');
+        sessionStorage.removeItem('player2Name');
+        sessionStorage.removeItem('roomId');
       }
-      _restoreLoginBtn();
-      
-      const payLoad = {
-        "method": "leave",
-        "clientId": clientId
+      if (path === '/tournament-room') {
+        _restoreLoginBtn();
+        const payLoad = {
+          "method": "leave",
+          "clientId": clientId
+        }
+        if (ws)
+          ws.send(JSON.stringify(payLoad));
+        sessionStorage.removeItem('tournamentName');
+        sessionStorage.removeItem('tournamentId');
+        sessionStorage.removeItem('gamestate');
+        sessionStorage.removeItem('player1Name');
+        sessionStorage.removeItem('player2Name');
+        sessionStorage.removeItem('roomId');
       }
-
-      if (ws)
-        ws.send(JSON.stringify(payLoad));
-
-      // if (sessionStorage.getItem('gamestate') === 'playing-game') {
-      //   if (ws)
-      //     ws.close();
-      // }
-
-      sessionStorage.removeItem('tournamentName');
-      sessionStorage.removeItem('tournamentId');
-      sessionStorage.removeItem('gamestate');
+      if (path === '/online-tournament-game') {
+        return ;
+      }
       sessionStorage.removeItem('player1Name');
       sessionStorage.removeItem('player2Name');
       sessionStorage.removeItem('roomId');
