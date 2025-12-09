@@ -117,6 +117,7 @@ class Tournament {
 
 		client.isReady = false;
 		client.isActive = true;
+		client._activeTournamentId = this.tournamentId;
 
 		this.clients.push(client);
 
@@ -147,7 +148,7 @@ class Tournament {
 		};
 
 		this.clients.forEach(c => {
-			if (c._conection && typeof c._conection.send === 'function' && c.isActive === true) {
+			if (c._conection && typeof c._conection.send === 'function' && c.isActive === true && this.tournamentId === c._activeTournamentId) {
 				c._conection.send(JSON.stringify(payLoad));
 			}
 		});
@@ -185,7 +186,7 @@ class Tournament {
 			};
 
 			this.clients.forEach(c => {
-				if (c._conection && typeof c._conection.send === 'function' && c.isActive === true) {
+				if (c._conection && typeof c._conection.send === 'function' && c.isActive === true && this.tournamentId === c._activeTournamentId) {
 					c._conection.send(JSON.stringify(payLoad));
 				}
 			});
@@ -206,7 +207,7 @@ class Tournament {
 			};
 
 			this.clients.forEach(c => {
-				if (c._conection && typeof c._conection.send === 'function' && c.isActive === true) {
+				if (c._conection && typeof c._conection.send === 'function' && c.isActive === true && this.tournamentId === c._activeTournamentId) {
 					c._conection.send(JSON.stringify(payLoad));
 				}
 			});
@@ -232,7 +233,7 @@ class Tournament {
 		};
 
 		this.clients.forEach(c => {
-			if (c._conection && typeof c._conection.send === 'function' && c.isActive === true) {
+			if (c._conection && typeof c._conection.send === 'function' && c.isActive === true && this.tournamentId === c._activeTournamentId) {
 				c._conection.send(JSON.stringify(payload));
 			}
 		});
@@ -256,14 +257,12 @@ class Tournament {
 		const quarterPromises = quarterFinalRooms.map(async (roomData) => {
 			const room = this.rooms.findRoom(roomData.roomId);
 
-			// Verify object references
-			const p1InClients = this.clients.find(c => c._clientId === roomData.player1._clientId);
-			const p2InClients = this.clients.find(c => c._clientId === roomData.player2._clientId);
-			console.log(`🔍 QF Match: P1 same ref? ${p1InClients === roomData.player1}, P2 same ref? ${p2InClients === roomData.player2}`);
+			roomData.player1 = this.clients.find(c => c._clientId === roomData.player1._clientId);
+			roomData.player2 = this.clients.find(c => c._clientId === roomData.player2._clientId);
 
 			// Vérifier les connexions des joueurs
-			const p1Connected = roomData.player1 && roomData.player1._conection && roomData.player1._conection.readyState === 1 && this.clients.find(c => c._clientId === roomData.player1._clientId && c.isActive === true);
-			const p2Connected = roomData.player2 && roomData.player2._conection && roomData.player2._conection.readyState === 1 && this.clients.find(c => c._clientId === roomData.player2._clientId && c.isActive === true);
+			const p1Connected = roomData.player1 && roomData.player1._conection && roomData.player1._conection.readyState === 1 && roomData.player1.isActive === true && this.tournamentId === roomData.player1._activeTournamentId ;
+			const p2Connected = roomData.player2 && roomData.player2._conection && roomData.player2._conection.readyState === 1 && roomData.player2.isActive === true && this.tournamentId === roomData.player2._activeTournamentId;
 
 			let winner;
 
@@ -285,8 +284,7 @@ class Tournament {
 				roomData.score2 = 3;
 				roomData.winner = winner;
 				roomData.status = 'completed';
-				const client2 = this.clients.find(c => c._clientId === roomData.player2._clientId);
-				if (p2Connected && client2 && client2.isActive === true) {
+				if (p2Connected) {
 					roomData.player2._conection.send(JSON.stringify({
 						method: "returnToBracket",
 						tournamentId: this.tournamentId
@@ -304,7 +302,7 @@ class Tournament {
 				roomData.winner = winner;
 				roomData.status = 'completed';
 				const client1 = this.clients.find(c => c._clientId === roomData.player1._clientId);
-				if (p1Connected && client1 && client1.isActive === true) {
+				if (p1Connected) {
 					roomData.player1._conection.send(JSON.stringify({
 						method: "returnToBracket",
 						tournamentId: this.tournamentId
@@ -318,34 +316,26 @@ class Tournament {
 			if (p1Connected) {
 				// const roomUrl = `/online-tournament-game?gameId=${roomData.roomId}`;
 				const roomUrl = `/online-tournament-game`;
-				// Always check against the authoritative client in this.clients array
-				const client1 = this.clients.find(c => c._clientId === roomData.player1._clientId);
-				if (client1 && client1.isActive === true) {
-					roomData.player1._conection.send(JSON.stringify({
-						method: "startMatch",
-						roomId: roomData.roomId,
-						roomUrl: roomUrl,
-						player1Name: roomData.player1._name,
-						player2Name: roomData.player2._name,
-						matchRound: roomData.roomName
-					}));
-				}
+				roomData.player1._conection.send(JSON.stringify({
+					method: "startMatch",
+					roomId: roomData.roomId,
+					roomUrl: roomUrl,
+					player1Name: roomData.player1._name,
+					player2Name: roomData.player2._name,
+					matchRound: roomData.roomName
+				}));
 			}
 			if (p2Connected) {
 				// const roomUrl = `/online-tournament-game?gameId=${roomData.roomId}`;
 				const roomUrl = `/online-tournament-game`;
-				// Always check against the authoritative client in this.clients array
-				const client2 = this.clients.find(c => c._clientId === roomData.player2._clientId);
-				if (client2 && client2.isActive === true) {
-					roomData.player2._conection.send(JSON.stringify({
-						method: "startMatch",
-						roomId: roomData.roomId,
-						roomUrl: roomUrl,
-						player1Name: roomData.player1._name,
-						player2Name: roomData.player2._name,
-						matchRound: roomData.roomName
-					}));
-				}
+				roomData.player2._conection.send(JSON.stringify({
+					method: "startMatch",
+					roomId: roomData.roomId,
+					roomUrl: roomUrl,
+					player1Name: roomData.player1._name,
+					player2Name: roomData.player2._name,
+					matchRound: roomData.roomName
+				}));
 			}
 
 			await sleep(3000);
@@ -353,31 +343,34 @@ class Tournament {
 			room.state = "playing-game";
 
 			if (p1Connected) {
-				const client1 = this.clients.find(c => c._clientId === roomData.player1._clientId);
-				if (client1 && client1.isActive === true) {
-					roomData.player1._conection.send(JSON.stringify({
-						method: "Start",
-						round: "1",
-						roomId: roomData.roomId,
-					}));
-				}
+				roomData.player1._conection.send(JSON.stringify({
+					method: "Start",
+					round: "1",
+					roomId: roomData.roomId,
+				}));
 			}
 			if (p2Connected) {
-				const client2 = this.clients.find(c => c._clientId === roomData.player2._clientId);
-				if (client2 && client2.isActive === true) {
-					roomData.player2._conection.send(JSON.stringify({
-						method: "Start",
-						round: "1",
-						roomId: roomData.roomId,
-					}));
-				}
+				roomData.player2._conection.send(JSON.stringify({
+					method: "Start",
+					round: "1",
+					roomId: roomData.roomId,
+				}));
 			}
 
 			await sleep(3000);
 
 			await room.gameLoop();
 
-			winner = room.p1Score > room.p2Score ? roomData.player1 : roomData.player2;
+			roomData.player1 = this.clients.find(c => c._clientId === roomData.player1._clientId);
+			roomData.player2 = this.clients.find(c => c._clientId === roomData.player2._clientId);
+
+			if (roomData.player2.isActive === false) {
+				winner = roomData.player1;
+			} else if (roomData.player2.isActive === false) {
+				winner = roomData.player2;
+			} else {
+				winner = room.p1Score > room.p2Score ? roomData.player1 : roomData.player2;
+			}
 
 			roomData.score1 = room.p1Score;
 			roomData.score2 = room.p2Score;
@@ -427,9 +420,13 @@ class Tournament {
 		const semiPromises = semiFinalRooms.map(async (roomData) => {
 			const room = this.rooms.findRoom(roomData.roomId);
 
+
+			roomData.player1 = this.clients.find(c => c._clientId === roomData.player1._clientId);
+			roomData.player2 = this.clients.find(c => c._clientId === roomData.player2._clientId);
+
 			// Vérifier les connexions des joueurs
-            const p1Connected = roomData.player1 && roomData.player1._conection && roomData.player1._conection.readyState === 1 && this.clients.find(c => c._clientId === roomData.player1._clientId && c.isActive === true);
-            const p2Connected = roomData.player2 && roomData.player2._conection && roomData.player2._conection.readyState === 1 && this.clients.find(c => c._clientId === roomData.player2._clientId && c.isActive === true);
+            const p1Connected = roomData.player1 && roomData.player1._conection && roomData.player1._conection.readyState === 1 && roomData.player1.isActive === true && this.tournamentId === roomData.player1._activeTournamentId ;
+			const p2Connected = roomData.player2 && roomData.player2._conection && roomData.player2._conection.readyState === 1 && roomData.player2.isActive === true && this.tournamentId === roomData.player2._activeTournamentId;
 
 			let winner;
 
@@ -451,8 +448,7 @@ class Tournament {
 				roomData.score2 = 3;
 				roomData.winner = winner;
 				roomData.status = 'completed';
-				const client2 = this.clients.find(c => c._clientId === roomData.player2._clientId);
-				if (p2Connected && client2 && client2.isActive === true) {
+				if (p2Connected) {
 					roomData.player2._conection.send(JSON.stringify({
 						method: "returnToBracket",
 						tournamentId: this.tournamentId
@@ -469,8 +465,7 @@ class Tournament {
 				roomData.score2 = 0;
 				roomData.winner = winner;
 				roomData.status = 'completed';
-				const client1 = this.clients.find(c => c._clientId === roomData.player1._clientId);
-				if (p1Connected && client1 && client1.isActive === true) {
+				if (p1Connected) {
 					roomData.player1._conection.send(JSON.stringify({
 						method: "returnToBracket",
 						tournamentId: this.tournamentId
@@ -484,32 +479,26 @@ class Tournament {
 			if (p1Connected) {
 				// const roomUrl = `/online-tournament-game?gameId=${roomData.roomId}`;
 				const roomUrl = `/online-tournament-game`;
-				const client1 = this.clients.find(c => c._clientId === roomData.player1._clientId);
-				if (client1 && client1.isActive === true) {
-					roomData.player1._conection.send(JSON.stringify({
-						method: "startMatch",
-						roomId: roomData.roomId,
-						roomUrl: roomUrl,
-						player1Name: roomData.player1._name,
-						player2Name: roomData.player2._name,
-						matchRound: roomData.roomName
-					}));
-				}
+				roomData.player1._conection.send(JSON.stringify({
+					method: "startMatch",
+					roomId: roomData.roomId,
+					roomUrl: roomUrl,
+					player1Name: roomData.player1._name,
+					player2Name: roomData.player2._name,
+					matchRound: roomData.roomName
+				}));
 			}
 			if (p2Connected) {
 				// const roomUrl = `/online-tournament-game?gameId=${roomData.roomId}`;
 				const roomUrl = `/online-tournament-game`;
-				const client2 = this.clients.find(c => c._clientId === roomData.player2._clientId);
-				if (client2 && client2.isActive === true) {
-					roomData.player2._conection.send(JSON.stringify({
-						method: "startMatch",
-						roomId: roomData.roomId,
-						roomUrl: roomUrl,
-						player1Name: roomData.player1._name,
-						player2Name: roomData.player2._name,
-						matchRound: roomData.roomName
-					}));
-				}
+				roomData.player2._conection.send(JSON.stringify({
+					method: "startMatch",
+					roomId: roomData.roomId,
+					roomUrl: roomUrl,
+					player1Name: roomData.player1._name,
+					player2Name: roomData.player2._name,
+					matchRound: roomData.roomName
+				}));
 			}
 
 			await sleep(3000);
@@ -517,31 +506,34 @@ class Tournament {
 			room.state = "playing-game";
 
 			if (p1Connected) {
-				const client1 = this.clients.find(c => c._clientId === roomData.player1._clientId);
-				if (client1 && client1.isActive === true) {
-					roomData.player1._conection.send(JSON.stringify({
-						method: "Start",
-						round: "2",
-						roomId: roomData.roomId,
-					}));
-				}
+				roomData.player1._conection.send(JSON.stringify({
+					method: "Start",
+					round: "2",
+					roomId: roomData.roomId,
+				}));
 			}
 			if (p2Connected) {
-				const client2 = this.clients.find(c => c._clientId === roomData.player2._clientId);
-				if (client2 && client2.isActive === true) {
-					roomData.player2._conection.send(JSON.stringify({
-						method: "Start",
-						round: "2",
-						roomId: roomData.roomId,
-					}));
-				}
+				roomData.player2._conection.send(JSON.stringify({
+					method: "Start",
+					round: "2",
+					roomId: roomData.roomId,
+				}));
 			}
 
 			await sleep(3000);
 
 			await room.gameLoop();
 
-			winner = room.p1Score > room.p2Score ? roomData.player1 : roomData.player2;
+			roomData.player1 = this.clients.find(c => c._clientId === roomData.player1._clientId);
+			roomData.player2 = this.clients.find(c => c._clientId === roomData.player2._clientId);
+
+			if (roomData.player2.isActive === false) {
+				winner = roomData.player1;
+			} else if (roomData.player2.isActive === false) {
+				winner = roomData.player2;
+			} else {
+				winner = room.p1Score > room.p2Score ? roomData.player1 : roomData.player2;
+			}
 
 			roomData.score1 = room.p1Score;
 			roomData.score2 = room.p2Score;
@@ -585,9 +577,13 @@ class Tournament {
 
 			const room = this.rooms.findRoom(finalRoomData.roomId);
 
+			finalRoomData.player1 = this.clients.find(c => c._clientId === finalRoomData.player1._clientId);
+			finalRoomData.player2 = this.clients.find(c => c._clientId === finalRoomData.player2._clientId);
+
+
 			// Vérifier les connexions des joueurs
-            const p1Connected = finalRoomData.player1 && finalRoomData.player1._conection && finalRoomData.player1._conection.readyState === 1 && this.clients.find(c => c._clientId === finalRoomData.player1._clientId && c.isActive === true);
-            const p2Connected = finalRoomData.player2 && finalRoomData.player2._conection && finalRoomData.player2._conection.readyState === 1 && this.clients.find(c => c._clientId === finalRoomData.player2._clientId && c.isActive === true);
+           	const p1Connected = finalRoomData.player1 && finalRoomData.player1._conection && finalRoomData.player1._conection.readyState === 1 && finalRoomData.player1.isActive === true && this.tournamentId === finalRoomData.player1._activeTournamentId ;
+			const p2Connected = finalRoomData.player2 && finalRoomData.player2._conection && finalRoomData.player2._conection.readyState === 1 && finalRoomData.player2.isActive === true && this.tournamentId === finalRoomData.player2._activeTournamentId;
 
 			let champion;
 
@@ -606,8 +602,7 @@ class Tournament {
 				finalRoomData.score2 = 3;
 				finalRoomData.winner = champion;
 				finalRoomData.status = 'completed';
-				const finalClient2 = this.clients.find(c => c._clientId === finalRoomData.player2._clientId);
-				if (p2Connected && finalClient2 && finalClient2.isActive === true) {
+				if (p2Connected) {
 					finalRoomData.player2._conection.send(JSON.stringify({
 						method: "returnToBracket",
 						tournamentId: this.tournamentId
@@ -621,8 +616,7 @@ class Tournament {
 				finalRoomData.score2 = 0;
 				finalRoomData.winner = champion;
 				finalRoomData.status = 'completed';
-				const finalClient1 = this.clients.find(c => c._clientId === finalRoomData.player1._clientId);
-				if (p1Connected && finalClient1 && finalClient1.isActive === true) {
+				if (p1Connected) {
 					finalRoomData.player1._conection.send(JSON.stringify({
 						method: "returnToBracket",
 						tournamentId: this.tournamentId
@@ -634,32 +628,26 @@ class Tournament {
 				if (p1Connected) {
 					// const roomUrl = `/online-tournament-game?gameId=${finalRoomData.roomId}`;
 					const roomUrl = `/online-tournament-game`;
-					const finalClient1 = this.clients.find(c => c._clientId === finalRoomData.player1._clientId);
-					if (finalClient1 && finalClient1.isActive === true) {
-						finalRoomData.player1._conection.send(JSON.stringify({
-							method: "startMatch",
-							roomId: finalRoomData.roomId,
-							roomUrl: roomUrl,
-							player1Name: finalRoomData.player1._name,
-							player2Name: finalRoomData.player2._name,
-							matchRound: finalRoomData.roomName
-						}));
-					}
+					finalRoomData.player1._conection.send(JSON.stringify({
+						method: "startMatch",
+						roomId: finalRoomData.roomId,
+						roomUrl: roomUrl,
+						player1Name: finalRoomData.player1._name,
+						player2Name: finalRoomData.player2._name,
+						matchRound: finalRoomData.roomName
+					}));
 				}
 				if (p2Connected) {
 					// const roomUrl = `/online-tournament-game?gameId=${finalRoomData.roomId}`;
 					const roomUrl = `/online-tournament-game`;
-					const finalClient2 = this.clients.find(c => c._clientId === finalRoomData.player2._clientId);
-					if (finalClient2 && finalClient2.isActive === true) {
-						finalRoomData.player2._conection.send(JSON.stringify({
-							method: "startMatch",
-							roomId: finalRoomData.roomId,
-							roomUrl: roomUrl,
-							player1Name: finalRoomData.player1._name,
-							player2Name: finalRoomData.player2._name,
-							matchRound: finalRoomData.roomName
-						}));
-					}
+					finalRoomData.player2._conection.send(JSON.stringify({
+						method: "startMatch",
+						roomId: finalRoomData.roomId,
+						roomUrl: roomUrl,
+						player1Name: finalRoomData.player1._name,
+						player2Name: finalRoomData.player2._name,
+						matchRound: finalRoomData.roomName
+					}));
 				}
 
 				await sleep(3000);
@@ -667,24 +655,18 @@ class Tournament {
 				room.state = "playing-game";
 
 				if (p1Connected) {
-					const finalClient1 = this.clients.find(c => c._clientId === finalRoomData.player1._clientId);
-					if (finalClient1 && finalClient1.isActive === true) {
-						finalRoomData.player1._conection.send(JSON.stringify({
-							method: "Start",
-							round: "3",
-							roomId: finalRoomData.roomId,
-						}));
-					}
+					finalRoomData.player1._conection.send(JSON.stringify({
+						method: "Start",
+						round: "3",
+						roomId: finalRoomData.roomId,
+					}));
 				}
 				if (p2Connected) {
-					const finalClient2 = this.clients.find(c => c._clientId === finalRoomData.player2._clientId);
-					if (finalClient2 && finalClient2.isActive === true) {
-						finalRoomData.player2._conection.send(JSON.stringify({
-							method: "Start",
-							round: "3",
-							roomId: finalRoomData.roomId,
-						}));
-					}
+					finalRoomData.player2._conection.send(JSON.stringify({
+						method: "Start",
+						round: "3",
+						roomId: finalRoomData.roomId,
+					}));
 				}
 
 
@@ -693,6 +675,17 @@ class Tournament {
 				await room.gameLoop();
 
 				champion = room.p1Score > room.p2Score ? finalRoomData.player1 : finalRoomData.player2;
+
+				finalRoomData.player1 = this.clients.find(c => c._clientId === finalRoomData.player1._clientId);
+				finalRoomData.player2 = this.clients.find(c => c._clientId === finalRoomData.player2._clientId);
+
+				if (finalRoomData.player2.isActive === false) {
+					champion = finalRoomData.player1;
+				} else if (finalRoomData.player2.isActive === false) {
+					champion = finalRoomData.player2;
+				} else {
+					champion = room.p1Score > room.p2Score ? finalRoomData.player1 : finalRoomData.player2;
+				}
 
 				finalRoomData.score1 = room.p1Score;
 				finalRoomData.score2 = room.p2Score;
@@ -723,7 +716,7 @@ class Tournament {
 			await sleep(2000);
 
 			this.clients.forEach(c => {
-				if (c._conection && typeof c._conection.send === 'function' && c.isActive === true) {
+				if (c._conection && typeof c._conection.send === 'function' &&  c.isActive === true && c._activeTournamentId === this.tournamentId) {
 					c._conection.send(JSON.stringify({
 						method: 'tournamentWinner',
 						winner: champion._name,
@@ -733,7 +726,7 @@ class Tournament {
 					}));
 				}
 			});
-			console.log(`🏆 Tournament Champion: ${champion._name}`);
+			console.log(`Tournament Champion: ${champion._name}`);
 			this.state = "finished";
 			if (this.onTournamentEnd) {
 				this.onTournamentEnd(this.tournamentId);
@@ -746,12 +739,22 @@ class Tournament {
 		const idx = this.clients.findIndex(c => c._clientId === clientId);
 		if (idx !== -1) {
 			const disconnectedClient = this.clients[idx];
-			console.log(`🔴 Setting isActive=false for client ${clientId} (${disconnectedClient._name})`);
 			disconnectedClient.isActive = false;
-            // disconnectedClient._connected = false;
+			disconnectedClient._activeTournamentId = null;
+
+			for (const roomData of this.allTournamentRooms) {
+				const p1Id = roomData.player1 && roomData.player1._clientId;
+				const p2Id = roomData.player2 && roomData.player2._clientId;
+
+				if (p1Id === clientId || p2Id === clientId) {
+					const room = this.rooms.findRoom(roomData.roomId);
+					room.remove(clientId);
+
+					break;
+				}
+			}
 			return true;
 		}
-		console.log(`⚠️ Client ${clientId} not found in tournament.disconnect`);
 		return false;
 	}
 
@@ -777,7 +780,7 @@ class Tournament {
 			};
 
 			this.clients.forEach(c => {
-				if (c._conection && typeof c._conection.send === 'function' && c.isActive === true) {
+				if (c._conection && typeof c._conection.send === 'function' && c.isActive === true && this.tournamentId === c._activeTournamentId) {
 					c._conection.send(JSON.stringify(payLoad));
 				}
 			});
@@ -825,8 +828,6 @@ class Tournament {
 			rooms: this.rooms.toJSON ? this.rooms.toJSON() : this.rooms,
 		};
 	}
-
-
 }
 
 module.exports = Tournament;

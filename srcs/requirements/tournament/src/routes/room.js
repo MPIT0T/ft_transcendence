@@ -150,12 +150,17 @@ class Room {
 				this.state = "gameEnd";
 			}
 
+			this.clients.forEach(c => {
+				if (c.isActive === false)
+					this.state = "gameEnd"
+			})
 			await this.updateGamePhysics();
 
 			const payLoad = {
 				"method": "update",
 				"room": this.toJsonUpdate()
 			};
+			
 
 			this.clients.forEach(c => {
 				if (c._conection && typeof c._conection.send === 'function') {
@@ -250,7 +255,16 @@ class Room {
 
 	async sendGameEnd() {
 		this.endTime = Date.now();
-		const winner = this.p1Score > this.p2Score ? 1 : 2;
+		let winner;
+
+		if (this.clients.length === 1) {
+			const remainingClient = this.clients[0];
+			winner = remainingClient._player;
+		} else if (this.clients.length === 0) {
+			winner = this.p1Score > this.p2Score ? 1 : 2;
+		} else {
+			winner = this.p1Score > this.p2Score ? 1 : 2;
+		}
 
 		const payLoad = {
 			"method": "gameEnd",

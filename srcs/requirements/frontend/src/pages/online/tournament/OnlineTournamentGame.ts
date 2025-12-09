@@ -89,21 +89,8 @@ export const OnlineTournamentGame: Page = {
     };
 
     const popstateHandler = (event: PopStateEvent) => {
-      const path = window.location.pathname;
-      if (path.includes('online-game')) {
-        return;
-      }
-      _restoreLoginBtn();
-      const payLoad = {
-        "method": "leave",
-        "clientId": clientId
-      }
-      if (ws)
-        ws.send(JSON.stringify(payLoad));
-
-      // Nettoyer les infos du match
-      sessionStorage.removeItem('matchRound');
-
+      
+      currentGame?.destroy();
       window.removeEventListener('popstate', popstateHandler);
     };
 
