@@ -256,8 +256,8 @@ class Tournament {
 			const room = this.rooms.findRoom(roomData.roomId);
 
 			// Vérifier les connexions des joueurs
-			const p1Connected = roomData.player1 && roomData.player1._conection && roomData.player1._conection.readyState === 1;
-			const p2Connected = roomData.player2 && roomData.player2._conection && roomData.player2._conection.readyState === 1;
+			const p1Connected = roomData.player1 && roomData.player1._conection && roomData.player1._conection.readyState === 1 && this.clients.find(c => c._clientId === roomData.player1._clientId && c.isActive === true);
+			const p2Connected = roomData.player2 && roomData.player2._conection && roomData.player2._conection.readyState === 1 && this.clients.find(c => c._clientId === roomData.player2._clientId && c.isActive === true);
 
 			let winner;
 
@@ -403,8 +403,8 @@ class Tournament {
 			const room = this.rooms.findRoom(roomData.roomId);
 
 			// Vérifier les connexions des joueurs
-			const p1Connected = roomData.player1 && roomData.player1._conection && roomData.player1._conection.readyState === 1;
-			const p2Connected = roomData.player2 && roomData.player2._conection && roomData.player2._conection.readyState === 1;
+            const p1Connected = roomData.player1 && roomData.player1._conection && roomData.player1._conection.readyState === 1 && this.clients.find(c => c._clientId === roomData.player1._clientId && c.isActive === true);
+            const p2Connected = roomData.player2 && roomData.player2._conection && roomData.player2._conection.readyState === 1 && this.clients.find(c => c._clientId === roomData.player2._clientId && c.isActive === true);
 
 			let winner;
 
@@ -544,8 +544,8 @@ class Tournament {
 			const room = this.rooms.findRoom(finalRoomData.roomId);
 
 			// Vérifier les connexions des joueurs
-			const p1Connected = finalRoomData.player1 && finalRoomData.player1._conection && finalRoomData.player1._conection.readyState === 1;
-			const p2Connected = finalRoomData.player2 && finalRoomData.player2._conection && finalRoomData.player2._conection.readyState === 1;
+            const p1Connected = finalRoomData.player1 && finalRoomData.player1._conection && finalRoomData.player1._conection.readyState === 1 && this.clients.find(c => c._clientId === finalRoomData.player1._clientId && c.isActive === true);
+            const p2Connected = finalRoomData.player2 && finalRoomData.player2._conection && finalRoomData.player2._conection.readyState === 1 && this.clients.find(c => c._clientId === finalRoomData.player2._clientId && c.isActive === true);
 
 			let champion;
 
@@ -688,6 +688,7 @@ class Tournament {
 		if (idx !== -1) {
 			const disconnectedClient = this.clients[idx];
 			disconnectedClient.isActive = false;
+            // disconnectedClient._connected = false;
 			return true;
 		}
 		return false;

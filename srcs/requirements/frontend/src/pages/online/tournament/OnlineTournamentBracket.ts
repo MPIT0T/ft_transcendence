@@ -256,10 +256,10 @@ export const OnlineTournamentBracket: Page = {
       if (ws)
         ws.send(JSON.stringify(payLoad));
 
-      if (sessionStorage.getItem('gamestate') === 'playing-game') {
-        if (ws)
-          ws.close();
-      }
+      // if (sessionStorage.getItem('gamestate') === 'playing-game') {
+      //   if (ws)
+      //     ws.close();
+      // }
 
       sessionStorage.removeItem('tournamentName');
       sessionStorage.removeItem('tournamentId');
@@ -272,6 +272,7 @@ export const OnlineTournamentBracket: Page = {
     };
 
     if (ws) {
+      window.addEventListener('popstate', popstateHandler);
       ws.onmessage = message => {
 
         const response = JSON.parse(message.data);
@@ -573,6 +574,5 @@ export const OnlineTournamentBracket: Page = {
         window.dispatchEvent(new PopStateEvent('popstate'));
       });
     }
-    window.addEventListener('popstate', popstateHandler);
   }
 };

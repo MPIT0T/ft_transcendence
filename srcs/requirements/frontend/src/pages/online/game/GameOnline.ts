@@ -393,14 +393,10 @@ export const GameOnline: Page = {
         }
       }
     } else {
-      // countdown.abort();
-      // window.removeEventListener('popstate', popstateHandler);
       const p = '/game-room';
       history.replaceState(null, '', p);
       window.dispatchEvent(new PopStateEvent('popstate'));
       sessionStorage.removeItem('roomId');
     }
-
-    // window.addEventListener('popstate', popstateHandler);
   }
 }
