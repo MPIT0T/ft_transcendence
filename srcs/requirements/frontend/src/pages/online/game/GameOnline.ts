@@ -126,7 +126,6 @@ export const GameOnline: Page = {
     const popstateHandler = (event: PopStateEvent) => {
       _restoreLoginBtn();
       const path = window.location.pathname.toLowerCase();
-      console.log(path);
       const payLoad = {
         "method": "leave",
         "clientId": clientId
@@ -283,7 +282,7 @@ export const GameOnline: Page = {
               player1AvatarEl.src = data.avatar || 'anonymous.png';
             })
             .catch(err => {
-              const msg = err?.error || 'Impossible de recevoir l\'avatar du joueur';
+              const msg = err?.error || t('notifications.cannotGetAvatar');
               Layout.showNotification(msg, 'error');
             });
             fetch('/user/api/get-avatar', {
@@ -301,7 +300,7 @@ export const GameOnline: Page = {
               player2AvatarEl.src = data.avatar || 'anonymous.png';
             })
             .catch(err => {
-              const msg = err?.error || 'Impossible de recevoir l\'avatar du joueur';
+              const msg = err?.error || t('notifications.cannotGetAvatar');
               Layout.showNotification(msg, 'error');
             });
             player1EloEl.textContent = response.room.clients[0].elo;
@@ -358,7 +357,7 @@ export const GameOnline: Page = {
             try {
               countdown.abort();
             } catch (e: any) {
-              console.log(e.message);
+              console.error(e.message);
             }
             const winnerModal = root.querySelector('#winner-modal') as HTMLElement;
             const winnerText = root.querySelector('#winner-text') as HTMLElement;

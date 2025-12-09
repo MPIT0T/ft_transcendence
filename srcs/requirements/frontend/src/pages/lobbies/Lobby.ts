@@ -116,8 +116,10 @@ export const Lobby: Page = {
 		if (localBtn) {
 			localBtn.addEventListener('click', () => {
 				const p = '/local-lobby';
-				history.pushState(null, '', p);
-				window.dispatchEvent(new PopStateEvent('popstate'));
+				if (window.location.pathname !== p) {
+					history.pushState(null, '', p);
+					window.dispatchEvent(new PopStateEvent('popstate'));
+				}
 			});
 		}
 
@@ -126,8 +128,10 @@ export const Lobby: Page = {
 		if (onlineBtn) {
 			onlineBtn.addEventListener('click', () => {
 				const p = '/online-lobby';
-				history.pushState(null, '', p);
-				window.dispatchEvent(new PopStateEvent('popstate'));
+				if (window.location.pathname !== p) {
+					history.pushState(null, '', p);
+					window.dispatchEvent(new PopStateEvent('popstate'));
+				}
 			});
 		}
 

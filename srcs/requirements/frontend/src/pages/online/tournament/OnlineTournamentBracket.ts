@@ -334,14 +334,14 @@ export const OnlineTournamentBracket: Page = {
         if (response.method === "tournamentState") {
           const allMatches = response.allMatches;
 
-          let currentRound = 'Quarts de Finale';
+          let currentRound = t('tournamentOnline.quarterFinal');
           const hasCompletedQuarters = allMatches.filter((m: any) => m.round === 'Quarter Finals' && m.status === 'completed').length;
           const hasCompletedSemis = allMatches.filter((m: any) => m.round === 'Semi Finals' && m.status === 'completed').length;
 
           if (hasCompletedSemis === 2) {
-            currentRound = 'Finale';
+            currentRound = t('tournamentOnline.final');
           } else if (hasCompletedQuarters === 4) {
-            currentRound = 'Semi-Finales';
+            currentRound = t('tournamentOnline.semiFinal');
           }
 
           if (tournamentNameEl) {
@@ -530,7 +530,7 @@ export const OnlineTournamentBracket: Page = {
             avatar = data.avatar;
             if (winnerProfilePicEl) winnerProfilePicEl.src = avatar;
           }).catch(err => {
-            const msg = err?.error || 'Impossible de recevoir l\'avatar du joueur';
+            const msg = err?.error || t('notifications.cannotGetAvatar');
             Layout.showNotification(msg, 'error');
           });
 
@@ -543,7 +543,7 @@ export const OnlineTournamentBracket: Page = {
       }
     } else {
       window.removeEventListener('popstate', popstateHandler);
-      const p = '/';
+      const p = '/tournament-room';
       history.replaceState(null, '', p);
       window.dispatchEvent(new PopStateEvent('popstate'));
     }

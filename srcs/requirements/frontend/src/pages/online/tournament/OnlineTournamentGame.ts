@@ -180,7 +180,7 @@ export const OnlineTournamentGame: Page = {
         player1AvatarEl.src = data.avatar || 'anonymous.png';
       })
       .catch(err => {
-        const msg = err?.error || 'Impossible de recevoir l\'avatar du joueur';
+        const msg = err?.error || t('notifications.cannotGetAvatar');
         Layout.showNotification(msg, 'error');
       });
     fetch('/user/api/get-avatar', {
@@ -198,7 +198,7 @@ export const OnlineTournamentGame: Page = {
         player2AvatarEl.src = data.avatar || 'anonymous.png';
       })
       .catch(err => {
-        const msg = err?.error || 'Impossible de recevoir l\'avatar du joueur';
+        const msg = err?.error || t('notifications.cannotGetAvatar');
         Layout.showNotification(msg, 'error');
       });
     currentGame = new GameComponentOnline(

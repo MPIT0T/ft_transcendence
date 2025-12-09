@@ -235,8 +235,10 @@ export const Home: Page = {
 		if (gameBtn) {
 			gameBtn.addEventListener('click', () => {
 				const p = '/game-lobby';
-				history.pushState(null, '', p);
-				window.dispatchEvent(new PopStateEvent('popstate'));
+				if (window.location.pathname !== p) {
+					history.pushState(null, '', p);
+					window.dispatchEvent(new PopStateEvent('popstate'));
+				}
 			})
 		}
 
@@ -244,8 +246,11 @@ export const Home: Page = {
 		const statsBtn = root.querySelector('#stats-btn') as HTMLButtonElement;
 		if (statsBtn) {
 			statsBtn.addEventListener('click', () => {
-				window.history.pushState({}, "", 'stats');
-				window.dispatchEvent(new PopStateEvent('popstate'));
+				const p = '/stats';
+				if (window.location.pathname !== p) {
+					window.history.pushState({}, "", p);
+					window.dispatchEvent(new PopStateEvent('popstate'));
+				}
 			});
 		}
 

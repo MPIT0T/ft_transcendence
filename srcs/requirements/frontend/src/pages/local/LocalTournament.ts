@@ -110,10 +110,10 @@ function generateNextRound() {
  */
 // Always 8 players: 4 matches = Quarts, 2 matches = Semis, 1 match = Finale
 function getRoundName(matchCount: number): string {
-	if (matchCount === 1) return 'Finale';
-	if (matchCount === 2) return 'Demi-finale';
-	if (matchCount === 4) return 'Quart de finale';
-	return `Tour`;
+	if (matchCount === 1) return t('tournamentLocal.final');
+	if (matchCount === 2) return t('tournamentLocal.semiFinal');
+	if (matchCount === 4) return t('tournamentLocal.quarterFinal');
+	return t('tournamentLocal.round');
 }
 
 /**
@@ -325,14 +325,14 @@ export const LocalTournament: Page = {
 			<div class="absolute inset-0 bg-gradient-to-r from-amber-400 via-lime-500 to-green-500 bg-[length:150%_150%] animate-gradientShift opacity-30"></div>
 			<div class="relative z-10">
 				<div class="flex items-center px-6 pt-2">
-					<span id="player1-name" class="font-semibold text-4xl flex-1 text-left text-white">Joueur 1</span>
+					<span id="player1-name" class="font-semibold text-4xl flex-1 text-left text-white" data-i18n="tournamentLocal.player1">Joueur 1</span>
 					<span id="score" class="text-4xl font-extrabold tracking-wide">0 : 0</span>
-					<span id="player2-name" class="font-semibold text-4xl flex-1 text-right text-white">Joueur 2</span>
+					<span id="player2-name" class="font-semibold text-4xl flex-1 text-right text-white" data-i18n="tournamentLocal.player2">Joueur 2</span>
 				</div>
 				<div class="flex items-center justify-between px-6 pb-2 text-sm opacity-90">
 					<span class="flex-1 text-left text-gray-400">W / S</span>
 					<span>
-            <span id="winning-score-info" class="text-gray-400">Premier à</span>
+            <span id="winning-score-info" class="text-gray-400" data-i18n="tournamentLocal.firstTo">Premier à</span>
             <span id="winning-score-display" class="text-yellow-400 font-bold">5</span>
           </span>
 					<span class="flex-1 text-right text-gray-400">↑ / ↓</span>
@@ -593,7 +593,7 @@ export const LocalTournament: Page = {
 		// ============================================
 		const updatePlayersList = () => {
 			if (tournamentPlayers.length === 0) {
-				playersList.innerHTML = '<p class="text-gray-500 text-center py-4 italic">Aucun joueur inscrit</p>';
+				playersList.innerHTML = `<p class="text-gray-500 text-center py-4 italic">${t('tournamentLocal.noPlayersRegistered')}</p>`;
 			} else {
 				playersList.innerHTML = tournamentPlayers.map((player, index) => `
 					<div class="flex items-center justify-between px-3 py-2 border border-gray-600 hover:border-gray-400 transition-colors group">
@@ -601,7 +601,7 @@ export const LocalTournament: Page = {
 							<span class="text-gray-500 mr-2">${index + 1}.</span>
 							${player}
 						</span>
-						<button class="remove-player-btn text-gray-500 hover:text-red-400 px-2 opacity-50 group-hover:opacity-100 transition-opacity" data-player="${player}" title="Retirer">✕</button>
+						<button class="remove-player-btn text-gray-500 hover:text-red-400 px-2 opacity-50 group-hover:opacity-100 transition-opacity" data-player="${player}" title="${t('tournamentLocal.removePlayer')}">✕</button>
 					</div>
 				`).join('');
 
@@ -611,7 +611,7 @@ export const LocalTournament: Page = {
 						if (name) {
 							tournamentPlayers = tournamentPlayers.filter(p => p !== name);
 							updatePlayersList();
-							Layout.showNotification(`${name} retiré du tournoi`, 'info');
+							Layout.showNotification(t('tournamentLocal.playerRemoved', { name }), 'info');
 						}
 					});
 				});
@@ -668,7 +668,7 @@ export const LocalTournament: Page = {
 			playerInput.value = '';
 			playerInput.focus();
 			updatePlayersList();
-			Layout.showNotification(`${name} ajouté au tournoi !`, 'success');
+			Layout.showNotification(t('tournamentLocal.playerAdded', { name }), 'success');
 		};
 
 		// ============================================

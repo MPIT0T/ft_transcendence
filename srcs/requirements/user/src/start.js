@@ -22,7 +22,7 @@ try {
   cert = fs.readFileSync(certPath);
   key = fs.readFileSync(keyPath);
 } catch (e) {
-  console.error('❌ Unable to read TLS cert or key for user service.', e);
+  console.error('Unable to read TLS cert or key for user service.', e);
   process.exit(1);
 }
 
@@ -49,7 +49,7 @@ fastify.register(AutoLoad, {
 });
 
 fastify.listen({ host: serverAddr, port }).then(addr => {
-  console.log(`🚀 User service listening (HTTPS) on ${addr}`);
+  console.log(`User service listening (HTTPS) on ${addr}`);
 }).catch(err => {
   fastify.log.error(err);
   process.exit(1);

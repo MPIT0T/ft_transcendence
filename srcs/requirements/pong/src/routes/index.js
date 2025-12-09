@@ -190,7 +190,7 @@ async function getDbId(username, token) {
 		const bodyText = await res.text().catch(() => '');
 
 		if (!res.ok) {
-			console.log('getDbId - error response:', {
+			console.error('getDbId - error response:', {
 				status: res.status,
 				statusText: res.statusText,
 				body: bodyText,
@@ -201,11 +201,11 @@ async function getDbId(username, token) {
 				const parsed = JSON.parse(bodyText);
 				dbId = parsed.id || parsed.dbId || parsed.userId || null;
 			} catch (parseErr) {
-				console.log('getDbId - JSON parse error:', parseErr);
+				console.error('getDbId - JSON parse error:', parseErr);
 			}
 		}
 	} catch (err) {
-		console.log('getDbId - fetch error:', err);
+		console.error('getDbId - fetch error:', err);
 	}
 
 	return dbId;
@@ -261,7 +261,7 @@ async function handleGetFriends(socket, data) {
 		const bodyText = await res.text().catch(() => '');
 
 		if (!res.ok) {
-			console.log('handleGetFriends - error response:', {
+			console.error('handleGetFriends - error response:', {
 				status: res.status,
 				statusText: res.statusText,
 				body: bodyText,
@@ -270,16 +270,15 @@ async function handleGetFriends(socket, data) {
 		} else {
 			try {
 				const parsed = JSON.parse(bodyText);
-				// parsed.friends = [{ username: "Max" }, ...]
 				if (Array.isArray(parsed.friends)) {
 					friendsList = parsed.friends.map(f => f.username);
 				}
 			} catch (parseErr) {
-				// console.log('handleGetFriends - JSON parse error:', parseErr);
+				console.error('handleGetFriends - JSON parse error:', parseErr);
 			}
 		}
 	} catch (err) {
-		console.log('handleGetFriends - fetch error:', err);
+		console.error('handleGetFriends - fetch error:', err);
 	}
 
 	const onlineFriends = Object.values(g_Games._clients._clients)

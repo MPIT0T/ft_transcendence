@@ -144,6 +144,16 @@ export async function applyTranslations(root: HTMLElement | Document = document)
       el.placeholder = translation;
     }
   });
+  
+  // Also handle data-i18n-title for input validation title translations
+  root.querySelectorAll<HTMLInputElement>('[data-i18n-title]').forEach(el => {
+    const key = el.dataset.i18nTitle;
+    if (!key) return;
+    const translation = translations[key];
+    if (translation) {
+      el.title = translation;
+    }
+  });
 }
 
 /**

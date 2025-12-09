@@ -108,8 +108,10 @@ export const OnlineLobby: Page = {
     if (gameOnlineBtn) {
       gameOnlineBtn.addEventListener('click', (e) => {
         const p = '/game-room';
-        history.pushState(null, '', p);
-        window.dispatchEvent(new PopStateEvent('popstate'));
+        if (window.location.pathname !== p) {
+          history.pushState(null, '', p);
+          window.dispatchEvent(new PopStateEvent('popstate'));
+        }
       });
     }
 
@@ -117,8 +119,10 @@ export const OnlineLobby: Page = {
     if (tournamentOnlineBtn) {
       tournamentOnlineBtn.addEventListener('click', (e) => {
         const p = '/tournament-room';
-        history.pushState(null, '', p);
-        window.dispatchEvent(new PopStateEvent('popstate'));
+        if (window.location.pathname !== p) {
+          history.pushState(null, '', p);
+          window.dispatchEvent(new PopStateEvent('popstate'));
+        }
       });
     }
 

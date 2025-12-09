@@ -36,29 +36,24 @@ class Tournaments {
 			if (tournament.state === "waiting") {
 				const removed = tournament.leave(clientId);
 				if (removed) {
-					console.log(`Client ${clientId} retiré du tournoi ${tournamentId}`);
 					tournament.playerR -= 1;
 					// Si le tournoi est vide, le supprimer
 					if (tournament.clients.length === 0) {
 						delete this._tournaments[tournamentId];
-						console.log(`Tournoi ${tournamentId} supprimé (aucun client restant)`);
 					}
 				}
 			}
 			// Si le tournoi est déjà lancé (playing-tournament), ne rien faire
 			else if (tournament.state === "playing-tournament") {
 				tournament.disconnect(clientId);
-				console.log(`Client ${clientId} ne peut pas être retiré du tournoi ${tournamentId} (partie en cours)`);
 				
 			}
 			else if (tournament.state === "finished") {
 				const removed = tournament.remove(clientId);
 				if (removed) {
-					console.log(`Client ${clientId} retiré du tournoi ${tournamentId}`);
 					tournament.playerR -= 1;
 					if (tournament.clients.length === 0) {
 						delete this._tournaments[tournamentId];
-						console.log(`Tournoi ${tournamentId} supprimé (aucun client restant)`);
 					}
 				}
 			}

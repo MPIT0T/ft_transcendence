@@ -151,7 +151,7 @@ export const OnlineTournamentRoom: Page = {
 						placeholder="Enter Tournament name"
 						data-i18n-placeholder="tournament.namePlaceholder"
 						pattern="^[a-zA-Z0-9]{3,12}$"
-                 		title="Le nom doit contenir uniquement des lettres et chiffres (3-12 caractères)"
+                 		data-i18n-title="layout.usernameTitle"
 						required
 					>
 				</div>
@@ -236,7 +236,7 @@ export const OnlineTournamentRoom: Page = {
 							sessionStorage.setItem('tournamentName', tournamentName);
 						}
 						const p = response.url;
-						history.pushState(null, '', p);
+						history.replaceState(null, '', p);
 						window.dispatchEvent(new PopStateEvent('popstate'));
 					} else {
 						alert(response.message);

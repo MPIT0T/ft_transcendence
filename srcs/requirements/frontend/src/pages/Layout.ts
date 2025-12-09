@@ -197,7 +197,7 @@ export const Layout = {
                   placeholder="Enter your username"
                   data-i18n-placeholder="layout.usernamePlaceholder"
                   pattern="^[a-zA-Z0-9]{3,12}$"
-                  title="Le nom doit contenir uniquement des lettres et chiffres (3-12 caractères)"
+                  data-i18n-title="layout.usernameTitle"
                   required
                 >
               </div>
@@ -211,7 +211,7 @@ export const Layout = {
                   placeholder="Enter your password"
                   data-i18n-placeholder="layout.passwordPlaceholder"
                   pattern="^(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d]{6,18}$"
-                  title="Le mot de passe doit contenir 6-18 caractères, au moins 1 majuscule et 1 chiffre"
+                  data-i18n-title="layout.passwordTitle"
                   required
                 >
               </div>
@@ -272,7 +272,7 @@ export const Layout = {
                   placeholder="Choose a username"
                   data-i18n-placeholder="layout.chooseUsername"
                   pattern="^[a-zA-Z0-9]{3,12}$"
-                  title="Le nom doit contenir uniquement des lettres et chiffres (3-12 caractères)"
+                  data-i18n-title="layout.usernameTitle"
                   required
                 >
               </div>
@@ -286,7 +286,7 @@ export const Layout = {
                   placeholder="Create a password"
                   data-i18n-placeholder="layout.createPassword"
                   pattern="^(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d]{6,18}$"
-                  title="Le mot de passe doit contenir 6-18 caractères, au moins 1 majuscule et 1 chiffre"
+                  data-i18n-title="layout.passwordTitle"
                   required
                 >
               </div>
@@ -300,7 +300,7 @@ export const Layout = {
                   placeholder="Confirm your password"
                   data-i18n-placeholder="layout.confirmYourPassword"
                   pattern="^(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d]{6,18}$"
-                  title="Le mot de passe doit contenir 6-18 caractères, au moins 1 majuscule et 1 chiffre"
+                  data-i18n-title="layout.passwordTitle"
                   required
                 >
               </div>
@@ -400,8 +400,10 @@ export const Layout = {
     if (homeBtn) {
       homeBtn.addEventListener('click', () => {
         const p = '/';
-        history.pushState(null, '', p);
-        window.dispatchEvent(new PopStateEvent('popstate'));
+        if (window.location.pathname !== p) {
+          history.pushState(null, '', p);
+          window.dispatchEvent(new PopStateEvent('popstate'));
+        }
       });
     }
 
@@ -409,8 +411,10 @@ export const Layout = {
     if (statsBtn) {
       statsBtn.addEventListener('click', () => {
         const p = '/stats';
-        history.pushState(null, '', p);
-        window.dispatchEvent(new PopStateEvent('popstate'));
+        if (window.location.pathname !== p) {
+          history.pushState(null, '', p);
+          window.dispatchEvent(new PopStateEvent('popstate'));
+        }
       });
     }
 
@@ -418,8 +422,10 @@ export const Layout = {
     if (gameBtn) {
       gameBtn.addEventListener('click', () => {
         const p = '/game-lobby';
-        history.pushState(null, '', p);
-        window.dispatchEvent(new PopStateEvent('popstate'));
+        if (window.location.pathname !== p) {
+          history.pushState(null, '', p);
+          window.dispatchEvent(new PopStateEvent('popstate'));
+        }
       });
     }
 
@@ -531,8 +537,10 @@ export const Layout = {
    */
   redirectIfNotLoggedIn(redirectTo = '/', triedTo: boolean = false): void {
     if (!Layout.isLoggedIn()) {
-      history.pushState(null, '', redirectTo);
-      window.dispatchEvent(new PopStateEvent('popstate'));
+      if (window.location.pathname !== redirectTo) {
+        history.pushState(null, '', redirectTo);
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      }
       if (triedTo) Layout.showNotification(t('layout.loginToAccess'), 'error');
     }
   },
@@ -633,8 +641,10 @@ export const Layout = {
 
     if (isLoggedIn) {
       const p = '/stats';
-      history.pushState(null, '', p);
-      window.dispatchEvent(new PopStateEvent('popstate'));
+      if (window.location.pathname !== p) {
+        history.pushState(null, '', p);
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      }
     } else {
       // Open login modal
       const loginModal = root.querySelector('#login-modal') as HTMLDivElement;
@@ -710,8 +720,6 @@ export const Layout = {
       this.showNotification(t('notifications.passwordMismatch'), 'error');
       return;
     }
-
-    console.log('📝 Register attempt:', { username });
 
     // Simulate register API call
     let stayInModale = false;

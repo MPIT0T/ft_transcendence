@@ -47,5 +47,5 @@ fastify.register(fastifyStatic, {
 });
 
 fastify.listen({ host: serverAddr, port }).then(addr => {
-  console.log(`🚀 API service listening (HTTPS) on ${addr}`);
+  console.log(`API service listening (HTTPS) on ${addr}`);
 }).catch(err => { fastify.log.error(err); process.exit(1); });

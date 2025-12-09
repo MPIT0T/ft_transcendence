@@ -479,7 +479,7 @@ const Stats: StatsPage = {
           indicatorEl.textContent = data.elo?.toFixed(0).toString() ?? '?';
         })
         .catch(err => {
-          const msg = err?.error || 'Impossible de recevoir l\'elo du joueur';
+          const msg = err?.error || t('notifications.cannotGetElo');
           Layout.showNotification(msg, 'error');
         });
     };
@@ -624,7 +624,7 @@ const Stats: StatsPage = {
           wrStat.textContent = wr.toFixed(2) + '%';
         })
         .catch(err => {
-          const msg = err?.error || 'Impossible de recevoir l\'historique des matches';
+          const msg = err?.error || t('notifications.cannotGetHistory');
           Layout.showNotification(msg, 'error');
         });
     }
@@ -779,7 +779,6 @@ const Stats: StatsPage = {
           if (!file) return;
 
           // Validate file type
-          console.log('file type is: ' + file.type);
           if (!file.type.match(/^image\/(png|jpeg|gif)$/)) {
             Layout.showNotification(t('notifications.onlyPngJpgGif'), 'error');
             return;
@@ -1110,9 +1109,6 @@ const Stats: StatsPage = {
         data = text;
       }
 
-      console.log('Response status:', res.status);
-      console.log('Response data:', data);
-
       if (!res.ok) {
         return Promise.reject(data);
       }
@@ -1183,7 +1179,7 @@ const Stats: StatsPage = {
         });
       })
       .catch(err => {
-        const msg = err.error || 'Impossible de recevoir les requetes d\'amis';
+        const msg = err.error || t('notifications.cannotGetFriends');
         Layout.showNotification(msg, 'error');
       });
   },

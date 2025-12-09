@@ -307,10 +307,10 @@ class Room {
 			});
 			if (!res.ok) {
 				const bodyText = await res.text().catch(() => '');
-				console.log('sendGameEnd - failed posting game result:', res.status, res.statusText, bodyText);
+				console.error('sendGameEnd - failed posting game result:', res.status, res.statusText, bodyText);
 			}
 		} catch (err) {
-			console.log('sendGameEnd - fetch error:', err);
+			console.error('sendGameEnd - fetch error:', err);
 		}
 	}
 

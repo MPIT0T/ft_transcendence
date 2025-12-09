@@ -154,7 +154,7 @@ async function getDbId(username, token) {
 		const bodyText = await res.text().catch(() => '');
 
 		if (!res.ok) {
-			console.log('getDbId - error response:', {
+			console.error('getDbId - error response:', {
 				status: res.status,
 				statusText: res.statusText,
 				body: bodyText,
@@ -165,11 +165,11 @@ async function getDbId(username, token) {
 				const parsed = JSON.parse(bodyText);
 				dbId = parsed.id || parsed.dbId || parsed.userId || null;
 			} catch (parseErr) {
-				console.log('getDbId - JSON parse error:', parseErr);
+				console.error('getDbId - JSON parse error:', parseErr);
 			}
 		}
 	} catch (err) {
-		console.log('getDbId - fetch error:', err);
+		console.error('getDbId - fetch error:', err);
 	}
 
 	return dbId;

@@ -106,8 +106,10 @@ export const LocalLobby: Page = {
     if (gameLocalBtn) {
       gameLocalBtn.addEventListener('click', (e) => {
         const p = '/game';
-        history.pushState(null, '', p);
-        window.dispatchEvent(new PopStateEvent('popstate'));
+        if (window.location.pathname !== p) {
+          history.pushState(null, '', p);
+          window.dispatchEvent(new PopStateEvent('popstate'));
+        }
       });
     }
 
@@ -115,8 +117,10 @@ export const LocalLobby: Page = {
     if (tournamentLocalBtn) {
       tournamentLocalBtn.addEventListener('click', (e) => {
         const p = '/local-tournament';
-        history.pushState(null, '', p);
-        window.dispatchEvent(new PopStateEvent('popstate'));
+        if (window.location.pathname !== p) {
+          history.pushState(null, '', p);
+          window.dispatchEvent(new PopStateEvent('popstate'));
+        }
       });
     }
   }

@@ -13,13 +13,13 @@ const { spawn } = require('child_process');
 const serverAddr = process.env.SERVER_ADDR || '0.0.0.0';
 const port = process.env.SERVER_PORT || '3000';
 
-console.log(`🔥 Starting DEV server on ${serverAddr}:${port}`);
-console.log(`📁 Using .env file: ${envPath}`);
+console.log(`Starting DEV server on ${serverAddr}:${port}`);
+console.log(`Using .env file: ${envPath}`);
 
 // Start the fastify server in development mode with watch
 const args = ['start', '-w', '-l', 'info', '-P', '-a', serverAddr, '-p', port, 'app.js'];
 
-console.log(`🔧 Running: fastify ${args.join(' ')}`);
+console.log(`Running: fastify ${args.join(' ')}`);
 
 const child = spawn('npx', ['fastify', ...args], {
   stdio: 'inherit',
@@ -28,11 +28,11 @@ const child = spawn('npx', ['fastify', ...args], {
 });
 
 child.on('error', (err) => {
-  console.error('❌ Failed to start dev server:', err);
+  console.error('Failed to start dev server:', err);
   process.exit(1);
 });
 
 child.on('close', (code) => {
-  console.log(`📴 Dev server stopped with code: ${code}`);
+  console.log(`Dev server stopped with code: ${code}`);
   process.exit(code);
 });

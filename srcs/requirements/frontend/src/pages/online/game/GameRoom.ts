@@ -268,7 +268,7 @@ export const GameRoom: Page = {
 						placeholder="Enter room name"
 						data-i18n-placeholder="room.roomNamePlaceholder"
 						pattern="^[a-zA-Z0-9]{3,12}$"
-                  		title="Le nom doit contenir uniquement des lettres et chiffres (3-12 caractères)"
+                  		data-i18n-title="layout.usernameTitle"
 						required
 					>
 					<p id="room-name-error" class="text-red-500 text-sm mt-1 hidden" data-i18n="room.roomNameError">Le nom contient des caractères non autorisés</p>
@@ -407,7 +407,7 @@ export const GameRoom: Page = {
 						}
 
 						const p = response.url;
-						history.pushState(null, '', p);
+						history.replaceState(null, '', p);
 						window.dispatchEvent(new PopStateEvent('popstate'));
 					} else {
 						const matchmakingModal = root.querySelector('#matchmaking-modal') as HTMLDivElement;

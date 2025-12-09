@@ -17,7 +17,7 @@ try {
   cert = fs.readFileSync('/run/secrets/tournament_cert');
   key = fs.readFileSync('/run/secrets/tournament_key');
 } catch (e) {
-  console.error('❌ Unable to read TLS cert/key for tournament service.', e);
+  console.error('Unable to read TLS cert/key for tournament service.', e);
   process.exit(1);
 }
 
@@ -34,5 +34,5 @@ fastify.register(AutoLoad, { dir: path.join(__dirname, 'plugins') });
 fastify.register(AutoLoad, { dir: path.join(__dirname, 'routes') });
 
 fastify.listen({ host: serverAddr, port }).then(addr => {
-  console.log(`🚀 Tournament service listening (HTTPS) on ${addr}`);
+  console.log(`Tournament service listening (HTTPS) on ${addr}`);
 }).catch(err => { fastify.log.error(err); process.exit(1); });

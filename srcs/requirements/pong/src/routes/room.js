@@ -124,7 +124,7 @@ class Room {
 			const bodyText = await res.text().catch(() => '');
 
 			if (!res.ok) {
-				console.log('updatePlayerR - get-elo-server error:', res.status, res.statusText, bodyText);
+				console.error('updatePlayerR - get-elo-server error:', res.status, res.statusText, bodyText);
 			} else {
 				try {
 					const data = JSON.parse(bodyText);
@@ -135,13 +135,12 @@ class Room {
 						if (this.clients[0]) this.clients[0]._elo = Number(data.elo1.toFixed(0));
 						if (this.clients[1]) this.clients[1]._elo = Number(data.elo2.toFixed(0));
 					}
-					console.log('Elos assigned:', this.clients[0]?._elo, this.clients[1]?._elo);
 				} catch (parseErr) {
-					console.log('updatePlayerR - JSON parse error:', parseErr);
+					console.error('updatePlayerR - JSON parse error:', parseErr);
 				}
 			}
 		} catch (err) {
-			console.log('updatePlayerR - fetch error:', err);
+			console.error('updatePlayerR - fetch error:', err);
 		}
 	}
 
@@ -370,10 +369,10 @@ class Room {
 			});
 			if (!res.ok) {
 				const bodyText = await res.text().catch(() => '');
-				console.log('sendGameEnd - failed posting game result:', res.status, res.statusText, bodyText);
+				console.error('sendGameEnd - failed posting game result:', res.status, res.statusText, bodyText);
 			}
 		} catch (err) {
-			console.log('sendGameEnd - fetch error:', err);
+			console.error('sendGameEnd - fetch error:', err);
 		}
 
 		await sleep(3000);
