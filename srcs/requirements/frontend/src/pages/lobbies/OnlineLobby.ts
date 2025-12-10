@@ -154,9 +154,9 @@ export const OnlineLobby: Page = {
           await fetch("/tournament/status");
           const endTournament = Date.now();
           const latencyAvg = (endPong - startPong + endTournament - startTournament) / 2;
-          ping.textContent = `${latencyAvg}`;
+          if (ping) ping.textContent = `${latencyAvg}`;
         } catch (error) {
-          ping.textContent = `?`;
+          if (ping) ping.textContent = `?`;
         }
       }, 5000);
     }
