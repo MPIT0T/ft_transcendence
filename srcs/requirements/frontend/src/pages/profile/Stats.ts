@@ -237,12 +237,12 @@ const Stats: StatsPage = {
         </div>
         
         <div class="mb-4 flex items-center justify-between">
-          <div class="relative w-60">
+          <div class="relative w-80">
           <div id="friends-tab-indicator" class="absolute top-0 left-0 h-full w-1/3 bg-gray-700 transition-transform duration-200" style="transform: translateX(0%);"></div>
           <div class="relative z-10 flex">
-            <button id="friends-online-tab" class="flex-1 px-3 py-2 text-sm hover:bg-gray-700/50 text-white text-center" data-i18n="friends.online">Online</button>
-            <button id="friends-offline-tab" class="flex-1 px-3 py-2 text-sm hover:bg-gray-700/50 text-white text-center" data-i18n="friends.offline">Offline</button>
-            <button id="friends-request-tab" class="flex-1 px-3 py-2 text-sm hover:bg-gray-700/50 text-white text-center" data-i18n="friends.requests">Request</button>
+            <button id="friends-online-tab" class="flex-1 px-4 py-2 text-base hover:bg-gray-700/50 text-white text-center whitespace-nowrap" data-i18n="friends.online">Online</button>
+            <button id="friends-offline-tab" class="flex-1 px-4 py-2 text-base hover:bg-gray-700/50 text-white text-center whitespace-nowrap" data-i18n="friends.offline">Offline</button>
+            <button id="friends-request-tab" class="flex-1 px-4 py-2 text-base hover:bg-gray-700/50 text-white text-center whitespace-nowrap" data-i18n="friends.requests">Request</button>
           </div>
           </div>
         </div>
