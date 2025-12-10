@@ -1,10 +1,8 @@
-include srcs/.env
-
 SECRETS_DIR = secrets
 SECRETS_FILES = ssl_certificate ssl_certificate_key jwt_secret_key server_call_key
 SECRETS = ${addprefix ${SECRETS_DIR}/, ${SECRETS_FILES}}
 
-all: dev
+all: prod
 
 %server_call_key:
 	@mkdir -p ${@D}
