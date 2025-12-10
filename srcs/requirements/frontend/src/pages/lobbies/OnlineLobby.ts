@@ -138,9 +138,9 @@ export const OnlineLobby: Page = {
         await fetch("/tournament/status");
         const endTournament = Date.now();
         const latencyAvg = (endPong - startPong + endTournament - startTournament) / 2;
-        ping.textContent = `${latencyAvg}`;
+        if (ping) ping.textContent = `${latencyAvg}`;
       } catch (error) {
-        ping.textContent = `?`;
+        if (ping) ping.textContent = `?`;
       }
     })();
 
@@ -172,8 +172,8 @@ export const OnlineLobby: Page = {
         const responseTournament = await fetch("/tournament/statusPlayer");
         const countP = await responsePong.text();
         const countT = await responseTournament.text();
-        playerGame.textContent = `${countP}`;
-        playerTournament.textContent = `${countT}`;
+        if (playerGame) playerGame.textContent = `${countP}`;
+        if (playerTournament) playerTournament.textContent = `${countT}`;
       } catch (error) {
         playerGame.textContent = `?`;
         playerTournament.textContent = `?`;
@@ -187,11 +187,11 @@ export const OnlineLobby: Page = {
           const responseTournament = await fetch("/tournament/statusPlayer");
           const countP = await responsePong.text();
           const countT = await responseTournament.text();
-          playerGame.textContent = `${countP}`;
-          playerTournament.textContent = `${countT}`;
+          if (playerGame) playerGame.textContent = `${countP}`;
+          if (playerTournament) playerTournament.textContent = `${countT}`;
         } catch (error) {
-          playerGame.textContent = `?`;
-          playerTournament.textContent = `?`;
+          if (playerGame) playerGame.textContent = `?`;
+          if (playerTournament) playerTournament.textContent = `?`;
         }
       }, 5000);
     }
