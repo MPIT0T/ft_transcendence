@@ -54,7 +54,8 @@ const reloadFriends = function (root: HTMLElement) {
 function displayFriends(root: HTMLElement, friends: any[]) {
 
 	const container = root.querySelector('#friends-container') as HTMLDivElement;
-	container.innerHTML = ''; // Vider le container
+
+	if (container) container.innerHTML = ''; // Vider le container
 
 	friends.forEach(friend => {
 		const friendBtn = document.createElement('button');
@@ -109,14 +110,18 @@ function displayRooms(root: HTMLElement, rooms: any[]) {
  * @param root - Root element containing the room creation form
  */
 const createRoom = function (root: HTMLElement): void {
-	const roomName = (root.querySelector('#room-name') as HTMLInputElement).value;
-	const gamePoint = (root.querySelector('#game-point') as HTMLSelectElement).value;
+	const roomName = root.querySelector('#room-name') as HTMLInputElement;
+	const gamePoint = root.querySelector('#game-point') as HTMLSelectElement;
+	let roomNameVal = null;
+	let gamePointVal = null;
 
+	if (roomNameVal) roomNameVal = roomName.value;
+	if (gamePoint) gamePointVal = gamePoint.value;
 	const payLoad = {
 		"method": "createR",
 		"clientId": clientId,
-		"roomName": roomName,
-		"gamePoint": gamePoint,
+		"roomName": roomNameVal,
+		"gamePoint": gamePointVal,
 		"gameMode": "1V1"
 	}
 	if (ws)
@@ -124,8 +129,11 @@ const createRoom = function (root: HTMLElement): void {
 
 	// Close modal
 	const modal = root.querySelector('#create-room-modal') as HTMLDivElement;
-	modal.classList.add('hidden');
-	modal.classList.remove('flex');
+
+	if (modal) {
+		modal.classList.add('hidden');
+		modal.classList.remove('flex');
+	}
 
 	// Reset form
 	(root.querySelector('#create-room-form') as HTMLFormElement).reset();
@@ -549,8 +557,11 @@ export const GameRoom: Page = {
 		if (createRoomBtn) {
 			createRoomBtn.addEventListener('click', () => {
 				const modal = root.querySelector('#create-room-modal') as HTMLDivElement;
-				modal.classList.remove('hidden');
-				modal.classList.add('flex');
+				if (modal)
+				{
+					modal.classList.remove('hidden');
+					modal.classList.add('flex');
+				}
 			});
 		}
 
@@ -567,8 +578,11 @@ export const GameRoom: Page = {
 
 		if (cancelBtn) {
 			cancelBtn.addEventListener('click', () => {
-				modal.classList.add('hidden');
-				modal.classList.remove('flex');
+				if (modal)
+				{
+					modal.classList.add('hidden');
+					modal.classList.remove('flex');
+				}
 			});
 		}
 
