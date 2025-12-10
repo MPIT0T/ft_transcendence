@@ -167,13 +167,16 @@ const Stats: StatsPage = {
         <div class="mb-6">
           <label class="block text-xs text-gray-300 mb-2" data-i18n="stats.username">Username</label>
           <div class="relative">
-            <span
+            <input
               id="change-username"
-              class="flex w-full px-3 py-2 border border-gray-400 text-2xl font-bold text-gray-200 focus:outline-none focus:border-gray-50"
-              contenteditable="false"
-            >
-              ${sessionStorage.getItem('username')}
-            </span>
+              type="text"
+              value="${sessionStorage.getItem('username')}"
+              pattern="^[a-zA-Z0-9]{3,12}$"
+              maxlength="12"
+              minlength="3"
+              class="flex w-full px-3 py-2 border border-gray-400 text-2xl font-bold text-gray-200 bg-transparent focus:outline-none focus:border-gray-50"
+              readonly
+            />
             <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-gray-400" data-i18n="stats.clickToEdit">
               Cliquez pour modifier
             </span>
@@ -479,8 +482,7 @@ const Stats: StatsPage = {
           indicatorEl.textContent = data.elo?.toFixed(0).toString() ?? '?';
         })
         .catch(err => {
-          const msg = err?.error || t('notifications.cannotGetElo');
-          Layout.showNotification(msg, 'error');
+          Layout.showNotification(t('notifications.cannotGetElo'), 'error');
         });
     };
 
@@ -624,16 +626,15 @@ const Stats: StatsPage = {
           wrStat.textContent = wr.toFixed(2) + '%';
         })
         .catch(err => {
-          const msg = err?.error || t('notifications.cannotGetHistory');
-          Layout.showNotification(msg, 'error');
+          Layout.showNotification(t('notifications.cannotGetHistory'), 'error');
         });
     }
 
     //change username
-    const usernameEl = document.getElementById("change-username");
+    const usernameEl = document.getElementById("change-username") as HTMLInputElement;
     if (usernameEl) {
       usernameEl.addEventListener("click", () => {
-        usernameEl.contentEditable = "true";
+        usernameEl.removeAttribute("readonly");
         usernameEl.focus();
       });
       usernameEl.addEventListener("keydown", (e) => {
@@ -644,11 +645,20 @@ const Stats: StatsPage = {
       });
 
       usernameEl.addEventListener("blur", () => {
-        usernameEl.contentEditable = "false";
-        if (!usernameEl.textContent || usernameEl.textContent === '')
-          usernameEl.textContent = sessionStorage.getItem('username');
-        if (usernameEl.textContent && usernameEl.textContent.trim() !== sessionStorage.getItem('username')) {
-          const newUsername = usernameEl.textContent.trim();
+        usernameEl.setAttribute("readonly", "true");
+        const newUsername = usernameEl.value.trim();
+        
+        // Validation du pattern
+        const pattern = /^[a-zA-Z0-9]{3,12}$/;
+        if (!pattern.test(newUsername)) {
+          usernameEl.value = sessionStorage.getItem('username') || '';
+          Layout.showNotification(t('notifications.usernameInvalid'), 'error');
+          return;
+        }
+        
+        if (!newUsername || newUsername === '')
+          usernameEl.value = sessionStorage.getItem('username') || '';
+        if (newUsername && newUsername !== sessionStorage.getItem('username')) {
           fetch('/user/api/change-name', {
             method: 'POST',
             headers: {
@@ -679,12 +689,12 @@ const Stats: StatsPage = {
                 sessionStorage.setItem('username', Layout.getUserInfoFromJwt(data.token).username);
                 Layout.updateUsername();
               }
-              Layout.showNotification(data.message || t('notifications.usernameChanged'), 'success');
+              Layout.showNotification(t('notifications.usernameChanged'), 'success');
             })
             .catch(err => {
               console.error('Fetch error:', err);
-              const msg = (err && (err.error || err.message)) || t('notifications.cannotChangeUsername');
-              Layout.showNotification(msg, 'error');
+              usernameEl.value = sessionStorage.getItem('username') || '';
+              Layout.showNotification(t('notifications.cannotChangeUsername'), 'error');
             });
         }
       });
@@ -743,12 +753,12 @@ const Stats: StatsPage = {
               return data;
             }))
             .then(data => {
-              Layout.showNotification(data.message || t('notifications.passwordChanged'), 'success');
+              Layout.showNotification(t('notifications.passwordChanged'), 'success');
               form.reset();
               pwdModal.classList.add('hidden');
             })
             .catch(err => {
-              const msg = (err && (err.error || err.message)) || t('notifications.cannotChangePassword');
+              const msg = t('notifications.cannotChangePassword');
               Layout.showNotification(msg, 'error');
             });
         });
@@ -811,8 +821,7 @@ const Stats: StatsPage = {
             avatarUploadEl.value = '';
           } catch (err) {
             console.error('Upload error:', err);
-            const msg = err instanceof Error ? err.message : 'Impossible d\'uploader l\'image';
-            Layout.showNotification(msg, 'error');
+            Layout.showNotification(t('notifications.cannotUploadImage'), 'error');
             avatarUploadEl.value = '';
           }
         });
@@ -920,8 +929,7 @@ const Stats: StatsPage = {
         }
       })
       .catch(err => {
-        const msg = err.error || t('notifications.cannotSendInvite');
-        Layout.showNotification(msg, 'error');
+        Layout.showNotification(t('notifications.cannotSendInvite'), 'error');
       });
   },
 
@@ -985,8 +993,7 @@ const Stats: StatsPage = {
         });
       })
       .catch(err => {
-        const msg = err.error || t('notifications.cannotGetFriends');
-        Layout.showNotification(msg, 'error');
+        Layout.showNotification(t('notifications.cannotGetFriends'), 'error');
       });
   },
 
@@ -1012,8 +1019,7 @@ const Stats: StatsPage = {
         Layout.showNotification(t('notifications.friendAccepted', { username }), 'success');
       })
       .catch(err => {
-        const msg = err.error || t('notifications.cannotAcceptFriend', { username });
-        Layout.showNotification(msg, 'error');
+        Layout.showNotification(t('notifications.cannotAcceptFriend', { username }), 'error');
       });
   },
 
@@ -1070,8 +1076,7 @@ const Stats: StatsPage = {
         });
       })
       .catch(err => {
-        const msg = err.error || t('notifications.cannotGetFriends');
-        Layout.showNotification(msg, 'error');
+        Layout.showNotification(t('notifications.cannotGetFriends'), 'error');
       });
   },
 
@@ -1119,12 +1124,11 @@ const Stats: StatsPage = {
         sessionStorage.setItem('token', data.token);
         this.updateAvatar();
       }
-      Layout.showNotification(data.message || t('notifications.avatarChanged'), 'success');
+      Layout.showNotification(t('notifications.avatarChanged'), 'success');
     })
     .catch(err => {
       console.error('Fetch error:', err);
-      const msg = (err && (err.error || err.message)) || t('notifications.cannotChangeAvatar');
-      Layout.showNotification(msg, 'error');
+      Layout.showNotification(t('notifications.cannotChangeAvatar'), 'error');
     });
   },
 
@@ -1179,8 +1183,7 @@ const Stats: StatsPage = {
         });
       })
       .catch(err => {
-        const msg = err.error || t('notifications.cannotGetFriends');
-        Layout.showNotification(msg, 'error');
+        Layout.showNotification(t('notifications.cannotGetFriends'), 'error');
       });
   },
 
@@ -1403,8 +1406,7 @@ const Stats: StatsPage = {
       victorySpan.textContent = t('stats.victoryRate', { percent: (total > 0 ? (victories / total) * 100 : 0).toFixed(2) });
     })
     .catch(err => {
-      const msg = err?.error || t('notifications.cannotGetHistory');
-      Layout.showNotification(msg, 'error');
+      Layout.showNotification(t('notifications.cannotGetHistory'), 'error');
     });
   }
 }

@@ -134,9 +134,24 @@ export const Lobby: Page = {
 				}
 			});
 		}
-
 		let status: ReturnType<typeof setInterval> | undefined;
 		const ping = root.querySelector('#ping') as HTMLButtonElement;
+
+		(async () => {
+			try {
+				const startPong = Date.now();
+				await fetch("/pong/status");
+				const endPong = Date.now();
+				const startTournament = Date.now();
+				await fetch("/tournament/status");
+				const endTournament = Date.now();
+				const latencyAvg = (endPong - startPong + endTournament - startTournament) / 2;
+				ping.textContent = `${latencyAvg}`;
+			} catch (error) {
+				ping.textContent = `?`;
+			}
+		})();
+
 		if(ping){
 			status = setInterval(async () => {
 				try {
@@ -156,6 +171,21 @@ export const Lobby: Page = {
 
 		let statusPlayer: ReturnType<typeof setInterval> | undefined;
 		const player = root.querySelector('#player') as HTMLButtonElement;
+
+		(async () => {
+		
+			try {
+				const responsePong = await fetch("/pong/statusPlayer");
+				const responseTournament = await fetch("/tournament/statusPlayer");
+				const countP = await responsePong.text();
+				const countT = await responseTournament.text();
+				const count: number = parseInt(countP) + parseInt(countT);
+				player.textContent = `${count.toString()}`;
+			} catch (error) {
+				player.textContent = `?`;
+			}
+		})();
+
 		if (player) {
 			statusPlayer = setInterval(async () => {
 				try {

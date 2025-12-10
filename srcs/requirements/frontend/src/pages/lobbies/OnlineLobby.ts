@@ -128,6 +128,22 @@ export const OnlineLobby: Page = {
 
     let status: ReturnType<typeof setInterval> | undefined;
     const ping = root.querySelector('#ping') as HTMLButtonElement;
+
+    (async () => {
+      try {
+        const startPong = Date.now();
+        await fetch("/pong/status");
+        const endPong = Date.now();
+        const startTournament = Date.now();
+        await fetch("/tournament/status");
+        const endTournament = Date.now();
+        const latencyAvg = (endPong - startPong + endTournament - startTournament) / 2;
+        ping.textContent = `${latencyAvg}`;
+      } catch (error) {
+        ping.textContent = `?`;
+      }
+    })();
+
     if(ping){
       status = setInterval(async () => {
         try {
@@ -148,6 +164,22 @@ export const OnlineLobby: Page = {
     let statusPlayer: ReturnType<typeof setInterval> | undefined;
     const playerGame = root.querySelector('#players-online-game') as HTMLButtonElement;
     const playerTournament = root.querySelector('#players-online-tournament') as HTMLButtonElement;
+
+    (async () => {
+		
+      try {
+        const responsePong = await fetch("/pong/statusPlayer");
+        const responseTournament = await fetch("/tournament/statusPlayer");
+        const countP = await responsePong.text();
+        const countT = await responseTournament.text();
+        playerGame.textContent = `${countP}`;
+        playerTournament.textContent = `${countT}`;
+      } catch (error) {
+        playerGame.textContent = `?`;
+        playerTournament.textContent = `?`;
+      }
+		})();
+
     if (playerGame && playerTournament) {
       statusPlayer = setInterval(async () => {
         try {
