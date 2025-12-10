@@ -271,7 +271,9 @@ async function handleGetFriends(socket, data) {
 			try {
 				const parsed = JSON.parse(bodyText);
 				if (Array.isArray(parsed.friends)) {
-					friendsList = parsed.friends.map(f => f.username);
+					friendsList = parsed.friends
+						.filter(f => f && f.username)
+						.map(f => f.username);
 				}
 			} catch (parseErr) {
 				console.error('handleGetFriends - JSON parse error:', parseErr);
