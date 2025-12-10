@@ -9,7 +9,7 @@ import { ws } from "./GameRoom";
 import { sleep } from "../../../utils/sleep"
 import { Layout } from "../../Layout";
 import { t } from "../../../utils/i18n";
-import {createCountdown} from "../../../utils/countdown";
+import { createCountdown } from "../../../utils/countdown";
 
 /** Current game component instance */
 let currentGame: GameComponentOnline | null = null;
@@ -47,7 +47,10 @@ export const GameOnline: Page = {
     </div>
     <div class="flex items-center px-6 pb-2 text-md opacity-90">
       <span id="player-1-elo" class="flex-1 text-left ml-1"></span>
-      <span id="timer">00:00</span>
+      <span>
+        <span id="winning-score-info" data-i18n="game.firstTo">Premier à</span>
+        <span id="winning-score-display" class="text-sky-400 font-bold">?</span>
+      </span>
       <span id="player-2-elo" class="flex-1 text-right"></span>
     </div>
   </div>
@@ -91,7 +94,7 @@ export const GameOnline: Page = {
 </div>
 <div id="start-modal" class="fixed inset-0 flex justify-center items-center z-75 hidden">
   <div id="start-modal-text" class="text-8xl font-bold text-gray-50 mb-4 ml-4 text-center px-16 py-16">
-    - 3 -
+    3
   </div>
 </div>
 `;
@@ -147,13 +150,6 @@ export const GameOnline: Page = {
       currentGame = null;
     }
 
-    // Reset timer
-    if (timerInterval !== null) {
-      clearInterval(timerInterval);
-      timerInterval = null;
-    }
-    elapsedSeconds = 0;
-
     Layout.redirectIfNotLoggedIn('/', true);
 
     let roomId = sessionStorage.getItem('roomId');
@@ -164,7 +160,6 @@ export const GameOnline: Page = {
 
     const gameContainer = root.querySelector('#game-container') as HTMLElement;
     const score = root.querySelector('#score') as HTMLElement;
-    const timerEl = root.querySelector('#timer') as HTMLElement;
     const player1NameEl = root.querySelector('#player-1-name') as HTMLElement;
     const player1AvatarEl = root.querySelector('#player-1-avatar') as HTMLImageElement;
     const player2AvatarEl = root.querySelector('#player-2-avatar') as HTMLImageElement;
@@ -175,22 +170,7 @@ export const GameOnline: Page = {
     const cancelMatchmakingBtn = root.querySelector('#cancel-matchmaking') as HTMLButtonElement;
     const startModal = root.querySelector('#start-modal') as HTMLElement;
     const startModalText = root.querySelector('#start-modal-text') as HTMLElement;
-
-    const formatTime = (s: number) => {
-      const hours = Math.floor(s / 3600);
-      const minutes = Math.floor((s % 3600) / 60);
-      const seconds = s % 60;
-      if (hours > 0) {
-        return `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-      }
-      return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
-    }
-
-    const updateTimerDisplay = () => {
-      if (timerEl) {
-        timerEl.textContent = formatTime(elapsedSeconds);
-      }
-    }
+    const playerWinningScoreDisplay = root.querySelector('#winning-score-display') as HTMLElement;
 
     // Bouton pour quitter le matchmaking
     if (cancelMatchmakingBtn) {
@@ -209,21 +189,6 @@ export const GameOnline: Page = {
 
   });
     }
-
-    const startTimer = () => {
-      if (timerInterval !== null) return;
-      timerInterval = window.setInterval(() => {
-        elapsedSeconds += 1;
-        updateTimerDisplay();
-      }, 1000);
-    };
-
-    const stopTimer = () => {
-      if (timerInterval !== null) {
-        clearInterval(timerInterval);
-        timerInterval = null;
-      }
-    };
 
     currentGame = new GameComponentOnline(
       gameContainer,
@@ -259,11 +224,10 @@ export const GameOnline: Page = {
           waiting = false;
           canStart = true;
           // Masquer le modal d'attenteplayer1NameEl
-          if (waitingModal) {
-            waitingModal.classList.add('hidden');
-          }
+          if (waitingModal) waitingModal.classList.add('hidden');
 
           if (currentGame) {
+            if (playerWinningScoreDisplay) playerWinningScoreDisplay.textContent = response.room.gamePoint;
             currentGame.setCanStart(canStart);
             player1NameEl.textContent = response.room.clients[0].name;
             player2NameEl.textContent = response.room.clients[1].name;
@@ -307,8 +271,6 @@ export const GameOnline: Page = {
             player2EloEl.textContent = response.room.clients[1].elo;
 
             await countdown.start(startModal, startModalText);
-
-            startTimer();
           }
         }
 
@@ -317,10 +279,8 @@ export const GameOnline: Page = {
           if (currentGame && game) {
             currentGame.updateGameState(game);
             if (response.isGoal) {
-              stopTimer();
               if (response.isLastGoal === undefined) {
                 await countdown.start(startModal, startModalText);
-                startTimer();
               }
             }
           }
@@ -353,7 +313,6 @@ export const GameOnline: Page = {
           if (currentGame) {
             const winner = currentGame.getScores().p1Score > currentGame.getScores().p2Score ? player1NameEl.textContent : currentGame.getScores().p1Score < currentGame.getScores().p2Score ? player2NameEl.textContent : `${username}`;
             currentGame.destroy();
-            stopTimer();
             try {
               countdown.abort();
             } catch (e: any) {

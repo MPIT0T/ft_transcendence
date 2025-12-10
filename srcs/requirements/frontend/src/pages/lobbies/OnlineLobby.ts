@@ -127,39 +127,6 @@ export const OnlineLobby: Page = {
     }
 
     let status: ReturnType<typeof setInterval> | undefined;
-    const ping = root.querySelector('#ping') as HTMLButtonElement;
-
-    (async () => {
-      try {
-        const startPong = Date.now();
-        await fetch("/pong/status");
-        const endPong = Date.now();
-        const startTournament = Date.now();
-        await fetch("/tournament/status");
-        const endTournament = Date.now();
-        const latencyAvg = (endPong - startPong + endTournament - startTournament) / 2;
-        ping.textContent = `${latencyAvg}`;
-      } catch (error) {
-        ping.textContent = `?`;
-      }
-    })();
-
-    if(ping){
-      status = setInterval(async () => {
-        try {
-          const startPong = Date.now();
-          await fetch("/pong/status");
-          const endPong = Date.now();
-          const startTournament = Date.now();
-          await fetch("/tournament/status");
-          const endTournament = Date.now();
-          const latencyAvg = (endPong - startPong + endTournament - startTournament) / 2;
-          if (ping) ping.textContent = `${latencyAvg}`;
-        } catch (error) {
-          if (ping) ping.textContent = `?`;
-        }
-      }, 5000);
-    }
 
     let statusPlayer: ReturnType<typeof setInterval> | undefined;
     const playerGame = root.querySelector('#players-online-game') as HTMLButtonElement;

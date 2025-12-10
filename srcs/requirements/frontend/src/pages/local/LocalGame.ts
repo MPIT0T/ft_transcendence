@@ -37,7 +37,7 @@ export const LocalGame: Page = {
           <span>W/S</span>
           <span>
             <span id="winning-score-info" data-i18n="game.firstTo">Premier à</span>
-            <span id="winning-score-display" class="text-yellow-400 font-bold">5</span>
+            <span id="winning-score-display" class="text-yellow-400 font-bold">?</span>
           </span>
           <span>↑/↓</span>
         </div>

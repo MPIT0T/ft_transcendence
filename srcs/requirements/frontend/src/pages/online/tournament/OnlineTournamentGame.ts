@@ -9,6 +9,8 @@ import { ws } from "./OnlineTournamentRoom";
 import {sleep} from "../../../utils/sleep";
 import {Layout} from "../../Layout";
 import { t } from "../../../utils/i18n";
+import { createCountdown } from "../../../utils/countdown";
+
 
 /** Current game component instance for tournament match */
 let currentGame: GameComponentOnline | null = null;
@@ -49,7 +51,10 @@ export const OnlineTournamentGame: Page = {
     </div>
     <div class="flex items-center justify-between px-6 pb-2 text-md opacity-90">
       <span id="player-1-elo" class="flex-1 text-left ml-1"></span>
-      <span id="timer">00:00</span>
+      <span>
+        <span id="winning-score-info" data-i18n="game.firstTo">Premier à</span>
+        <span id="winning-score-display" class="text-purple-400 font-bold">?</span>
+      </span>
       <span id="player-2-elo" class="flex-1 text-right"></span>
     </div>
   </div>
@@ -59,7 +64,7 @@ export const OnlineTournamentGame: Page = {
 </div>
 <div id="start-modal" class="fixed inset-0 flex justify-center items-center z-75 hidden">
   <div id="start-modal-text" class="text-8xl font-bold text-gray-50 mb-4 ml-4 text-center px-16 py-16">
-    - 3 -
+    3
   </div>
 </div>
     `;
@@ -90,7 +95,10 @@ export const OnlineTournamentGame: Page = {
 
     const popstateHandler = (event: PopStateEvent) => {
       
-      currentGame?.destroy();
+      if (currentGame) {
+        currentGame.destroy();
+        currentGame = null;
+      }
       window.removeEventListener('popstate', popstateHandler);
     };
 
@@ -101,6 +109,8 @@ export const OnlineTournamentGame: Page = {
     let canStart = false;
     let waiting = true;
 
+    const countdown = createCountdown();
+
     const gameContainer = root.querySelector('#game-container') as HTMLElement;
     const matchTitleEl = root.querySelector('#tournament-match-title') as HTMLElement;
     const player1NameEl = root.querySelector('#player-1-name') as HTMLElement;
@@ -108,60 +118,9 @@ export const OnlineTournamentGame: Page = {
     const player1AvatarEl = root.querySelector('#player-1-avatar') as HTMLImageElement;
     const player2AvatarEl = root.querySelector('#player-2-avatar') as HTMLImageElement;
     const score = root.querySelector('#score') as HTMLElement;
-    const timerEl = root.querySelector('#timer') as HTMLElement;
     const startModal = root.querySelector('#start-modal') as HTMLElement;
     const startModalText = root.querySelector('#start-modal-text') as HTMLElement;
-
-    const formatTime = (s: number) => {
-      const hours = Math.floor(s / 3600);
-      const minutes = Math.floor((s % 3600) / 60);
-      const seconds = s % 60;
-      if (hours > 0) {
-        return `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-      }
-      return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
-    }
-
-    const updateTimerDisplay = () => {
-      if (timerEl) {
-        timerEl.textContent = formatTime(elapsedSeconds);
-      }
-    }
-
-    const startTimer = () => {
-      if (timerInterval !== null) return;
-      timerInterval = window.setInterval(() => {
-        elapsedSeconds += 1;
-        updateTimerDisplay();
-      }, 1000);
-    };
-
-    const stopTimer = () => {
-      if (timerInterval !== null) {
-        clearInterval(timerInterval);
-        timerInterval = null;
-      }
-    };
-
-    const startAnimation = async () => {
-      startModal.classList.remove("hidden");
-      await sleep(850);
-      startModalText.classList.add('opacity-0');
-      await sleep(150);
-      startModalText.classList.remove("opacity-0");
-      startModalText.textContent = "- 2 -";
-      await sleep(850);
-      startModalText.classList.add('opacity-0');
-      await sleep(150);
-      startModalText.classList.remove("opacity-0");
-      startModalText.textContent = "- 1 -";
-      await sleep(850);
-      startModalText.classList.add('opacity-0');
-      await sleep(150);
-      startModalText.classList.remove("opacity-0");
-      startModal.classList.add('hidden');
-      startModalText.textContent = "- 3 -";
-    }
+    const playerWinningScoreDisplay = root.querySelector('#winning-score-display') as HTMLElement;
 
     player1NameEl.textContent = sessionStorage.getItem('player1Name');
     player2NameEl.textContent = sessionStorage.getItem('player2Name');
@@ -228,10 +187,10 @@ export const OnlineTournamentGame: Page = {
         if (response.method === "Start") {
           waiting = false;
           canStart = true;
+          if (playerWinningScoreDisplay) playerWinningScoreDisplay.textContent = response.gamePoint;
           if (currentGame) {
             currentGame.setCanStart(canStart);
-            await startAnimation();
-            startTimer();
+            await countdown.start(startModal, startModalText);
           }
         }
 
@@ -241,10 +200,8 @@ export const OnlineTournamentGame: Page = {
           if (currentGame && game) {
             currentGame.updateGameState(game);
             if (response.isGoal) {
-              stopTimer();
               if (response.isLastGoal === undefined) {
-                await startAnimation();
-                startTimer();
+                await countdown.start(startModal, startModalText);
               }
             }
           }
@@ -262,28 +219,26 @@ export const OnlineTournamentGame: Page = {
               winnerName = sessionStorage.getItem('username') || '';
             }
             matchTitleEl.textContent = `${t('tournamentOnline.winner')}: ${winnerName}`;
-
             currentGame.destroy();
+            currentGame = null;
+            try {
+              countdown.abort();
+            } catch (e: any) {
+              console.error(e.message);
+            }
           }
-
-          // Attendre un peu avant de rediriger vers le bracket
           setTimeout(() => {
-            // Le backend enverra returnToBracket qui gérera la redirection
           }, 2000);
         }
 
-        // Retour au bracket (envoyé par le backend après le match)
         if (response.method === "returnToBracket") {
           
-          // Nettoyer les infos du match
           sessionStorage.removeItem('matchRound');
 
-          // Sauvegarder le tournamentId pour revenir au bon tournoi
           if (response.tournamentId) {
             sessionStorage.setItem('tournamentId', response.tournamentId);
           }
           
-          // Rediriger vers la page du tournoi après un délai (History API)
           setTimeout(() => {
             const p = '/online-tournament';
             history.replaceState(null, '', p);
@@ -292,18 +247,9 @@ export const OnlineTournamentGame: Page = {
         }
       }
     } else {
-      // window.removeEventListener('popstate', popstateHandler);
       const p = '/tournament-room';
       history.replaceState(null, '', p);
       window.dispatchEvent(new PopStateEvent('popstate'));
     }
-
-    // Cleanup du jeu précédent s'il existe
-    if (currentGame) {
-      currentGame.destroy();
-    }
-
-  // Handler pour le popstate (si le joueur quitte manuellement)
-
   }
 }

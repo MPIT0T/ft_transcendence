@@ -346,6 +346,7 @@ class Tournament {
 				roomData.player1._conection.send(JSON.stringify({
 					method: "Start",
 					round: "1",
+					gamePoint: this.gamePoint,
 					roomId: roomData.roomId,
 				}));
 			}
@@ -353,6 +354,7 @@ class Tournament {
 				roomData.player2._conection.send(JSON.stringify({
 					method: "Start",
 					round: "1",
+					gamePoint: this.gamePoint,
 					roomId: roomData.roomId,
 				}));
 			}
@@ -509,6 +511,7 @@ class Tournament {
 				roomData.player1._conection.send(JSON.stringify({
 					method: "Start",
 					round: "2",
+					gamePoint: this.gamePoint,
 					roomId: roomData.roomId,
 				}));
 			}
@@ -516,6 +519,7 @@ class Tournament {
 				roomData.player2._conection.send(JSON.stringify({
 					method: "Start",
 					round: "2",
+					gamePoint: this.gamePoint,
 					roomId: roomData.roomId,
 				}));
 			}
@@ -658,6 +662,7 @@ class Tournament {
 					finalRoomData.player1._conection.send(JSON.stringify({
 						method: "Start",
 						round: "3",
+						gamePoint: this.gamePoint,
 						roomId: finalRoomData.roomId,
 					}));
 				}
@@ -665,6 +670,7 @@ class Tournament {
 					finalRoomData.player2._conection.send(JSON.stringify({
 						method: "Start",
 						round: "3",
+						gamePoint: this.gamePoint,
 						roomId: finalRoomData.roomId,
 					}));
 				}

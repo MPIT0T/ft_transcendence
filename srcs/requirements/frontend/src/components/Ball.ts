@@ -38,8 +38,8 @@ export class Ball {
      * @param direction - Horizontal direction (1 = right, -1 = left)
      */
     reset(direction: number = 1): void {
-        this.x = 450;
-        this.y = 300;
+        this.x = 446;
+        this.y = 296;
         this.vel_x = direction * 5;
         this.vel_y = (Math.random() - 0.5) * 6;
     }
