@@ -146,9 +146,9 @@ export const Lobby: Page = {
 				await fetch("/tournament/status");
 				const endTournament = Date.now();
 				const latencyAvg = (endPong - startPong + endTournament - startTournament) / 2;
-				ping.textContent = `${latencyAvg}`;
+				if (ping) ping.textContent = `${latencyAvg}`;
 			} catch (error) {
-				ping.textContent = `?`;
+				if (ping) ping.textContent = `?`;
 			}
 		})();
 
@@ -162,9 +162,9 @@ export const Lobby: Page = {
 					await fetch("/tournament/status");
 					const endTournament = Date.now();
 					const latencyAvg = (endPong - startPong + endTournament - startTournament) / 2;
-					ping.textContent = `${latencyAvg}`;
+					if (ping) ping.textContent = `${latencyAvg}`;
 				} catch (error) {
-					ping.textContent = `?`;
+					if (ping) ping.textContent = `?`;
 				}
 			}, 5000);
 		}
@@ -180,9 +180,9 @@ export const Lobby: Page = {
 				const countP = await responsePong.text();
 				const countT = await responseTournament.text();
 				const count: number = parseInt(countP) + parseInt(countT);
-				player.textContent = `${count.toString()}`;
+				if (player) player.textContent = `${count.toString()}`;
 			} catch (error) {
-				player.textContent = `?`;
+				if (player) player.textContent = `?`;
 			}
 		})();
 
@@ -194,9 +194,9 @@ export const Lobby: Page = {
 					const countP = await responsePong.text();
 					const countT = await responseTournament.text();
 					const count: number = parseInt(countP) + parseInt(countT);
-					player.textContent = `${count.toString()}`;
+					if (player) player.textContent = `${count.toString()}`;
 				} catch (error) {
-					player.textContent = `?`;
+					if (player) player.textContent = `?`;
 				}
 			}, 5000);
 		}
