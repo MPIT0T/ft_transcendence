@@ -15,6 +15,9 @@ async function apiChangeUsernameRoute(fastify, options) {
             return reply.status(400).send({ error: "missing credentials" });
         if (errorToken(req.headers['authorization'], username))
             return reply.status(401).send({error: "Token manquant ou invalide"});
+        const usernameRegex = /^[a-zA-Z0-9]{3,12}$/;
+        if (!usernameRegex.test(newUsername))
+            return reply.status(400).send({ error: 'Le nom doit contenir uniquement des lettres et chiffres (3-12 caractères)'});
         try {
             const prepUserInfo = db.prepare('SELECT * from users where username = ?');
             const allUserInfo = prepUserInfo.get(username);
